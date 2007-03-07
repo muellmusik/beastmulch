@@ -1,0 +1,198 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red191\green0\blue0;\red0\green115\blue0;
+\red96\green96\blue96;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf0 (\
+	\cf2 var\cf0  inPorts = 2;\
+	\cf2 var\cf0  outPorts = 2;\
+	\cf2 MIDIClient\cf0 .init(inPorts,outPorts);			\cf3 // explicitly intialize the client\cf0 \
+	inPorts.do(\{ \cf2 arg\cf0  i; \
+		\cf2 MIDIIn\cf0 .connect(i, \cf2 MIDIClient\cf0 .sources.at(i));\
+	\});\
+)\
+\
+(\
+\
+\cf3 // register test functions:	\cf0 \
+	\cf2 MIDIIn\cf0 .noteOff = \{ \cf2 arg\cf0  src, chan, num, vel; 	[\cf4 \\noteOff\cf0 , chan,num,vel / 127].postln; \};\
+	\cf2 MIDIIn\cf0 .noteOn = \{ \cf2 arg\cf0  src, chan, num, vel; 	[\cf4 \\noteOn\cf0 , chan,num,vel / 127].postln; \};\
+	\cf2 MIDIIn\cf0 .polytouch = \{ \cf2 arg\cf0  src, chan, num, vel; 	[\cf4 \\poly\cf0 , chan,num,vel / 127].postln; \};\
+	\cf2 MIDIIn\cf0 .control = \{ \cf2 arg\cf0  src, chan, num, val; 	[\cf4 \\control\cf0 , chan,num,val].postln; \};\
+	\cf2 MIDIIn\cf0 .program = \{ \cf2 arg\cf0  src, chan, prog; 		[\cf4 \\prog\cf0 , chan,prog].postln; \};\
+	\cf2 MIDIIn\cf0 .touch = \{ \cf2 arg\cf0  src, chan, pressure; 	[\cf4 \\touch\cf0 , chan,pressure].postln; \};\
+	\cf2 MIDIIn\cf0 .bend = \{ \cf2 arg\cf0  src, chan, bend; 			[\cf4 \\bend\cf0 , chan,bend].postln; \};\
+	\cf2 MIDIIn\cf0 .sysex = \{ \cf2 arg\cf0  src, sysex; 			[\cf4 \\sysex\cf0 , sysex].postln; \};\
+	\cf2 MIDIIn\cf0 .sysrt = \{ \cf2 arg\cf0  src, chan, val; 			[\cf4 \\sysrt\cf0 , chan,val].postln; \};\
+	\cf2 MIDIIn\cf0 .smpte = \{ \cf2 arg\cf0  src, chan, val; 			[\cf4 \\smpte\cf0 , chan,val].postln; \};\
+)\
+\
+(\
+\cf3 // uids these don't match\cf0 \
+\cf2 MIDIClient\cf0 .sources.at(0).uid.postln;\
+\cf2 MIDIClient\cf0 .destinations.at(0).uid;\
+)\
+\
+\
+(\
+	\cf3 // loopback\cf0 \
+	m = \cf2 MIDIOut\cf0 (0, \cf2 MIDIClient\cf0 .destinations.at(0).uid);\
+	\cf2 MIDIIn\cf0 .bend = \{ \cf2 arg\cf0  src, chan, bend; 	\
+		[src, chan,bend].postln; \
+		m.bend(chan, bend); \cf3 // assumes same port\cf0 \
+	\};\
+)\
+\
+~hdr = \cf2 Int8Array\cf0 [ -16, 0, 0, 102, 20]; \cf3 // ends with 21 for XT\cf0 \
+(\
+\cf3 // sysex\cf0 \
+m = \cf2 MIDIOut\cf0 (0, \cf2 MIDIClient\cf0 .destinations.at(0).uid);\
+m.sysex(\cf2 MIDIClient\cf0 .destinations.at(0).uid, \cf2 Int8Array\cf0 [ -16, 0, 0, 102, 20, 16r0, 16rf7]);\
+\
+)\
+\
+(\
+\cf3 // touchless faders\cf0 \
+m = \cf2 MIDIOut\cf0 (0, \cf2 MIDIClient\cf0 .destinations.at(0).uid);\
+m.sysex(\cf2 MIDIClient\cf0 .destinations.at(0).uid, \cf2 Int8Array\cf0 [ -16, 0, 0, 102, 20, 16r0c, 1, 16rf7]);\
+\
+)\
+\
+(\
+\cf3 // say hello\cf0 \
+m = \cf2 MIDIOut\cf0 (0, \cf2 MIDIClient\cf0 .destinations.at(0).uid);\
+m.sysex(\cf2 MIDIClient\cf0 .destinations.at(0).uid, \cf2 Int8Array\cf0 [ -16, 0, 0, 102, 20, 16r12, 0, 16r48, 16r65, 16r6c, 16r6c, 16r6f,16rf7]);\
+\
+)\
+\
+(\
+\cf3 // say hello\cf0 \
+m = \cf2 MIDIOut\cf0 (0, \cf2 MIDIClient\cf0 .destinations.at(0).uid);\
+m.sysex(\cf2 MIDIClient\cf0 .destinations.at(0).uid, (\cf2 Int8Array\cf0 [ -16, 0, 0, 102, 20, 16r12, 0, 16r48, 16r65, 16r6c, 16r6c, 16r6f] ++ \cf5 " Jonty!"\cf0 .collectAs(\{\cf2 arg\cf0  item; item.ascii\}, \cf2 Int8Array\cf0 )).add(16rf7));\
+)\
+\
+\
+(\
+\cf3 // say hello\cf0 \
+\cf2 var\cf0  string, array;\
+m = \cf2 MIDIOut\cf0 (0, \cf2 MIDIClient\cf0 .destinations.at(0).uid);\
+string = \cf5 "Hello Jonty!"\cf0 ;\
+	\
+\
+\{\
+loop \{\
+100.do(\{\
+	array = (\cf2 Int8Array\cf0 [-16, 0, 0, 102, 20, 16r12, 0] ++ string.collectAs(\{\cf2 arg\cf0  item; item.ascii\}, \cf2 Int8Array\cf0 )).add(16rf7);\
+	m.sysex(\cf2 MIDIClient\cf0 .destinations.at(0).uid, array);\
+	0.1.wait;\
+	string = \cf5 " "\cf0  ++ string;\
+\});\
+string = \cf5 "Hello Jonty!"\cf0 ;\
+\}\
+\}.fork(\cf2 SystemClock\cf0 );\
+)\
+\
+(\
+\cf3 // take out MIDI\cf0 \
+\cf2 var\cf0  string, array;\
+\cf3 //m = MIDIOut(0, MIDIClient.destinations.at(0).uid);\cf0 \
+string = \cf5 "Hello World!"\cf0 ;\
+	\
+\
+\{\
+loop \{\
+100.do(\{\cf2 |i|\cf0 \
+	i.postln;\
+	array = (\cf2 Int8Array\cf0 [-16, 0, 0, 102, 20, 16r12, 0] ++ string.collectAs(\{\cf2 arg\cf0  item; item.ascii\}, \cf2 Int8Array\cf0 )).add(16rf7);\
+	\cf3 //m.sysex(MIDIClient.destinations.at(0).uid, array);\cf0 \
+	0.15.wait;\
+	string = \cf5 " "\cf0  ++ string;\
+\});\
+string = \cf5 "Hello World!"\cf0 ;\
+\}\
+\}.fork(\cf2 SystemClock\cf0 );\
+)\
+\
+(\
+	\cf2 var\cf0  start, now;\
+	\cf3 // bend test\cf0 \
+	m = \cf2 MIDIOut\cf0 (0, \cf2 MIDIClient\cf0 .destinations.at(0).uid);\
+	e = \cf2 Env\cf0 .new([0, 16384, 0], [5, 5]);\
+	\
+	\{\
+	5.do(\{\
+		start = \cf2 Main\cf0 .elapsedTime;\
+		200.do(\{\
+			now = \cf2 Main\cf0 .elapsedTime - start;\
+			e.at(now).asInteger.postln;\
+			m.bend(0, e.at(now).asInteger); \cf3 // assumes same port\cf0 \
+			0.05.wait;\
+		\});\
+	\});\
+	\}.fork(\cf2 SystemClock\cf0 )\
+)\
+\
+(\
+\
+	\cf3 // noteOn /Off test\cf0 \
+	m = \cf2 MIDIOut\cf0 (0, \cf2 MIDIClient\cf0 .destinations.at(0).uid);\
+	\
+	\{\
+	loop(\{\
+		m.noteOn(0, 29, 1);\
+		\cf4 \\on\cf0 .postln;\
+		0.05.wait;\
+		m.noteOn(0, 29, 0);\
+		\cf4 \\off\cf0 .postln;\
+		0.05.wait;\
+	\});\
+	\}.fork(\cf2 SystemClock\cf0 )\
+\cf3 //	Notes:\cf0 \
+\cf3 //	Press down = NoteOn\cf0 \
+\cf3 //	Release = NoteOff\cf0 \
+\cf3 //	But, to turn off light send NoteOn with velocity 0\cf0 \
+	\
+)\
+\
+(\
+\cf3 // write timecode multiple (doesn't work)\cf0 \
+m = \cf2 MIDIOut\cf0 (0, \cf2 MIDIClient\cf0 .destinations.at(0).uid);\
+m.sysex(\cf2 MIDIClient\cf0 .destinations.at(0).uid, (\cf2 Int8Array\cf0 [ 16rF0, 16r00, 16r00, 16r66, 16r10, 16r10, 16r36, 16r32, 16r31, 16r71, 16r30, 16r72, 16r30, 16r79, 16r30, 16r31, 16rF7])); \
+\
+\cf3 //++ " Jonty!".collectAs(\{arg item; item.ascii\}, Int8Array)).add(16rf7));\cf0 \
+)\
+\
+(\
+\cf3 // write timecode single (works)\cf0 \
+\cf3 // pairs of index (16r40 + 0-9 right to left!) and value (16r30 - 16r39 for each digit)\cf0 \
+\cf3 // add 16r40 to light up decimal\cf0 \
+\cf3 // 16r00 turns off digit\cf0 \
+\
+m = \cf2 MIDIOut\cf0 (0, \cf2 MIDIClient\cf0 .destinations.at(0).uid);\
+m.sysex(\cf2 MIDIClient\cf0 .destinations.at(0).uid, (\cf2 Int8Array\cf0 [ -16, 0, 0, 102, 20, 16rB0, 16r40, 16r30, 16r41, 16r31 ])); \
+\
+)\
+\
+\
+\cf3 /// routine method:\cf0 \
+\
+r = \cf2 Routine\cf0 (\{\
+			\cf2 var\cf0 	event, event2;\
+			loop \{\
+				event = \cf2 MIDIIn\cf0 .waitBend;\
+				[event.port, event.status, event.chan, event.b].postln;\
+\
+			\}\
+		\}).play;\
+r.stop;\
+\
+r = \cf2 Routine\cf0 (\{\
+			\cf2 var\cf0 	event, event2;\
+			loop \{\
+				event = \cf2 MIDIIn\cf0 .waitNoteOn(\cf2 MIDIClient\cf0 .sources.at(1).uid);\
+				[event.port, event.status, event.chan, event.b].postln;\
+\
+			\}\
+		\}).play;\
+r.stop;}

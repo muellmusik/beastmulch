@@ -1,0 +1,1620 @@
+var o, p;
+o = [
+	IdentityDictionary.prNew,  Array.prNew(8),  Array.prNew(5),  "all off",  
+	"Stereo Diffusion Base",  "trio",  "dudas",  "charke",  
+	IdentityDictionary.prNew,  Array.prNew(16),  IdentityDictionary.prNew,  Array.prNew(12),  
+	IdentityDictionary.prNew,  Array.prNew(96),  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  IdentityDictionary.prNew,  Array.prNew(128),  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	IdentityDictionary.prNew,  Array.prNew(16),  IdentityDictionary.prNew,  Array.prNew(8),  
+	Array.prNew(8),  "      ",  Array.prNew(8),  IdentityDictionary.prNew,  
+	Array.prNew(8),  Array.prNew(9),  Array.prNew(9),  IdentityDictionary.prNew,  
+	Array.prNew(8),  Array.prNew(9),  Array.prNew(9),  IdentityDictionary.prNew,  
+	Array.prNew(8),  Array.prNew(8),  Array.prNew(8),  IdentityDictionary.prNew,  
+	Array.prNew(16),  IdentityDictionary.prNew,  Array.prNew(132),  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  IdentityDictionary.prNew,  Array.prNew(16),  IdentityDictionary.prNew,  
+	Array.prNew(8),  Array.prNew(8),  "      ",  Array.prNew(8),  
+	IdentityDictionary.prNew,  Array.prNew(8),  Array.prNew(9),  Array.prNew(9),  
+	IdentityDictionary.prNew,  Array.prNew(8),  Array.prNew(9),  Array.prNew(9),  
+	IdentityDictionary.prNew,  Array.prNew(8),  Array.prNew(8),  Array.prNew(8),  
+	IdentityDictionary.prNew,  Array.prNew(96),  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew(3),  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew(3),  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew(3),  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew(2),  
+	List.prNew,  Array.prNew(3),  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  IdentityDictionary.prNew,  Array.prNew(16),  
+	IdentityDictionary.prNew,  Array.prNew(132),  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	IdentityDictionary.prNew,  Array.prNew(16),  IdentityDictionary.prNew,  Array.prNew(8),  
+	Array.prNew(8),  "      ",  Array.prNew(8),  IdentityDictionary.prNew,  
+	Array.prNew(8),  Array.prNew(9),  Array.prNew(9),  IdentityDictionary.prNew,  
+	Array.prNew(8),  Array.prNew(9),  Array.prNew(9),  IdentityDictionary.prNew,  
+	Array.prNew(8),  Array.prNew(8),  Array.prNew(8),  IdentityDictionary.prNew,  
+	Array.prNew(96),  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew(3),  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew(3),  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew(3),  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew(2),  List.prNew,  
+	Array.prNew(3),  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  IdentityDictionary.prNew,  Array.prNew(16),  IdentityDictionary.prNew,  
+	Array.prNew(132),  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew(1),  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew(1),  List.prNew,  Array.prNew(1),  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  IdentityDictionary.prNew,  
+	Array.prNew(16),  IdentityDictionary.prNew,  Array.prNew(8),  Array.prNew(8),  
+	"Cptr-L",  "Cptr-M",  "Cptr-R",  "      ",  
+	"      ",  "      ",  "      ",  "      ",  
+	Array.prNew(8),  IdentityDictionary.prNew,  Array.prNew(8),  Array.prNew(9),  
+	"      ",  "      ",  "      ",  "      ",  
+	"      ",  "      ",  "      ",  "      ",  
+	"      ",  Array.prNew(9),  IdentityDictionary.prNew,  Array.prNew(8),  
+	Array.prNew(9),  "      ",  "      ",  "      ",  
+	"      ",  "      ",  "      ",  "      ",  
+	"      ",  "      ",  Array.prNew(9),  IdentityDictionary.prNew,  
+	Array.prNew(8),  Array.prNew(8),  "      ",  "      ",  
+	"      ",  "      ",  "      ",  "      ",  
+	"      ",  "      ",  Array.prNew(8),  IdentityDictionary.prNew,  
+	Array.prNew(96),  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew(2),  List.prNew,  
+	Array.prNew(2),  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew(2),  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew(2),  List.prNew,  Array.prNew(2),  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew(2),  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew(2),  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew(2),  List.prNew,  
+	Array.prNew(2),  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew(2),  List.prNew,  
+	Array.prNew(2),  IdentityDictionary.prNew,  Array.prNew(16),  IdentityDictionary.prNew,  
+	Array.prNew(132),  List.prNew,  Array.prNew(1),  List.prNew,  
+	Array.prNew(2),  List.prNew,  Array.prNew(2),  List.prNew,  
+	Array.prNew(2),  List.prNew,  Array.prNew(2),  List.prNew,  
+	Array.prNew(1),  List.prNew,  Array.prNew(1),  List.prNew,  
+	Array.prNew(2),  List.prNew,  Array.prNew(2),  List.prNew,  
+	Array.prNew(5),  List.prNew,  Array.prNew(2),  List.prNew,  
+	Array.prNew(2),  List.prNew,  Array.prNew(1),  List.prNew,  
+	Array.prNew(1),  List.prNew,  Array.prNew(1),  List.prNew,  
+	Array.prNew(1),  List.prNew,  Array.prNew(1),  List.prNew,  
+	Array.prNew(1),  List.prNew,  Array.prNew(1),  List.prNew,  
+	Array.prNew(2),  List.prNew,  Array.prNew(2),  List.prNew,  
+	Array.prNew(2),  List.prNew,  Array.prNew(2),  List.prNew,  
+	Array.prNew(1),  List.prNew,  Array.prNew(1),  List.prNew,  
+	Array.prNew(1),  List.prNew,  Array.prNew(2),  List.prNew,  
+	Array.prNew(2),  List.prNew,  Array.prNew(4),  List.prNew,  
+	Array.prNew(2),  List.prNew,  Array.prNew(1),  List.prNew,  
+	Array.prNew(1),  List.prNew,  Array.prNew(1),  "/Users/admin1/Desktop/basel:aix sound files/Sonja/1 Audio Track.aiff",  
+	IdentityDictionary.prNew,  Array.prNew(16),  IdentityDictionary.prNew,  Array.prNew(8),  
+	Array.prNew(8),  "SubsF ",  "SubsS ",  "SubsB ",  
+	"Tweetr",  "PunchL",  "PunchR",  "VDistL",  
+	"VDistR",  Array.prNew(8),  IdentityDictionary.prNew,  Array.prNew(8),  
+	Array.prNew(9),  "FloodF",  "FloodS",  "Close ",  
+	"HexF  ",  "HexS  ",  "HexB  ",  "5.1F  ",  
+	"5.1B  ",  "      ",  Array.prNew(9),  IdentityDictionary.prNew,  
+	Array.prNew(8),  Array.prNew(9),  "SideL ",  "SideR ",  
+	"FrontL",  "BackR ",  "FloorF",  "FloorS",  
+	"FloorB",  "Desk  ",  "      ",  Array.prNew(9),  
+	IdentityDictionary.prNew,  Array.prNew(8),  Array.prNew(8),  "DistL ",  
+	"DistR ",  "MainL ",  "MainR ",  "WideL ",  
+	"WideR ",  "RearL ",  "RearR ",  Array.prNew(8),  
+	IdentityDictionary.prNew,  Array.prNew(96),  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew(28),  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew(28),  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew
+];
+p = [
+	// IdentityDictionary
+	0, [ array: o[1],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	1, [ nil,  nil,  'presetNames',  o[2],  
+		'presetDict',  o[8],  nil,  nil ],  
+	// Array
+	2, [ o[3],  o[4],  o[5],  o[6],  
+		o[7] ],  
+	// IdentityDictionary
+	8, [ array: o[9],  size: 5,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	9, [ 'all off',  o[10],  'charke',  o[147],  
+		nil,  nil,  nil,  nil,  
+		'dudas',  o[286],  nil,  nil,  
+		'trio',  o[425],  'Stereo Diffusion Base',  o[597] ],  
+	// IdentityDictionary
+	10, [ array: o[11],  size: 3,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	11, [ nil,  nil,  'audMatrix',  o[12],  
+		nil,  nil,  'ctrlMatrix',  o[62],  
+		'mackies',  o[128],  nil,  nil ],  
+	// IdentityDictionary
+	12, [ array: o[13],  size: 24,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	13, [ nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'in12',  o[14],  
+		'Player7',  o[16],  'in4',  o[18],  
+		'in8',  o[20],  'Player2',  o[22],  
+		'Player3',  o[24],  'Player8',  o[26],  
+		nil,  nil,  nil,  nil,  
+		'in11',  o[28],  'Player9',  o[30],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'in9',  o[32],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'in6',  o[34],  
+		nil,  nil,  nil,  nil,  
+		'Player5',  o[36],  'in1',  o[38],  
+		nil,  nil,  nil,  nil,  
+		'Player10',  o[40],  'in2',  o[42],  
+		'Player1',  o[44],  'Player4',  o[46],  
+		'Player11',  o[48],  'in5',  o[50],  
+		'in3',  o[52],  'Player12',  o[54],  
+		'Player6',  o[56],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'in10',  o[58],  nil,  nil,  
+		'in7',  o[60],  nil,  nil ],  
+	// List
+	14, [ array: o[15] ],  
+	// List
+	16, [ array: o[17] ],  
+	// List
+	18, [ array: o[19] ],  
+	// List
+	20, [ array: o[21] ],  
+	// List
+	22, [ array: o[23] ],  
+	// List
+	24, [ array: o[25] ],  
+	// List
+	26, [ array: o[27] ],  
+	// List
+	28, [ array: o[29] ],  
+	// List
+	30, [ array: o[31] ],  
+	// List
+	32, [ array: o[33] ],  
+	// List
+	34, [ array: o[35] ],  
+	// List
+	36, [ array: o[37] ],  
+	// List
+	38, [ array: o[39] ],  
+	// List
+	40, [ array: o[41] ],  
+	// List
+	42, [ array: o[43] ],  
+	// List
+	44, [ array: o[45] ],  
+	// List
+	46, [ array: o[47] ],  
+	// List
+	48, [ array: o[49] ],  
+	// List
+	50, [ array: o[51] ],  
+	// List
+	52, [ array: o[53] ],  
+	// List
+	54, [ array: o[55] ],  
+	// List
+	56, [ array: o[57] ],  
+	// List
+	58, [ array: o[59] ],  
+	// List
+	60, [ array: o[61] ],  
+	// IdentityDictionary
+	62, [ array: o[63],  size: 32,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	63, [ 'mack2-4',  o[64],  'mackCU-1',  o[66],  
+		'mack2-5',  o[68],  'mackCU-4',  o[70],  
+		'mack4-5',  o[72],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mack1-1',  o[74],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'mack4-6',  o[76],  nil,  nil,  
+		nil,  nil,  'mack2-8',  o[78],  
+		'mack4-7',  o[80],  'mackCU-5',  o[82],  
+		'mack1-2',  o[84],  'mack1-8',  o[86],  
+		'mack1-3',  o[88],  'mack2-7',  o[90],  
+		'mack1-7',  o[92],  'mack4-3',  o[94],  
+		'mack2-2',  o[96],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mackCU-8',  o[98],  
+		'mack1-6',  o[100],  nil,  nil,  
+		nil,  nil,  'mack4-8',  o[102],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mack1-4',  o[104],  
+		'mackCU-3',  o[106],  'mack4-1',  o[108],  
+		nil,  nil,  'mack2-3',  o[110],  
+		'mack2-1',  o[112],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'mackCU-6',  o[114],  nil,  nil,  
+		nil,  nil,  'mackCU-2',  o[116],  
+		'mack4-4',  o[118],  'mack2-6',  o[120],  
+		'mackCU-7',  o[122],  nil,  nil,  
+		'mack4-2',  o[124],  nil,  nil,  
+		nil,  nil,  'mack1-5',  o[126] ],  
+	// List
+	64, [ array: o[65] ],  
+	// List
+	66, [ array: o[67] ],  
+	// List
+	68, [ array: o[69] ],  
+	// List
+	70, [ array: o[71] ],  
+	// List
+	72, [ array: o[73] ],  
+	// List
+	74, [ array: o[75] ],  
+	// List
+	76, [ array: o[77] ],  
+	// List
+	78, [ array: o[79] ],  
+	// List
+	80, [ array: o[81] ],  
+	// List
+	82, [ array: o[83] ],  
+	// List
+	84, [ array: o[85] ],  
+	// List
+	86, [ array: o[87] ],  
+	// List
+	88, [ array: o[89] ],  
+	// List
+	90, [ array: o[91] ],  
+	// List
+	92, [ array: o[93] ],  
+	// List
+	94, [ array: o[95] ],  
+	// List
+	96, [ array: o[97] ],  
+	// List
+	98, [ array: o[99] ],  
+	// List
+	100, [ array: o[101] ],  
+	// List
+	102, [ array: o[103] ],  
+	// List
+	104, [ array: o[105] ],  
+	// List
+	106, [ array: o[107] ],  
+	// List
+	108, [ array: o[109] ],  
+	// List
+	110, [ array: o[111] ],  
+	// List
+	112, [ array: o[113] ],  
+	// List
+	114, [ array: o[115] ],  
+	// List
+	116, [ array: o[117] ],  
+	// List
+	118, [ array: o[119] ],  
+	// List
+	120, [ array: o[121] ],  
+	// List
+	122, [ array: o[123] ],  
+	// List
+	124, [ array: o[125] ],  
+	// List
+	126, [ array: o[127] ],  
+	// IdentityDictionary
+	128, [ array: o[129],  size: 4,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	129, [ 'mack1',  o[130],  'mack4',  o[135],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mackCU',  o[139],  
+		'mack2',  o[143],  nil,  nil ],  
+	// IdentityDictionary
+	130, [ array: o[131],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	131, [ nil,  nil,  nil,  nil,  
+		'labels',  o[132],  'faders',  o[134] ],  
+	// Array
+	132, [ o[133],  o[133],  o[133],  o[133],  
+		o[133],  o[133],  o[133],  o[133] ],  
+	// Array
+	134, [ 0,  0,  0,  0,  
+		0,  0,  0,  0 ],  
+	// IdentityDictionary
+	135, [ array: o[136],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	136, [ nil,  nil,  nil,  nil,  
+		'labels',  o[137],  'faders',  o[138] ],  
+	// Array
+	137, [ o[133],  o[133],  o[133],  o[133],  
+		o[133],  o[133],  o[133],  o[133],  
+		o[133] ],  
+	// Array
+	138, [ 0,  0,  0,  0,  
+		0,  0,  0,  0,  
+		0 ],  
+	// IdentityDictionary
+	139, [ array: o[140],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	140, [ nil,  nil,  nil,  nil,  
+		'labels',  o[141],  'faders',  o[142] ],  
+	// Array
+	141, [ o[133],  o[133],  o[133],  o[133],  
+		o[133],  o[133],  o[133],  o[133],  
+		o[133] ],  
+	// Array
+	142, [ 0,  0,  0,  0,  
+		0,  0,  0,  0,  
+		0 ],  
+	// IdentityDictionary
+	143, [ array: o[144],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	144, [ nil,  nil,  nil,  nil,  
+		'labels',  o[145],  'faders',  o[146] ],  
+	// Array
+	145, [ o[133],  o[133],  o[133],  o[133],  
+		o[133],  o[133],  o[133],  o[133] ],  
+	// Array
+	146, [ 0,  0,  0,  0,  
+		0,  0,  0,  0 ],  
+	// IdentityDictionary
+	147, [ array: o[148],  size: 3,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	148, [ nil,  nil,  'ctrlMatrix',  o[149],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mackies',  o[217],  
+		nil,  nil,  'audMatrix',  o[236] ],  
+	// IdentityDictionary
+	149, [ array: o[150],  size: 33,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	150, [ nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'mackCU-3',  o[151],  'mackCU-6',  o[153],  
+		'mackCU-7',  o[155],  'mack1-1',  o[157],  
+		'mack1-4',  o[159],  'mack1-5',  o[161],  
+		'mack1-8',  o[163],  nil,  nil,  
+		'mack4-2',  o[165],  'mack4-6',  o[167],  
+		'mack4-7',  o[169],  nil,  nil,  
+		'mack4-1',  o[171],  'mack4-5',  o[173],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'mack2-1',  o[175],  'mack2-2',  o[177],  
+		'mack2-5',  o[179],  nil,  nil,  
+		'mack2-4',  o[181],  'mackCU-1',  o[183],  
+		'mackCU-2',  o[185],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mackCU-4',  o[187],  
+		'mackCU-5',  o[189],  'mackCU-8',  o[191],  
+		'mack1-2',  o[193],  'mack1-3',  o[195],  
+		'mack1-6',  o[197],  'mack2-8',  o[199],  
+		'mack1-7',  o[201],  'mack4-8',  o[203],  
+		'mack4-9',  o[205],  nil,  nil,  
+		nil,  nil,  'mack4-3',  o[207],  
+		'mack4-4',  o[209],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mack2-6',  o[211],  
+		'mack2-7',  o[213],  nil,  nil,  
+		nil,  nil,  'mack2-3',  o[215],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil ],  
+	// List
+	151, [ array: o[152] ],  
+	// List
+	153, [ array: o[154] ],  
+	// List
+	155, [ array: o[156] ],  
+	// List
+	157, [ array: o[158] ],  
+	// List
+	159, [ array: o[160] ],  
+	// List
+	161, [ array: o[162] ],  
+	// List
+	163, [ array: o[164] ],  
+	// List
+	165, [ array: o[166] ],  
+	// List
+	167, [ array: o[168] ],  
+	// List
+	169, [ array: o[170] ],  
+	// List
+	171, [ array: o[172] ],  
+	// List
+	173, [ array: o[174] ],  
+	// List
+	175, [ array: o[176] ],  
+	// List
+	177, [ array: o[178] ],  
+	// List
+	179, [ array: o[180] ],  
+	// List
+	181, [ array: o[182] ],  
+	// List
+	183, [ array: o[184] ],  
+	// List
+	185, [ array: o[186] ],  
+	// List
+	187, [ array: o[188] ],  
+	// List
+	189, [ array: o[190] ],  
+	// List
+	191, [ array: o[192] ],  
+	// List
+	193, [ array: o[194] ],  
+	// List
+	195, [ array: o[196] ],  
+	// List
+	197, [ array: o[198] ],  
+	// List
+	199, [ array: o[200] ],  
+	// List
+	201, [ array: o[202] ],  
+	// List
+	203, [ array: o[204] ],  
+	// List
+	205, [ array: o[206] ],  
+	// List
+	207, [ array: o[208] ],  
+	// List
+	209, [ array: o[210] ],  
+	// List
+	211, [ array: o[212] ],  
+	// List
+	213, [ array: o[214] ],  
+	// List
+	215, [ array: o[216] ],  
+	// IdentityDictionary
+	217, [ array: o[218],  size: 4,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	218, [ 'mack1',  o[219],  'mack4',  o[224],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mackCU',  o[228],  
+		'mack2',  o[232],  nil,  nil ],  
+	// IdentityDictionary
+	219, [ array: o[220],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	220, [ nil,  nil,  nil,  nil,  
+		'labels',  o[221],  'faders',  o[223] ],  
+	// Array
+	221, [ o[222],  o[222],  o[222],  o[222],  
+		o[222],  o[222],  o[222],  o[222] ],  
+	// Array
+	223, [ 0,  0,  0,  0,  
+		0,  0,  0,  0 ],  
+	// IdentityDictionary
+	224, [ array: o[225],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	225, [ nil,  nil,  nil,  nil,  
+		'labels',  o[226],  'faders',  o[227] ],  
+	// Array
+	226, [ o[222],  o[222],  o[222],  o[222],  
+		o[222],  o[222],  o[222],  o[222],  
+		o[222] ],  
+	// Array
+	227, [ 0,  0,  0,  0,  
+		0,  0,  0,  0,  
+		0 ],  
+	// IdentityDictionary
+	228, [ array: o[229],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	229, [ nil,  nil,  nil,  nil,  
+		'labels',  o[230],  'faders',  o[231] ],  
+	// Array
+	230, [ o[222],  o[222],  o[222],  o[222],  
+		o[222],  o[222],  o[222],  o[222],  
+		o[222] ],  
+	// Array
+	231, [ 0,  0,  0,  0,  
+		0,  0,  0,  0,  
+		16320 ],  
+	// IdentityDictionary
+	232, [ array: o[233],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	233, [ nil,  nil,  nil,  nil,  
+		'labels',  o[234],  'faders',  o[235] ],  
+	// Array
+	234, [ o[222],  o[222],  o[222],  o[222],  
+		o[222],  o[222],  o[222],  o[222] ],  
+	// Array
+	235, [ 0,  0,  0,  0,  
+		0,  0,  0,  0 ],  
+	// IdentityDictionary
+	236, [ array: o[237],  size: 24,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	237, [ nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'in12',  o[238],  
+		'Player7',  o[240],  'in4',  o[242],  
+		'in8',  o[244],  'Player2',  o[246],  
+		'Player3',  o[248],  'Player8',  o[250],  
+		nil,  nil,  nil,  nil,  
+		'in11',  o[252],  'Player9',  o[254],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'in9',  o[256],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'in6',  o[258],  
+		nil,  nil,  nil,  nil,  
+		'Player5',  o[260],  'in1',  o[262],  
+		nil,  nil,  nil,  nil,  
+		'Player10',  o[264],  'in2',  o[266],  
+		'Player1',  o[268],  'Player4',  o[270],  
+		'Player11',  o[272],  'in5',  o[274],  
+		'in3',  o[276],  'Player12',  o[278],  
+		'Player6',  o[280],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'in10',  o[282],  nil,  nil,  
+		'in7',  o[284],  nil,  nil ],  
+	// List
+	238, [ array: o[239] ],  
+	// List
+	240, [ array: o[241] ],  
+	// List
+	242, [ array: o[243] ],  
+	// Array
+	243, [ 'RearR',  'SideR',  'SubBR' ],  
+	// List
+	244, [ array: o[245] ],  
+	// List
+	246, [ array: o[247] ],  
+	// List
+	248, [ array: o[249] ],  
+	// List
+	250, [ array: o[251] ],  
+	// List
+	252, [ array: o[253] ],  
+	// List
+	254, [ array: o[255] ],  
+	// List
+	256, [ array: o[257] ],  
+	// List
+	258, [ array: o[259] ],  
+	// List
+	260, [ array: o[261] ],  
+	// List
+	262, [ array: o[263] ],  
+	// Array
+	263, [ 'MainL',  'WideL',  'SubFL' ],  
+	// List
+	264, [ array: o[265] ],  
+	// List
+	266, [ array: o[267] ],  
+	// Array
+	267, [ 'MainR',  'WideR',  'SubFR' ],  
+	// List
+	268, [ array: o[269] ],  
+	// List
+	270, [ array: o[271] ],  
+	// List
+	272, [ array: o[273] ],  
+	// List
+	274, [ array: o[275] ],  
+	// Array
+	275, [ 'MainL',  'MainR' ],  
+	// List
+	276, [ array: o[277] ],  
+	// Array
+	277, [ 'SideL',  'RearL',  'SubBL' ],  
+	// List
+	278, [ array: o[279] ],  
+	// List
+	280, [ array: o[281] ],  
+	// List
+	282, [ array: o[283] ],  
+	// List
+	284, [ array: o[285] ],  
+	// IdentityDictionary
+	286, [ array: o[287],  size: 3,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	287, [ nil,  nil,  'ctrlMatrix',  o[288],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mackies',  o[356],  
+		nil,  nil,  'audMatrix',  o[375] ],  
+	// IdentityDictionary
+	288, [ array: o[289],  size: 33,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	289, [ nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'mackCU-3',  o[290],  'mackCU-6',  o[292],  
+		'mackCU-7',  o[294],  'mack1-1',  o[296],  
+		'mack1-4',  o[298],  'mack1-5',  o[300],  
+		'mack1-8',  o[302],  nil,  nil,  
+		'mack4-2',  o[304],  'mack4-6',  o[306],  
+		'mack4-7',  o[308],  nil,  nil,  
+		'mack4-1',  o[310],  'mack4-5',  o[312],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'mack2-1',  o[314],  'mack2-2',  o[316],  
+		'mack2-5',  o[318],  nil,  nil,  
+		'mack2-4',  o[320],  'mackCU-1',  o[322],  
+		'mackCU-2',  o[324],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mackCU-4',  o[326],  
+		'mackCU-5',  o[328],  'mackCU-8',  o[330],  
+		'mack1-2',  o[332],  'mack1-3',  o[334],  
+		'mack1-6',  o[336],  'mack2-8',  o[338],  
+		'mack1-7',  o[340],  'mack4-8',  o[342],  
+		'mack4-9',  o[344],  nil,  nil,  
+		nil,  nil,  'mack4-3',  o[346],  
+		'mack4-4',  o[348],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mack2-6',  o[350],  
+		'mack2-7',  o[352],  nil,  nil,  
+		nil,  nil,  'mack2-3',  o[354],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil ],  
+	// List
+	290, [ array: o[291] ],  
+	// List
+	292, [ array: o[293] ],  
+	// List
+	294, [ array: o[295] ],  
+	// List
+	296, [ array: o[297] ],  
+	// List
+	298, [ array: o[299] ],  
+	// List
+	300, [ array: o[301] ],  
+	// List
+	302, [ array: o[303] ],  
+	// List
+	304, [ array: o[305] ],  
+	// List
+	306, [ array: o[307] ],  
+	// List
+	308, [ array: o[309] ],  
+	// List
+	310, [ array: o[311] ],  
+	// List
+	312, [ array: o[313] ],  
+	// List
+	314, [ array: o[315] ],  
+	// List
+	316, [ array: o[317] ],  
+	// List
+	318, [ array: o[319] ],  
+	// List
+	320, [ array: o[321] ],  
+	// List
+	322, [ array: o[323] ],  
+	// List
+	324, [ array: o[325] ],  
+	// List
+	326, [ array: o[327] ],  
+	// List
+	328, [ array: o[329] ],  
+	// List
+	330, [ array: o[331] ],  
+	// List
+	332, [ array: o[333] ],  
+	// List
+	334, [ array: o[335] ],  
+	// List
+	336, [ array: o[337] ],  
+	// List
+	338, [ array: o[339] ],  
+	// List
+	340, [ array: o[341] ],  
+	// List
+	342, [ array: o[343] ],  
+	// List
+	344, [ array: o[345] ],  
+	// List
+	346, [ array: o[347] ],  
+	// List
+	348, [ array: o[349] ],  
+	// List
+	350, [ array: o[351] ],  
+	// List
+	352, [ array: o[353] ],  
+	// List
+	354, [ array: o[355] ],  
+	// IdentityDictionary
+	356, [ array: o[357],  size: 4,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	357, [ 'mack1',  o[358],  'mack4',  o[363],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mackCU',  o[367],  
+		'mack2',  o[371],  nil,  nil ],  
+	// IdentityDictionary
+	358, [ array: o[359],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	359, [ nil,  nil,  nil,  nil,  
+		'labels',  o[360],  'faders',  o[362] ],  
+	// Array
+	360, [ o[361],  o[361],  o[361],  o[361],  
+		o[361],  o[361],  o[361],  o[361] ],  
+	// Array
+	362, [ 0,  0,  0,  0,  
+		0,  0,  0,  0 ],  
+	// IdentityDictionary
+	363, [ array: o[364],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	364, [ nil,  nil,  nil,  nil,  
+		'labels',  o[365],  'faders',  o[366] ],  
+	// Array
+	365, [ o[361],  o[361],  o[361],  o[361],  
+		o[361],  o[361],  o[361],  o[361],  
+		o[361] ],  
+	// Array
+	366, [ 0,  0,  0,  0,  
+		0,  0,  0,  0,  
+		0 ],  
+	// IdentityDictionary
+	367, [ array: o[368],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	368, [ nil,  nil,  nil,  nil,  
+		'labels',  o[369],  'faders',  o[370] ],  
+	// Array
+	369, [ o[361],  o[361],  o[361],  o[361],  
+		o[361],  o[361],  o[361],  o[361],  
+		o[361] ],  
+	// Array
+	370, [ 0,  0,  0,  0,  
+		0,  0,  0,  0,  
+		10624 ],  
+	// IdentityDictionary
+	371, [ array: o[372],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	372, [ nil,  nil,  nil,  nil,  
+		'labels',  o[373],  'faders',  o[374] ],  
+	// Array
+	373, [ o[361],  o[361],  o[361],  o[361],  
+		o[361],  o[361],  o[361],  o[361] ],  
+	// Array
+	374, [ 0,  0,  0,  0,  
+		0,  0,  0,  0 ],  
+	// IdentityDictionary
+	375, [ array: o[376],  size: 24,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	376, [ nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'in12',  o[377],  
+		'Player7',  o[379],  'in4',  o[381],  
+		'in8',  o[383],  'Player2',  o[385],  
+		'Player3',  o[387],  'Player8',  o[389],  
+		nil,  nil,  nil,  nil,  
+		'in11',  o[391],  'Player9',  o[393],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'in9',  o[395],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'in6',  o[397],  
+		nil,  nil,  nil,  nil,  
+		'Player5',  o[399],  'in1',  o[401],  
+		nil,  nil,  nil,  nil,  
+		'Player10',  o[403],  'in2',  o[405],  
+		'Player1',  o[407],  'Player4',  o[409],  
+		'Player11',  o[411],  'in5',  o[413],  
+		'in3',  o[415],  'Player12',  o[417],  
+		'Player6',  o[419],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'in10',  o[421],  nil,  nil,  
+		'in7',  o[423],  nil,  nil ],  
+	// List
+	377, [ array: o[378] ],  
+	// List
+	379, [ array: o[380] ],  
+	// List
+	381, [ array: o[382] ],  
+	// Array
+	382, [ 'RearR',  'SideR',  'SubBR' ],  
+	// List
+	383, [ array: o[384] ],  
+	// List
+	385, [ array: o[386] ],  
+	// List
+	387, [ array: o[388] ],  
+	// List
+	389, [ array: o[390] ],  
+	// List
+	391, [ array: o[392] ],  
+	// List
+	393, [ array: o[394] ],  
+	// List
+	395, [ array: o[396] ],  
+	// List
+	397, [ array: o[398] ],  
+	// List
+	399, [ array: o[400] ],  
+	// List
+	401, [ array: o[402] ],  
+	// Array
+	402, [ 'MainL',  'WideL',  'SubFL' ],  
+	// List
+	403, [ array: o[404] ],  
+	// List
+	405, [ array: o[406] ],  
+	// Array
+	406, [ 'MainR',  'WideR',  'SubFR' ],  
+	// List
+	407, [ array: o[408] ],  
+	// List
+	409, [ array: o[410] ],  
+	// List
+	411, [ array: o[412] ],  
+	// List
+	413, [ array: o[414] ],  
+	// Array
+	414, [ 'MainL',  'MainR' ],  
+	// List
+	415, [ array: o[416] ],  
+	// Array
+	416, [ 'SideL',  'RearL',  'SubBL' ],  
+	// List
+	417, [ array: o[418] ],  
+	// List
+	419, [ array: o[420] ],  
+	// List
+	421, [ array: o[422] ],  
+	// List
+	423, [ array: o[424] ],  
+	// IdentityDictionary
+	425, [ array: o[426],  size: 3,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	426, [ nil,  nil,  'ctrlMatrix',  o[427],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mackies',  o[495],  
+		nil,  nil,  'audMatrix',  o[547] ],  
+	// IdentityDictionary
+	427, [ array: o[428],  size: 33,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	428, [ nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'mackCU-3',  o[429],  'mackCU-6',  o[431],  
+		'mackCU-7',  o[433],  'mack1-1',  o[435],  
+		'mack1-4',  o[437],  'mack1-5',  o[439],  
+		'mack1-8',  o[441],  nil,  nil,  
+		'mack4-2',  o[443],  'mack4-6',  o[445],  
+		'mack4-7',  o[447],  nil,  nil,  
+		'mack4-1',  o[449],  'mack4-5',  o[451],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'mack2-1',  o[453],  'mack2-2',  o[455],  
+		'mack2-5',  o[457],  nil,  nil,  
+		'mack2-4',  o[459],  'mackCU-1',  o[461],  
+		'mackCU-2',  o[463],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mackCU-4',  o[465],  
+		'mackCU-5',  o[467],  'mackCU-8',  o[469],  
+		'mack1-2',  o[471],  'mack1-3',  o[473],  
+		'mack1-6',  o[475],  'mack2-8',  o[477],  
+		'mack1-7',  o[479],  'mack4-8',  o[481],  
+		'mack4-9',  o[483],  nil,  nil,  
+		nil,  nil,  'mack4-3',  o[485],  
+		'mack4-4',  o[487],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mack2-6',  o[489],  
+		'mack2-7',  o[491],  nil,  nil,  
+		nil,  nil,  'mack2-3',  o[493],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil ],  
+	// List
+	429, [ array: o[430] ],  
+	// List
+	431, [ array: o[432] ],  
+	// List
+	433, [ array: o[434] ],  
+	// List
+	435, [ array: o[436] ],  
+	// Array
+	436, [ 'HexFL' ],  
+	// List
+	437, [ array: o[438] ],  
+	// List
+	439, [ array: o[440] ],  
+	// List
+	441, [ array: o[442] ],  
+	// List
+	443, [ array: o[444] ],  
+	// List
+	445, [ array: o[446] ],  
+	// List
+	447, [ array: o[448] ],  
+	// List
+	449, [ array: o[450] ],  
+	// List
+	451, [ array: o[452] ],  
+	// List
+	453, [ array: o[454] ],  
+	// List
+	455, [ array: o[456] ],  
+	// List
+	457, [ array: o[458] ],  
+	// List
+	459, [ array: o[460] ],  
+	// List
+	461, [ array: o[462] ],  
+	// List
+	463, [ array: o[464] ],  
+	// List
+	465, [ array: o[466] ],  
+	// List
+	467, [ array: o[468] ],  
+	// List
+	469, [ array: o[470] ],  
+	// List
+	471, [ array: o[472] ],  
+	// Array
+	472, [ 'BackR' ],  
+	// List
+	473, [ array: o[474] ],  
+	// Array
+	474, [ 'HexFR' ],  
+	// List
+	475, [ array: o[476] ],  
+	// List
+	477, [ array: o[478] ],  
+	// List
+	479, [ array: o[480] ],  
+	// List
+	481, [ array: o[482] ],  
+	// List
+	483, [ array: o[484] ],  
+	// List
+	485, [ array: o[486] ],  
+	// List
+	487, [ array: o[488] ],  
+	// List
+	489, [ array: o[490] ],  
+	// List
+	491, [ array: o[492] ],  
+	// List
+	493, [ array: o[494] ],  
+	// IdentityDictionary
+	495, [ array: o[496],  size: 4,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	496, [ 'mack1',  o[497],  'mack4',  o[509],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mackCU',  o[522],  
+		'mack2',  o[535],  nil,  nil ],  
+	// IdentityDictionary
+	497, [ array: o[498],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	498, [ nil,  nil,  nil,  nil,  
+		'labels',  o[499],  'faders',  o[508] ],  
+	// Array
+	499, [ o[500],  o[501],  o[502],  o[503],  
+		o[504],  o[505],  o[506],  o[507] ],  
+	// Array
+	508, [ 0,  0,  0,  0,  
+		0,  0,  0,  0 ],  
+	// IdentityDictionary
+	509, [ array: o[510],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	510, [ nil,  nil,  nil,  nil,  
+		'labels',  o[511],  'faders',  o[521] ],  
+	// Array
+	511, [ o[512],  o[513],  o[514],  o[515],  
+		o[516],  o[517],  o[518],  o[519],  
+		o[520] ],  
+	// Array
+	521, [ 0,  0,  0,  0,  
+		0,  0,  0,  0,  
+		0 ],  
+	// IdentityDictionary
+	522, [ array: o[523],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	523, [ nil,  nil,  nil,  nil,  
+		'labels',  o[524],  'faders',  o[534] ],  
+	// Array
+	524, [ o[525],  o[526],  o[527],  o[528],  
+		o[529],  o[530],  o[531],  o[532],  
+		o[533] ],  
+	// Array
+	534, [ 0,  0,  0,  0,  
+		0,  0,  0,  16,  
+		9056 ],  
+	// IdentityDictionary
+	535, [ array: o[536],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	536, [ nil,  nil,  nil,  nil,  
+		'labels',  o[537],  'faders',  o[546] ],  
+	// Array
+	537, [ o[538],  o[539],  o[540],  o[541],  
+		o[542],  o[543],  o[544],  o[545] ],  
+	// Array
+	546, [ 0,  0,  0,  0,  
+		0,  0,  0,  0 ],  
+	// IdentityDictionary
+	547, [ array: o[548],  size: 24,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	548, [ nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'in12',  o[549],  
+		'Player7',  o[551],  'in4',  o[553],  
+		'in8',  o[555],  'Player2',  o[557],  
+		'Player3',  o[559],  'Player8',  o[561],  
+		nil,  nil,  nil,  nil,  
+		'in11',  o[563],  'Player9',  o[565],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'in9',  o[567],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'in6',  o[569],  
+		nil,  nil,  nil,  nil,  
+		'Player5',  o[571],  'in1',  o[573],  
+		nil,  nil,  nil,  nil,  
+		'Player10',  o[575],  'in2',  o[577],  
+		'Player1',  o[579],  'Player4',  o[581],  
+		'Player11',  o[583],  'in5',  o[585],  
+		'in3',  o[587],  'Player12',  o[589],  
+		'Player6',  o[591],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'in10',  o[593],  nil,  nil,  
+		'in7',  o[595],  nil,  nil ],  
+	// List
+	549, [ array: o[550] ],  
+	// List
+	551, [ array: o[552] ],  
+	// List
+	553, [ array: o[554] ],  
+	// Array
+	554, [ '5.1L',  'BackR' ],  
+	// List
+	555, [ array: o[556] ],  
+	// Array
+	556, [ 'WideR',  'HexFR' ],  
+	// List
+	557, [ array: o[558] ],  
+	// List
+	559, [ array: o[560] ],  
+	// List
+	561, [ array: o[562] ],  
+	// List
+	563, [ array: o[564] ],  
+	// Array
+	564, [ 'MainR',  '5.1R' ],  
+	// List
+	565, [ array: o[566] ],  
+	// List
+	567, [ array: o[568] ],  
+	// Array
+	568, [ 'SideR',  'HexFR' ],  
+	// List
+	569, [ array: o[570] ],  
+	// Array
+	570, [ '5.1R',  'BackR' ],  
+	// List
+	571, [ array: o[572] ],  
+	// List
+	573, [ array: o[574] ],  
+	// Array
+	574, [ 'SideL',  'HexFL' ],  
+	// List
+	575, [ array: o[576] ],  
+	// List
+	577, [ array: o[578] ],  
+	// Array
+	578, [ 'WideL',  'HexFL' ],  
+	// List
+	579, [ array: o[580] ],  
+	// List
+	581, [ array: o[582] ],  
+	// List
+	583, [ array: o[584] ],  
+	// List
+	585, [ array: o[586] ],  
+	// Array
+	586, [ '5.1C',  'BackR' ],  
+	// List
+	587, [ array: o[588] ],  
+	// Array
+	588, [ 'MainL',  'HexFL' ],  
+	// List
+	589, [ array: o[590] ],  
+	// List
+	591, [ array: o[592] ],  
+	// List
+	593, [ array: o[594] ],  
+	// Array
+	594, [ 'MainL',  '5.1L' ],  
+	// List
+	595, [ array: o[596] ],  
+	// Array
+	596, [ 'MainR',  'HexFR' ],  
+	// IdentityDictionary
+	597, [ array: o[598],  size: 4,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	598, [ nil,  nil,  'ctrlMatrix',  o[599],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'path',  o[667],  
+		'mackies',  o[668],  'audMatrix',  o[720] ],  
+	// IdentityDictionary
+	599, [ array: o[600],  size: 33,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	600, [ nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'mackCU-3',  o[601],  'mackCU-6',  o[603],  
+		'mackCU-7',  o[605],  'mack1-1',  o[607],  
+		'mack1-4',  o[609],  'mack1-5',  o[611],  
+		'mack1-8',  o[613],  nil,  nil,  
+		'mack4-2',  o[615],  'mack4-6',  o[617],  
+		'mack4-7',  o[619],  nil,  nil,  
+		'mack4-1',  o[621],  'mack4-5',  o[623],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'mack2-1',  o[625],  'mack2-2',  o[627],  
+		'mack2-5',  o[629],  nil,  nil,  
+		'mack2-4',  o[631],  'mackCU-1',  o[633],  
+		'mackCU-2',  o[635],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mackCU-4',  o[637],  
+		'mackCU-5',  o[639],  'mackCU-8',  o[641],  
+		'mack1-2',  o[643],  'mack1-3',  o[645],  
+		'mack1-6',  o[647],  'mack2-8',  o[649],  
+		'mack1-7',  o[651],  'mack4-8',  o[653],  
+		'mack4-9',  o[655],  nil,  nil,  
+		nil,  nil,  'mack4-3',  o[657],  
+		'mack4-4',  o[659],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mack2-6',  o[661],  
+		'mack2-7',  o[663],  nil,  nil,  
+		nil,  nil,  'mack2-3',  o[665],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil ],  
+	// List
+	601, [ array: o[602] ],  
+	// Array
+	602, [ 'FrontL' ],  
+	// List
+	603, [ array: o[604] ],  
+	// Array
+	604, [ 'FloorSL',  'FloorSR' ],  
+	// List
+	605, [ array: o[606] ],  
+	// Array
+	606, [ 'FloorBL',  'FloorBR' ],  
+	// List
+	607, [ array: o[608] ],  
+	// Array
+	608, [ 'SubFL',  'SubFR' ],  
+	// List
+	609, [ array: o[610] ],  
+	// Array
+	610, [ 'TweetL',  'TweetR' ],  
+	// List
+	611, [ array: o[612] ],  
+	// Array
+	612, [ 'PunchL' ],  
+	// List
+	613, [ array: o[614] ],  
+	// Array
+	614, [ 'VDistR' ],  
+	// List
+	615, [ array: o[616] ],  
+	// Array
+	616, [ 'FloodSL',  'FloodSR' ],  
+	// List
+	617, [ array: o[618] ],  
+	// Array
+	618, [ 'HexBL',  'HexBR' ],  
+	// List
+	619, [ array: o[620] ],  
+	// Array
+	620, [ '5.1L',  '5.1R',  '5.1C',  '5.1SbL',  
+		'5.1SbR' ],  
+	// List
+	621, [ array: o[622] ],  
+	// Array
+	622, [ 'FloodFL',  'FloodFR' ],  
+	// List
+	623, [ array: o[624] ],  
+	// Array
+	624, [ 'HexSL',  'HexSR' ],  
+	// List
+	625, [ array: o[626] ],  
+	// Array
+	626, [ 'DistL' ],  
+	// List
+	627, [ array: o[628] ],  
+	// Array
+	628, [ 'DistR' ],  
+	// List
+	629, [ array: o[630] ],  
+	// Array
+	630, [ 'WideL' ],  
+	// List
+	631, [ array: o[632] ],  
+	// Array
+	632, [ 'MainR' ],  
+	// List
+	633, [ array: o[634] ],  
+	// Array
+	634, [ 'SideL' ],  
+	// List
+	635, [ array: o[636] ],  
+	// Array
+	636, [ 'SideR' ],  
+	// List
+	637, [ array: o[638] ],  
+	// Array
+	638, [ 'BackR' ],  
+	// List
+	639, [ array: o[640] ],  
+	// Array
+	640, [ 'FloorFL',  'FloorFR' ],  
+	// List
+	641, [ array: o[642] ],  
+	// Array
+	642, [ 'DeskL',  'DeskR' ],  
+	// List
+	643, [ array: o[644] ],  
+	// Array
+	644, [ 'SubSL',  'SubSR' ],  
+	// List
+	645, [ array: o[646] ],  
+	// Array
+	646, [ 'SubBL',  'SubBR' ],  
+	// List
+	647, [ array: o[648] ],  
+	// Array
+	648, [ 'PunchR' ],  
+	// List
+	649, [ array: o[650] ],  
+	// Array
+	650, [ 'RearR' ],  
+	// List
+	651, [ array: o[652] ],  
+	// Array
+	652, [ 'VDistL' ],  
+	// List
+	653, [ array: o[654] ],  
+	// Array
+	654, [ '5.1SL',  '5.1SR' ],  
+	// List
+	655, [ array: o[656] ],  
+	// Array
+	656, [ '1037L',  '1037R' ],  
+	// List
+	657, [ array: o[658] ],  
+	// Array
+	658, [ 'CloseFL',  'CloseFR',  'CloseML',  'CloseMR' ],  
+	// List
+	659, [ array: o[660] ],  
+	// Array
+	660, [ 'HexFL',  'HexFR' ],  
+	// List
+	661, [ array: o[662] ],  
+	// Array
+	662, [ 'WideR' ],  
+	// List
+	663, [ array: o[664] ],  
+	// Array
+	664, [ 'RearL' ],  
+	// List
+	665, [ array: o[666] ],  
+	// Array
+	666, [ 'MainL' ],  
+	// IdentityDictionary
+	668, [ array: o[669],  size: 4,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	669, [ 'mack1',  o[670],  'mack4',  o[682],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mackCU',  o[695],  
+		'mack2',  o[708],  nil,  nil ],  
+	// IdentityDictionary
+	670, [ array: o[671],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	671, [ nil,  nil,  nil,  nil,  
+		'labels',  o[672],  'faders',  o[681] ],  
+	// Array
+	672, [ o[673],  o[674],  o[675],  o[676],  
+		o[677],  o[678],  o[679],  o[680] ],  
+	// Array
+	681, [ 3872,  0,  0,  0,  
+		0,  0,  0,  0 ],  
+	// IdentityDictionary
+	682, [ array: o[683],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	683, [ nil,  nil,  nil,  nil,  
+		'labels',  o[684],  'faders',  o[694] ],  
+	// Array
+	684, [ o[685],  o[686],  o[687],  o[688],  
+		o[689],  o[690],  o[691],  o[692],  
+		o[693] ],  
+	// Array
+	694, [ 0,  0,  0,  0,  
+		0,  0,  0,  0,  
+		0 ],  
+	// IdentityDictionary
+	695, [ array: o[696],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	696, [ nil,  nil,  nil,  nil,  
+		'labels',  o[697],  'faders',  o[707] ],  
+	// Array
+	697, [ o[698],  o[699],  o[700],  o[701],  
+		o[702],  o[703],  o[704],  o[705],  
+		o[706] ],  
+	// Array
+	707, [ 0,  0,  0,  0,  
+		0,  0,  0,  16,  
+		0 ],  
+	// IdentityDictionary
+	708, [ array: o[709],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	709, [ nil,  nil,  nil,  nil,  
+		'labels',  o[710],  'faders',  o[719] ],  
+	// Array
+	710, [ o[711],  o[712],  o[713],  o[714],  
+		o[715],  o[716],  o[717],  o[718] ],  
+	// Array
+	719, [ 0,  0,  32,  16,  
+		0,  0,  0,  0 ],  
+	// IdentityDictionary
+	720, [ array: o[721],  size: 24,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	721, [ nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'in12',  o[722],  
+		'Player7',  o[724],  'in4',  o[726],  
+		'in8',  o[728],  'Player2',  o[730],  
+		'Player3',  o[732],  'Player8',  o[734],  
+		nil,  nil,  nil,  nil,  
+		'in11',  o[736],  'Player9',  o[738],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'in9',  o[740],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'in6',  o[742],  
+		nil,  nil,  nil,  nil,  
+		'Player5',  o[744],  'in1',  o[746],  
+		nil,  nil,  nil,  nil,  
+		'Player10',  o[748],  'in2',  o[750],  
+		'Player1',  o[752],  'Player4',  o[754],  
+		'Player11',  o[756],  'in5',  o[758],  
+		'in3',  o[760],  'Player12',  o[762],  
+		'Player6',  o[764],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'in10',  o[766],  nil,  nil,  
+		'in7',  o[768],  nil,  nil ],  
+	// List
+	722, [ array: o[723] ],  
+	// List
+	724, [ array: o[725] ],  
+	// List
+	726, [ array: o[727] ],  
+	// List
+	728, [ array: o[729] ],  
+	// List
+	730, [ array: o[731] ],  
+	// Array
+	731, [ 'SubFR',  'SubSR',  'SubBR',  'TweetR',  
+		'PunchR',  'VDistR',  'DistR',  'MainR',  
+		'WideR',  'RearR',  'SideR',  'BackR',  
+		'FloorFR',  'FloorSR',  'FloorBR',  'DeskR',  
+		'FloodFR',  'FloodSR',  'CloseFR',  'CloseMR',  
+		'HexFR',  'HexSR',  'HexBR',  '5.1R',  
+		'5.1SR',  '5.1C',  '5.1SbR',  '1037R' ],  
+	// List
+	732, [ array: o[733] ],  
+	// List
+	734, [ array: o[735] ],  
+	// List
+	736, [ array: o[737] ],  
+	// List
+	738, [ array: o[739] ],  
+	// List
+	740, [ array: o[741] ],  
+	// List
+	742, [ array: o[743] ],  
+	// List
+	744, [ array: o[745] ],  
+	// List
+	746, [ array: o[747] ],  
+	// List
+	748, [ array: o[749] ],  
+	// List
+	750, [ array: o[751] ],  
+	// List
+	752, [ array: o[753] ],  
+	// Array
+	753, [ 'SubFL',  'SubSL',  'SubBL',  'TweetL',  
+		'PunchL',  'VDistL',  'DistL',  'MainL',  
+		'WideL',  'RearL',  'SideL',  'FrontL',  
+		'FloorFL',  'FloorSL',  'FloorBL',  'DeskL',  
+		'FloodFL',  'FloodSL',  'CloseFL',  'CloseML',  
+		'HexFL',  'HexSL',  'HexBL',  '5.1L',  
+		'5.1SL',  '5.1C',  '5.1SbL',  '1037L' ],  
+	// List
+	754, [ array: o[755] ],  
+	// List
+	756, [ array: o[757] ],  
+	// List
+	758, [ array: o[759] ],  
+	// List
+	760, [ array: o[761] ],  
+	// List
+	762, [ array: o[763] ],  
+	// List
+	764, [ array: o[765] ],  
+	// List
+	766, [ array: o[767] ],  
+	// List
+	768, [ array: o[769] ]
+];
+prUnarchive(o,p);

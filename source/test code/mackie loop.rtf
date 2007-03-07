@@ -1,0 +1,108 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red191\green0\blue0;\red0\green115\blue0;
+\red96\green96\blue96;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf0 (\
+	\cf2 var\cf0  numMackies = 1;\
+	s.boot;\
+	\cf2 MIDIClient\cf0 .init(numMackies,numMackies);			\cf3 // explicitly intialize the client\cf0 \
+	numMackies.do(\{ \cf2 arg\cf0  i; \
+		\cf2 MIDIIn\cf0 .connect(i, \cf2 MIDIClient\cf0 .sources.at(i));\
+	\});\
+)\
+\
+\cf2 n = MackieXT\cf0 .new(\cf2 MIDIClient\cf0 .sources[0].uid, \cf4 \\mack1\cf0 );\
+m = \cf2 MackieCU\cf0 .new(\cf2 MIDIClient\cf0 .sources[0].uid, \cf4 \\mackCU\cf0 );\
+\
+m.setLabel(1, \\foo);\
+\
+r = \{\
+loop(\{\
+[\\mainL, \\mainR, \\wideL, \\wideR, \\distL, \\distR, \\sideL, \\sideR].scramble\
+	.do(\{ |item, i| m.setLabel(i + 1, item);\});\
+	0.1.wait;\
+\})	\
+\}.fork(AppClock)\
+\
+n.setLabel(13, \\bar); // fails silently\
+\
+x = \cf2 Stopwatch\cf0 .new(\{\cf2 arg\cf0  ...stuff; \
+// why are these two incompatible?\
+\{\
+m.setTimeString(stuff.last.getTimeString.copyFromStart(9));\}.defer;\
+ \}, 0, 0.1);\
+ \
+\
+x.start;\
+\
+x.stop\
+\
+///////////////////\
+\
+(\
+	\cf2 var\cf0  numMackies = 1;\
+	s.boot;\
+	\cf2 MIDIClient\cf0 .init(numMackies,numMackies);			\cf3 // explicitly intialize the client\cf0 \
+	numMackies.do(\{ \cf2 arg\cf0  i; \
+		\cf2 MIDIIn\cf0 .connect(i, \cf2 MIDIClient\cf0 .sources.at(i));\
+	\});\
+)\
+\
+\cf2 n = MackieCU\cf0 .new(\cf2 MIDIClient\cf0 .sources[0].uid, \cf4 \\mackCU\cf0 );\
+m = \cf2 MackieCU\cf0 .new(\cf2 MIDIClient\cf0 .sources[0].uid, \cf4 \\mackCU\cf0 );\
+\{\
+loop(\{\
+n.setLabel(1, [\\mainL, \\mainR, \\wideL, \\wideR, \\distL, \\distR, \\sideL, \\sideR].choose);\
+	0.1.wait;\
+\})	\
+\}.fork\
+\
+\{\
+loop(\{\
+m.setLabel(3, [\\mainL, \\mainR, \\wideL, \\wideR, \\distL, \\distR, \\sideL, \\sideR].choose);\\foo.postln;\
+	0.1.wait;\
+\})	\
+\}.fork\
+\
+\{\
+loop(\{\
+m.setTimeString((160000 + 1000.0.rand).asTimeString);\
+	0.1.wait;\
+\})	\
+\}.fork\
+\
+/////////////////// simple case\
+\
+(\
+\cf3 // say hello\cf0 \
+\cf2 var\cf0  string, array;\
+n = \cf2 MIDIOut\cf0 (0, \cf2 MIDIClient\cf0 .destinations.at(0).uid);\
+string = \cf5 "Hello World!"\cf0 ;\
+	\
+\
+\{\
+loop \{\
+100.do(\{\
+	array = (\cf2 Int8Array\cf0 [-16, 0, 0, 102, 20, 16r12, 0] ++ string.collectAs(\{\cf2 arg\cf0  item; item.ascii\}, \cf2 Int8Array\cf0 )).add(16rf7);\
+	n.sysex(\cf2 MIDIClient\cf0 .destinations.at(0).uid, array);\
+	0.1.wait;\
+	string = \cf5 " "\cf0  ++ string;\
+\});\
+string = \cf5 "Hello World!"\cf0 ;\
+\}\
+\}.fork(\cf2 SystemClock\cf0 );\
+)\
+\
+(\
+\
+var m, i = 0;\
+\{\
+//m = \cf2 MIDIOut\cf0 (0, \cf2 MIDIClient\cf0 .destinations.at(0).uid);\
+loop(\{ \
+n.sysex(\cf2 MIDIClient\cf0 .destinations.at(0).uid, (\cf2 Int8Array\cf0 [ -16, 0, 0, 102, 20, 16rB0, 16r40, 16r30, 16r41, 16r31 + (i%10), -9 ])); i = i + 1; 0.1.wait;\
+\})\
+\}.fork;\
+)\
+)}

@@ -1,0 +1,81 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red0\green115\blue0;
+\red191\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf2 (\
+\cf3 Server\cf2 .default = s = \cf3 Server\cf2 .internal;\
+s.boot;\
+)\
+~matrix = \cf3 AudioMatrix\cf2 ([\cf4 \\in1\cf2 , \cf4 \\in2\cf2 ], [\cf4 \\out1\cf2 , \cf4 \\out2\cf2 , \cf4 \\out3\cf2 ]);\
+\
+~matrix.connect(\cf4 \\in1\cf2 , \cf4 \\out2\cf2 );\
+\
+s.scope(4);\
+\
+~matrix.connect(\cf4 \\in1\cf2 , \cf4 \\out1\cf2 );\
+\
+~matrix.disconnect(\cf4 \\in1\cf2 , \cf4 \\out2\cf2 , \cf4 \\out1\cf2 );\
+\
+~matrix.connect(\cf4 \\in1\cf2 , \cf4 \\out3\cf2 );\
+\
+\cf5 // error checking\cf2 \
+~matrix.connect(\cf4 \\in1\cf2 , [\cf4 \\foo\cf2 , \cf4 \\out1\cf2 ]);\
+\
+~matrix.connect(\cf4 \\bar\cf2 , [\cf4 \\foo\cf2 , \cf4 \\out1\cf2 ]);\
+\
+~matrix.connect(\cf4 \\in1\cf2 , \cf4 \\out1\cf2 );\
+\
+\cf5 // crossfade checks\cf2 \
+\
+~matrix.crossfade = 5;\
+\
+~matrix.disconnect(\cf4 \\in1\cf2 , \cf4 \\out1\cf2 );\
+\
+~matrix.connect(\cf4 \\in1\cf2 , \cf4 \\out1\cf2 );\
+\
+~matrix.clear;\
+\
+\
+~matrix.free;\
+\
+\cf5 // with InputArray\cf2 \
+\
+~matrix = \cf3 AudioMatrix\cf2 (\cf3 InputArray\cf2 [\cf4 \\in1\cf2  -> s.options.numOutputBusChannels], \cf3 OutputArray\cf2 [\cf4 \\out2\cf2  -> 1]);\cf5 // should these be + 1?\cf2 \
+\
+~matrix.connect(\cf4 \\in1\cf2 , \cf4 \\out2\cf2 );\
+\
+\cf5 // GUI\cf2 \
+\
+(\
+\cf3 Server\cf2 .default = s = \cf3 Server\cf2 .internal;\
+s.boot;\
+)\
+~matrix = \cf3 AudioMatrix\cf2 ([\cf4 \\in1\cf2 , \cf4 \\in2\cf2 ], [\cf4 \\out1\cf2 , \cf4 \\out2\cf2 , \cf4 \\out3\cf2 ]);\
+~gui = \cf3 MatrixGUI\cf2 (~matrix, \cf4 \\foo\cf2 );\
+\
+s.scope(4);\
+\
+~matrix.free;\
+\
+~matrix = \cf3 AudioMatrix\cf2 (\cf3 InputArray\cf2 [\cf4 \\in1\cf2  -> s.options.numOutputBusChannels], \cf3 OutputArray\cf2 [\cf4 \\out1\cf2  -> 0, \cf4 \\out2\cf2  -> 1, \cf4 \\out4\cf2  -> 3, \cf4 \\wideL\cf2  -> 2]);\
+~gui = \cf3 MatrixGUI\cf2 (~matrix);\
+\
+~matrix = \cf3 AudioMatrix\cf2 ([\cf4 \\in1\cf2 , \cf4 \\in2\cf2 ], [\cf4 \\out1\cf2 , \cf4 \\out2\cf2 , \cf4 \\out3\cf2 , \cf4 \\out4\cf2 , \cf4 \\wideL\cf2 , \cf4 \\wideR\cf2 , \cf4 \\fooL\cf2 , \cf4 \\fooR\cf2 , \cf4 \\barL\cf2 , \cf4 \\barR\cf2 , \cf4 \\mishL\cf2 , \cf4 \\mishR\cf2 , \cf4 \\distL\cf2 , \cf4 \\distR\cf2 , \cf4 \\subsL\cf2 , \cf4 \\subsR\cf2 , \cf4 \\fishL\cf2 , \cf4 \\fishR\cf2 , \cf4 \\tacoL\cf2 , \cf4 \\tacoR\cf2 , \cf4 \\anaL\cf2 , \cf4 \\anaR\cf2 , \cf4 \\tweetL\cf2 , \cf4 \\tweetR\cf2 , \cf4 \\ScottL\cf2 , \cf4 \\ScottR\cf2 , \cf4 \\appL\cf2 , \cf4 \\appR\cf2 , \cf4 \\booL\cf2 , \cf4 \\booR\cf2 , \cf4 \\haggL\cf2 , \cf4 \\haggR\cf2 , \cf4 \\donkL\cf2 , \cf4 \\donkR\cf2 , \cf4 \\morL\cf2 , \cf4 \\morR\cf2 ]);\
+~gui = \cf3 MatrixGUI\cf2 (~matrix, \cf4 \\foo\cf2 );\
+\
+\cf5 ////////////\cf2 \
+\
+~matrix = \cf3 AmpControlMatrix\cf2 ([\cf4 \\in1\cf2 , \cf4 \\in2\cf2 , \cf4 \\in3\cf2 ], [\cf4 \\out1\cf2 , \cf4 \\out2\cf2 , \cf4 \\out3\cf2 , \cf4 \\out4\cf2 , \cf4 \\wideL\cf2 , \cf4 \\wideR\cf2 , \cf4 \\fooL\cf2 , \cf4 \\fooR\cf2 , \cf4 \\barL\cf2 , \cf4 \\barR\cf2 , \cf4 \\mishL\cf2 , \cf4 \\mishR\cf2 , \cf4 \\distL\cf2 , \cf4 \\distR\cf2 , \cf4 \\subsL\cf2 , \cf4 \\subsR\cf2 , \cf4 \\fishL\cf2 , \cf4 \\fishR\cf2 , \cf4 \\tacoL\cf2 , \cf4 \\tacoR\cf2 , \cf4 \\anaL\cf2 , \cf4 \\anaR\cf2 , \cf4 \\tweetL\cf2 , \cf4 \\tweetR\cf2 , \cf4 \\ScottL\cf2 , \cf4 \\ScottR\cf2 , \cf4 \\appL\cf2 , \cf4 \\appR\cf2 , \cf4 \\booL\cf2 , \cf4 \\booR\cf2 , \cf4 \\haggL\cf2 , \cf4 \\haggR\cf2 , \cf4 \\donkL\cf2 , \cf4 \\donkR\cf2 , \cf4 \\morL\cf2 , \cf4 \\morR\cf2 ]);\
+~gui = \cf3 MatrixGUI\cf2 (~matrix, \cf4 \\bar\cf2 );\
+\
+\
+\cf5 ////////// dependancy\cf2 \
+\
+~matrix = \cf3 AudioMatrix\cf2 (\cf3 InputArray\cf2 [\cf4 \\in1\cf2  -> s.options.numOutputBusChannels], \cf3 OutputArray\cf2 [\cf4 \\out1\cf2  -> 0, \cf4 \\out2\cf2  -> 1, \cf4 \\out4\cf2  -> 3, \cf4 \\wideL\cf2  -> 2]);\
+~gui = \cf3 MatrixGUI\cf2 (~matrix, \cf4 \\foo\cf2 );\
+\
+~matrix.connect(\cf4 \\in1\cf2 , \cf4 \\out4\cf2 );\
+\
+}

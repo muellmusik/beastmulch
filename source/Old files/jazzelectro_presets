@@ -1,0 +1,997 @@
+var o, p;
+o = [
+	IdentityDictionary.prNew,  Array.prNew(8),  Array.prNew(2),  "all off",  
+	"jazzelectro Live",  IdentityDictionary.prNew,  Array.prNew(8),  IdentityDictionary.prNew,  
+	Array.prNew(20),  IdentityDictionary.prNew,  Array.prNew(132),  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  IdentityDictionary.prNew,  Array.prNew(64),  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  IdentityDictionary.prNew,  
+	Array.prNew(132),  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  IdentityDictionary.prNew,  
+	Array.prNew(216),  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  IdentityDictionary.prNew,  Array.prNew(16),  IdentityDictionary.prNew,  
+	Array.prNew(8),  Array.prNew(8),  "      ",  Array.prNew(8),  
+	IdentityDictionary.prNew,  Array.prNew(8),  Array.prNew(9),  Array.prNew(9),  
+	IdentityDictionary.prNew,  Array.prNew(8),  Array.prNew(9),  Array.prNew(9),  
+	IdentityDictionary.prNew,  Array.prNew(8),  Array.prNew(8),  Array.prNew(8),  
+	IdentityDictionary.prNew,  Array.prNew(16),  IdentityDictionary.prNew,  Array.prNew(132),  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  List.prNew,  Array.prNew,  
+	List.prNew,  Array.prNew,  IdentityDictionary.prNew,  Array.prNew(16),  
+	IdentityDictionary.prNew,  Array.prNew(8),  Array.prNew(8),  "      ",  
+	Array.prNew(8),  IdentityDictionary.prNew,  Array.prNew(8),  Array.prNew(9),  
+	Array.prNew(9),  IdentityDictionary.prNew,  Array.prNew(8),  Array.prNew(9),  
+	Array.prNew(9),  IdentityDictionary.prNew,  Array.prNew(8),  Array.prNew(8),  
+	Array.prNew(8),  IdentityDictionary.prNew,  Array.prNew(216),  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew,  List.prNew,  
+	Array.prNew,  List.prNew,  Array.prNew
+];
+p = [
+	// IdentityDictionary
+	0, [ array: o[1],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	1, [ nil,  nil,  'presetNames',  o[2],  
+		'presetDict',  o[5],  nil,  nil ],  
+	// Array
+	2, [ o[3],  o[4] ],  
+	// IdentityDictionary
+	5, [ array: o[6],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	6, [ 'all off',  o[7],  nil,  nil,  
+		'jazzelectro Live',  o[308],  nil,  nil ],  
+	// IdentityDictionary
+	7, [ array: o[8],  size: 5,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	8, [ nil,  nil,  'ctrlMatrix',  o[9],  
+		nil,  nil,  'ltaudMatrix',  o[77],  
+		'ltctrlMatrix',  o[111],  'audMatrix',  o[179],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mackies',  o[289] ],  
+	// IdentityDictionary
+	9, [ array: o[10],  size: 33,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	10, [ nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'mackCU-3',  o[11],  'mackCU-6',  o[13],  
+		'mackCU-7',  o[15],  'mack1-1',  o[17],  
+		'mack1-4',  o[19],  'mack1-5',  o[21],  
+		'mack1-8',  o[23],  nil,  nil,  
+		'mack4-2',  o[25],  'mack4-6',  o[27],  
+		'mack4-7',  o[29],  nil,  nil,  
+		'mack4-1',  o[31],  'mack4-5',  o[33],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'mack2-1',  o[35],  'mack2-2',  o[37],  
+		'mack2-5',  o[39],  nil,  nil,  
+		'mack2-4',  o[41],  'mackCU-1',  o[43],  
+		'mackCU-2',  o[45],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mackCU-4',  o[47],  
+		'mackCU-5',  o[49],  'mackCU-8',  o[51],  
+		'mack1-2',  o[53],  'mack1-3',  o[55],  
+		'mack1-6',  o[57],  'mack2-8',  o[59],  
+		'mack1-7',  o[61],  'mack4-8',  o[63],  
+		'mack4-9',  o[65],  nil,  nil,  
+		nil,  nil,  'mack4-3',  o[67],  
+		'mack4-4',  o[69],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mack2-6',  o[71],  
+		'mack2-7',  o[73],  nil,  nil,  
+		nil,  nil,  'mack2-3',  o[75],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil ],  
+	// List
+	11, [ array: o[12] ],  
+	// List
+	13, [ array: o[14] ],  
+	// List
+	15, [ array: o[16] ],  
+	// List
+	17, [ array: o[18] ],  
+	// List
+	19, [ array: o[20] ],  
+	// List
+	21, [ array: o[22] ],  
+	// List
+	23, [ array: o[24] ],  
+	// List
+	25, [ array: o[26] ],  
+	// List
+	27, [ array: o[28] ],  
+	// List
+	29, [ array: o[30] ],  
+	// List
+	31, [ array: o[32] ],  
+	// List
+	33, [ array: o[34] ],  
+	// List
+	35, [ array: o[36] ],  
+	// List
+	37, [ array: o[38] ],  
+	// List
+	39, [ array: o[40] ],  
+	// List
+	41, [ array: o[42] ],  
+	// List
+	43, [ array: o[44] ],  
+	// List
+	45, [ array: o[46] ],  
+	// List
+	47, [ array: o[48] ],  
+	// List
+	49, [ array: o[50] ],  
+	// List
+	51, [ array: o[52] ],  
+	// List
+	53, [ array: o[54] ],  
+	// List
+	55, [ array: o[56] ],  
+	// List
+	57, [ array: o[58] ],  
+	// List
+	59, [ array: o[60] ],  
+	// List
+	61, [ array: o[62] ],  
+	// List
+	63, [ array: o[64] ],  
+	// List
+	65, [ array: o[66] ],  
+	// List
+	67, [ array: o[68] ],  
+	// List
+	69, [ array: o[70] ],  
+	// List
+	71, [ array: o[72] ],  
+	// List
+	73, [ array: o[74] ],  
+	// List
+	75, [ array: o[76] ],  
+	// IdentityDictionary
+	77, [ array: o[78],  size: 16,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	78, [ nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'in5',  o[79],  
+		nil,  nil,  'Player2',  o[81],  
+		'Player3',  o[83],  'in6',  o[85],  
+		'Player6',  o[87],  'Player8',  o[89],  
+		'Player5',  o[91],  'in1',  o[93],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'in2',  o[95],  
+		'Player1',  o[97],  'Player4',  o[99],  
+		nil,  nil,  'Player7',  o[101],  
+		'in3',  o[103],  'in4',  o[105],  
+		'in8',  o[107],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'in7',  o[109],  nil,  nil ],  
+	// List
+	79, [ array: o[80] ],  
+	// List
+	81, [ array: o[82] ],  
+	// List
+	83, [ array: o[84] ],  
+	// List
+	85, [ array: o[86] ],  
+	// List
+	87, [ array: o[88] ],  
+	// List
+	89, [ array: o[90] ],  
+	// List
+	91, [ array: o[92] ],  
+	// List
+	93, [ array: o[94] ],  
+	// List
+	95, [ array: o[96] ],  
+	// List
+	97, [ array: o[98] ],  
+	// List
+	99, [ array: o[100] ],  
+	// List
+	101, [ array: o[102] ],  
+	// List
+	103, [ array: o[104] ],  
+	// List
+	105, [ array: o[106] ],  
+	// List
+	107, [ array: o[108] ],  
+	// List
+	109, [ array: o[110] ],  
+	// IdentityDictionary
+	111, [ array: o[112],  size: 33,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	112, [ nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'mackCU-3',  o[113],  'mackCU-6',  o[115],  
+		'mackCU-7',  o[117],  'mack1-1',  o[119],  
+		'mack1-4',  o[121],  'mack1-5',  o[123],  
+		'mack1-8',  o[125],  nil,  nil,  
+		'mack4-2',  o[127],  'mack4-6',  o[129],  
+		'mack4-7',  o[131],  nil,  nil,  
+		'mack4-1',  o[133],  'mack4-5',  o[135],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'mack2-1',  o[137],  'mack2-2',  o[139],  
+		'mack2-5',  o[141],  nil,  nil,  
+		'mack2-4',  o[143],  'mackCU-1',  o[145],  
+		'mackCU-2',  o[147],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mackCU-4',  o[149],  
+		'mackCU-5',  o[151],  'mackCU-8',  o[153],  
+		'mack1-2',  o[155],  'mack1-3',  o[157],  
+		'mack1-6',  o[159],  'mack2-8',  o[161],  
+		'mack1-7',  o[163],  'mack4-8',  o[165],  
+		'mack4-9',  o[167],  nil,  nil,  
+		nil,  nil,  'mack4-3',  o[169],  
+		'mack4-4',  o[171],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mack2-6',  o[173],  
+		'mack2-7',  o[175],  nil,  nil,  
+		nil,  nil,  'mack2-3',  o[177],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil ],  
+	// List
+	113, [ array: o[114] ],  
+	// List
+	115, [ array: o[116] ],  
+	// List
+	117, [ array: o[118] ],  
+	// List
+	119, [ array: o[120] ],  
+	// List
+	121, [ array: o[122] ],  
+	// List
+	123, [ array: o[124] ],  
+	// List
+	125, [ array: o[126] ],  
+	// List
+	127, [ array: o[128] ],  
+	// List
+	129, [ array: o[130] ],  
+	// List
+	131, [ array: o[132] ],  
+	// List
+	133, [ array: o[134] ],  
+	// List
+	135, [ array: o[136] ],  
+	// List
+	137, [ array: o[138] ],  
+	// List
+	139, [ array: o[140] ],  
+	// List
+	141, [ array: o[142] ],  
+	// List
+	143, [ array: o[144] ],  
+	// List
+	145, [ array: o[146] ],  
+	// List
+	147, [ array: o[148] ],  
+	// List
+	149, [ array: o[150] ],  
+	// List
+	151, [ array: o[152] ],  
+	// List
+	153, [ array: o[154] ],  
+	// List
+	155, [ array: o[156] ],  
+	// List
+	157, [ array: o[158] ],  
+	// List
+	159, [ array: o[160] ],  
+	// List
+	161, [ array: o[162] ],  
+	// List
+	163, [ array: o[164] ],  
+	// List
+	165, [ array: o[166] ],  
+	// List
+	167, [ array: o[168] ],  
+	// List
+	169, [ array: o[170] ],  
+	// List
+	171, [ array: o[172] ],  
+	// List
+	173, [ array: o[174] ],  
+	// List
+	175, [ array: o[176] ],  
+	// List
+	177, [ array: o[178] ],  
+	// IdentityDictionary
+	179, [ array: o[180],  size: 54,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	180, [ nil,  nil,  nil,  nil,  
+		'lt3_12',  o[181],  'lt1_13',  o[183],  
+		nil,  nil,  'lt2_16',  o[185],  
+		'lt1_7',  o[187],  'lt1_8',  o[189],  
+		'lt2_7',  o[191],  'lt3_9',  o[193],  
+		nil,  nil,  'lt3_1',  o[195],  
+		'lt1_15',  o[197],  nil,  nil,  
+		nil,  nil,  'lt1_1',  o[199],  
+		'lt1_6',  o[201],  'lt1_12',  o[203],  
+		'instL',  o[205],  nil,  nil,  
+		nil,  nil,  'lt2_9',  o[207],  
+		'lt2_3',  o[209],  'lt2_13',  o[211],  
+		'lt3_5',  o[213],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'lt3_2',  o[215],  nil,  nil,  
+		'lt2_14',  o[217],  nil,  nil,  
+		nil,  nil,  'lt2_4',  o[219],  
+		nil,  nil,  nil,  nil,  
+		'lt3_15',  o[221],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'instR',  o[223],  'lt3_4',  o[225],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'lt2_15',  o[227],  'lt1_5',  o[229],  
+		'lt3_6',  o[231],  'specR',  o[233],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'lt2_1',  o[235],  
+		'lt2_6',  o[237],  nil,  nil,  
+		'lt1_3',  o[239],  'specL',  o[241],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'lt1_14',  o[243],  nil,  nil,  
+		'fldBkSL',  o[245],  'lt1_9',  o[247],  
+		nil,  nil,  'lt2_5',  o[249],  
+		nil,  nil,  nil,  nil,  
+		'lt3_13',  o[251],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'lt1_4',  o[253],  'lt3_3',  o[255],  
+		'lt1_11',  o[257],  nil,  nil,  
+		nil,  nil,  'lt3_11',  o[259],  
+		'lt3_14',  o[261],  'lt2_10',  o[263],  
+		'lt2_12',  o[265],  nil,  nil,  
+		'lt3_7',  o[267],  'lt2_8',  o[269],  
+		nil,  nil,  nil,  nil,  
+		'lt1_2',  o[271],  'lt1_16',  o[273],  
+		'lt3_16',  o[275],  'fldBkSR',  o[277],  
+		nil,  nil,  'lt3_8',  o[279],  
+		'lt3_10',  o[281],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'lt1_10',  o[283],  'lt2_2',  o[285],  
+		'lt2_11',  o[287],  nil,  nil,  
+		nil,  nil,  nil,  nil ],  
+	// List
+	181, [ array: o[182] ],  
+	// List
+	183, [ array: o[184] ],  
+	// List
+	185, [ array: o[186] ],  
+	// List
+	187, [ array: o[188] ],  
+	// List
+	189, [ array: o[190] ],  
+	// List
+	191, [ array: o[192] ],  
+	// List
+	193, [ array: o[194] ],  
+	// List
+	195, [ array: o[196] ],  
+	// List
+	197, [ array: o[198] ],  
+	// List
+	199, [ array: o[200] ],  
+	// List
+	201, [ array: o[202] ],  
+	// List
+	203, [ array: o[204] ],  
+	// List
+	205, [ array: o[206] ],  
+	// List
+	207, [ array: o[208] ],  
+	// List
+	209, [ array: o[210] ],  
+	// List
+	211, [ array: o[212] ],  
+	// List
+	213, [ array: o[214] ],  
+	// List
+	215, [ array: o[216] ],  
+	// List
+	217, [ array: o[218] ],  
+	// List
+	219, [ array: o[220] ],  
+	// List
+	221, [ array: o[222] ],  
+	// List
+	223, [ array: o[224] ],  
+	// List
+	225, [ array: o[226] ],  
+	// List
+	227, [ array: o[228] ],  
+	// List
+	229, [ array: o[230] ],  
+	// List
+	231, [ array: o[232] ],  
+	// List
+	233, [ array: o[234] ],  
+	// List
+	235, [ array: o[236] ],  
+	// List
+	237, [ array: o[238] ],  
+	// List
+	239, [ array: o[240] ],  
+	// List
+	241, [ array: o[242] ],  
+	// List
+	243, [ array: o[244] ],  
+	// List
+	245, [ array: o[246] ],  
+	// List
+	247, [ array: o[248] ],  
+	// List
+	249, [ array: o[250] ],  
+	// List
+	251, [ array: o[252] ],  
+	// List
+	253, [ array: o[254] ],  
+	// List
+	255, [ array: o[256] ],  
+	// List
+	257, [ array: o[258] ],  
+	// List
+	259, [ array: o[260] ],  
+	// List
+	261, [ array: o[262] ],  
+	// List
+	263, [ array: o[264] ],  
+	// List
+	265, [ array: o[266] ],  
+	// List
+	267, [ array: o[268] ],  
+	// List
+	269, [ array: o[270] ],  
+	// List
+	271, [ array: o[272] ],  
+	// List
+	273, [ array: o[274] ],  
+	// List
+	275, [ array: o[276] ],  
+	// List
+	277, [ array: o[278] ],  
+	// List
+	279, [ array: o[280] ],  
+	// List
+	281, [ array: o[282] ],  
+	// List
+	283, [ array: o[284] ],  
+	// List
+	285, [ array: o[286] ],  
+	// List
+	287, [ array: o[288] ],  
+	// IdentityDictionary
+	289, [ array: o[290],  size: 4,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	290, [ 'mack1',  o[291],  'mack4',  o[296],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mackCU',  o[300],  
+		'mack2',  o[304],  nil,  nil ],  
+	// IdentityDictionary
+	291, [ array: o[292],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	292, [ nil,  nil,  nil,  nil,  
+		'labels',  o[293],  'faders',  o[295] ],  
+	// Array
+	293, [ o[294],  o[294],  o[294],  o[294],  
+		o[294],  o[294],  o[294],  o[294] ],  
+	// Array
+	295, [ 0,  0,  0,  0,  
+		0,  0,  0,  0 ],  
+	// IdentityDictionary
+	296, [ array: o[297],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	297, [ nil,  nil,  nil,  nil,  
+		'labels',  o[298],  'faders',  o[299] ],  
+	// Array
+	298, [ o[294],  o[294],  o[294],  o[294],  
+		o[294],  o[294],  o[294],  o[294],  
+		o[294] ],  
+	// Array
+	299, [ 0,  0,  0,  0,  
+		0,  0,  0,  0,  
+		0 ],  
+	// IdentityDictionary
+	300, [ array: o[301],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	301, [ nil,  nil,  nil,  nil,  
+		'labels',  o[302],  'faders',  o[303] ],  
+	// Array
+	302, [ o[294],  o[294],  o[294],  o[294],  
+		o[294],  o[294],  o[294],  o[294],  
+		o[294] ],  
+	// Array
+	303, [ 0,  0,  0,  0,  
+		0,  0,  0,  0,  
+		0 ],  
+	// IdentityDictionary
+	304, [ array: o[305],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	305, [ nil,  nil,  nil,  nil,  
+		'labels',  o[306],  'faders',  o[307] ],  
+	// Array
+	306, [ o[294],  o[294],  o[294],  o[294],  
+		o[294],  o[294],  o[294],  o[294] ],  
+	// Array
+	307, [ 0,  0,  0,  0,  
+		0,  0,  0,  0 ],  
+	// IdentityDictionary
+	308, [ array: o[309],  size: 3,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	309, [ nil,  nil,  'ctrlMatrix',  o[310],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mackies',  o[378],  
+		nil,  nil,  'audMatrix',  o[397] ],  
+	// IdentityDictionary
+	310, [ array: o[311],  size: 33,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	311, [ nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'mackCU-3',  o[312],  'mackCU-6',  o[314],  
+		'mackCU-7',  o[316],  'mack1-1',  o[318],  
+		'mack1-4',  o[320],  'mack1-5',  o[322],  
+		'mack1-8',  o[324],  nil,  nil,  
+		'mack4-2',  o[326],  'mack4-6',  o[328],  
+		'mack4-7',  o[330],  nil,  nil,  
+		'mack4-1',  o[332],  'mack4-5',  o[334],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'mack2-1',  o[336],  'mack2-2',  o[338],  
+		'mack2-5',  o[340],  nil,  nil,  
+		'mack2-4',  o[342],  'mackCU-1',  o[344],  
+		'mackCU-2',  o[346],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mackCU-4',  o[348],  
+		'mackCU-5',  o[350],  'mackCU-8',  o[352],  
+		'mack1-2',  o[354],  'mack1-3',  o[356],  
+		'mack1-6',  o[358],  'mack2-8',  o[360],  
+		'mack1-7',  o[362],  'mack4-8',  o[364],  
+		'mack4-9',  o[366],  nil,  nil,  
+		nil,  nil,  'mack4-3',  o[368],  
+		'mack4-4',  o[370],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mack2-6',  o[372],  
+		'mack2-7',  o[374],  nil,  nil,  
+		nil,  nil,  'mack2-3',  o[376],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil ],  
+	// List
+	312, [ array: o[313] ],  
+	// List
+	314, [ array: o[315] ],  
+	// List
+	316, [ array: o[317] ],  
+	// List
+	318, [ array: o[319] ],  
+	// List
+	320, [ array: o[321] ],  
+	// List
+	322, [ array: o[323] ],  
+	// List
+	324, [ array: o[325] ],  
+	// List
+	326, [ array: o[327] ],  
+	// List
+	328, [ array: o[329] ],  
+	// List
+	330, [ array: o[331] ],  
+	// List
+	332, [ array: o[333] ],  
+	// List
+	334, [ array: o[335] ],  
+	// List
+	336, [ array: o[337] ],  
+	// List
+	338, [ array: o[339] ],  
+	// List
+	340, [ array: o[341] ],  
+	// List
+	342, [ array: o[343] ],  
+	// List
+	344, [ array: o[345] ],  
+	// List
+	346, [ array: o[347] ],  
+	// List
+	348, [ array: o[349] ],  
+	// List
+	350, [ array: o[351] ],  
+	// List
+	352, [ array: o[353] ],  
+	// List
+	354, [ array: o[355] ],  
+	// List
+	356, [ array: o[357] ],  
+	// List
+	358, [ array: o[359] ],  
+	// List
+	360, [ array: o[361] ],  
+	// List
+	362, [ array: o[363] ],  
+	// List
+	364, [ array: o[365] ],  
+	// List
+	366, [ array: o[367] ],  
+	// List
+	368, [ array: o[369] ],  
+	// List
+	370, [ array: o[371] ],  
+	// List
+	372, [ array: o[373] ],  
+	// List
+	374, [ array: o[375] ],  
+	// List
+	376, [ array: o[377] ],  
+	// IdentityDictionary
+	378, [ array: o[379],  size: 4,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	379, [ 'mack1',  o[380],  'mack4',  o[385],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'mackCU',  o[389],  
+		'mack2',  o[393],  nil,  nil ],  
+	// IdentityDictionary
+	380, [ array: o[381],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	381, [ nil,  nil,  nil,  nil,  
+		'labels',  o[382],  'faders',  o[384] ],  
+	// Array
+	382, [ o[383],  o[383],  o[383],  o[383],  
+		o[383],  o[383],  o[383],  o[383] ],  
+	// Array
+	384, [ 0,  0,  0,  0,  
+		0,  0,  0,  0 ],  
+	// IdentityDictionary
+	385, [ array: o[386],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	386, [ nil,  nil,  nil,  nil,  
+		'labels',  o[387],  'faders',  o[388] ],  
+	// Array
+	387, [ o[383],  o[383],  o[383],  o[383],  
+		o[383],  o[383],  o[383],  o[383],  
+		o[383] ],  
+	// Array
+	388, [ 0,  0,  0,  0,  
+		0,  0,  0,  0,  
+		0 ],  
+	// IdentityDictionary
+	389, [ array: o[390],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	390, [ nil,  nil,  nil,  nil,  
+		'labels',  o[391],  'faders',  o[392] ],  
+	// Array
+	391, [ o[383],  o[383],  o[383],  o[383],  
+		o[383],  o[383],  o[383],  o[383],  
+		o[383] ],  
+	// Array
+	392, [ 0,  0,  0,  0,  
+		0,  0,  0,  0,  
+		0 ],  
+	// IdentityDictionary
+	393, [ array: o[394],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	394, [ nil,  nil,  nil,  nil,  
+		'labels',  o[395],  'faders',  o[396] ],  
+	// Array
+	395, [ o[383],  o[383],  o[383],  o[383],  
+		o[383],  o[383],  o[383],  o[383] ],  
+	// Array
+	396, [ 0,  0,  0,  0,  
+		0,  0,  0,  0 ],  
+	// IdentityDictionary
+	397, [ array: o[398],  size: 54,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	398, [ nil,  nil,  nil,  nil,  
+		'lt3_12',  o[399],  'lt1_13',  o[401],  
+		nil,  nil,  'lt2_16',  o[403],  
+		'lt1_7',  o[405],  'lt1_8',  o[407],  
+		'lt2_7',  o[409],  'lt3_9',  o[411],  
+		nil,  nil,  'lt3_1',  o[413],  
+		'lt1_15',  o[415],  nil,  nil,  
+		nil,  nil,  'lt1_1',  o[417],  
+		'lt1_6',  o[419],  'lt1_12',  o[421],  
+		'instL',  o[423],  nil,  nil,  
+		nil,  nil,  'lt2_9',  o[425],  
+		'lt2_3',  o[427],  'lt2_13',  o[429],  
+		'lt3_5',  o[431],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'lt3_2',  o[433],  nil,  nil,  
+		'lt2_14',  o[435],  nil,  nil,  
+		nil,  nil,  'lt2_4',  o[437],  
+		nil,  nil,  nil,  nil,  
+		'lt3_15',  o[439],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'instR',  o[441],  'lt3_4',  o[443],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'lt2_15',  o[445],  'lt1_5',  o[447],  
+		'lt3_6',  o[449],  'specR',  o[451],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'lt2_1',  o[453],  
+		'lt2_6',  o[455],  nil,  nil,  
+		'lt1_3',  o[457],  'specL',  o[459],  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'lt1_14',  o[461],  nil,  nil,  
+		'fldBkSL',  o[463],  'lt1_9',  o[465],  
+		nil,  nil,  'lt2_5',  o[467],  
+		nil,  nil,  nil,  nil,  
+		'lt3_13',  o[469],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'lt1_4',  o[471],  'lt3_3',  o[473],  
+		'lt1_11',  o[475],  nil,  nil,  
+		nil,  nil,  'lt3_11',  o[477],  
+		'lt3_14',  o[479],  'lt2_10',  o[481],  
+		'lt2_12',  o[483],  nil,  nil,  
+		'lt3_7',  o[485],  'lt2_8',  o[487],  
+		nil,  nil,  nil,  nil,  
+		'lt1_2',  o[489],  'lt1_16',  o[491],  
+		'lt3_16',  o[493],  'fldBkSR',  o[495],  
+		nil,  nil,  'lt3_8',  o[497],  
+		'lt3_10',  o[499],  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		'lt1_10',  o[501],  'lt2_2',  o[503],  
+		'lt2_11',  o[505],  nil,  nil,  
+		nil,  nil,  nil,  nil ],  
+	// List
+	399, [ array: o[400] ],  
+	// List
+	401, [ array: o[402] ],  
+	// List
+	403, [ array: o[404] ],  
+	// List
+	405, [ array: o[406] ],  
+	// List
+	407, [ array: o[408] ],  
+	// List
+	409, [ array: o[410] ],  
+	// List
+	411, [ array: o[412] ],  
+	// List
+	413, [ array: o[414] ],  
+	// List
+	415, [ array: o[416] ],  
+	// List
+	417, [ array: o[418] ],  
+	// List
+	419, [ array: o[420] ],  
+	// List
+	421, [ array: o[422] ],  
+	// List
+	423, [ array: o[424] ],  
+	// List
+	425, [ array: o[426] ],  
+	// List
+	427, [ array: o[428] ],  
+	// List
+	429, [ array: o[430] ],  
+	// List
+	431, [ array: o[432] ],  
+	// List
+	433, [ array: o[434] ],  
+	// List
+	435, [ array: o[436] ],  
+	// List
+	437, [ array: o[438] ],  
+	// List
+	439, [ array: o[440] ],  
+	// List
+	441, [ array: o[442] ],  
+	// List
+	443, [ array: o[444] ],  
+	// List
+	445, [ array: o[446] ],  
+	// List
+	447, [ array: o[448] ],  
+	// List
+	449, [ array: o[450] ],  
+	// List
+	451, [ array: o[452] ],  
+	// List
+	453, [ array: o[454] ],  
+	// List
+	455, [ array: o[456] ],  
+	// List
+	457, [ array: o[458] ],  
+	// List
+	459, [ array: o[460] ],  
+	// List
+	461, [ array: o[462] ],  
+	// List
+	463, [ array: o[464] ],  
+	// List
+	465, [ array: o[466] ],  
+	// List
+	467, [ array: o[468] ],  
+	// List
+	469, [ array: o[470] ],  
+	// List
+	471, [ array: o[472] ],  
+	// List
+	473, [ array: o[474] ],  
+	// List
+	475, [ array: o[476] ],  
+	// List
+	477, [ array: o[478] ],  
+	// List
+	479, [ array: o[480] ],  
+	// List
+	481, [ array: o[482] ],  
+	// List
+	483, [ array: o[484] ],  
+	// List
+	485, [ array: o[486] ],  
+	// List
+	487, [ array: o[488] ],  
+	// List
+	489, [ array: o[490] ],  
+	// List
+	491, [ array: o[492] ],  
+	// List
+	493, [ array: o[494] ],  
+	// List
+	495, [ array: o[496] ],  
+	// List
+	497, [ array: o[498] ],  
+	// List
+	499, [ array: o[500] ],  
+	// List
+	501, [ array: o[502] ],  
+	// List
+	503, [ array: o[504] ],  
+	// List
+	505, [ array: o[506] ]
+];
+prUnarchive(o,p);

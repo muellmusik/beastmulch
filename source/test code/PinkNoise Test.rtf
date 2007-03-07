@@ -1,0 +1,66 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red0\green115\blue0;\red191\green0\blue0;
+\red96\green96\blue96;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf0 \
+(\
+\cf2 var\cf0  w, startButton, synth;\
+\cf2 var\cf0  outputControl, ampControl;\
+\cf2 var\cf0  cmdPeriodFunc;\
+s.waitForBoot(\{\
+\cf2 SynthDef\cf0 (\cf3 \\PinkTest\cf0 , \{\cf2 |out, amp|\cf0  \cf2 Out\cf0 .ar(out, \cf2 PinkNoise\cf0 .ar(amp)); \}).load(s);\
+\
+\cf4 // make the window\cf0 \
+w = \cf2 SCWindow\cf0 (\cf5 "PinkNoise Tester"\cf0 , \cf2 Rect\cf0 (20, 400, 440, 180));\
+w.front; \cf4 // make window visible and front window.\cf0 \
+w.view.decorator = \cf2 FlowLayout\cf0 (w.view.bounds);\
+\
+w.view.background = \cf2 HiliteGradient\cf0 (\cf2 Color\cf0 .rand(0.0,1.0),\cf2 Color\cf0 .rand(0.0,1.0),\
+					[\cf3 \\h\cf0 ,\cf3 \\v\cf0 ].choose, 100, rrand(0.1,0.9));\
+\
+\cf4 // add a button to start and stop the sound.\cf0 \
+startButton = \cf2 SCButton\cf0 (w, 75 @ 24);\
+startButton.states = [\
+	[\cf5 "Start"\cf0 , \cf2 Color\cf0 .black, \cf2 Color\cf0 .green],\
+	[\cf5 "Stop"\cf0 , \cf2 Color\cf0 .white, \cf2 Color\cf0 .red]\
+];\
+startButton.action = \{\cf2 |view|\cf0 \
+		if (view.value == 1) \{\
+			\cf4 // start sound\cf0 \
+			\
+			synth = \cf2 Synth\cf0 (\cf3 \\PinkTest\cf0 , [\cf3 \\amp\cf0 , ampControl.value.dbamp, \cf3 \\out\cf0 , \
+				outputControl.value - 1]);\
+			\
+		\};\
+		if (view.value == 0) \{\
+			\cf4 // stop sound\
+\cf0 			synth.free;\
+		\};\
+\};\
+\
+\cf4 // create controls for all parameters\cf0 \
+w.view.decorator.nextLine;\
+outputControl = \cf2 EZSlider\cf0 (w, 400 @ 24, \cf5 "Hardware Out"\cf0 , \cf2 ControlSpec\cf0 (1, 98, \cf3 \\lin\cf0 , 1), \
+	\{\cf2 |ez|\cf0  synth.set( \cf5 "out"\cf0 , ez.value -1); \}, 1);\
+	\
+w.view.decorator.nextLine;\
+ampControl = \cf2 EZSlider\cf0 (w, 400 @ 24, \cf5 "Amp"\cf0 , \cf3 \\db\cf0 , \
+	\{\cf2 |ez|\cf0  synth.set(\cf5 "amp"\cf0 , ez.value.dbamp); \}, -34);\
+\
+w.view.decorator.nextLine;\
+\cf2 SCStaticText\cf0 .new(w, \cf2 Rect\cf0 (0,0,300,80)).string_(\cf5 "Outputs are Hardware, not SC, i.e. 1 = 1"\cf0 );\
+			\
+\
+\cf4 // set start button to zero upon a cmd-period\cf0 \
+cmdPeriodFunc = \{ startButton.value = 0; \};\
+\cf2 CmdPeriod\cf0 .add(cmdPeriodFunc);\
+\
+\cf4 // stop the sound when window closes and remove cmdPeriodFunc.\cf0 \
+w.onClose = \{\
+	synth.free;\
+	\cf2 CmdPeriod\cf0 .remove(cmdPeriodFunc);\
+\};\
+\})\
+)}

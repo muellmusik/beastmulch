@@ -1,0 +1,232 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red191\green0\blue0;\red0\green0\blue191;
+\red0\green115\blue0;\red96\green96\blue96;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf2 \
+\
+\
+\cf3 //////////////\cf2 \
+\
+(\
+\cf4 var\cf2  w, h = 700, v = 700, numIns = 10, numOuts = 10, matrix, dotSize = 10, hinterval, vinterval;\
+\cf4 var\cf2  cellsize = 70, screenBounds; \cf3 // maximum cellsize\cf2 \
+\cf4 var\cf2  hoffset = 40, voffset = 20;\
+\cf4 var\cf2  color, ringColor;\
+\cf4 var\cf2  lastx, lasty, on = \cf4 false\cf2 ;\
+\cf4 var\cf2  ins, outs;\
+\
+ins = [\cf5 \\aud1\cf2 , \cf5 \\aud2\cf2 , \cf5 \\play1\cf2 , \cf5 \\play2\cf2 , \cf5 \\play3\cf2 , \cf5 \\play4\cf2 , \cf5 \\play5\cf2 , \cf5 \\play6\cf2 , \cf5 \\play7\cf2 , \cf5 \\play8\cf2 ];\
+\
+numIns = ins.size;\
+\
+outs = [\cf5 \\distL\cf2 , \cf5 \\distR\cf2 , \cf5 \\mainL\cf2 , \cf5 \\mainR\cf2 , \cf5 \\wideL\cf2 , \cf5 \\wideR\cf2 , \cf5 \\sideL\cf2 , \cf5 \\sideR\cf2 , \cf5 \\rearL\cf2 , \cf5 \\rearR\cf2 , \cf5 \\subsL\cf2 , \cf5 \\subsR\cf2 ];\
+numOuts = outs.size;\
+\
+\cf3 // scale size to available monitor size\cf2 \
+screenBounds = \cf4 SCWindow\cf2 .screenBounds;\
+cellsize = cellsize min: (screenBounds.width - 40 - hoffset / numOuts); cellsize.postln;\
+cellsize = cellsize min: (screenBounds.height - 40 - voffset / numIns); cellsize.postln;\
+dotSize = cellsize * 0.33 min: 15; \cf3 // maximum dot size\cf2 \
+if(cellsize < 35, \{voffset = 35\}); \cf3 // double line of top labels\cf2 \
+voffset.postln;\
+h = numOuts * cellsize + hoffset;\
+v = numIns * cellsize + voffset;\
+\
+\
+ \
+\cf3 //color = Color.rand(0.0,1.0).alpha_(rrand(0.1,0.7)).set;\cf2 \
+color = \cf4 Color\cf2 .blue.alpha_(0.3).set;\
+ringColor = color.copy.alpha_(1);\
+\
+matrix = \cf4 Array\cf2 .newClear(numOuts) ! numIns;\
+\
+w = \cf4 SCWindow\cf2 (\cf6 "matrix"\cf2 , \cf4 Rect\cf2 (40, 40, h, v), \cf4 false\cf2 );\
+w.alpha = 0.9;\
+\cf3 //w.view.background = Color.rand(0,0.3);\cf2 \
+w.view.background = \cf4 Color\cf2 .new255(140, 38, 255);\
+hinterval = w.bounds.width - hoffset / (numOuts + 1);\
+vinterval = w.bounds.height - voffset / (numIns + 1);\
+t = \cf4 SCTabletView\cf2 (w,w.view.bounds);\
+t.background = \cf4 Color\cf2 .clear;\
+t.mouseDownAction = \{ \cf4 arg\cf2   view,inx,iny,pressure,tiltx,tilty,\CocoaLigature0 deviceID, buttonNumber,clickCount\CocoaLigature1 ;\
+	\cf4 var\cf2  x, y;\
+	x = (inx - hoffset/ hinterval).round.clip(1, numOuts) - 1;\
+	y = (iny - voffset/ vinterval).round.clip(1, numIns) - 1;\
+	if(matrix[y][x].isNil, \{matrix[y].put(x, \cf5 \\foo\cf2 ); on = \cf4 true\cf2 ;\},\
+		\{matrix[y].put(x, \cf4 nil\cf2 ); on = \cf4 false\cf2 \});\
+	lastx = x; lasty = y;\
+	w.refresh;\
+\};\
+\cf3 // dragging\cf2 \
+t.action = \{ \cf4 arg\cf2   view,inx,iny,pressure,tiltx,tilty,\CocoaLigature0 deviceID, buttonNumber,clickCount\CocoaLigature1 ;\
+	\cf4 var\cf2  x, y;\
+	x = (inx - hoffset/ hinterval).round.clip(1, numOuts) - 1;\
+	y = (iny - voffset/ vinterval).round.clip(1, numIns) - 1;\
+	if((x != lastx) || (y != lasty), \{\
+		if(on, \{matrix[y].put(x, \cf5 \\foo\cf2 )\},\{matrix[y].put(x, \cf4 nil\cf2 )\});\
+	\
+		w.refresh;\
+	\});\
+	lastx = x; lasty = y;\
+\};\
+\
+w.front;\
+w.drawHook = \{\
+\
+	\cf4 Pen\cf2 .width = 2;\
+	\
+	\cf4 Pen\cf2 .use \{\
+		ringColor.set;\
+		\cf3 // border lines\cf2 \
+\
+		\cf4 Pen\cf2 .line(hoffset@voffset, w.bounds.width@voffset);\
+		\cf4 Pen\cf2 .line(hoffset@voffset, hoffset@w.bounds.height);\
+\
+		color.set;\
+		numIns.do \{ \cf4 |i|\cf2 \
+			\cf4 Pen\cf2 .line((1 + hoffset)@(vinterval + voffset + (i * vinterval)), (w.bounds.width + hoffset)@(vinterval + voffset + (i * vinterval)));\
+		\};\
+		numOuts.do \{ \cf4 |i|\cf2 	 \
+			\cf4 Pen\cf2 .line((hinterval + hoffset + (i * hinterval))@(1 + voffset), (hinterval + hoffset + (i * hinterval))@(w.bounds.height + voffset)); \
+			\
+\
+		\};\
+		\cf4 Pen\cf2 .stroke;\
+		matrix.do(\{ \cf4 arg\cf2  row, y;\
+			row.do(\{ \cf4 arg\cf2  item, x;\
+				\cf4 var\cf2  crosspoint, rect;\
+				item.notNil.if(\{\
+					rect = \cf4 Rect\cf2 .aboutPoint((hinterval  + hoffset + (x * hinterval))@(vinterval + voffset + (y * vinterval)), dotSize, dotSize);\
+					color.set;\
+					\cf4 Pen\cf2 .fillOval(rect);\
+\
+					ringColor.set;\
+					\cf4 Pen\cf2 .strokeOval(rect);\
+				\});\
+			\})\
+		\});\
+		\
+	\};\
+	\cf3 //"foo".drawInRect(Rect.aboutPoint(hinterval@10, 10, 10), color: Color.white);\cf2 \
+\cf3 //	outs.do(\{|item, i|\cf2 \
+\cf3 //		var y;\cf2 \
+\cf3 //		if(voffset > 20, \{ y = [10, 25].wrapAt(i) \}, \{ y = 10 \});\cf2 \
+\cf3 //		item.asString.drawInRect(\cf2 \
+\cf3 //			Rect.aboutPoint((hoffset + hinterval + (hinterval * i))@y, 20, 10), \cf2 \
+\cf3 //			Font("Andale Mono", 12),\cf2 \
+\cf3 //			color: Color.black\cf2 \
+\cf3 //		)\cf2 \
+\cf3 //	\});\cf2 \
+\cf3 //	ins.do(\{|item, i| \cf2 \
+\cf3 //		item.asString.drawInRect(\cf2 \
+\cf3 //			Rect.aboutPoint((hoffset / 2)@(voffset + vinterval + (vinterval * i)), 18, 10),\cf2 \
+\cf3 //			Font("Andale Mono", 12),\cf2 \
+\cf3 //			color: Color.black\cf2 \
+\cf3 //		)\cf2 \
+\cf3 //	\});\cf2 \
+\};\
+\
+	outs.do(\{\cf4 |item, i|\cf2 \
+		\cf4 var\cf2  y, t;\
+		if(voffset > 20, \{ y = [10, 25].wrapAt(i) \}, \{ y = 10 \});\
+		t = \cf4 SCStaticText\cf2 (w,\
+			\cf4 Rect\cf2 .aboutPoint((hoffset + hinterval + (hinterval * i))@y, 20, 10)\
+		);\
+		t.string = item.asString;\
+		t.stringColor = \cf4 Color\cf2 .black;\
+		t.font = \cf4 Font\cf2 (\cf6 "Andale Mono"\cf2 , 12);\
+		t.align = \cf5 \\center\cf2 ;\
+	\});\
+	ins.do(\{\cf4 |item, i|\cf2  \
+		\cf4 var\cf2  t;\
+		t = \cf4 SCStaticText\cf2 (w,\
+			\cf4 Rect\cf2 .aboutPoint((hoffset / 2)@(voffset + vinterval + (vinterval * i)), 18, 10)\
+		);\
+		t.string = item.asString;\
+		t.stringColor = \cf4 Color\cf2 .black;\
+		t.font = \cf4 Font\cf2 (\cf6 "Andale Mono"\cf2 , 12);\
+		t.align = \cf5 \\center\cf2 ;\
+	\});\
+\
+w.refresh;\
+)\
+\
+\cf3 //////////// Older simpler version\cf2 \
+\
+(\
+\cf4 var\cf2  w, h = 700, v = 700, numLines = 20, matrix, dotSize = 10, hinterval, vinterval;\
+\cf4 var\cf2  color, ringColor;\
+\cf4 var\cf2  lastx, lasty, on = \cf4 false\cf2 ;\
+color = \cf4 Color\cf2 .rand(0.0,1.0).alpha_(rrand(0.1,0.7)).set;\
+ringColor = color.copy.alpha_(1);\
+\
+matrix = \cf4 Array\cf2 .newClear(numLines) ! numLines;\
+\
+w = \cf4 SCWindow\cf2 (\cf6 "matrix"\cf2 , \cf4 Rect\cf2 (40, 40, h, v));\
+w.view.background = \cf4 Color\cf2 .rand(0,0.3);\
+hinterval = w.bounds.width / (numLines + 1);\
+vinterval = w.bounds.height / (numLines + 1);\
+t = \cf4 SCTabletView\cf2 (w,w.view.bounds);\
+t.background = \cf4 Color\cf2 .clear;\
+t.mouseDownAction = \{ \cf4 arg\cf2   view,inx,iny,pressure,tiltx,tilty,\CocoaLigature0 deviceID, buttonNumber,clickCount\CocoaLigature1 ;\
+	\cf4 var\cf2  x, y;\
+	x = (inx / hinterval).round.clip(1, numLines) - 1;\
+	y = (iny / vinterval).round.clip(1, numLines) - 1;\
+	if(matrix[y][x].isNil, \{matrix[y].put(x, \cf5 \\foo\cf2 ); on = \cf4 true\cf2 ;\},\
+		\{matrix[y].put(x, \cf4 nil\cf2 ); on = \cf4 false\cf2 \});\
+	lastx = x; lasty = y;\
+	w.refresh;\
+\};\
+\cf3 // dragging\cf2 \
+t.action = \{ \cf4 arg\cf2   view,inx,iny,pressure,tiltx,tilty,\CocoaLigature0 deviceID, buttonNumber,clickCount\CocoaLigature1 ;\
+	\cf4 var\cf2  x, y;\
+	x = (inx / hinterval).round.clip(1, numLines) - 1;\
+	y = (iny / vinterval).round.clip(1, numLines) - 1;\
+	if((x != lastx) || (y != lasty), \{\
+		if(on, \{matrix[y].put(x, \cf5 \\foo\cf2 )\},\{matrix[y].put(x, \cf4 nil\cf2 )\});\
+	\
+		w.refresh;\
+	\});\
+	lastx = x; lasty = y;\
+\};\
+\
+w.front;\
+w.drawHook = \{\
+\
+	\cf4 Pen\cf2 .width = 2;\
+	\
+	\cf4 Pen\cf2 .use \{\
+		color.set;\
+		numLines.do \{ \cf4 |i|\cf2 \
+			\cf4 Pen\cf2 .line(1@(vinterval + (i * vinterval)), w.bounds.width@(vinterval + (i * vinterval))); \
+			\cf4 Pen\cf2 .line((hinterval + (i * hinterval))@1, (hinterval + (i * hinterval))@w.bounds.height); \
+			\cf4 Pen\cf2 .stroke;\
+\
+		\};\
+		matrix.do(\{ \cf4 arg\cf2  row, y;\
+			row.do(\{ \cf4 arg\cf2  item, x;\
+				\cf4 var\cf2  crosspoint, rect;\
+				item.notNil.if(\{\
+					rect = \cf4 Rect\cf2 .aboutPoint((hinterval + (x * hinterval))@(vinterval + (y * vinterval)), dotSize, dotSize);\
+					color.set;\
+					\cf4 Pen\cf2 .width = 2;\
+					\cf4 Pen\cf2 .fillOval(rect);\
+					ringColor.set;\
+					\cf4 Pen\cf2 .width = 4;\
+					\cf4 Pen\cf2 .strokeOval(rect);\
+					\
+				\});\
+			\})\
+		\});\
+		\
+	\};\
+	\cf3 //"foo".drawInRect(Rect.aboutPoint(interval@10, 10, 10), color: Color.white);\cf2 \
+\};\
+\
+w.refresh;\
+\
+\
+)\
+}
