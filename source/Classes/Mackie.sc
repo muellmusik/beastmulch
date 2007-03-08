@@ -79,7 +79,7 @@ AbstractMackie {
 		//value = spec.unmap(bend.post + 1); // exp warp so can't have zero
 		//" ".post;
 		value = spec.at(bend);
-		server.sendMsg("/c_set", busIndex + chan, value.postln);
+		server.sendMsg("/c_set", busIndex + chan, value);
 		valueArray[chan] = bend;
 		midiout.bend(chan, bend); // loopback bend to fader
 	}
