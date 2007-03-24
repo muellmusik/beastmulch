@@ -1,0 +1,543 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		631417A30A203392007B9355 /* All */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 631417CC0A203392007B9355 /* Build configuration list for PBXAggregateTarget "All" */;
+			buildPhases = (
+			);
+			dependencies = (
+			);
+			name = All;
+			productName = "SC_Synth PlugIns";
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		FE2BB3F30BB5975C009F34F8 /* BEASTMulchPV.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB3F20BB5975C009F34F8 /* BEASTMulchPV.h */; };
+		FE2BB3F60BB59792009F34F8 /* SCComplex.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB3F50BB59792009F34F8 /* SCComplex.h */; };
+		FE2BB40B0BB598CF009F34F8 /* SCComplex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE2BB4060BB598CF009F34F8 /* SCComplex.cpp */; };
+		FE2BB40C0BB598CF009F34F8 /* BEASTMulchPV.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE2BB4080BB598CF009F34F8 /* BEASTMulchPV.cpp */; };
+		FE2BB4100BB5995A009F34F8 /* SC_Lock.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB40F0BB5995A009F34F8 /* SC_Lock.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		92CCC51F045B4BDE00CA2167 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
+		F5499A1103A3023A01BA7E76 /* vecLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = vecLib.framework; path = /System/Library/Frameworks/vecLib.framework; sourceTree = "<absolute>"; };
+		F5D127DE03383D340164B34C /* libsndfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsndfile.a; path = /usr/local/lib/libsndfile.a; sourceTree = "<absolute>"; };
+		FE2BB3780BB59278009F34F8 /* BEASTMulchPV.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = BEASTMulchPV.scx; sourceTree = BUILT_PRODUCTS_DIR; };
+		FE2BB3D00BB59628009F34F8 /* clz.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = clz.h; sourceTree = "<group>"; };
+		FE2BB3D10BB59628009F34F8 /* Hash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Hash.h; sourceTree = "<group>"; };
+		FE2BB3D20BB59628009F34F8 /* SC_BoundsMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SC_BoundsMacros.h; sourceTree = "<group>"; };
+		FE2BB3D30BB59628009F34F8 /* SC_BufGen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SC_BufGen.h; sourceTree = "<group>"; };
+		FE2BB3D40BB59628009F34F8 /* SC_Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SC_Constants.h; sourceTree = "<group>"; };
+		FE2BB3D50BB59628009F34F8 /* SC_DemandUnit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SC_DemandUnit.h; sourceTree = "<group>"; };
+		FE2BB3D60BB59628009F34F8 /* SC_Dimension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SC_Dimension.h; sourceTree = "<group>"; };
+		FE2BB3D70BB59628009F34F8 /* SC_FifoMsg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SC_FifoMsg.h; sourceTree = "<group>"; };
+		FE2BB3D80BB59628009F34F8 /* SC_Graph.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SC_Graph.h; sourceTree = "<group>"; };
+		FE2BB3D90BB59628009F34F8 /* SC_InlineBinaryOp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SC_InlineBinaryOp.h; sourceTree = "<group>"; };
+		FE2BB3DA0BB59628009F34F8 /* SC_InlineUnaryOp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SC_InlineUnaryOp.h; sourceTree = "<group>"; };
+		FE2BB3DB0BB59628009F34F8 /* SC_InterfaceTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SC_InterfaceTable.h; sourceTree = "<group>"; };
+		FE2BB3DC0BB59628009F34F8 /* sc_msg_iter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sc_msg_iter.h; sourceTree = "<group>"; };
+		FE2BB3DD0BB59628009F34F8 /* SC_Node.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SC_Node.h; sourceTree = "<group>"; };
+		FE2BB3DE0BB59628009F34F8 /* SC_PlugIn.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SC_PlugIn.h; sourceTree = "<group>"; };
+		FE2BB3DF0BB59628009F34F8 /* SC_Rate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SC_Rate.h; sourceTree = "<group>"; };
+		FE2BB3E00BB59628009F34F8 /* SC_RGen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SC_RGen.h; sourceTree = "<group>"; };
+		FE2BB3E10BB59628009F34F8 /* SC_SndBuf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SC_SndBuf.h; sourceTree = "<group>"; };
+		FE2BB3E20BB59628009F34F8 /* SC_Types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SC_Types.h; sourceTree = "<group>"; };
+		FE2BB3E30BB59628009F34F8 /* SC_Unit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SC_Unit.h; sourceTree = "<group>"; };
+		FE2BB3E40BB59628009F34F8 /* SC_Wire.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SC_Wire.h; sourceTree = "<group>"; };
+		FE2BB3E50BB59628009F34F8 /* SC_World.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SC_World.h; sourceTree = "<group>"; };
+		FE2BB3E60BB59628009F34F8 /* Unroll.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Unroll.h; sourceTree = "<group>"; };
+		FE2BB3F20BB5975C009F34F8 /* BEASTMulchPV.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BEASTMulchPV.h; sourceTree = "<group>"; };
+		FE2BB3F50BB59792009F34F8 /* SCComplex.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SCComplex.h; sourceTree = "<group>"; };
+		FE2BB3F70BB597D5009F34F8 /* SC_Altivec.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SC_Altivec.h; sourceTree = "<group>"; };
+		FE2BB3F80BB597D5009F34F8 /* SC_Sem.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SC_Sem.h; sourceTree = "<group>"; };
+		FE2BB3F90BB597D5009F34F8 /* SC_Endian.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SC_Endian.h; sourceTree = "<group>"; };
+		FE2BB4060BB598CF009F34F8 /* SCComplex.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SCComplex.cpp; sourceTree = "<group>"; };
+		FE2BB4080BB598CF009F34F8 /* BEASTMulchPV.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BEASTMulchPV.cpp; sourceTree = "<group>"; };
+		FE2BB40A0BB598CF009F34F8 /* SC_SyncCondition.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SC_SyncCondition.cpp; sourceTree = "<group>"; };
+		FE2BB40F0BB5995A009F34F8 /* SC_Lock.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SC_Lock.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FE2BB3700BB59278009F34F8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F50D04F802E68E8201CA2799 = {
+			isa = PBXGroup;
+			children = (
+				FE2BB3B40BB595ED009F34F8 /* headers */,
+				FE2BB4040BB598CF009F34F8 /* source */,
+				F50D060302E69C2101CA2799 /* Products */,
+				F50D069402E6A1C601CA2799 /* Frameworks */,
+				F50D069D02E6A1C601CA2799 /* Resources */,
+			);
+			sourceTree = "<group>";
+		};
+		F50D060302E69C2101CA2799 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FE2BB3780BB59278009F34F8 /* BEASTMulchPV.scx */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F50D069402E6A1C601CA2799 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F5D127DE03383D340164B34C /* libsndfile.a */,
+				F5499A1103A3023A01BA7E76 /* vecLib.framework */,
+				92CCC51F045B4BDE00CA2167 /* Carbon.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F50D069D02E6A1C601CA2799 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		FE2BB3B40BB595ED009F34F8 /* headers */ = {
+			isa = PBXGroup;
+			children = (
+				FE2BB3F40BB5976E009F34F8 /* common */,
+				FE2BB3F10BB5975C009F34F8 /* plugin headers */,
+				FE2BB3CF0BB59628009F34F8 /* plugin_interface */,
+			);
+			path = headers;
+			sourceTree = "<group>";
+		};
+		FE2BB3CF0BB59628009F34F8 /* plugin_interface */ = {
+			isa = PBXGroup;
+			children = (
+				FE2BB40F0BB5995A009F34F8 /* SC_Lock.h */,
+				FE2BB3F50BB59792009F34F8 /* SCComplex.h */,
+				FE2BB3D00BB59628009F34F8 /* clz.h */,
+				FE2BB3D10BB59628009F34F8 /* Hash.h */,
+				FE2BB3D20BB59628009F34F8 /* SC_BoundsMacros.h */,
+				FE2BB3D30BB59628009F34F8 /* SC_BufGen.h */,
+				FE2BB3D40BB59628009F34F8 /* SC_Constants.h */,
+				FE2BB3D50BB59628009F34F8 /* SC_DemandUnit.h */,
+				FE2BB3D60BB59628009F34F8 /* SC_Dimension.h */,
+				FE2BB3D70BB59628009F34F8 /* SC_FifoMsg.h */,
+				FE2BB3D80BB59628009F34F8 /* SC_Graph.h */,
+				FE2BB3D90BB59628009F34F8 /* SC_InlineBinaryOp.h */,
+				FE2BB3DA0BB59628009F34F8 /* SC_InlineUnaryOp.h */,
+				FE2BB3DB0BB59628009F34F8 /* SC_InterfaceTable.h */,
+				FE2BB3DC0BB59628009F34F8 /* sc_msg_iter.h */,
+				FE2BB3DD0BB59628009F34F8 /* SC_Node.h */,
+				FE2BB3DE0BB59628009F34F8 /* SC_PlugIn.h */,
+				FE2BB3DF0BB59628009F34F8 /* SC_Rate.h */,
+				FE2BB3E00BB59628009F34F8 /* SC_RGen.h */,
+				FE2BB3E10BB59628009F34F8 /* SC_SndBuf.h */,
+				FE2BB3E20BB59628009F34F8 /* SC_Types.h */,
+				FE2BB3E30BB59628009F34F8 /* SC_Unit.h */,
+				FE2BB3E40BB59628009F34F8 /* SC_Wire.h */,
+				FE2BB3E50BB59628009F34F8 /* SC_World.h */,
+				FE2BB3E60BB59628009F34F8 /* Unroll.h */,
+			);
+			path = plugin_interface;
+			sourceTree = "<group>";
+		};
+		FE2BB3F10BB5975C009F34F8 /* plugin headers */ = {
+			isa = PBXGroup;
+			children = (
+				FE2BB3F20BB5975C009F34F8 /* BEASTMulchPV.h */,
+			);
+			path = "plugin headers";
+			sourceTree = "<group>";
+		};
+		FE2BB3F40BB5976E009F34F8 /* common */ = {
+			isa = PBXGroup;
+			children = (
+				FE2BB3F70BB597D5009F34F8 /* SC_Altivec.h */,
+				FE2BB3F80BB597D5009F34F8 /* SC_Sem.h */,
+				FE2BB3F90BB597D5009F34F8 /* SC_Endian.h */,
+			);
+			path = common;
+			sourceTree = "<group>";
+		};
+		FE2BB4040BB598CF009F34F8 /* source */ = {
+			isa = PBXGroup;
+			children = (
+				FE2BB4050BB598CF009F34F8 /* common */,
+				FE2BB4070BB598CF009F34F8 /* plugin source */,
+				FE2BB4090BB598CF009F34F8 /* server */,
+			);
+			path = source;
+			sourceTree = "<group>";
+		};
+		FE2BB4050BB598CF009F34F8 /* common */ = {
+			isa = PBXGroup;
+			children = (
+				FE2BB4060BB598CF009F34F8 /* SCComplex.cpp */,
+			);
+			path = common;
+			sourceTree = "<group>";
+		};
+		FE2BB4070BB598CF009F34F8 /* plugin source */ = {
+			isa = PBXGroup;
+			children = (
+				FE2BB4080BB598CF009F34F8 /* BEASTMulchPV.cpp */,
+			);
+			path = "plugin source";
+			sourceTree = "<group>";
+		};
+		FE2BB4090BB598CF009F34F8 /* server */ = {
+			isa = PBXGroup;
+			children = (
+				FE2BB40A0BB598CF009F34F8 /* SC_SyncCondition.cpp */,
+			);
+			path = server;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		FE2BB36D0BB59278009F34F8 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FE2BB3F30BB5975C009F34F8 /* BEASTMulchPV.h in Headers */,
+				FE2BB3F60BB59792009F34F8 /* SCComplex.h in Headers */,
+				FE2BB4100BB5995A009F34F8 /* SC_Lock.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		FE2BB36C0BB59278009F34F8 /* BEASTMulchPV */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FE2BB3740BB59278009F34F8 /* Build configuration list for PBXNativeTarget "BEASTMulchPV" */;
+			buildPhases = (
+				FE2BB36D0BB59278009F34F8 /* Headers */,
+				FE2BB36E0BB59278009F34F8 /* Sources */,
+				FE2BB3700BB59278009F34F8 /* Frameworks */,
+				FE2BB3720BB59278009F34F8 /* Rez */,
+				FE2BB3730BB59278009F34F8 /* ShellScript */,
+				FE2BB4120BB59989009F34F8 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BEASTMulchPV;
+			productInstallPath = /usr/local/lib;
+			productName = BinaryOpUGens;
+			productReference = FE2BB3780BB59278009F34F8 /* BEASTMulchPV.scx */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F50D04F702E68E8201CA2799 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 88332412090ABD1F00A4A7E4 /* Build configuration list for PBXProject "BEASTMulch Plugins" */;
+			hasScannedForEncodings = 1;
+			mainGroup = F50D04F802E68E8201CA2799;
+			productRefGroup = F50D060302E69C2101CA2799 /* Products */;
+			projectDirPath = "";
+			targets = (
+				631417A30A203392007B9355 /* All */,
+				FE2BB36C0BB59278009F34F8 /* BEASTMulchPV */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXRezBuildPhase section */
+		FE2BB3720BB59278009F34F8 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXRezBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		FE2BB3730BB59278009F34F8 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
+		};
+		FE2BB4120BB59989009F34F8 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p /Library/Application\\ Support/SuperCollider/Extensions/BEASTMulch/PV/\ncp build/PV/* /Library/Application\\ Support/SuperCollider/Extensions/BEASTMulch/PV/";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		FE2BB36E0BB59278009F34F8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FE2BB40C0BB598CF009F34F8 /* BEASTMulchPV.cpp in Sources */,
+				FE2BB40B0BB598CF009F34F8 /* SCComplex.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		631417CD0A203392007B9355 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OPTIMIZATION_CFLAGS = "-O0 -faltivec";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "SC_Synth PlugIns";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		631417CE0A203392007B9355 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				OPTIMIZATION_CFLAGS = "-O3 -faltivec";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "SC_Synth PlugIns";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		631417CF0A203392007B9355 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "SC_Synth PlugIns";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Default;
+		};
+		88332413090ABD1F00A4A7E4 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+			};
+			name = Development;
+		};
+		88332414090ABD1F00A4A7E4 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+			};
+			name = Deployment;
+		};
+		88332415090ABD1F00A4A7E4 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+			};
+			name = Default;
+		};
+		FE2BB3750BB59278009F34F8 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OBJROOT = "$(SYMROOT)/..";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = BEASTMulchPV;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "$(PROJECT_DIR)/build/PV";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Development;
+		};
+		FE2BB3760BB59278009F34F8 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OBJROOT = "$(SYMROOT)/..";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = BEASTMulchPV;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "$(PROJECT_DIR)/build/PV";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		FE2BB3770BB59278009F34F8 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OBJROOT = "$(SYMROOT)/..";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = BEASTMulchPV;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "$(PROJECT_DIR)/build/PV";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Default;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		631417CC0A203392007B9355 /* Build configuration list for PBXAggregateTarget "All" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				631417CD0A203392007B9355 /* Development */,
+				631417CE0A203392007B9355 /* Deployment */,
+				631417CF0A203392007B9355 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		88332412090ABD1F00A4A7E4 /* Build configuration list for PBXProject "BEASTMulch Plugins" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				88332413090ABD1F00A4A7E4 /* Development */,
+				88332414090ABD1F00A4A7E4 /* Deployment */,
+				88332415090ABD1F00A4A7E4 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		FE2BB3740BB59278009F34F8 /* Build configuration list for PBXNativeTarget "BEASTMulchPV" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FE2BB3750BB59278009F34F8 /* Development */,
+				FE2BB3760BB59278009F34F8 /* Deployment */,
+				FE2BB3770BB59278009F34F8 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F50D04F702E68E8201CA2799 /* Project object */;
+}
