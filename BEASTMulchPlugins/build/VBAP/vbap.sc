@@ -1,3 +1,31 @@
+/*
+VBAP created by Ville Pukki
+This version ported from PD code by Scott Wilson
+Development funded by the AHRC
+ 
+Copyright
+
+This software is being provided to you, the licensee, by Ville Pulkki,
+under the following license. By obtaining, using and/or copying this
+software, you agree that you have read, understood, and will comply
+with these terms and conditions: Permission to use, copy, modify and
+distribute, including the right to grant others rights to distribute
+at any tier, this software and its documentation for any purpose and
+without fee or royalty is hereby granted, provided that you agree to
+comply with the following copyright notice and statements, including
+the disclaimer, and that the same appear on ALL copies of the software
+and documentation, including modifications that you make for internal
+use or for distribution:
+
+
+ Written by Ville Pulkki 1999
+ Helsinki University of Technology 
+ and 
+ Unversity of California at Berkeley
+ 
+*/
+
+
 VBAPSpeakerArray {
 	classvar <>maxNumSpeakers = 55, minSideLength = 0.01;
 	var <dim, speakers, <numSpeakers, <>sets;
@@ -39,9 +67,20 @@ VBAPSpeakerArray {
 		});
 	}
 	
-	bang {
-	
+	// i.e. 'BANG'
+	getSetsAndMatrices {
+		/* calculate and print out chosen loudspeaker sets and corresponding  matrices */
+
+		if(dim == 3, {
+			this.choose_ls_triplets;
+			^this.calculate_3x3_matrixes;
+		}, {
+			if(dim == 2, {^this.choose_ls_tuplets});
+		});
+		postln("Error in loudspeaker direction data");
+		^nil;
 	}
+	
 	
 	     /* Selects the loudspeaker triplets, and
       calculates the inversion matrices for each selected triplet.
@@ -75,12 +114,12 @@ VBAPSpeakerArray {
 //    return;
 //  }
 		// init vars defined above
-		connections = Array.fill(maxNumSpeakers, {Array.new(maxNumSpeakers)});
-		angles = Array.new(maxNumSpeakers);
-		sorted_angles = Array.new(maxNumSpeakers);
-		distance_table = Array.new((maxNumSpeakers * (maxNumSpeakers - 1)) / 2);
-		distance_table_i = Array.new((maxNumSpeakers * (maxNumSpeakers - 1)) / 2);
-		distance_table_j = Array.new((maxNumSpeakers * (maxNumSpeakers - 1)) / 2);
+		connections = Array.fill(maxNumSpeakers, {Array.newClear(maxNumSpeakers)});
+		angles = Array.newClear(maxNumSpeakers);
+		sorted_angles = Array.newClear(maxNumSpeakers);
+		distance_table = Array.newClear((maxNumSpeakers * (maxNumSpeakers - 1)) / 2);
+		distance_table_i = Array.newClear((maxNumSpeakers * (maxNumSpeakers - 1)) / 2);
+		distance_table_j = Array.newClear((maxNumSpeakers * (maxNumSpeakers - 1)) / 2);
   
 		for(0, numSpeakers -1, {|i|
 			for(i+1, numSpeakers -1, {|j|
@@ -93,7 +132,7 @@ VBAPSpeakerArray {
 						connections[j][k]=1;
 						connections[k][j]=1;
 						//add_ldsp_triplet(i,j,k); //(i,j,k,x)
-						sets = sets.add(VPABSpeakerSet([i,j,k]));
+						sets = sets.add(VBAPSpeakerSet([i,j,k]));
 					}
 				});
 			});
@@ -261,7 +300,7 @@ VBAPSpeakerArray {
 		lp2 =  speakers[b];
 		lp3 =  speakers[c];
 		
-		inmx = Array.new(9);
+		inmx = Array.newClear(9);
 
 		/* matrix inversion */
 		invdet = 1.0 / (  lp1.x * ((lp2.y * lp3.z) - (lp2.z * lp3.y))
@@ -318,14 +357,81 @@ VBAPSpeakerArray {
 //  sets = sets.add([i,j,k]);
 //}
 
+	calculate_3x3_matrixes {
+     /* Calculates the inverse matrices for 3D */
+
+		var invdet;
+		var lp1, lp2, lp3; //t_ls *lp1, *lp2, *lp3;
+		var invmx; //float *invmx;
+		//float *ptr;
+		//struct t_ls_set *tr_ptr = x->x_ls_set;
+		var triplet_amount = 0, pointer,list_length=0; //int triplet_amount = 0, ftable_size,i,j,k, pointer,list_length=0;
+		var at; //t_atom *at;
+		//t_ls *lss = x->x_ls;
+  
+		if(sets.isNil, {
+	    		postln("define-loudspeakers: Not valid 3-D configuration");
+	    		^nil;
+		});
+	
+ 		triplet_amount = sets.size;
+		list_length = triplet_amount * 21 + 2; /* was: + 3, pure data doesn't like errors on list_length */
+		at = FloatArray.newClear(list_length);
+  
+		at[0] = dim;
+		at[1] = numSpeakers;
+		pointer=2;
+  
+		sets.do({|set|
+    		lp1 = speakers[set.chanOffsets[0]];
+			lp2 = speakers[set.chanOffsets[1]];
+			lp3 = speakers[set.chanOffsets[2]];
+
+			/* matrix inversion */
+			invmx = set.inv_mx;
+			invdet = 1.0 / (  (lp1.x * ((lp2.y * lp3.z)) - (lp2.z * lp3.y))
+                    - (lp1.y * ((lp2.x * lp3.z)) - (lp2.z * lp3.x))
+                    + (lp1.z * ((lp2.x * lp3.y)) - (lp2.y * lp3.x)));
+
+			invmx[0] = ((lp2.y * lp3.z) - (lp2.z * lp3.y)) * invdet;
+			invmx[3] = ((lp1.y * lp3.z) - (lp1.z * lp3.y)) * invdet.neg;
+			invmx[6] = ((lp1.y * lp2.z) - (lp1.z * lp2.y)) * invdet;
+			invmx[1] = ((lp2.x * lp3.z) - (lp2.z * lp3.x)) * invdet.neg;
+			invmx[4] = ((lp1.x * lp3.z) - (lp1.z * lp3.x)) * invdet;
+			invmx[7] = ((lp1.x * lp2.z) - (lp1.z * lp2.x)) * invdet.neg;
+			invmx[2] = ((lp2.x * lp3.y) - (lp2.y * lp3.x)) * invdet;
+			invmx[5] = ((lp1.x * lp3.y) - (lp1.y * lp3.x)) * invdet.neg;
+			invmx[8] = ((lp1.x * lp2.y) - (lp1.y * lp2.x)) * invdet;
+			3.do({|i|
+				at[pointer] = set.chanOffsets[i] + 1;
+				pointer = pointer + 1;
+			});
+			9.do({|i|
+				at[pointer] = invmx[i];
+				pointer = pointer + 1;
+			});
+			at[pointer] = lp1.x; pointer = pointer + 1;
+			at[pointer] = lp2.x; pointer = pointer + 1;
+			at[pointer] = lp3.x; pointer = pointer + 1;
+			at[pointer] = lp1.y; pointer = pointer + 1;
+			at[pointer] = lp2.y; pointer = pointer + 1;
+			at[pointer] = lp3.y; pointer = pointer + 1;
+			at[pointer] = lp1.z; pointer = pointer + 1;
+			at[pointer] = lp2.z; pointer = pointer + 1;
+			at[pointer] = lp3.z; pointer = pointer + 1;
+
+		});
+		// [dim, numSpeakers, [chanOffsets 0-2, invmx 0-8, [lp1, lp2, lp2].x, sim.y, sim.z] * sets.size].flat
+		^at; 
+	}
 }
 
-VPABSpeakerSet { // triplet or pair
-  var chanOffsets; //ls_nos[3];  /* channel numbers */
-  var inv_mx; //float inv_mx[9]; /* inverse 3x3 or 2x2 matrix */
+VBAPSpeakerSet { // triplet or pair
+	var chanOffsets; //ls_nos[3];  /* channel numbers */
+	var inv_mx; //float inv_mx[9]; /* inverse 3x3 or 2x2 matrix */
   //var next; //struct t_ls_set *next;  /* next set (triplet or pair) */
   
-  *new {|chanOffsets|
-  	^super.newCopyArgs(chanOffsets);
-  }
+	*new {|chanOffsets|
+  		^super.newCopyArgs(chanOffsets);
+  	}
 }	
