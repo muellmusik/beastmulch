@@ -121,12 +121,13 @@ VBAPSpeakerArray {
 		distance_table = Array.newClear((maxNumSpeakers * (maxNumSpeakers - 1)) / 2);
 		distance_table_i = Array.newClear((maxNumSpeakers * (maxNumSpeakers - 1)) / 2);
 		distance_table_j = Array.newClear((maxNumSpeakers * (maxNumSpeakers - 1)) / 2);
-  
+  		
+  		sets = nil;
 		for(0.0, numSpeakers -1, {|i|
-			for(i+1, numSpeakers -1, {|j|
-				for(j+1, numSpeakers -1, {|k|
+			for(i+1.0, numSpeakers -1, {|j|
+				for(j+1.0, numSpeakers -1, {|k|
 					//"i: % j+1: %, k: %\n".postf(i, j + 1, k);
-					if(this.vol_p_side_lgth(i,j,k) > minSideLength){
+					if(this.vol_p_side_lgth(i,j,k) > minSideLength, {
 						connections[i][j]=1;
 						connections[j][i]=1;
 						connections[i][k]=1;
@@ -134,8 +135,9 @@ VBAPSpeakerArray {
 						connections[j][k]=1;
 						connections[k][j]=1;
 						//add_ldsp_triplet(i,j,k); //(i,j,k,x)
+						"i: % j: %, k: %\n".postf(i, j, k);
 						sets = sets.add(VBAPSpeakerSet([i,j,k]));
-					}
+					});
 				});
 			});
 		});
@@ -143,14 +145,16 @@ VBAPSpeakerArray {
 		/*calculate distancies between all lss and sorting them*/
 		table_size = ((numSpeakers - 1) * (numSpeakers)) / 2; 
 		for(0, table_size -1, { |i| distance_table[i] = 100000.0 });
-		for(0, numSpeakers - 1, { |i|
+		for(0.0, numSpeakers - 1, { |i|
 			for(i+1, numSpeakers - 1, {|j| 
 				var k;
 				if(connections[i][j] == 1, {
 					distance = abs(this.vec_angle(speakers[i],speakers[j]));
 					k=0;
 					while({distance_table[k] < distance}, {k = k+1});
+					//"tablesize-1: % k+1: %\n".postf(table_size - 1, k+1);
 					forBy(table_size - 1, k + 1, -1,{ |l|
+						//\loop.postln;
 						distance_table[l] = distance_table[l-1];
 						distance_table_i[l] = distance_table_i[l-1];
 						distance_table_j[l] = distance_table_j[l-1];
@@ -171,7 +175,7 @@ VBAPSpeakerArray {
 			sec_ls = distance_table_j[i];
 			if(connections[fst_ls][sec_ls] == 1, {
 				for(0.0, numSpeakers - 1, {|j|
-					for(j+1, numSpeakers - 1, {|k|
+					for(j+1.0, numSpeakers - 1, {|k|
 						if( (j!=fst_ls) && (k != sec_ls) && (k!=fst_ls) && (j != sec_ls), {
 							if(this.lines_intersect(fst_ls, sec_ls, j,k), {
 								connections[j][k] = 0;
@@ -185,14 +189,15 @@ VBAPSpeakerArray {
 
 	  /* remove triangles which had crossing sides
 	     with smaller triangles or include loudspeakers*/
-
-		sets = sets.select({|set|
+		"triplet_amount before stripping: %\n".postf(sets.size);
+		sets = sets.reject({|set|
     			i1 = set.chanOffsets[0];
 			j1 = set.chanOffsets[1];
 			k1 = set.chanOffsets[2];
 			(connections[i1][j1] == 0) || (connections[i1][k1] == 0) || (connections[j1][k1] == 0) 
-				|| this.any_ls_inside_triplet(i1,j1,k1);
+				|| this.any_ls_inside_triplet(i1,j1,k1).postln;
 		});
+		"triplet_amount after stripping: %\n".postf(sets.size);
 	}
 	
 	//lines_intersect(int i,int j,int k,int l,t_ls  lss[MAX_LS_AMOUNT])
@@ -296,7 +301,7 @@ VBAPSpeakerArray {
   		var invdet; //float invdet;
 		var lp1, lp2, lp3; //Speakers // t_ls *lp1, *lp2, *lp3;
 		var invmx; //float invmx[9];
-		var i, j, k; //int i,j,k;
+		//var i, j, k; //int i,j,k;
 		var tmp; //float tmp;
 		var any_ls_inside, this_inside; //int any_ls_inside, this_inside;
 
@@ -379,6 +384,7 @@ VBAPSpeakerArray {
 		});
 	
  		triplet_amount = sets.size;
+ 		"triplet_amount: %\n".postf(triplet_amount);
 		list_length = triplet_amount * 21 + 2; /* was: + 3, pure data doesn't like errors on list_length */
 		result = FloatArray.newClear(list_length);
   
@@ -390,13 +396,20 @@ VBAPSpeakerArray {
     			lp1 = speakers[set.chanOffsets[0]];
 			lp2 = speakers[set.chanOffsets[1]];
 			lp3 = speakers[set.chanOffsets[2]];
+			
+			//"lp1Off: % lp2Off: % lp3Off: %\n".postf(set.chanOffsets[0], set.chanOffsets[1], set.chanOffsets[2]);
 			/* matrix inversion */
 			//invmx = Array.newClear(9);
 			invmx = FloatArray.newClear(9);
-
-			invdet = 1.0 / (  (lp1.x * ((lp2.y * lp3.z)) - (lp2.z * lp3.y))
-                    - (lp1.y * ((lp2.x * lp3.z)) - (lp2.z * lp3.x))
-                    + (lp1.z * ((lp2.x * lp3.y)) - (lp2.y * lp3.x)));
+			
+			"lp1x: % lp1y: % lp1z: %\n".postf(lp1.x, lp1.y, lp1.z);
+			"lp2x: % lp2y: % lp2z: %\n".postf(lp2.x, lp2.y, lp2.z);
+			"lp3x: % lp3y: % lp3z: %\n".postf(lp3.x, lp3.y, lp3.z);
+			invdet = 1.0 / (  (lp1.x * ((lp2.y * lp3.z) - (lp2.z * lp3.y)))
+                    - (lp1.y * ((lp2.x * lp3.z) - (lp2.z * lp3.x)))
+                    + (lp1.z * ((lp2.x * lp3.y) - (lp2.y * lp3.x))));
+              
+              "invdet: %\n".postf(invdet);
 
 			invmx[0] = ((lp2.y * lp3.z) - (lp2.z * lp3.y)) * invdet;
 			invmx[3] = ((lp1.y * lp3.z) - (lp1.z * lp3.y)) * invdet.neg;
