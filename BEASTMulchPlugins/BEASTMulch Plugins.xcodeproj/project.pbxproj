@@ -21,9 +21,6 @@
 
 /* Begin PBXBuildFile section */
 		FE2BB3F30BB5975C009F34F8 /* BEASTMulchVBAP.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB3F20BB5975C009F34F8 /* BEASTMulchVBAP.h */; };
-		FE2BB3F60BB59792009F34F8 /* SCComplex.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB3F50BB59792009F34F8 /* SCComplex.h */; };
-		FE2BB40B0BB598CF009F34F8 /* SCComplex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE2BB4060BB598CF009F34F8 /* SCComplex.cpp */; };
-		FE2BB4100BB5995A009F34F8 /* SC_Lock.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB40F0BB5995A009F34F8 /* SC_Lock.h */; };
 		FEC9FE4D0BFCD6C500237BCA /* SCComplex.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB3F50BB59792009F34F8 /* SCComplex.h */; };
 		FEC9FE4E0BFCD6C500237BCA /* SC_Lock.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB40F0BB5995A009F34F8 /* SC_Lock.h */; };
 		FEC9FE500BFCD6C500237BCA /* BEASTMulchPV.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE2BB4080BB598CF009F34F8 /* BEASTMulchPV.cpp */; };
@@ -233,8 +230,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				FE2BB3F30BB5975C009F34F8 /* BEASTMulchVBAP.h in Headers */,
-				FE2BB3F60BB59792009F34F8 /* SCComplex.h in Headers */,
-				FE2BB4100BB5995A009F34F8 /* SC_Lock.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -380,7 +375,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FE2BB40B0BB598CF009F34F8 /* SCComplex.cpp in Sources */,
 				FEC9FE720BFCD85700237BCA /* BEASTMulchVBAP.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
