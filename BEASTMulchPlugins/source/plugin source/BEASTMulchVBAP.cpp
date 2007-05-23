@@ -498,6 +498,10 @@ void VBAP_next(VBAP *unit, int inNumSamples)
 		int ls[3];
 		int i;
 		
+		unit->x_azi = azimuth;
+		unit->x_ele = elevation;
+		unit->x_spread = spread;
+		
 		if(unit->x_lsset_available ==1){
 			vbap(g,ls, unit);
 			for(i=0;i<unit->x_ls_amount;i++)
@@ -508,6 +512,11 @@ void VBAP_next(VBAP *unit, int inNumSamples)
 			if(unit->x_spread != 0){
 				spread_it(unit,final_gs);
 			}
+			
+			for(i=0; i < unit->mNumOutputs; i++){
+				printf("chan %i: %f\n", i, final_gs[i] );
+			}
+			
 //			for(i=0;i<unit->x_ls_amount;i++) {
 //				SETFLOAT(&at[0], (t_float)i);	
 //				SETFLOAT(&at[1], (t_float)final_gs[i]);
@@ -532,15 +541,12 @@ void VBAP_next(VBAP *unit, int inNumSamples)
 		}
 	}
 	
-	unit->x_azi = azimuth;
-	unit->x_ele = elevation;
-	unit->x_spread = spread;
 }
 
 
 void VBAP_Ctor(VBAP* unit)
 {
-	int numOutputs = unit->mNumOutputs, counter, datapointer=0, setpointer=0, i;
+	int numOutputs = unit->mNumOutputs, counter = 0, datapointer=0, setpointer=0, i;
 	
 	// [dim, numSpeakers, [chanOffsets 0-2, invmx 0-8, [lp1, lp2, lp2].x, sim.y, sim.z] * sets.size].flat
 	float fbufnum = ZIN0(1);
@@ -618,6 +624,10 @@ void VBAP_Ctor(VBAP* unit)
 		}
 		if(unit->x_spread != 0){
 			spread_it(unit,final_gs);
+		}
+		
+		for(i=0; i < numOutputs; i++){
+			printf("chan %i: %f\n", i, final_gs[i] );
 		}
 		//			for(i=0;i<unit->x_ls_amount;i++) {
 		//				SETFLOAT(&at[0], (t_float)i);	

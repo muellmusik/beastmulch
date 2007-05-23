@@ -190,24 +190,24 @@
 			<key>Content</key>
 			<dict>
 				<key>PBXProjectModuleGUID</key>
-				<string>FEC9FEC90BFCFD2200237BCA</string>
+				<string>FEC9FF540C01BE1200237BCA</string>
 				<key>PBXProjectModuleLabel</key>
-				<string>BEASTMulchVBAP.cpp</string>
+				<string>SC_SndBuf.h</string>
 				<key>PBXSplitModuleInNavigatorKey</key>
 				<dict>
 					<key>Split0</key>
 					<dict>
 						<key>PBXProjectModuleGUID</key>
-						<string>FEC9FECA0BFCFD2200237BCA</string>
+						<string>FEC9FF550C01BE1200237BCA</string>
 						<key>PBXProjectModuleLabel</key>
-						<string>BEASTMulchVBAP.cpp</string>
+						<string>SC_SndBuf.h</string>
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>FE705A710C0253E4002D64A1</string>
+						<string>FE705AA40C04CB53002D64A1</string>
 						<key>history</key>
 						<array>
-							<string>FE705A700C0253E4002D64A1</string>
+							<string>FEC9FF980C02154400237BCA</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -223,47 +223,7 @@
 				<key>PBXModuleWindowStatusBarHidden2</key>
 				<false/>
 				<key>RubberWindowFrame</key>
-				<string>169 286 927 565 0 0 1680 1028 </string>
-			</dict>
-		</dict>
-		<dict>
-			<key>Content</key>
-			<dict>
-				<key>PBXProjectModuleGUID</key>
-				<string>FE705A720C0253E4002D64A1</string>
-				<key>PBXProjectModuleLabel</key>
-				<string>SC_World.h</string>
-				<key>PBXSplitModuleInNavigatorKey</key>
-				<dict>
-					<key>Split0</key>
-					<dict>
-						<key>PBXProjectModuleGUID</key>
-						<string>FE705A730C0253E4002D64A1</string>
-						<key>PBXProjectModuleLabel</key>
-						<string>SC_World.h</string>
-						<key>_historyCapacity</key>
-						<integer>0</integer>
-						<key>bookmark</key>
-						<string>FE705A750C0253E4002D64A1</string>
-						<key>history</key>
-						<array>
-							<string>FE705A740C0253E4002D64A1</string>
-						</array>
-					</dict>
-					<key>SplitCount</key>
-					<string>1</string>
-				</dict>
-				<key>StatusBarVisibility</key>
-				<true/>
-			</dict>
-			<key>Geometry</key>
-			<dict>
-				<key>Frame</key>
-				<string>{{0, 20}, {927, 524}}</string>
-				<key>PBXModuleWindowStatusBarHidden2</key>
-				<false/>
-				<key>RubberWindowFrame</key>
-				<string>61 416 927 565 0 0 1680 1028 </string>
+				<string>452 59 927 565 0 0 1680 1028 </string>
 			</dict>
 		</dict>
 		<dict>
@@ -284,7 +244,7 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>FE705A770C0253E4002D64A1</string>
+						<string>FE705AA60C04CB53002D64A1</string>
 						<key>history</key>
 						<array>
 							<string>FE705A760C0253E4002D64A1</string>
@@ -310,6 +270,46 @@
 			<key>Content</key>
 			<dict>
 				<key>PBXProjectModuleGUID</key>
+				<string>FEC9FEC90BFCFD2200237BCA</string>
+				<key>PBXProjectModuleLabel</key>
+				<string>BEASTMulchVBAP.cpp</string>
+				<key>PBXSplitModuleInNavigatorKey</key>
+				<dict>
+					<key>Split0</key>
+					<dict>
+						<key>PBXProjectModuleGUID</key>
+						<string>FEC9FECA0BFCFD2200237BCA</string>
+						<key>PBXProjectModuleLabel</key>
+						<string>BEASTMulchVBAP.cpp</string>
+						<key>_historyCapacity</key>
+						<integer>0</integer>
+						<key>bookmark</key>
+						<string>FE705AA70C04CB53002D64A1</string>
+						<key>history</key>
+						<array>
+							<string>FE705A700C0253E4002D64A1</string>
+						</array>
+					</dict>
+					<key>SplitCount</key>
+					<string>1</string>
+				</dict>
+				<key>StatusBarVisibility</key>
+				<true/>
+			</dict>
+			<key>Geometry</key>
+			<dict>
+				<key>Frame</key>
+				<string>{{0, 20}, {927, 524}}</string>
+				<key>PBXModuleWindowStatusBarHidden2</key>
+				<false/>
+				<key>RubberWindowFrame</key>
+				<string>169 286 927 565 0 0 1680 1028 </string>
+			</dict>
+		</dict>
+		<dict>
+			<key>Content</key>
+			<dict>
+				<key>PBXProjectModuleGUID</key>
 				<string>FEC9FF5A0C01BE1200237BCA</string>
 				<key>PBXProjectModuleLabel</key>
 				<string>vbap.c</string>
@@ -324,7 +324,7 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>FE705A780C0253E4002D64A1</string>
+						<string>FE705AA80C04CB53002D64A1</string>
 						<key>history</key>
 						<array>
 							<string>FEC9FF940C02154400237BCA</string>
@@ -350,24 +350,24 @@
 			<key>Content</key>
 			<dict>
 				<key>PBXProjectModuleGUID</key>
-				<string>FEC9FF540C01BE1200237BCA</string>
+				<string>FE705A720C0253E4002D64A1</string>
 				<key>PBXProjectModuleLabel</key>
-				<string>SC_SndBuf.h</string>
+				<string>SC_World.h</string>
 				<key>PBXSplitModuleInNavigatorKey</key>
 				<dict>
 					<key>Split0</key>
 					<dict>
 						<key>PBXProjectModuleGUID</key>
-						<string>FEC9FF550C01BE1200237BCA</string>
+						<string>FE705A730C0253E4002D64A1</string>
 						<key>PBXProjectModuleLabel</key>
-						<string>SC_SndBuf.h</string>
+						<string>SC_World.h</string>
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>FE705A790C0253E4002D64A1</string>
+						<string>FE705AAA0C04CB53002D64A1</string>
 						<key>history</key>
 						<array>
-							<string>FEC9FF980C02154400237BCA</string>
+							<string>FE705A740C0253E4002D64A1</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -383,7 +383,7 @@
 				<key>PBXModuleWindowStatusBarHidden2</key>
 				<false/>
 				<key>RubberWindowFrame</key>
-				<string>452 59 927 565 0 0 1680 1028 </string>
+				<string>61 416 927 565 0 0 1680 1028 </string>
 			</dict>
 		</dict>
 	</array>
@@ -521,7 +521,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>FE705A6D0C0253E4002D64A1</string>
+										<string>FE705AA30C04CB53002D64A1</string>
 										<key>history</key>
 										<array>
 											<string>FE2BB4160BB599BD009F34F8</string>
@@ -746,14 +746,14 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C530D57069F1CE1000CFCEE</string>
-		<string>FEC9FF540C01BE1200237BCA</string>
-		<string>FEC9FF5A0C01BE1200237BCA</string>
-		<string>FEC9FEC50BFCFD2200237BCA</string>
-		<string>/Users/scottw/SDW Dev/projects/BEASTMulchPlugins/BEASTMulch Plugins.xcodeproj</string>
 		<string>FE705A720C0253E4002D64A1</string>
-		<string>FEC9FEC90BFCFD2200237BCA</string>
 		<string>FE2BB41E0BB599BD009F34F8</string>
+		<string>1C530D57069F1CE1000CFCEE</string>
+		<string>FEC9FF5A0C01BE1200237BCA</string>
+		<string>FEC9FEC90BFCFD2200237BCA</string>
+		<string>FEC9FEC50BFCFD2200237BCA</string>
+		<string>FEC9FF540C01BE1200237BCA</string>
+		<string>/Users/scottw/SDW Dev/projects/BEASTMulchPlugins/BEASTMulch Plugins.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
 	<string>96 490 690 397 0 0 1680 1028 </string>
@@ -846,7 +846,7 @@
 			<key>WindowToolGUID</key>
 			<string>FE2BB41E0BB599BD009F34F8</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>Identifier</key>

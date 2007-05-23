@@ -624,7 +624,7 @@ VBAP : Panner {
 	*ar { arg numChans, in, bufnum, azimuth = 0.0, elevation = 1.0, spread = 0.0;
 		^this.multiNew('audio', numChans, in, bufnum, azimuth, elevation, spread )
 	}
-	*kr { arg numChans, in, pos = 0.0, level = 1.0, width = 2.0, orientation = 0.5;
+	*kr { arg numChans, in, bufnum, azimuth = 0.0, elevation = 1.0, spread = 0.0;
 		^this.multiNew('control', numChans, in, bufnum, azimuth, elevation, spread )
 	}
 	init { arg numChans ... theInputs;

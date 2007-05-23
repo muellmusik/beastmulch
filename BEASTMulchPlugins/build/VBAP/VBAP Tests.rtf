@@ -20,4 +20,32 @@ a.getSetsAndMatrices.asCompileString\
 \
 a = \cf2 VBAPSpeakerArray\cf0 .newFromDirections(3, [[-45, 0], [45, 0], [0, 45], [180, 45]]);\
 \
-a.getSetsAndMatrices.asCompileString}
+c = a.getSetsAndMatrices;\
+\
+\
+\
+b = Buffer.loadCollection(s, c);\
+\
+\
+x = \{ |azi = 0, ele = 0, spr = 0|\
+\
+VBAP.ar(c[1], Dust.ar, b.bufnum, azi, ele, spr);\
+\
+0\
+\
+\}.play;\
+\
+/// 0 0 0\
+\
+chan 0: 0.707107\
+chan 1: 0.707107\
+chan 2: 0.000000\
+chan 3: 0.000000\
+\
+x.set(\\azi, -12)\
+x.set(\\azi, 44)\
+x.set(\\ele, 3)\
+x.set(\\spr, 100)\
+x.set(\\spr, 50, \\ele, 0, \\azi, -12)\
+\
+}
