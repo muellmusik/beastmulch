@@ -23,15 +23,20 @@ a = \cf2 VBAPSpeakerArray\cf0 .newFromDirections(3, [[-45, 0], [45, 0], [0, 45],
 c = a.getSetsAndMatrices;\
 \
 \
+a = \cf2 VBAPSpeakerArray\cf0 .newFromDirections(2, [-45, 45]);\
+\
+c = a.getSetsAndMatrices;\
+\
+\
 \
 b = Buffer.loadCollection(s, c);\
-\
+b.plot;\
 \
 x = \{ |azi = 0, ele = 0, spr = 0|\
 \
-VBAP.ar(c[1], Dust.ar, b.bufnum, azi, ele, spr);\
+VBAP.ar(4, Dust.ar(25, 0.2), b.bufnum, azi, ele, spr).poll;\
 \
-0\
+//0\
 \
 \}.play;\
 \
@@ -43,7 +48,7 @@ chan 2: 0.000000\
 chan 3: 0.000000\
 \
 x.set(\\azi, -12)\
-x.set(\\azi, 44)\
+x.set(\\azi, -45)\
 x.set(\\ele, 3)\
 x.set(\\spr, 100)\
 x.set(\\spr, 50, \\ele, 0, \\azi, -12)\

@@ -513,9 +513,9 @@ void VBAP_next(VBAP *unit, int inNumSamples)
 				spread_it(unit,final_gs);
 			}
 			
-			for(i=0; i < unit->mNumOutputs; i++){
-				printf("chan %i: %f\n", i, final_gs[i] );
-			}
+//			for(i=0; i < unit->mNumOutputs; i++){
+//				printf("chan %i: %f\n", i, final_gs[i] );
+//			}
 			
 //			for(i=0;i<unit->x_ls_amount;i++) {
 //				SETFLOAT(&at[0], (t_float)i);	
@@ -626,9 +626,9 @@ void VBAP_Ctor(VBAP* unit)
 			spread_it(unit,final_gs);
 		}
 		
-		for(i=0; i < numOutputs; i++){
-			printf("chan %i: %f\n", i, final_gs[i] );
-		}
+//		for(i=0; i < numOutputs; i++){
+//			printf("chan %i: %f\n", i, final_gs[i] );
+//		}
 		//			for(i=0;i<unit->x_ls_amount;i++) {
 		//				SETFLOAT(&at[0], (t_float)i);	
 		//				SETFLOAT(&at[1], (t_float)final_gs[i]);
