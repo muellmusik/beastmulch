@@ -2,7 +2,7 @@
  *  BEASTMulchVBAP.cpp
  *
  *  Created by Scott Wilson on 15/05/2007.
- *  Copyright 2007 Scott Wilson. All rights reserved.
+ *  Copyright 2007 Scott Wilson
  *  Development funded by the AHRC
  *
  *	VBAP created by Ville Pulkki
@@ -63,10 +63,6 @@ struct VBAP : Unit
 {			
 	float x_azi; 				/* panning direction azimuth */
 	float x_ele;				/* panning direction elevation */
-//	void *x_outlet0;			// list to go to matrix
-//	void *x_outlet1;			// actual panning direction	azi
-//	void *x_outlet2;			// actual panning direction ele	
-//	void *x_outlet3;			// actual spread	
 	float x_set_inv_matx[MAX_LS_SETS][9];  /* inverse matrice for each loudspeaker set */
 	float x_set_matx[MAX_LS_SETS][9];      /* matrice for each loudspeaker set */
 	int x_lsset[MAX_LS_SETS][3];          /* channel numbers of loudspeakers in each LS set */
@@ -79,6 +75,14 @@ struct VBAP : Unit
 	float *final_gs;
 };
 
+// for circular smoothing
+
+struct CircleRamp : public Unit
+{
+	double m_level, m_slope;
+	int m_counter;
+};
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 extern "C"
@@ -88,6 +92,10 @@ extern "C"
 	void VBAP_Ctor(VBAP *unit);
 	void VBAP_Dtor(VBAP *unit);
 	void VBAP_next(VBAP *unit, int inNumSamples);
+	
+	void CircleRamp_next(CircleRamp *unit, int inNumSamples);
+	void CircleRamp_next_1(CircleRamp *unit, int inNumSamples);
+	void CircleRamp_Ctor(CircleRamp* unit);
 
 }
 
@@ -481,8 +489,7 @@ void vbap(float g[3], int ls[3], VBAP *x)
 
 void VBAP_next(VBAP *unit, int inNumSamples)
 {
-	// should check if inputs have changed and only calculate new gains if they have
-	// adapt from vbap_bang
+	// adapted from vbap_bang
 	
 	float *zin0 = ZIN(0);
 	float azimuth = ZIN0(2);
@@ -517,14 +524,6 @@ void VBAP_next(VBAP *unit, int inNumSamples)
 //				printf("chan %i: %f\n", i, final_gs[i] );
 //			}
 			
-//			for(i=0;i<unit->x_ls_amount;i++) {
-//				SETFLOAT(&at[0], (t_float)i);	
-//				SETFLOAT(&at[1], (t_float)final_gs[i]);
-//				outlet_list(x->x_outlet0, gensym("list") /* was: 0L */, 2, at);
-//			}
-//			outlet_float(x->x_outlet1, x->x_azi); 
-//			outlet_float(x->x_outlet2, x->x_ele); 
-//			outlet_float(x->x_outlet3, x->x_spread); 
 		}
 	}
 	
@@ -629,40 +628,13 @@ void VBAP_Ctor(VBAP* unit)
 //		for(i=0; i < numOutputs; i++){
 //			printf("chan %i: %f\n", i, final_gs[i] );
 //		}
-		//			for(i=0;i<unit->x_ls_amount;i++) {
-		//				SETFLOAT(&at[0], (t_float)i);	
-		//				SETFLOAT(&at[1], (t_float)final_gs[i]);
-		//				outlet_list(x->x_outlet0, gensym("list") /* was: 0L */, 2, at);
-		//			}
-		//			outlet_float(x->x_outlet1, x->x_azi); 
-		//			outlet_float(x->x_outlet2, x->x_ele); 
-		//			outlet_float(x->x_outlet3, x->x_spread); 
+
 	} else {
 		// if the ls data was bad, just set every gain to 0 and bail
 		for(i=0;i<unit->x_ls_amount;i++)
 			final_gs[i]=0.f; 
 	}
 }
-	
-
-//struct VBAP : Unit
-//{			
-//	float x_azi; 				/* panning direction azimuth */
-//	float x_ele;				/* panning direction elevation */
-//	//	void *x_outlet0;			// list to go to matrix
-//	//	void *x_outlet1;			// actual panning direction	azi
-//	//	void *x_outlet2;			// actual panning direction ele	
-//	//	void *x_outlet3;			// actual spread	
-//	float x_set_inv_matx[MAX_LS_SETS][9];  /* inverse matrice for each loudspeaker set */
-//	float x_set_matx[MAX_LS_SETS][9];      /* matrice for each loudspeaker set */
-//	int x_lsset[MAX_LS_SETS][3];          /* channel numbers of loudspeakers in each LS set */
-//	int x_lsset_available;			/* have loudspeaker sets been defined with define_loudspeakers */
-//	int x_lsset_amount;			/* amount of loudspeaker sets */
-//	int x_ls_amount;                      /* amount of loudspeakers */
-//	int x_dimension;                      /* 2 or 3 */
-//	float x_spread;                         /* speading amount of virtual source (0-100) */
-//	float x_spread_base[3];                /* used to create uniform spreading */
-//};
 
 
 void VBAP_Dtor(VBAP* unit)
@@ -672,12 +644,97 @@ void VBAP_Dtor(VBAP* unit)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
+// for circular smoothing of input signals
+void CircleRamp_next(CircleRamp *unit, int inNumSamples)
+{
+	float *out = ZOUT(0);
+	float *in = IN(0);
+	float period = ZIN0(1);
+	double circmin = (double)ZIN0(2);
+	double circmax = (double)ZIN0(3);
+	
+	double circrange = circmax - circmin;
+	double slope = unit->m_slope;
+	double level = unit->m_level;
+	int counter = unit->m_counter;
+	int remain = inNumSamples;
+	while (remain) {
+		int nsmps = sc_min(remain, counter);
+		LOOP(nsmps, 
+			 ZXP(out) = level;
+			 level = sc_wrap(level + slope, circmin, circmax);
+			 );
+		in += nsmps;
+		counter -= nsmps;
+		remain -= nsmps;
+		if (counter <= 0) {
+			counter = (int)(period * SAMPLERATE);
+			counter = sc_max(1, counter);
+			double diff = sc_wrap((double)(*in), circmin, circmax) - level;
+			// go the shortest way around...
+			if(fabs(diff) > (circrange * 0.5)){
+				int diffsign = diff < 0.0 ? -1 : 1;
+				diff = (circrange - fabs(diff)) * diffsign;
+			}
+			slope = diff / counter;
+		}
+	}
+	unit->m_level = level;
+	unit->m_slope = slope;
+	unit->m_counter = counter;
+	
+}
+
+void CircleRamp_next_1(CircleRamp *unit, int inNumSamples)
+{
+	float *out = OUT(0);
+	
+	double circmin = (double)ZIN0(2);
+	double circmax = (double)ZIN0(3);
+	double circrange = circmax - circmin;
+	
+	*out = unit->m_level;
+	unit->m_level = sc_wrap(unit->m_level + unit->m_slope, circmin, circmax);
+	if (--unit->m_counter <= 0) {
+		float in = ZIN0(0);
+		float period = ZIN0(1);
+		int counter = (int)(period * SAMPLERATE);
+		unit->m_counter = counter = sc_max(1, counter);
+		
+		double diff = sc_wrap((double)in, circmin, circmax) - unit->m_level;
+		// go the shortest way around...
+		if(fabs(diff) > (circrange * 0.5)){
+			int diffsign = diff < 0.0 ? -1 : 1;
+			diff = (circrange - fabs(diff)) * diffsign;
+		}
+		unit->m_slope = diff / counter;
+	}
+	
+}
+
+void CircleRamp_Ctor(CircleRamp* unit)
+{
+	if (BUFLENGTH == 1) {
+		SETCALC(CircleRamp_next_1);
+	} else {
+		SETCALC(CircleRamp_next);
+	}
+	
+	unit->m_counter = 1;
+	unit->m_level = sc_wrap(ZIN0(0), ZIN0(2), ZIN0(3));
+	unit->m_slope = 0.f;
+	ZOUT0(0) = unit->m_level;
+	
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
 void load(InterfaceTable *inTable)
 {
 	ft = inTable;
 	DefineDtorCantAliasUnit(VBAP);
-	//DefineSimpleUnit(VBAP);
-	//DefineSimpleCantAliasUnit
+	DefineSimpleUnit(CircleRamp);
 }
 
 
