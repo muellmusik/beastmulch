@@ -673,8 +673,8 @@ void CircleRamp_next(CircleRamp *unit, int inNumSamples)
 			double diff = sc_wrap((double)(*in), circmin, circmax) - level;
 			// go the shortest way around...
 			if(fabs(diff) > (circrange * 0.5)){
-				int diffsign = diff < 0.0 ? -1 : 1;
-				diff = (circrange - fabs(diff)) * diffsign;
+				int invsign = diff < 0.0 ? 1 : -1;
+				diff = (circrange - fabs(diff)) * invsign;
 			}
 			slope = diff / counter;
 		}
@@ -704,8 +704,8 @@ void CircleRamp_next_1(CircleRamp *unit, int inNumSamples)
 		double diff = sc_wrap((double)in, circmin, circmax) - unit->m_level;
 		// go the shortest way around...
 		if(fabs(diff) > (circrange * 0.5)){
-			int diffsign = diff < 0.0 ? -1 : 1;
-			diff = (circrange - fabs(diff)) * diffsign;
+			int invsign = diff < 0.0 ? 1 : -1;
+			diff = (circrange - fabs(diff)) * invsign;
 		}
 		unit->m_slope = diff / counter;
 	}
@@ -716,8 +716,10 @@ void CircleRamp_Ctor(CircleRamp* unit)
 {
 	if (BUFLENGTH == 1) {
 		SETCALC(CircleRamp_next_1);
+		printf("next1\n");
 	} else {
 		SETCALC(CircleRamp_next);
+		printf("next\n");
 	}
 	
 	unit->m_counter = 1;
