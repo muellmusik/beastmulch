@@ -86,7 +86,7 @@ NewPresetGUI {
 		var presetName, copyDict;
 		
 		copyDict 	= IdentityDictionary[];
-		window 	= SCWindow("New Preset", Rect(origin.x, origin.y, 340, 200), false).userCanClose_(false);
+		window 	= SCWindow("New Preset", Rect(origin.x, origin.y, 340, 230), false).userCanClose_(false);
 		window.view.decorator = FlowLayout(window.view.bounds, Point(10, 10), Point(10, 10));
 		
 		SCStaticText(window, 130 @ 20).string = "Preset Name?";
@@ -94,7 +94,7 @@ NewPresetGUI {
 						   		    .string_(defaultName)
 						   		    .action_({| field | presetName = field.value });
 
-		[ 'Copy audio routing?' -> true, 'Copy control routing?' -> true, 'Copy initial fader state?' -> false ]
+		[ 'Copy audio routing?' -> true, 'Copy control routing?' -> true, 'Copy fader labels?' -> true, 'Copy initial fader state?' -> false ]
 		 .do{| assoc |
 			 
 			 copyDict.add(assoc);
@@ -135,7 +135,7 @@ NewPresetGUI {
 	makeErrorWindow {| origin, window, presetNameField |
 		var errorWindow;
 		
-		errorWindow = SCWindow("", Rect(420, 360, 340, 200+25), false, false)
+		errorWindow = SCWindow("", Rect(420, 360, 340, 230 + 25), false, false)
 					 .alwaysOnTop_(true)
 					 .onClose = { errorWindow = nil };
 		errorWindow.view.background	= Color.red(0.9);
