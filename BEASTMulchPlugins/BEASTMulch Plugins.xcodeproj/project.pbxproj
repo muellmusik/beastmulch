@@ -22,6 +22,22 @@
 /* Begin PBXBuildFile section */
 		FE2BB3F30BB5975C009F34F8 /* BEASTMulchVBAP.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB3F20BB5975C009F34F8 /* BEASTMulchVBAP.h */; };
 		FE5386600C1EDD8B00E7E247 /* SC_InlineBinaryOp.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB3D90BB59628009F34F8 /* SC_InlineBinaryOp.h */; };
+		FEC02E0B0C4D1E72009EC06B /* SC_Lock.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB40F0BB5995A009F34F8 /* SC_Lock.h */; };
+		FEC02E1B0C4D1F5F009EC06B /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92CCC51F045B4BDE00CA2167 /* Carbon.framework */; };
+		FEC02EB10C4D1FA5009EC06B /* SC_Altivec.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB3F70BB597D5009F34F8 /* SC_Altivec.h */; };
+		FEC02EB20C4D1FE4009EC06B /* SC_Endian.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB3F90BB597D5009F34F8 /* SC_Endian.h */; };
+		FEC02ECF0C4D22F8009EC06B /* MsgFifo.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC02ECE0C4D22F8009EC06B /* MsgFifo.h */; };
+		FEC02ED00C4D2324009EC06B /* SC_DemandUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB3D50BB59628009F34F8 /* SC_DemandUnit.h */; };
+		FEC02ED80C4D234B009EC06B /* SC_SyncCondition.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC02ED70C4D234B009EC06B /* SC_SyncCondition.h */; };
+		FEC02EDA0C4D235A009EC06B /* SC_UnitDef.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC02ED90C4D235A009EC06B /* SC_UnitDef.h */; };
+		FEC02EDB0C4D2371009EC06B /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
+		FEC02EEF0C4D239F009EC06B /* SC_SyncCondition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE2BB40A0BB598CF009F34F8 /* SC_SyncCondition.cpp */; };
+		FEC02F3F0C4D29CB009EC06B /* HashTable.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC02F3E0C4D29CB009EC06B /* HashTable.h */; };
+		FEC02F420C4D2A6E009EC06B /* SC_Str4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEC02F410C4D2A6E009EC06B /* SC_Str4.cpp */; };
+		FEC02F440C4D2A79009EC06B /* SC_Str4.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC02F430C4D2A79009EC06B /* SC_Str4.h */; };
+		FEC02F4D0C4D2EAF009EC06B /* BEASTMulchSendIndex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEC02F4C0C4D2EAF009EC06B /* BEASTMulchSendIndex.cpp */; };
+		FEC02FEC0C4D5CC9009EC06B /* libsndfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FEC02FE90C4D5CC9009EC06B /* libsndfile.a */; };
+		FEC02FED0C4D5CC9009EC06B /* sndfile.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC02FEA0C4D5CC9009EC06B /* sndfile.h */; };
 		FEC9FE4D0BFCD6C500237BCA /* SCComplex.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB3F50BB59792009F34F8 /* SCComplex.h */; };
 		FEC9FE4E0BFCD6C500237BCA /* SC_Lock.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB40F0BB5995A009F34F8 /* SC_Lock.h */; };
 		FEC9FE500BFCD6C500237BCA /* BEASTMulchPV.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE2BB4080BB598CF009F34F8 /* BEASTMulchPV.cpp */; };
@@ -33,7 +49,6 @@
 /* Begin PBXFileReference section */
 		92CCC51F045B4BDE00CA2167 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		F5499A1103A3023A01BA7E76 /* vecLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = vecLib.framework; path = /System/Library/Frameworks/vecLib.framework; sourceTree = "<absolute>"; };
-		F5D127DE03383D340164B34C /* libsndfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsndfile.a; path = /usr/local/lib/libsndfile.a; sourceTree = "<absolute>"; };
 		FE2BB3780BB59278009F34F8 /* BEASTMulchVBAP.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = BEASTMulchVBAP.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE2BB3D00BB59628009F34F8 /* clz.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = clz.h; sourceTree = "<group>"; };
 		FE2BB3D10BB59628009F34F8 /* Hash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Hash.h; sourceTree = "<group>"; };
@@ -67,9 +82,20 @@
 		FE2BB4080BB598CF009F34F8 /* BEASTMulchPV.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BEASTMulchPV.cpp; sourceTree = "<group>"; };
 		FE2BB40A0BB598CF009F34F8 /* SC_SyncCondition.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SC_SyncCondition.cpp; sourceTree = "<group>"; };
 		FE2BB40F0BB5995A009F34F8 /* SC_Lock.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SC_Lock.h; sourceTree = "<group>"; };
+		FEC02E180C4D1E72009EC06B /* BEASTMulchSendIndex.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = BEASTMulchSendIndex.scx; sourceTree = BUILT_PRODUCTS_DIR; };
+		FEC02ECE0C4D22F8009EC06B /* MsgFifo.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MsgFifo.h; sourceTree = "<group>"; };
+		FEC02ED70C4D234B009EC06B /* SC_SyncCondition.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SC_SyncCondition.h; sourceTree = "<group>"; };
+		FEC02ED90C4D235A009EC06B /* SC_UnitDef.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SC_UnitDef.h; sourceTree = "<group>"; };
+		FEC02F3E0C4D29CB009EC06B /* HashTable.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HashTable.h; sourceTree = "<group>"; };
+		FEC02F410C4D2A6E009EC06B /* SC_Str4.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SC_Str4.cpp; sourceTree = "<group>"; };
+		FEC02F430C4D2A79009EC06B /* SC_Str4.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SC_Str4.h; sourceTree = "<group>"; };
+		FEC02F4C0C4D2EAF009EC06B /* BEASTMulchSendIndex.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BEASTMulchSendIndex.cpp; sourceTree = "<group>"; };
+		FEC02FE90C4D5CC9009EC06B /* libsndfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libsndfile.a; sourceTree = "<group>"; };
+		FEC02FEA0C4D5CC9009EC06B /* sndfile.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = sndfile.h; sourceTree = "<group>"; };
+		FEC02FEB0C4D5CC9009EC06B /* VERSION */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = VERSION; sourceTree = "<group>"; };
 		FEC9FE5A0BFCD6C500237BCA /* BEASTMulchPV.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = BEASTMulchPV.scx; sourceTree = BUILT_PRODUCTS_DIR; };
-		FEC9FE6C0BFCD7D800237BCA /* BEASTMulchPV.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = BEASTMulchPV.h; path = "headers/plugin headers/BEASTMulchPV.h"; sourceTree = "<group>"; };
-		FEC9FE710BFCD85700237BCA /* BEASTMulchVBAP.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = BEASTMulchVBAP.cpp; path = "source/plugin source/BEASTMulchVBAP.cpp"; sourceTree = "<group>"; };
+		FEC9FE6C0BFCD7D800237BCA /* BEASTMulchPV.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BEASTMulchPV.h; sourceTree = "<group>"; };
+		FEC9FE710BFCD85700237BCA /* BEASTMulchVBAP.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BEASTMulchVBAP.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +103,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FEC02E100C4D1E72009EC06B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FEC02EDB0C4D2371009EC06B /* vecLib.framework in Frameworks */,
+				FEC02E1B0C4D1F5F009EC06B /* Carbon.framework in Frameworks */,
+				FEC02FEC0C4D5CC9009EC06B /* libsndfile.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,8 +129,6 @@
 		F50D04F802E68E8201CA2799 = {
 			isa = PBXGroup;
 			children = (
-				FEC9FE710BFCD85700237BCA /* BEASTMulchVBAP.cpp */,
-				FEC9FE6C0BFCD7D800237BCA /* BEASTMulchPV.h */,
 				FE2BB3B40BB595ED009F34F8 /* headers */,
 				FE2BB4040BB598CF009F34F8 /* source */,
 				F50D060302E69C2101CA2799 /* Products */,
@@ -108,6 +142,7 @@
 			children = (
 				FE2BB3780BB59278009F34F8 /* BEASTMulchVBAP.scx */,
 				FEC9FE5A0BFCD6C500237BCA /* BEASTMulchPV.scx */,
+				FEC02E180C4D1E72009EC06B /* BEASTMulchSendIndex.scx */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -115,7 +150,7 @@
 		F50D069402E6A1C601CA2799 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				F5D127DE03383D340164B34C /* libsndfile.a */,
+				FEC02FE60C4D5CB4009EC06B /* libsndfile */,
 				F5499A1103A3023A01BA7E76 /* vecLib.framework */,
 				92CCC51F045B4BDE00CA2167 /* Carbon.framework */,
 			);
@@ -132,6 +167,7 @@
 		FE2BB3B40BB595ED009F34F8 /* headers */ = {
 			isa = PBXGroup;
 			children = (
+				FEC02ECA0C4D22E0009EC06B /* server */,
 				FE2BB3F40BB5976E009F34F8 /* common */,
 				FE2BB3F10BB5975C009F34F8 /* plugin headers */,
 				FE2BB3CF0BB59628009F34F8 /* plugin_interface */,
@@ -174,6 +210,7 @@
 		FE2BB3F10BB5975C009F34F8 /* plugin headers */ = {
 			isa = PBXGroup;
 			children = (
+				FEC9FE6C0BFCD7D800237BCA /* BEASTMulchPV.h */,
 				FE2BB3F20BB5975C009F34F8 /* BEASTMulchVBAP.h */,
 			);
 			path = "plugin headers";
@@ -210,6 +247,8 @@
 		FE2BB4070BB598CF009F34F8 /* plugin source */ = {
 			isa = PBXGroup;
 			children = (
+				FEC02F4C0C4D2EAF009EC06B /* BEASTMulchSendIndex.cpp */,
+				FEC9FE710BFCD85700237BCA /* BEASTMulchVBAP.cpp */,
 				FE2BB4080BB598CF009F34F8 /* BEASTMulchPV.cpp */,
 			);
 			path = "plugin source";
@@ -218,9 +257,32 @@
 		FE2BB4090BB598CF009F34F8 /* server */ = {
 			isa = PBXGroup;
 			children = (
+				FEC02F410C4D2A6E009EC06B /* SC_Str4.cpp */,
 				FE2BB40A0BB598CF009F34F8 /* SC_SyncCondition.cpp */,
 			);
 			path = server;
+			sourceTree = "<group>";
+		};
+		FEC02ECA0C4D22E0009EC06B /* server */ = {
+			isa = PBXGroup;
+			children = (
+				FEC02F430C4D2A79009EC06B /* SC_Str4.h */,
+				FEC02F3E0C4D29CB009EC06B /* HashTable.h */,
+				FEC02ED70C4D234B009EC06B /* SC_SyncCondition.h */,
+				FEC02ECE0C4D22F8009EC06B /* MsgFifo.h */,
+				FEC02ED90C4D235A009EC06B /* SC_UnitDef.h */,
+			);
+			name = server;
+			sourceTree = "<group>";
+		};
+		FEC02FE60C4D5CB4009EC06B /* libsndfile */ = {
+			isa = PBXGroup;
+			children = (
+				FEC02FE90C4D5CC9009EC06B /* libsndfile.a */,
+				FEC02FEA0C4D5CC9009EC06B /* sndfile.h */,
+				FEC02FEB0C4D5CC9009EC06B /* VERSION */,
+			);
+			name = libsndfile;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -232,6 +294,23 @@
 			files = (
 				FE5386600C1EDD8B00E7E247 /* SC_InlineBinaryOp.h in Headers */,
 				FE2BB3F30BB5975C009F34F8 /* BEASTMulchVBAP.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FEC02E090C4D1E72009EC06B /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FEC02EB10C4D1FA5009EC06B /* SC_Altivec.h in Headers */,
+				FEC02EB20C4D1FE4009EC06B /* SC_Endian.h in Headers */,
+				FEC02E0B0C4D1E72009EC06B /* SC_Lock.h in Headers */,
+				FEC02ED00C4D2324009EC06B /* SC_DemandUnit.h in Headers */,
+				FEC02ECF0C4D22F8009EC06B /* MsgFifo.h in Headers */,
+				FEC02ED80C4D234B009EC06B /* SC_SyncCondition.h in Headers */,
+				FEC02EDA0C4D235A009EC06B /* SC_UnitDef.h in Headers */,
+				FEC02F3F0C4D29CB009EC06B /* HashTable.h in Headers */,
+				FEC02F440C4D2A79009EC06B /* SC_Str4.h in Headers */,
+				FEC02FED0C4D5CC9009EC06B /* sndfile.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,6 +348,27 @@
 			productReference = FE2BB3780BB59278009F34F8 /* BEASTMulchVBAP.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		FEC02E080C4D1E72009EC06B /* BEASTMulchPlaySendIndex */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FEC02E140C4D1E72009EC06B /* Build configuration list for PBXNativeTarget "BEASTMulchPlaySendIndex" */;
+			buildPhases = (
+				FEC02E090C4D1E72009EC06B /* Headers */,
+				FEC02E0D0C4D1E72009EC06B /* Sources */,
+				FEC02E100C4D1E72009EC06B /* Frameworks */,
+				FEC02E110C4D1E72009EC06B /* Rez */,
+				FEC02E120C4D1E72009EC06B /* ShellScript */,
+				FEC02E130C4D1E72009EC06B /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BEASTMulchPlaySendIndex;
+			productInstallPath = /usr/local/lib;
+			productName = BinaryOpUGens;
+			productReference = FEC02E180C4D1E72009EC06B /* BEASTMulchSendIndex.scx */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		FEC9FE4A0BFCD6C500237BCA /* BEASTMulchPV */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = FEC9FE560BFCD6C500237BCA /* Build configuration list for PBXNativeTarget "BEASTMulchPV" */;
@@ -304,12 +404,20 @@
 				631417A30A203392007B9355 /* All */,
 				FE2BB36C0BB59278009F34F8 /* BEASTMulchVBAP */,
 				FEC9FE4A0BFCD6C500237BCA /* BEASTMulchPV */,
+				FEC02E080C4D1E72009EC06B /* BEASTMulchPlaySendIndex */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXRezBuildPhase section */
 		FE2BB3720BB59278009F34F8 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FEC02E110C4D1E72009EC06B /* Rez */ = {
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -348,6 +456,28 @@
 			shellPath = /bin/sh;
 			shellScript = "mkdir -p /Library/Application\\ Support/SuperCollider/Extensions/BEASTMulch/VBAP/\ncp build/VBAP/* /Library/Application\\ Support/SuperCollider/Extensions/BEASTMulch/VBAP/";
 		};
+		FEC02E120C4D1E72009EC06B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
+		};
+		FEC02E130C4D1E72009EC06B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p /Library/Application\\ Support/SuperCollider/Extensions/BEASTMulch/PlaySendIndex/\ncp build/BEASTMulchPlaySendIndex/* /Library/Application\\ Support/SuperCollider/Extensions/BEASTMulch/PlaySendIndex/";
+		};
 		FEC9FE540BFCD6C500237BCA /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -378,6 +508,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				FEC9FE720BFCD85700237BCA /* BEASTMulchVBAP.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FEC02E0D0C4D1E72009EC06B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FEC02EEF0C4D239F009EC06B /* SC_SyncCondition.cpp in Sources */,
+				FEC02F420C4D2A6E009EC06B /* SC_Str4.cpp in Sources */,
+				FEC02F4D0C4D2EAF009EC06B /* BEASTMulchSendIndex.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -588,6 +728,121 @@
 			};
 			name = Default;
 		};
+		FEC02E150C4D1E72009EC06B /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OBJROOT = "$(SYMROOT)/..";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = BEASTMulchSendIndex;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "$(PROJECT_DIR)/build/BEASTMulchPlaySendIndex/";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Development;
+		};
+		FEC02E160C4D1E72009EC06B /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OBJROOT = "$(SYMROOT)/..";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = BEASTMulchSendIndex;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "$(PROJECT_DIR)/build/BEASTMulchPlaySendIndex/";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		FEC02E170C4D1E72009EC06B /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OBJROOT = "$(SYMROOT)/..";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = BEASTMulchSendIndex;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "$(PROJECT_DIR)/build/BEASTMulchPlaySendIndex/";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Default;
+		};
 		FEC9FE570BFCD6C500237BCA /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -720,6 +975,16 @@
 				FE2BB3750BB59278009F34F8 /* Development */,
 				FE2BB3760BB59278009F34F8 /* Deployment */,
 				FE2BB3770BB59278009F34F8 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		FEC02E140C4D1E72009EC06B /* Build configuration list for PBXNativeTarget "BEASTMulchPlaySendIndex" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FEC02E150C4D1E72009EC06B /* Development */,
+				FEC02E160C4D1E72009EC06B /* Deployment */,
+				FEC02E170C4D1E72009EC06B /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
