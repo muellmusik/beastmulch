@@ -1,27 +1,39 @@
 
 PresetManager {
 	
-	classvar <presetsDir;
+	classvar <presetsDirs;
 	
-	var <presetName, <pieceDir, <zeroPad = 4;
+	var <presetType, <presetName, <pieceDir, <zeroPad = 4;
+
 	 
 	*initClass {
 		
-		presetsDir	= "~/Library/Application Support/BEASTMulch/Presets/".standardizePath;
-		if (presetsDir.pathMatch.isEmpty) { systemCmd("mkdir -p" + presetsDir.escapeChar($ )); ("creating directory: " + presetsDir).inform }
-		 
-	 }
+		presetsDirs	= 
+				(
+				   piece: 	"~/Library/Application Support/BEASTMulch/Presets/Piece Presets/".standardizePath,
+				   concert:	"~/Library/Application Support/BEASTMulch/Presets/Concert Configuration/".standardizePath,
+				   system:	"~/Library/Application Support/BEASTMulch/Presets/System Setup/".standardizePath
+				);
+		
+		presetsDirs.values
+				 .collect{| dir | 
+						 if (dir.pathMatch.isEmpty) 
+						    { systemCmd("mkdir -p" + dir.escapeChar($ )); ("creating directory: " + dir).inform }
+						}		 
 	 
-	*new { | presetName | 
+	}
+	 
+	 
+	*new { | presetType, presetName | 
 
-	 	^super.newCopyArgs(presetName).init
+	 	^super.newCopyArgs(presetType, presetName).init
 	 
-	 }
-	
+	}
+	 
 	
 	init {
 	
-		pieceDir	= presetsDir ++ presetName ++ "/"
+		pieceDir		= presetsDirs[presetType] ++ presetName ++ "/"
 	
 	}
 	
@@ -29,14 +41,23 @@ PresetManager {
 	presetName_ {| x |
 		
 		presetName 	= x;
-		pieceDir 		= presetsDir ++ presetName ++ "/";
+		pieceDir 		= presetsDirs[presetType]  ++ presetName ++ "/";
 		
 	}
 	
-	
+	presetType_ {| x |
+		
+		presetType 	= x;
+		pieceDir 		= presetsDirs[presetType]  ++ presetName ++ "/";
+		
+	}
 	checkDirForPiece {
  		
- 		if (pieceDir.pathMatch.isEmpty) { systemCmd("mkdir" + pieceDir.escapeChar($ )); ("creating directory: " + pieceDir).inform };
+ 		if (pieceDir.pathMatch.isEmpty) 
+ 		   { systemCmd("mkdir" + pieceDir.escapeChar($ )); 
+ 		     ("creating directory: " + pieceDir).inform; 
+ 		     this.changed 
+ 		   }
 
 	}
 	 
@@ -63,6 +84,15 @@ PresetManager {
 	 }
 	
 	
+//	import {| preset |
+//		
+//		this.add(preset);
+//		this.changed(\imported, presetName);
+//	 	^this
+//	 
+//	 }
+	
+	 	
 	get {| id |
 		
 		id 	= (id ?? { this.lastID }).asStringToBase(width: zeroPad);
@@ -70,15 +100,50 @@ PresetManager {
 	 	
 	 } 
 	 
+	
 }
 
+
+PresetList  {
+	var <>presetManager, <>list;
+	 
+	*new {| presetManager | 
+		
+	
+		^super.newCopyArgs(presetManager).init
+	 
+	 }
+	 
+	 init {
+	 
+		presetManager.addDependant(this);
+	 	this.getList;
+	 	
+	 
+	 }
+	 
+	 
+	 getList {
+	 
+	 	list	= (presetManager.class.presetsDirs[presetManager.presetType]++"*").standardizePath.pathMatch.collect(_.basename)
+	 		  .sort
+	 		  .collect(_.asSymbol);
+	 	^list
+	 
+	 }
+	 
+	 update{ this.getList; this.changed }
+
+}
+
+	
 NewPresetGUI {
 	var defaultName, presetNames, origin, window, presetNameField;
 	var >onClose;
 
 	
 	*new {| defaultName, presetNames, origin |
-		^super.newCopyArgs(defaultName, presetNames, origin).makeWindow(origin ? (420 @ 360));
+		^super.newCopyArgs(defaultName, presetNames, origin).makeWindow(origin ? (490 @ 360));
 	}
 	
 		
@@ -86,10 +151,10 @@ NewPresetGUI {
 		var presetName, copyDict;
 		
 		copyDict 	= IdentityDictionary[];
-		window 	= SCWindow("New Preset", Rect(origin.x, origin.y, 340, 230), false).userCanClose_(false);
+		window 	= SCWindow("New Preset", Rect(origin.x, origin.y, 340-140+60, 230), false).userCanClose_(false);
 		window.view.decorator = FlowLayout(window.view.bounds, Point(10, 10), Point(10, 10));
 		
-		SCStaticText(window, 130 @ 20).string = "Preset Name?";
+		SCStaticText(window, 50 @ 20).string = "Name:";
 		presetNameField 	= SCTextField(window, 180 @ 20)
 						   		    .string_(defaultName)
 						   		    .action_({| field | presetName = field.value });
@@ -99,25 +164,31 @@ NewPresetGUI {
 			 
 			 copyDict.add(assoc);
 			 window.view.decorator.nextLine;
-			 SCStaticText(window, 130 @ 20).string_(assoc.key.asString);
-			 SCButton(window, 180 @ 20)
-			 	    .states_([ "Yes", "No" ].collect( [ _, Color.black, Color.clear ]))
-				    .action_({| button | copyDict[assoc.key] = if (button.value == 0) { true } { false } })
-				    .value_(if (assoc.value) { 0 } { 1 })
+			 
+			 ToggleView(window, 240 @ 20)
+			 		.caption_(assoc.key.asString)
+			 		.hitColor_(Color.red(alpha: 0.2))
+			 		.action_({| button | copyDict[assoc.key] = button.value.postln })
+			 		.value_(assoc.value)
+			 
+//			 SCButton(window, 180 @ 20)
+//			 	    .states_([ "Yes", "No" ].collect( [ _, Color.black, Color.clear ]))
+//				    .action_({| button | copyDict[assoc.key] = if (button.value == 0) { true } { false } })
+//				    .value_(if (assoc.value) { 0 } { 1 })
 			 
 			 };
 		    
 		window.view.decorator.shift(0, 30);
 		
-		SCButton(window, 155 @ 20)
+		SCButton(window, 115 @ 20)
 			   .states_([[ "Cancel", Color.black, Color.clear ]])
 			   .action_({	window.close; 
 			   		    	this.changed(\cancel); 
 			   		    	NotificationCenter.notify(this, \didClose) 
 			   		   });
 			   
-		SCButton(window, 155 @ 20)
-			   .states_([[ "Create New Preset", Color.white, Color.red ]])
+		SCButton(window, 115 @ 20)
+			   .states_([[ "OK", Color.white, Color.red ]])
 			   .action_({	if (presetNames.indexOfEqual(presetName ? defaultName).isNil)
 			   			   { window.close;
 			   			     this.changed(\OK, presetName ? defaultName, copyDict); 
@@ -134,18 +205,19 @@ NewPresetGUI {
 	
 	makeErrorWindow {| origin, window, presetNameField |
 		var errorWindow;
-		
-		errorWindow = SCWindow("", Rect(420, 360, 340, 230 + 25), false, false)
+		//Rect(origin.x, origin.y, 340-140+60, 230),
+		//Rect(420, 360, 340, 230 + 25)
+		errorWindow = SCWindow("", Rect(490, 360, 260, 230 + 25), false, false)
 					 .alwaysOnTop_(true)
 					 .onClose = { errorWindow = nil };
 		errorWindow.view.background	= Color.red(0.9);
 		
-		SCStaticText(errorWindow, Rect(20, 0, 320, 90))
+		SCStaticText(errorWindow, Rect(20, 0, 240, 130))
 		 .string_("Preset name already in use. Please enter a different name.")
 		 .stringColor_(Color.white)
 		 .font_(Font("Helvetica", 22));
 		
-		SCButton(errorWindow, Rect(92, 150, 155, 20))
+		SCButton(errorWindow, Rect(70, 180, 118, 20))
 		  .states_([[ "OK", Color.white, Color.red(0.9) ]])
 		  .action_({	errorWindow.close; window.front; presetNameField.focus })
 		  .focus;
