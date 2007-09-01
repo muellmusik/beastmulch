@@ -3,7 +3,7 @@ PresetManager {
 	
 	classvar <presetsDirs;
 	
-	var <presetType, <presetName, <pieceDir, <zeroPad = 4;
+	var <presetType, <presetName, <pieceDir, <zeroPad = 4,  <>list;
 
 	 
 	*initClass {
@@ -33,7 +33,8 @@ PresetManager {
 	
 	init {
 	
-		pieceDir		= presetsDirs[presetType] ++ presetName ++ "/"
+		pieceDir		= presetsDirs[presetType] ++ presetName ++ "/";
+		this.storedPresets
 	
 	}
 	
@@ -51,11 +52,14 @@ PresetManager {
 		pieceDir 		= presetsDirs[presetType]  ++ presetName ++ "/";
 		
 	}
+	
+	
 	checkDirForPiece {
  		
  		if (pieceDir.pathMatch.isEmpty) 
  		   { systemCmd("mkdir" + pieceDir.escapeChar($ )); 
  		     ("creating directory: " + pieceDir).inform; 
+ 		     this.storedPresets;
  		     this.changed 
  		   }
 
@@ -83,15 +87,6 @@ PresetManager {
 	 
 	 }
 	
-	
-//	import {| preset |
-//		
-//		this.add(preset);
-//		this.changed(\imported, presetName);
-//	 	^this
-//	 
-//	 }
-	
 	 	
 	get {| id |
 		
@@ -100,41 +95,19 @@ PresetManager {
 	 	
 	 } 
 	 
-	
-}
-
-
-PresetList  {
-	var <>presetManager, <>list;
 	 
-	*new {| presetManager | 
-		
-	
-		^super.newCopyArgs(presetManager).init
+	 storedPresets {
 	 
-	 }
-	 
-	 init {
-	 
-		presetManager.addDependant(this);
-	 	this.getList;
-	 	
-	 
-	 }
-	 
-	 
-	 getList {
-	 
-	 	list	= (presetManager.class.presetsDirs[presetManager.presetType]++"*").standardizePath.pathMatch.collect(_.basename)
+	 	list	= (presetsDirs[presetType]++"*").standardizePath.pathMatch.collect(_.basename)
 	 		  .sort
 	 		  .collect(_.asSymbol);
 	 	^list
 	 
 	 }
 	 
-	 update{ this.getList; this.changed }
-
+	
 }
+
 
 	
 NewPresetGUI {

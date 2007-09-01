@@ -57,23 +57,23 @@ ConcertConfig {
 
 ConcertConfigGUI {
 
-	var concertConfig, storedPresets, systemSetup, presetManager, name, window;
+	var concertConfig, presetManager, systemSetup, name, window;
 	var presetsSection, concertSection, presetView, concertView, listSection;
 	var addButton, deleteButton, buttonSection, upButton, downButton, importSection, exportButton, importButton;
 	var loadButton, configButton;
 	var >onClose;
 	
 	
-	*new {| concertConfig, storedPresets, systemSetup, presetManager, name, origin |
+	*new {| concertConfig, presetManager, systemSetup, name, origin |
 	
-		  ^super.newCopyArgs(concertConfig, storedPresets, systemSetup, presetManager, name).init.makeWindow(origin ? (40@200));
+		  ^super.newCopyArgs(concertConfig, presetManager, systemSetup, name).init.makeWindow(origin ? (40@200));
 	
 	}
 	
 	init {
 	
 		concertConfig.addDependant(this);
-		storedPresets.addDependant(this)
+		presetManager.addDependant(this)
 		
 	}
 	
@@ -126,8 +126,6 @@ ConcertConfigGUI {
 								  };
 
 
-
-		
 		buttonSection 			= SCVLayoutView(window,Rect(0,0,200,360)).visible = false;
 		SCStaticText.new(buttonSection, Rect(0,0,80,20)).string_(" ");// placeholder
 		
@@ -179,15 +177,9 @@ ConcertConfigGUI {
 								  };
 			
 		SCStaticText.new(buttonSection, Rect(0,0,80,10)).string_(" ");// placeholder
-		
-		
-		
 		SCStaticText.new(buttonSection, Rect(0,0,180,20)).string = "Import / Export";
-		
 		SCStaticText.new(buttonSection, Rect(0,0,80,0)).string_(" ");// placeholder
 		
-	
-
 		exportButton 			= SCButton.new(buttonSection, Rect(0,0,110,20));
 		exportButton.states 	= [[ "Export Concert Configuration", Color.black, Color.new255(72, 61, 139).alpha_(0.6) ]];
 		exportButton.background	= Color.clear;
@@ -195,7 +187,7 @@ ConcertConfigGUI {
 									
 									var presetNames, presetDict, concertPresetM;
 									
-									presetNames	= concertConfig.list.collect(_.asString).postln;
+									presetNames	= concertConfig.list.collect(_.asString);
 									
 									presetDict	= IdentityDictionary[];
 									presetNames.do{| presetN | 
@@ -238,52 +230,35 @@ ConcertConfigGUI {
 								 	 };
 								 
 								 concertConfig.clear;
-								 presetNames.do{| name | concertConfig.add(name.asSymbol) };								 "hola pergio".postln; concertConfig.list.postln;
+								 presetNames.do{| name | concertConfig.add(name.asSymbol) };
 							    }, maxSize:1)
 							   };	
-							   
-
 
 		SCStaticText.new(buttonSection, Rect(0,0,80,0)).string_(" ");// placeholder
-		
 		SCStaticText.new(buttonSection, Rect(0,0,180,45)).string_("Cmd-drag or use button to add, select and press delete to remove.");
 		//.align_(\center);///.font_(Font("CoffeeCup", 14));
 		
-									   
-							   
-							   
-
 		
-
-
-	
-	
 		presetsSection			= SCVLayoutView(window, Rect(0,0,200,360)).visible = false;
 		SCStaticText(presetsSection, Rect(0,0,180,20)).string_("Stored Piece Presets");//.font_(Font("Crush49", 14))
 		
 		presetView 				= SCListView(presetsSection, Rect(0, 0, 200, 317)).canReceiveDragHandler = false;
 		presetView.beginDragAction 	= {|view| view.item };
-		presetView.items 			= storedPresets.getList;
-//		presetView.action 			= { this.update }; 
 		presetView.background 		= HiliteGradient(Color.blue.alpha_(0.3), Color.green.alpha_(0.3), steps: 317);
 		
-
-		
-		//importSection 			= SCVLayoutView(window, Rect(0,0,150,300)).visible = false;
 			
 
-		this.update; 
-		window.onClose 		= { concertConfig.removeDependant(this); 
-							    storedPresets.removeDependant(this); 
-							    onClose.value(this) 
-							   };
-		
+	    this.update; 
+		window.onClose 			= { concertConfig.removeDependant(this); 
+							   	    presetManager.removeDependant(this); 
+								    onClose.value(this) 
+								  };
 		window.front
 	}
 	
 			
 	update {
 		concertView.items 	= concertConfig.list.asArray;
-		presetView.items 	= storedPresets.getList.asArray.difference(concertView.items)
+		presetView.items 	= presetManager.storedPresets.difference(concertView.items)
 	}
 }
