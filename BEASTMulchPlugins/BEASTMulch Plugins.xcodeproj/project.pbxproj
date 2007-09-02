@@ -336,7 +336,6 @@
 				FE2BB3700BB59278009F34F8 /* Frameworks */,
 				FE2BB3720BB59278009F34F8 /* Rez */,
 				FE2BB3730BB59278009F34F8 /* ShellScript */,
-				FE2BB4120BB59989009F34F8 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -357,7 +356,6 @@
 				FEC02E100C4D1E72009EC06B /* Frameworks */,
 				FEC02E110C4D1E72009EC06B /* Rez */,
 				FEC02E120C4D1E72009EC06B /* ShellScript */,
-				FEC02E130C4D1E72009EC06B /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -378,7 +376,6 @@
 				FEC9FE520BFCD6C500237BCA /* Frameworks */,
 				FEC9FE530BFCD6C500237BCA /* Rez */,
 				FEC9FE540BFCD6C500237BCA /* ShellScript */,
-				FEC9FE550BFCD6C500237BCA /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -443,19 +440,6 @@
 			shellPath = /bin/sh;
 			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
 		};
-		FE2BB4120BB59989009F34F8 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "mkdir -p /Library/Application\\ Support/SuperCollider/Extensions/BEASTMulch/VBAP/\ncp build/VBAP/* /Library/Application\\ Support/SuperCollider/Extensions/BEASTMulch/VBAP/";
-		};
 		FEC02E120C4D1E72009EC06B /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -465,19 +449,6 @@
 			shellPath = /bin/sh;
 			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
 		};
-		FEC02E130C4D1E72009EC06B /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "mkdir -p /Library/Application\\ Support/SuperCollider/Extensions/BEASTMulch/PlaySendIndex/\ncp build/BEASTMulchPlaySendIndex/* /Library/Application\\ Support/SuperCollider/Extensions/BEASTMulch/PlaySendIndex/";
-		};
 		FEC9FE540BFCD6C500237BCA /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -486,19 +457,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
-		};
-		FEC9FE550BFCD6C500237BCA /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "mkdir -p /Library/Application\\ Support/SuperCollider/Extensions/BEASTMulch/PV/\ncp build/PV/* /Library/Application\\ Support/SuperCollider/Extensions/BEASTMulch/PV/";
 		};
 /* End PBXShellScriptBuildPhase section */
 
