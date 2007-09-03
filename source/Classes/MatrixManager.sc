@@ -4,7 +4,7 @@
 
 // Note that AbstractMatrix-cmdPeriod calls this.changed, so any dependencies will be updated before the bundle is sent. This may not be desirable, and possibly should be factored out
 
-MatrixManager {
+BMAudioChainManager {
 	var <matrices, <group;
 
 	*new {|matrices, group|
