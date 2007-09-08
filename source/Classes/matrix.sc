@@ -20,25 +20,30 @@
 
 // At the moment AudioMatrices default to the head of the default group, AmpControlMatrices to the tail, but a Matrix Manager can control the ordering of this.
 
+// Defines the minimum interface for a matrix AudioChainElement
+BMAbstractMatrix : BMAbstractAudioChainElement {
 
-AbstractMatrix {
-
-	var <ins, <outs, <group, <>server, <name, <crossfade = 0.1, <matrixArray, <mappings, defname;
-	var <inNames, <outNames, <callCmdPeriod = true;
+	var <crossfade = 0.1, <matrixArray, <mappings, defname; // defname is the def for a node
 	
 	*new { |ins, outs, group, server, name|
-		^super.newCopyArgs(ins, outs, group, server ? Server.default, name = \matrix).init;
+		^super.new.init(ins, outs, group, server ? Server.default, name ? this.name);
+		// default name is class
 	}
 	
-	init {
+	init {|argins, argouts, arggroup, argserver, argname|
+		ins = argins;
+		outs = argouts;
+		group = arggroup;
+		server = argserver;
+		name = argname;
 		// allow for arrays as well as Dictionaries
 		// if array, offset by input channels
 		if(ins.isInOutArray.not, 
 			{ins = ins.collectAs({|item, i| item -> (i + server.options.numInputBusChannels)}, 
-				InputArray);
+				InOutArray);
 		});
 		if(outs.isInOutArray.not, 
-			{outs = outs.collectAs({|item, i| item -> i}, OutputArray)});
+			{outs = outs.collectAs({|item, i| item -> i}, InOutArray)});
 		// used for indices for matrix lookup
 		inNames = ins.keys;
 		outNames = outs.keys;
@@ -132,17 +137,21 @@ AbstractMatrix {
 	
 	// subclass stuff
 	sendDef {
-		^this.subClassResponsibility(thisMethod);
+		^this.subclassResponsibility(thisMethod);
 	}
 	
-	makeGroup {
-		^this.subClassResponsibility(thisMethod);
+	gui {
+		^MatrixMenuGUI(this);
 	}
 
 }
 
 // maps ins to outs
-AudioMatrix : AbstractMatrix {
+AudioMatrix : BMAbstractMatrix {
+	
+	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
+		^this.new(inAudioArray, outAudioArray, group, server, name);
+	}
 	
 	sendDef {
 		SynthDef(defname, { arg in, out, gate = 1;
@@ -161,9 +170,13 @@ AudioMatrix : AbstractMatrix {
 // maps amp scales to control busses
 // roll your own curves etc. elsewhere
 // this should in fact only allow an output to be connected to a single input 
-AmpControlMatrix : AbstractMatrix {
+AmpControlMatrix : BMAbstractMatrix {
 	
 	var outmappings;
+	
+	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
+		^this.new(controllerArray, outAudioArray, group, server, name);
+	}
 	
 	newCollections {
 		matrixArray = Array.newClear(outNames.size) ! ins.size;
@@ -198,21 +211,21 @@ AmpControlMatrix : AbstractMatrix {
 	}
 }
 
-// Input and Output Arrays for easy auto offsetting
-// maybe should be from sequenceable Collection or override some List methods
-// Should ++ check for conflicting keys or values?
-
-// add methods to auto assign Symbols
+// An Ordered Dictionary of associations (\name->index);
 InOutArray : List {
 
-	var server, <keys;
+	var <keys;
 	
-	*new {|size, server|
-		^super.new(size).init(server);
+	*new {|size|
+		^super.new(size).init;
 	}
 	
-	init { |argServer|
-		server = argServer;
+	*hardwareInputArray {|server|
+		server = server.asTarget.server; // account for nil
+		^HardwareInputsProxy.fill(server.options.numInputBusChannels, {|i| ("in" ++ (i+1)).asSymbol -> 			(server.options.numOutputBusChannels + i)});
+	}
+	
+	init {
 		keys = Array.new;
 	}
 	
@@ -235,6 +248,16 @@ InOutArray : List {
 	++ {|aCollection| ^this.addAll(aCollection)}
 	
 	isInOutArray {^true}
+	
+	asInOutArray {^this}
+
+}
+
+HardwareInputsProxy : InOutArray {
+
+	name { ^"Hardware Inputs"; }
+	
+	gui { ^nil }
 }
 
 //temp
@@ -246,18 +269,19 @@ OutputArray : InOutArray {
 
 }
 
-MatrixMenuGUI {
+MatrixMenuGUI : BMAbstractGUI {
 
-	var matrix, name, window;
+	var matrix;
 	var inputSection, assignSection, outputSection, inputView, assignView, outputView;
 	var assignButton, labelPlusButton, matrixButton, clearButton, buttonSection;
-	var >onClose;
 	
 	*new {|matrix, name, origin|
-		^super.newCopyArgs(matrix, name ? matrix.name).init.makeWindow(origin ? (40@200));
+		^super.new.init(matrix, name ? matrix.name).makeWindow(origin ? (40@200));
 	}
 	
-	init {
+	init { |argmatrix, argname|
+		matrix = argmatrix;
+		name = argname;
 		matrix.addDependant(this);
 	}
 	
@@ -333,22 +357,24 @@ MatrixMenuGUI {
 	}
 }
 
-MatrixGUI {
+MatrixGUI : BMAbstractGUI {
 
-	var matrix, name, <window, h = 700, v = 700, numIns = 10, numOuts = 10, dotSize = 10;
+	var h = 700, v = 700, numIns = 10, numOuts = 10, dotSize = 10;
 	var hinterval, vinterval, tabletView;
 	var cellsize = 70, screenBounds; // maximum cellsize
 	var hoffset = 60, voffset = 20;
 	var color, ringColor;
 	var lastx, lasty, on = false;
 	var ins, outs;
-	var >onClose;
+	var matrix;
 	
 	*new {|matrix, name|
-		^super.newCopyArgs(matrix, name ? matrix.name).init.makeWindow;
+		^super.new.init(matrix, name ? matrix.name).makeWindow;
 	}
 	
-	init {
+	init {|argmatrix, argname|
+		matrix = argmatrix;
+		name = argname;
 		matrix.addDependant(this);
 	}
 	

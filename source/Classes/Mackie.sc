@@ -2,20 +2,15 @@
 // bend goes from 0 to 16384 and is mapped to values between 0 and 1 (assumes amplitude for the moment)
 // assumes MIDIClient is initialised
 
-AbstractMackie {
-	classvar <interfaces;
+BMAbstractMackie : BMAbstractController {
 	var <uid, <name, <server, <bus, <busIndex, numFaders, <outPort, <outUid, <midiout, spec;
 	var <>sysexHdr, valueArray, labelArray, faderRoutine;
 	
 	*new { |uid, name, server|
-		^super.newCopyArgs(uid, name, server ? Server.default).init;
+		^super.new.init(uid, name, server ? Server.default);
 	}
 	
-	*dumpAllValues {
-		^interfaces.collect({|elem, key| key->(elem.getAllFaders)});
-	}
-	
-	startListening {
+	startListening { 
 		faderRoutine = Routine({
 			var	event, port, channel, bend;
 			loop {
@@ -25,8 +20,12 @@ AbstractMackie {
 		}).play;
 	}
 	
-	init {
+	init { |arguid, argname, argserver|
 		var titleArray, nameString;
+		uid = arguid;
+		name = argname;
+		server = argserver;
+		
 		this.setNumFaders;
 		this.setSysexHdr;
 		valueArray = Array.fill(numFaders, {0});
@@ -45,22 +44,15 @@ AbstractMackie {
 		//spec = [1, 16385, -3].asSpec; // exp so must offset values by 1
 		spec = Env([0, 1], [16384], \sine);
 		this.updateAllFaders(valueArray);
-		this.addToClassDict;
+		allControllers[name] = this;
 	}
 	
 	setNumFaders {
-		^this.subClassResponsibility(thisMethod);
+		^this.subclassResponsibility(thisMethod);
 	}
 	
 	setSysexHdr {
-		^this.subClassResponsibility(thisMethod);
-	}
-	
-	addToClassDict {
-		if(interfaces.isNil, {
-			interfaces = IdentityDictionary[this.name -> this]; 
-			}, 
-			{interfaces = interfaces.add(this.name -> this)});
+		^this.subclassResponsibility(thisMethod);
 	}
 	
 	setOutUid {
@@ -125,7 +117,7 @@ AbstractMackie {
 
 }
 
-MackieCU : AbstractMackie {
+MackieCU : BMAbstractMackie {
 	var buttonRoutine, buttonOffRoutine, buttonFuncDict, masterFaderSynth;
 	
 	init {
@@ -216,7 +208,7 @@ MackieTimeDispatcher {
 	
 }
 
-MackieXT : AbstractMackie {
+MackieXT : BMAbstractMackie {
 
 	setNumFaders { numFaders = 8; }
 	
@@ -226,7 +218,7 @@ MackieXT : AbstractMackie {
 
 }
 
-MackieCUNoMaster : AbstractMackie {
+MackieCUNoMaster : BMAbstractMackie {
 
 	setNumFaders { numFaders = 9; }
 	

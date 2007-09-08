@@ -2,17 +2,24 @@
 // start time currently broken
 
 // currently will respond to any trigger message. Clean up later
-SoundFilePlayer {
-	var maxNumChannels, <latency, <server, <>bus;
+SoundFilePlayer : BMAbstractAudioSource {
+	var maxNumChannels, <latency, <>bus;
 	var <buffer, <synth, <>releaseTime = 0.1, watcher, <rate = 1;
 	var <sampleDur = 2.2675736961451e-05;
 	
-	*new {|maxNumChannels = 2, latency = 0.1, server|
-		^super.newCopyArgs(maxNumChannels, latency, server ? Server.default).init;
+	*new {|maxNumChannels = 2, latency = 0.1, server, group|
+		^super.new.init(maxNumChannels, latency, server ? Server.default, group);
 	}
 	
-	init {
+	init { |argMaxNumChannels, argLatency, argServer, argGroup|
+		
+		maxNumChannels = argMaxNumChannels;
+		latency = argLatency;
+		server = argServer;
+		group = argGroup;
 		bus = Bus.audio(server, maxNumChannels);
+		if(group.isNil, {this.makeGroup});
+		CmdPeriod.add(this);
 	}
 	
 	read {|path, action|
@@ -80,7 +87,7 @@ SoundFilePlayer {
 	play { |startTime = 0, out|
 		synth.isPlaying.not.if({
 //			server.makeBundle(latency, {
-				synth = Synth.head(server, this.hash.asString, 
+				synth = Synth.head(group, this.hash.asString, 
 					[\out, out ? bus.index, \rate, rate]);
 				watcher = NodeWatcher.register(synth);
 				synth.addDependant(this);
@@ -104,9 +111,13 @@ SoundFilePlayer {
 		this.changed(what);
 	}
 	
-	getInputArray {|name = "Player"|
-		^InputArray.fill(maxNumChannels, {|i| (name ++ (i + 1)).asSymbol -> (bus.index + i)});
-			
+//	getInputArray {|name = "Player"|
+//		^InOutArray.fill(maxNumChannels, {|i| (name ++ (i + 1)).asSymbol -> (bus.index + i)});
+//			
+//	}
+	
+	asInOutArray {|name = "Player"|
+		^InOutArray.fill(maxNumChannels, {|i| (name ++ (i + 1)).asSymbol -> (bus.index + i)});
 	}
 	
 	path { ^buffer.notNil.if({buffer.path}, {nil}) }
@@ -115,19 +126,31 @@ SoundFilePlayer {
 		rate = newRate;
 		synth.set(\rate, rate, \loop, 0);
 	}
+	
+	makeGroup {
+		group = Group.head(server);
+	}
+	
+	cmdPeriod { this.makeGroup }
+	
+	name { ^name ? "Soundfile Player" }
+	
+	gui { ^SoundFilePlayerGUI(this) }
 }
 
 
 // stopwatch should probably be in player
-SoundFilePlayerGUI {
+SoundFilePlayerGUI : BMAbstractGUI {
 	
-	var player, responder, <window, clockView, loadButton, info, dur, playButton, stopButton, clust, clearButton;
+	var player, responder, clockView, loadButton, info, dur, playButton, stopButton, clust, clearButton;
 	
-	*new { |player|
-		^super.newCopyArgs(player).init.makeWindow;
+	*new { |player, name|
+		^super.new.init(player).makeWindow;
 	}
 	
-	init {
+	init { |argplayer, argname|
+		player = argplayer;
+		name = argname ? "Sound File Player";
 		OSCresponderNode(player.server.addr,'/tr',{ arg time,responder,msg;
 			this.updateTimeDisplay(msg.last * player.sampleDur);
 		}).add;
@@ -135,7 +158,7 @@ SoundFilePlayerGUI {
 	}
 	
 	makeWindow {
-		window = SCWindow.new("Sound File Player", Rect(220, 700, 650, 100), false)
+		window = SCWindow.new(name, Rect(220, 700, 650, 100), false)
 			.userCanClose = false;
 		window.view.decorator = FlowLayout(window.view.bounds, Point(10, 10), Point(10, 10));
 		clockView = SCStaticText.new(window, Rect(10,10,200,40));
