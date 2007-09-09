@@ -1,3 +1,8 @@
+// class for storing some library wide options
+BMOptions {
+	classvar <>crossfade = 0.1;
+}
+
 // Defines the minimum interface for an AudioChainElement
 
 BMAbstractAudioChainElement {

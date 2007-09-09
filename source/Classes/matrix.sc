@@ -23,7 +23,7 @@
 // Defines the minimum interface for a matrix AudioChainElement
 BMAbstractMatrix : BMAbstractAudioChainElement {
 
-	var <crossfade = 0.1, <matrixArray, <mappings, defname; // defname is the def for a node
+	var <matrixArray, <mappings, defname; // defname is the def for a node
 	
 	*new { |ins, outs, group, server, name|
 		^super.new.init(ins, outs, group, server ? Server.default, name ? this.name);
@@ -89,7 +89,7 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 			outputs.do({|out|
 				(outBus = outs[out]).notNil.if({
 					outMatrixIndex = outNames.indexOf(out);
-					matrixArray[inMatrixIndex][outMatrixIndex].release(crossfade);
+					matrixArray[inMatrixIndex][outMatrixIndex].release(BMOptions.crossfade);
 					matrixArray[inMatrixIndex][outMatrixIndex] = nil;
 					mappings[input].remove(out);
 					this.changed;
@@ -115,11 +115,6 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 	mappings_ {|mappingsDict| // same format as instance var
 		this.clear;
 		mappingsDict.keysValuesDo({|input, outputs| this.connect(input, outputs.asArray)});
-	}
-	
-	crossfade_ { |time|
-		crossfade = time;
-		this.sendDef;
 	}
 	
 	cmdPeriod {
@@ -157,7 +152,7 @@ AudioMatrix : BMAbstractMatrix {
 		SynthDef(defname, { arg in, out, gate = 1;
 			// short fade in and out
 			Out.ar(out, In.ar(in, 1) 
-				* EnvGen.kr(Env.asr(crossfade, 1, crossfade), gate, doneAction: 2)
+				* EnvGen.kr(Env.asr(BMOptions.crossfade, 1, BMOptions.crossfade), gate, doneAction: 2)
 			);
 		}).send(server);	
 	}
@@ -200,7 +195,7 @@ AmpControlMatrix : BMAbstractMatrix {
 		SynthDef(defname, {arg in, out, gate = 1;
 			// XFade in new scaled value, crossfade out when freeing so no clicks
 			XOut.ar(out, 
-				EnvGen.kr(Env.asr(crossfade, 1, crossfade), gate, doneAction: 2),
+				EnvGen.kr(Env.asr(BMOptions.crossfade, 1, BMOptions.crossfade), gate, doneAction: 2),
 				In.ar(out, 1) * In.kr(in, 1)
 			);
 		}).send(server);
