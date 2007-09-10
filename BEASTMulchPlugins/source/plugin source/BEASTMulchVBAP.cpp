@@ -597,7 +597,7 @@ void VBAP_Ctor(VBAP* unit)
 		
  		setpointer++;
 	}
-	printf("vbap: Loudspeaker setup configured!\n");
+	//printf("vbap: Loudspeaker setup configured!\n");
 	
 	SETCALC(VBAP_next);
 	
@@ -716,10 +716,10 @@ void CircleRamp_Ctor(CircleRamp* unit)
 {
 	if (BUFLENGTH == 1) {
 		SETCALC(CircleRamp_next_1);
-		printf("next1\n");
+		//printf("next1\n");
 	} else {
 		SETCALC(CircleRamp_next);
-		printf("next\n");
+		//printf("next\n");
 	}
 	
 	unit->m_counter = 1;

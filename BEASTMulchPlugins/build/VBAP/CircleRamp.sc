@@ -11,7 +11,7 @@ CircleRamp : Filter {
 + UGen {
 	
 	circleRamp { arg lagTime=0.1, circmin = -180, circmax = 180;
-		^CircleRamp.multiNew(this.rate, this, lagTime)
+		^CircleRamp.multiNew(this.rate, this, lagTime, circmin, circmax)
 	}
 
 }

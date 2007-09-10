@@ -13,6 +13,9 @@
 			buildPhases = (
 			);
 			dependencies = (
+				FEDA69430C949E20007670AE /* PBXTargetDependency */,
+				FEDA69450C949E23007670AE /* PBXTargetDependency */,
+				FEDA69470C949E25007670AE /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = "SC_Synth PlugIns";
@@ -45,6 +48,30 @@
 		FEC9FE6D0BFCD7D800237BCA /* BEASTMulchPV.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC9FE6C0BFCD7D800237BCA /* BEASTMulchPV.h */; };
 		FEC9FE720BFCD85700237BCA /* BEASTMulchVBAP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEC9FE710BFCD85700237BCA /* BEASTMulchVBAP.cpp */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		FEDA69420C949E20007670AE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FE2BB36C0BB59278009F34F8 /* BEASTMulchVBAP */;
+			remoteInfo = BEASTMulchVBAP;
+		};
+		FEDA69440C949E23007670AE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FEC9FE4A0BFCD6C500237BCA /* BEASTMulchPV */;
+			remoteInfo = BEASTMulchPV;
+		};
+		FEDA69460C949E25007670AE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FEC02E080C4D1E72009EC06B /* BEASTMulchPlaySendIndex */;
+			remoteInfo = BEASTMulchPlaySendIndex;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		92CCC51F045B4BDE00CA2167 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
@@ -489,6 +516,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		FEDA69430C949E20007670AE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FE2BB36C0BB59278009F34F8 /* BEASTMulchVBAP */;
+			targetProxy = FEDA69420C949E20007670AE /* PBXContainerItemProxy */;
+		};
+		FEDA69450C949E23007670AE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FEC9FE4A0BFCD6C500237BCA /* BEASTMulchPV */;
+			targetProxy = FEDA69440C949E23007670AE /* PBXContainerItemProxy */;
+		};
+		FEDA69470C949E25007670AE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FEC02E080C4D1E72009EC06B /* BEASTMulchPlaySendIndex */;
+			targetProxy = FEDA69460C949E25007670AE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		631417CD0A203392007B9355 /* Development */ = {

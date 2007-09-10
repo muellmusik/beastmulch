@@ -1,3 +1,8 @@
+/*
+by Scott Wilson as part of the BEASTMulch project
+Development funded in part by the AHRC http://www.ahrc.ac.uk
+*/
+
 PlayBufSendIndex : MultiOutUGen {	
 	*ar { arg numChannels, bufnum=0, rate=1.0, trigger=1.0, startPos=0.0, loop = 0.0, 
 		indFreq = 10, id = 0;
