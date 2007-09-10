@@ -28,7 +28,7 @@ use or for distribution:
 
 VBAPSpeakerArray {
 	classvar <>maxNumSpeakers = 55, minSideLength = 0.01;
-	var <dim, <speakers, <numSpeakers, <>sets;
+	var <dim, <speakers, <numSpeakers, sets;
 	
 	*new { |dim, directions|
 		^super.newCopyArgs(dim).initFromDirections(directions);
@@ -534,6 +534,8 @@ VBAPSpeakerArray {
 }
 
 VBAPSpeaker {
+
+	// setters are 'private'
 	
 	var <>x, <>y, <>z;
 	
