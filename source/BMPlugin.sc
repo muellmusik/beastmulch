@@ -23,8 +23,8 @@
 // This should allow for an easy later extension to allow rt control with controllers
 
 BMPluginSpec {
-	classvar <specs;
-	var <name, <ugenGraphFunc, <specsDict, <guiFunc, <>presets, <description, <defaultAttributes;
+	classvar <specs, defaultGuiFunc;
+	var <name, <ugenGraphFunc, <specsDict, guiFunc, <>presets, <description, <defaultAttributes;
 	
 	*new {|name, ugenGraphFunc, specsDict, guiFunc, presets, description, defaultAttributes|
 		^super.new.init(name, ugenGraphFunc, specsDict, guiFunc, presets, description, 
@@ -37,10 +37,13 @@ BMPluginSpec {
 		ugenGraphFunc = argugenGraphFunc;
 		specsDict = argspecsDict;
 		guiFunc = argguiFunc;
-		presets = argpresets;
+		presets = argpresets ? ();
 		description = argdescription;
 		defaultAttributes = argattributes ?? { IdentityDictionary.new };
-		
+		// by default db specs are converted to linear amp in the gui
+		defaultAttributes[\usesLinearAmp].isNil.if({
+			defaultAttributes[\usesLinearAmp] = true;
+		});
 		this.class.specs[name] = this;
 	}
 	
@@ -103,48 +106,102 @@ BMPluginSpec {
 				"3 Band EQ based on the BEQSuite. A low shelf, mid parametric, and high shelf implemented with cascading Second Order Section (Biquad) filters"
 			);
 		// read application directory for source code files of user plugins specs
+		// or maybe in app
 		});
+		defaultGuiFunc = {|plugin|
+			var numSliders, spec, window, presetMenu, sliders;
+			spec = plugin.spec;
+			numSliders = spec.specsDict.size;
+			window = SCWindow.new("Plugin:" + spec.name, 
+				Rect(300, 300, 508, (numSliders + 1) * 24 + 24), false);
+			window.view.decorator = FlowLayout(window.view.bounds);
+			window.view.background = Color.rand.alpha_(0.3);
+			sliders = ();
+			spec.specsDict.sortedKeysValuesDo({|key, cspec|
+				var initVal;
+				initVal = plugin.get(key);
+				(cspec.units == " dB" && plugin.attributes[\usesLinearAmp]).if({ 
+					initVal = initVal.ampdb;
+				});
+				sliders[key] = EZSlider.new(window, 500@20, key.asString, cspec,
+					{|ez| var setVal;
+						setVal = ez.value;
+						(cspec.units == " dB" && plugin.attributes[\usesLinearAmp]).if({ 
+							setVal = setVal.dbamp;
+						});
+						plugin.set(key, setVal);
+					}, initVal
+				);
+			
+			});
+			window.view.decorator.nextLine.shift(10, 10);
+			presetMenu = SCPopUpMenu(window, Rect(0, 0, 100, 20));
+			presetMenu.items = ["presets", "-"] ++ spec.presets.keys;
+			presetMenu.action = {
+				if(presetMenu.value > 1, {
+					plugin.preset_(presetMenu.items[presetMenu.value].asSymbol);
+					sliders.keysValuesDo({|key, slid| 
+						var newVal;
+						newVal = plugin.get(key);
+						(slid.controlSpec.units == " dB" 
+							&& plugin.attributes[\usesLinearAmp]).if({ 
+							newVal = newVal.ampdb;
+						});
+						slid.value = newVal;
+					});
+				});
+			};
+			window.front;
+		}
 	}
+	
+	guiFunc { ^guiFunc ? defaultGuiFunc }
 	
 }
 
 // Class which manages resources for a plugin instance
 BMPlugin {
-	var <spec, <numChannels = 1, <server, <attributes, <defName, <def;
+	var <spec, <numChannels = 1, <target, <server, <attributes, <defName, <def;
 	var <synth, <values, defaultValues, <bus, numControls, controlNames, mappings;
 	var <preset;
 	
-	*new {|pluginSpecName, numChannels = 1, server, attributes|
-		^super.new.init(pluginSpecName, numChannels = 1, server ? Server.default, attributes);
+	*new {|pluginSpecName, numChannels = 1, target, attributes|
+		^super.new.init(pluginSpecName, numChannels = 1, target, attributes);
 	}
 	
-	init { |argpluginSpecName, argnumChannels, argserver, argattributes|
-		spec = BMPluginSpec.spec[argpluginSpecName.asSymbol];
+	init { |argpluginSpecName, argnumChannels, argtarget, argattributes|
+		spec = BMPluginSpec.specs[argpluginSpecName.asSymbol];
 		numChannels = argnumChannels;
-		server = argserver;
-		attributes = spec.defaultAttributes.copy.putAll(argattributes); // local settings override
+		target = argtarget.asTarget;
+		server = target.server;
+		attributes = spec.defaultAttributes.copy;
+		argattributes.notNil.if({attributes.putAll(argattributes)}); // local settings override
 		this.makeDef;
 		def.send(server);
 		values = ();
 		controlNames = ();
-		def.allControlNames.do({|cn| 
+		def.allControlNames.reject({|cn| (cn.name == \i_in) || (cn.name == \cfgate)}).do({|cn| 
 			var size, startVal, controlspec;
 			size = cn.defaultValue.size;
 			controlspec = spec.specsDict[cn.name];
 			// take defaults from the control name if no spec supplied. Hmm... maybe not?
-			startVal = controlspec.notNil.if({controlspec.default;},{cn.defaultValue});
+			controlspec.isNil.if({Error("No spec for Control:" + cn.name).throw; });
+			startVal = controlspec.default;
+			(controlspec.units == " dB" && attributes[\usesLinearAmp]).if({ 
+				startVal = startVal.dbamp;
+			});
 			if(size > startVal.size, {startVal = startVal ! size }); // not sure about this
 			values[cn.name] = startVal;
 			controlNames[cn.name] = cn;
 		});
 		defaultValues = values.deepCopy;
-		numControls = def.controls.size;
-		bus = Bus.control(server, numControls);
+		numControls = def.controls.size; 
+		bus = Bus.control(server, numControls); // this is two larger than it needs to be
 		controlNames.keysValuesDo({|key, cn| 
 			var value;
 			value = values[key];
-			server.sendBundle(nil,["/c_setn", bus.index + cn.index, max(value.size, 1)] 
-				++ value);
+			server.sendBundle(nil,["/c_setn", bus.index + cn.index, 
+				max(value.size, 1)] ++ value);
 		});
 		mappings = controlNames.values.collectAs({|cn| 
 			[cn.name, ("c" ++ (bus.index + cn.index)).asSymbol];
@@ -172,9 +229,36 @@ BMPlugin {
 		cn = controlNames[key];
 		cn.notNil.if({
 			values[key] = value;
-			server.sendBundle(nil,["/c_setn", bus.index + cn.index, max(value.size, 1)] 
-				++ value);
+			server.sendBundle(nil,["/c_setn", bus.index + cn.index, 
+				max(value.size, 1)] ++ value);
 		}, {("Plugin " ++ spec.name ++ "has no Control named " ++ key).warn });
+	}
+	
+	get {|key|
+		var cn;
+		cn = controlNames[key];
+		cn.notNil.if({
+			^values[key];
+		}, {("Plugin " ++ spec.name ++ "has no Control named " ++ key).warn; ^nil; });
+	}
+	
+	debug {
+		bus.getn(numControls, {|array|
+			"Control Bus values:".postln;
+			controlNames.keysValuesDo({|key, cn| 
+				cn.name.postln;
+				"\t".post;
+				"clientside: ".post;
+				values[cn.name].post;
+				" actual: ".post;
+				array[cn.index].postln;
+			});
+			synth.notNil.if({
+				("\n" ++ spec.name + "plugin synth trace:").postln;
+				synth.trace;
+			});
+		});
+		^("Debugging" + spec.name + "Plugin:\n");
 	}
 	
 	preset_{|presetname|
@@ -183,16 +267,20 @@ BMPlugin {
 		psdict.notNil.if({
 			preset = presetname;
 			psdict = defaultValues.copy.putAll(psdict); // use defaults for any non-specified
-			psdict.keysValues.do({|key, val| this.set(key, val)});
-		}, {("Plugin " ++ spec.name ++ "has no preset named " ++ presetname).warn });
+			psdict.keysValuesDo({|key, val| this.set(key, val)});
+		}, {("Plugin " ++ spec.name ++ " has no preset named " ++ presetname).warn });
 	}
 	
 	// args here is an IdentityDictionary or an Event
-	makeSynth {|target, addAction=\addToTail|
-		synth.isNil.if({this.release});
-		synth = Synth(defName, mappings, target, addAction);
+	makeSynth {|in, addAction=\addToTail|
+		synth.notNil.if({ synth.set(\cfgate, 0); });
+		synth = Synth(defName, [i_in: in] ++ mappings, target, addAction);
 	}
 	
-	release { synth.release; synth = nil; }
+	release { synth.set(\cfgate, 0); synth = nil; bus.free; bus = nil} // I'm a lame duck...
+	
+	gui {
+		spec.guiFunc.value(this);
+	}
 
 }

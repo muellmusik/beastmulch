@@ -29,7 +29,7 @@ BMAbstractAudioChainElement {
 	
 	makeGroup { ^this.subclassResponsibility(thisMethod); }
 	
-	name { ^name ? this.class.name }
+	name { ^name ? this.class.name } // this is probably a bad idea...
 }
 
 BMAbstractAudioSource : BMAbstractAudioChainElement {
