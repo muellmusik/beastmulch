@@ -248,7 +248,7 @@ BMTrimPluginsStripGUI {
 	 		{|ez| trimPluginsStrip.trim_(ez.value);}, trimPluginsStrip.trim, false, 96, 70);
 	 	ezKnob.labelView.align_(\left);
 	 	ezKnob.numberView.boxColor_(Color.white.alpha_(0.3));
-	 	listView = SCListView(containerView, Rect(0, 0, 100, 338))
+	 	listView = SCListView(containerView, Rect(0, 0, 100, 334))
 	 		.items_(trimPluginsStrip.plugins.collect({|plugin| plugin.spec.name}));
 	 	listView.enterKeyAction = {trimPluginsStrip.plugins[listView.value].gui }; // can duplicate
 	 	listView.keyDownAction = { arg view,char,modifiers,unicode,keycode;
