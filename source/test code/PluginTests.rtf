@@ -69,7 +69,7 @@ s.dumpOSC(0)\
 \cf0 ~ins = [\cf6 \\DistL\cf0 , \cf6 \\DistR\cf0 , \cf6 \\WideL\cf0 , \cf6 \\WideR\cf0 , \cf6 \\SideL\cf0 , \cf6 \\SideR\cf0 , \cf6 \\RearL\cf0 , \cf6 \\RearR\cf0 , \cf6 \\MainL\cf0 , \cf6 \\MainR\cf0 , \cf6 \\SubL\cf0 , \cf6 \\SubR\cf0 , \cf6 \\SeaShl\cf0 , \cf6 \\Aux1\cf0 , \cf6 \\Aux2\cf0 ].collectAs(\{\cf8 |item, i|\cf0  item -> i\}, \cf8 OutputArray\cf0 );\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 r = \cf8 BMTrimPluginsRack\cf0 (~ins, name: \cf6 \\foo\cf0 );\
+\cf0 r = \cf8 BMTrimPluginsRack\cf0 (~ins, name: \cf6 'Pre-processing'\cf0 );\
 r[\cf6 \\DistL\cf0 ].addPlugin(\cf8 BMPlugin\cf0 (\cf6 \\highpass\cf0 , 1));\
 r[\cf6 \\DistL\cf0 ].addPlugin(\cf8 BMPlugin\cf0 (\cf6 \\lowpass\cf0 , 1));\cf2 \
 r.gui;\
