@@ -152,6 +152,7 @@ BMTrimPluginsStrip {
 	trim_ {|newTrim| //in dB
 		trim = newTrim;
 		trimSynth.set(\trim, trim.dbamp);
+		this.changed(\trim);
 	}
 }
 
@@ -201,7 +202,7 @@ BMTrimPluginsRackGUI : BMAbstractGUI {
 				BMTrimPluginsStripGUI(trimPluginsRack[chanName], stripGUIs, chanName)
 			);
 		});
-		defaultHelpString = "Click names at left for description; click back here for this help.\nDrag from left to add plugins.\nSelect and press enter to edit plugin settings.\nCmd down and up arrows to change order.\nCmd drag to copy a plugin and its settings to another channel.";
+		defaultHelpString = "Click names at left for description.\nDrag from left to add plugins.\nSelect and press enter to edit plugin settings.\nCmd down and up arrows to change order.\nCmd drag to copy a plugin and its settings to another channel.";
 		window.view.decorator.nextLine;
 		window.view.decorator.shift(20, 0);
 		
@@ -247,7 +248,6 @@ BMTrimPluginsStripGUI {
 	 		{|ez| trimPluginsStrip.trim_(ez.value);}, trimPluginsStrip.trim, false, 96, 70);
 	 	ezKnob.labelView.align_(\left);
 	 	ezKnob.numberView.boxColor_(Color.white.alpha_(0.3));
-	 	trimPluginsStrip.plugins.postln;
 	 	listView = SCListView(containerView, Rect(0, 0, 100, 338))
 	 		.items_(trimPluginsStrip.plugins.collect({|plugin| plugin.spec.name}));
 	 	listView.enterKeyAction = {trimPluginsStrip.plugins[listView.value].gui }; // can duplicate
@@ -258,6 +258,7 @@ BMTrimPluginsStripGUI {
 			if((modifiers == 11534600) && (unicode == 63232), {
 				trimPluginsStrip.movePluginUp(listView.value);
 			});
+			if(unicode == 127, {trimPluginsStrip.removePlugin(listView.value)});
 			listView.defaultKeyDownAction(char,modifiers,unicode);
 		};
 		listView.canReceiveDragHandler = { SCView.currentDrag.isKindOf(BMPlugin) };
@@ -266,7 +267,7 @@ BMTrimPluginsStripGUI {
 	 }
 	 
 	 update {|tpv, what|
-	 	ezKnob.value = trimPluginsStrip.trim;
+	 	if(what == \trim, {ezKnob.value = trimPluginsStrip.trim;});
 	 	listView.items_(trimPluginsStrip.plugins.collect({|plugin| plugin.spec.name}));
 //	 	switch(what,
 //	 		\moveDown, {listView.value = listView.value + 1},
