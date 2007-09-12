@@ -203,7 +203,7 @@ BMTrimPluginsRackGUI : BMAbstractGUI {
 				BMTrimPluginsStripGUI(trimPluginsRack[chanName], stripGUIs, chanName)
 			);
 		});
-		defaultHelpString = "Click names at left for description.\nDrag from left to add plugins.\nSelect and press enter to edit plugin settings.\nCmd down and up arrows to change order.\nCmd drag to copy a plugin and its settings to another channel.";
+		defaultHelpString = "Click names at left for description.\nDrag from left to add plugins.\nDouble-click or select and press enter to edit plugin settings.\nCmd down and up arrows to change order.\nCmd drag to copy trim or a plugin and its settings to another channel.";
 		window.view.decorator.nextLine;
 		window.view.decorator.shift(20, 0);
 		
@@ -251,7 +251,11 @@ BMTrimPluginsStripGUI {
 	 	ezKnob.numberView.boxColor_(Color.white.alpha_(0.3));
 	 	listView = SCListView(containerView, Rect(0, 0, 100, 334))
 	 		.items_(trimPluginsStrip.plugins.collect({|plugin| plugin.spec.name}));
-	 	listView.enterKeyAction = {trimPluginsStrip.plugins[listView.value].gui }; // can duplicate
+	 	listView.enterKeyAction = {
+	 		var plgin;
+	 		plgin = trimPluginsStrip.plugins[listView.value];
+	 		plgin.notNil.if({plgin.gui}); 
+	 	}; // can duplicate
 	 	listView.keyDownAction = { arg view,char,modifiers,unicode,keycode;
 			if((modifiers == 11534600) && (unicode == 63233), {
 				trimPluginsStrip.movePluginDown(listView.value);
@@ -261,6 +265,11 @@ BMTrimPluginsStripGUI {
 			});
 			if(unicode == 127, {trimPluginsStrip.removePlugin(listView.value)});
 			listView.defaultKeyDownAction(char,modifiers,unicode);
+		};
+		listView.mouseDownAction = {|view, x, y, modifiers, buttonNumber, clickCount|
+			if(clickCount == 2, {
+				listView.enterKeyAction.value;
+			});
 		};
 		listView.canReceiveDragHandler = { SCView.currentDrag.isKindOf(BMPlugin) };
 		listView.receiveDragHandler = { trimPluginsStrip.addPlugin(SCView.currentDrag) };
