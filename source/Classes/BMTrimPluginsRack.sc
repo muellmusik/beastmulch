@@ -247,7 +247,7 @@ BMTrimPluginsStripGUI {
 	 		.string_(" " ++ name);
 	 	ezKnob = EZKnob(containerView, 50@20, " Trim (dBFS)", \db.asSpec, 
 	 		{|ez| trimPluginsStrip.trim_(ez.value);}, trimPluginsStrip.trim, false, 96, 70);
-	 	ezKnob.labelView.align_(\left);
+	 	ezKnob.labelView.align_(\left).font_(Font("Helvetica-Bold", 12));
 	 	ezKnob.numberView.boxColor_(Color.white.alpha_(0.3));
 	 	listView = SCListView(containerView, Rect(0, 0, 100, 334))
 	 		.items_(trimPluginsStrip.plugins.collect({|plugin| plugin.spec.name}));
