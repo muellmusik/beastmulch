@@ -22,7 +22,7 @@ BMAbstractAudioChainElement {
 	// which builds the window itself
 	gui { ^this.subclassResponsibility(thisMethod); } 
 	
-	// this should recreate our group
+	// this should recreate our group and do any other necessary bookkeeping
 	cmdPeriod { ^this.subclassResponsibility(thisMethod); } 
 	
 	callCmdPeriod_ { |bool| } // maybe change this later
@@ -31,7 +31,8 @@ BMAbstractAudioChainElement {
 	
 	makeGroup { ^this.subclassResponsibility(thisMethod); }
 	
-	name { ^name ? this.class.name } // this is probably a bad idea... need to fix in subclasses
+	name { ^name ? (this.class.name ++ UniqueID.next)} 
+
 }
 
 BMAbstractAudioSource : BMAbstractAudioChainElement {
