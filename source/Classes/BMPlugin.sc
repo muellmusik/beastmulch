@@ -35,10 +35,10 @@ BMPluginSpec {
 		argattributes|
 		name = argname.asSymbol;
 		ugenGraphFunc = argugenGraphFunc;
-		specsDict = argspecsDict;
+		specsDict = argspecsDict ? ();
 		guiFunc = argguiFunc;
 		presets = argpresets ? ();
-		description = argdescription;
+		description = argdescription ? "";
 		defaultAttributes = argattributes ?? { IdentityDictionary.new };
 		// by default db specs are converted to linear amp in the gui
 		defaultAttributes[\usesLinearAmp].isNil.if({
@@ -173,7 +173,7 @@ BMPlugin {
 	copy {
 		var values, newplugin;
 		values = this.values;
-		newplugin = BMPlugin(this.spec.name, this.numChannels, this.target, this.attributes);
+		newplugin = BMPlugin(this.spec.name, this.numChannels, this.server, this.attributes);
 		values.keysValuesDo({|key, val| newplugin.set(key, val)});
 		^newplugin;
 	}

@@ -134,7 +134,7 @@ BMTrimPluginsStrip {
 
 	movePluginDown {|index|
 		if(index < (plugins.size -1), {
-			plugins.swap(index, index - 1);
+			plugins.swap(index, index + 1);
 			this.resetOrder;
 			this.changed(\moveDown);
 		});
@@ -156,7 +156,7 @@ BMTrimPluginsStrip {
 }
 
 BMTrimPluginsRackGUI : BMAbstractGUI {
-	var trimPluginsRack;
+	var trimPluginsRack, trimPluginsStripGUIs, defaultHelpString, descriptionHelpText;
 	
 	*new {|trimPluginsRack, name, origin|
 		^super.new.init(trimPluginsRack, name ? trimPluginsRack.name)
@@ -166,6 +166,7 @@ BMTrimPluginsRackGUI : BMAbstractGUI {
 	init {|argtrimPluginsRack, argname|
 		trimPluginsRack = argtrimPluginsRack;
 		name = argname;
+		trimPluginsStripGUIs = List.new;
 	}
 	
 	makeWindow {|origin|
@@ -175,33 +176,56 @@ BMTrimPluginsRackGUI : BMAbstractGUI {
 		width = 4 + 170 + 4 + min(104 * trimPluginsRack.ins.size, 1078); // max 7 visible
 		window = SCWindow(name, Rect.new(x, y, width, 608), false);
 		window.view.decorator = FlowLayout(window.view.bounds);
-		pluglist = SCScrollView(window, Rect(0, 0, 160, 600))
+		pluglist = SCScrollView(window, Rect(0, 0, 160, 508))
 			.hasHorizontalScroller_(false)
 			.hasBorder_(true);
 		numTypes = BMPluginSpec.specs.size;
 		numStrips = trimPluginsRack.ins.size;
 		pluglist = SCVLayoutView(pluglist, Rect(4,4,150, numTypes * 24 + 4));
 		BMPluginSpec.specs.keysDo({|piName| 
-			SCDragSource(pluglist, Rect(0, 0, 150, 20)).string_(" " ++ piName.asString)
-				//.align_(\center)
-				.beginDragAction_({|ds| BMPlugin(piName, 1)}); // one channel for now
+			SCDragSource(pluglist, Rect(0, 0, 150, 20)).string_("   " ++ piName.asString)
+				.background_(Color.grey.alpha_(0.2))
+				.font_(Font("Helvetica-Bold", 12))
+				.beginDragAction_({BMPlugin(piName, 1)}) // one channel for now
+				.mouseDownAction_({
+					descriptionHelpText.string = BMPluginSpec.specs[piName].description;
+				});
 		});
-		stripGUIs = SCScrollView(window, Rect(0, 0, width - 178, 508))
+		stripGUIs = SCScrollView(window, Rect(0, 0, width - 174, 508))
 			.hasVerticalScroller_(false)
 			.hasBorder_(true);
 		stripGUIs.action = {window.refresh};
-		stripGUIs.bounds.postln;
 		stripGUIs = SCHLayoutView(stripGUIs, Rect(4, 4, 104 * numStrips + 4, 500));
 		trimPluginsRack.inNames.do({|chanName|
-			BMTrimPluginsStripGUI(trimPluginsRack[chanName], stripGUIs, chanName);
+			trimPluginsStripGUIs.add(
+				BMTrimPluginsStripGUI(trimPluginsRack[chanName], stripGUIs, chanName)
+			);
 		});
+		defaultHelpString = "Click names at left for description; click back here for this help.\nDrag from left to add plugins.\nSelect and press enter to edit plugin settings.\nCmd down and up arrows to change order.\nCmd drag to copy a plugin and its settings to another channel.";
+		window.view.decorator.nextLine;
+		window.view.decorator.shift(20, 0);
+		
+		descriptionHelpText = SCStaticText(window, Rect(0, 0, width - 58, 80))
+			.string_(defaultHelpString)
+			.font_(Font("Helvetica-Bold", 12));
+		TriggerView(window, Rect(0, 0, 20, 20))
+			.caption_(" ?")
+			.font_(Font("Helvetica-Bold", 14))
+			.action_({descriptionHelpText.string = defaultHelpString;});
+
+		window.onClose = { 
+			trimPluginsStripGUIs.do({|tpisg|
+				tpisg.trimPluginsStrip.removeDependant(tpisg);
+			});	
+			onClose.value(this);
+		};
 		window.front;
 	}
 }
 
 // only in a larger GUI
 BMTrimPluginsStripGUI {
-	var trimPluginsStrip, containerView, ezKnob, labelView, listView;
+	var <trimPluginsStrip, containerView, ezKnob, labelView, listView;
 	
 	*new { |trimPluginsStrip, parent, name, origin|
 		^super.new.init(trimPluginsStrip, parent).makeGUI(parent, name, origin ? 0@0);
@@ -223,9 +247,31 @@ BMTrimPluginsStripGUI {
 	 		{|ez| trimPluginsStrip.trim_(ez.value);}, trimPluginsStrip.trim, false, 96, 70);
 	 	ezKnob.labelView.align_(\left);
 	 	ezKnob.numberView.boxColor_(Color.white.alpha_(0.3));
-	 	listView = SCListView(containerView, Rect(0, 0, 100, 318)).items_([]);
+	 	trimPluginsStrip.plugins.postln;
+	 	listView = SCListView(containerView, Rect(0, 0, 100, 338))
+	 		.items_(trimPluginsStrip.plugins.collect({|plugin| plugin.spec.name}));
+	 	listView.enterKeyAction = {trimPluginsStrip.plugins[listView.value].gui }; // can duplicate
+	 	listView.keyDownAction = { arg view,char,modifiers,unicode,keycode;
+			if((modifiers == 11534600) && (unicode == 63233), {
+				trimPluginsStrip.movePluginDown(listView.value);
+			});
+			if((modifiers == 11534600) && (unicode == 63232), {
+				trimPluginsStrip.movePluginUp(listView.value);
+			});
+			listView.defaultKeyDownAction(char,modifiers,unicode);
+		};
+		listView.canReceiveDragHandler = { SCView.currentDrag.isKindOf(BMPlugin) };
+		listView.receiveDragHandler = { trimPluginsStrip.addPlugin(SCView.currentDrag) };
+		listView.beginDragAction = { trimPluginsStrip.plugins[listView.value].copy };
 	 }
 	 
-	 update {}
+	 update {|tpv, what|
+	 	ezKnob.value = trimPluginsStrip.trim;
+	 	listView.items_(trimPluginsStrip.plugins.collect({|plugin| plugin.spec.name}));
+//	 	switch(what,
+//	 		\moveDown, {listView.value = listView.value + 1},
+//	 		\moveUp, {listView.value = listView.value - 1}
+//	 	)
+	 }
 
 }
