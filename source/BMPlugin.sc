@@ -73,7 +73,7 @@ BMPluginSpec {
 				{|plugin, numChannels, input, freq, rq| 
 					BPF.ar(input, freq, rq);
 				}, 								
-				(freq: \freq.asSpec, rq: \rq.asSpec),	
+				(freq: \freq.asSpec, rq: \rq.asSpec.units = " 1/Q"),	
 				nil, 						// default GUI
 				nil, // no presets
 				"2nd Order Butterworth Bandpass Filter"
@@ -97,7 +97,7 @@ BMPluginSpec {
 					lowGain: \boostcut.asSpec,
 					midFreq: ControlSpec(20, 20000, 'exp', 0, 1000, " Hz"),
 					midGain: \boostcut.asSpec,
-					midrq: \rq.asSpec,
+					midrq: \rq.asSpec.units = " 1/Q",
 					hiFreq: ControlSpec(20, 20000, 'exp', 0, 6000, " Hz"),
 					hiGain: \boostcut.asSpec
 				),	
@@ -113,7 +113,7 @@ BMPluginSpec {
 			spec = plugin.spec;
 			numSliders = spec.specsDict.size;
 			window = SCWindow.new("Plugin:" + spec.name, 
-				Rect(300, 300, 508, (numSliders + 1) * 24 + 24), false);
+				Rect(300, 300, 552, (numSliders + 1) * 24 + 24), false); // 508
 			window.view.decorator = FlowLayout(window.view.bounds);
 			window.view.background = Color.rand.alpha_(0.3);
 			sliders = ();
@@ -132,6 +132,7 @@ BMPluginSpec {
 						plugin.set(key, setVal);
 					}, initVal
 				);
+				SCStaticText(window, Rect(0,0,40,20)).string_(cspec.units);
 			
 			});
 			window.view.decorator.nextLine.shift(10, 10);
@@ -161,19 +162,26 @@ BMPluginSpec {
 
 // Class which manages resources for a plugin instance
 BMPlugin {
-	var <spec, <numChannels = 1, <target, <server, <attributes, <defName, <def;
+	var <spec, <numChannels = 1, <server, <attributes, <defName, <def;
 	var <synth, <values, defaultValues, <bus, numControls, controlNames, mappings;
 	var <preset;
 	
-	*new {|pluginSpecName, numChannels = 1, target, attributes|
-		^super.new.init(pluginSpecName, numChannels = 1, target, attributes);
+	*new {|pluginSpecName, numChannels = 1, server, attributes|
+		^super.new.init(pluginSpecName, numChannels = 1, server ? Server.default, attributes);
 	}
 	
-	init { |argpluginSpecName, argnumChannels, argtarget, argattributes|
+	copy {
+		var values, newplugin;
+		values = this.values;
+		newplugin = BMPlugin(this.spec.name, this.numChannels, this.target, this.attributes);
+		values.keysValuesDo({|key, val| newplugin.set(key, val)});
+		^newplugin;
+	}
+	
+	init { |argpluginSpecName, argnumChannels, argserver, argattributes|
 		spec = BMPluginSpec.specs[argpluginSpecName.asSymbol];
 		numChannels = argnumChannels;
-		target = argtarget.asTarget;
-		server = target.server;
+		server = argserver;
 		attributes = spec.defaultAttributes.copy;
 		argattributes.notNil.if({attributes.putAll(argattributes)}); // local settings override
 		this.makeDef;
@@ -272,7 +280,10 @@ BMPlugin {
 	}
 	
 	// args here is an IdentityDictionary or an Event
-	makeSynth {|in, addAction=\addToTail|
+	makeSynth {|in, target, addAction=\addToTail|
+		(target.asTarget.server != server).if({
+			Error("Target server does not match Plugin server.").throw;
+		});
 		synth.notNil.if({ synth.set(\cfgate, 0); });
 		synth = Synth(defName, [i_in: in] ++ mappings, target, addAction);
 	}

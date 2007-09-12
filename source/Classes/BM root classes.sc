@@ -27,9 +27,11 @@ BMAbstractAudioChainElement {
 	
 	callCmdPeriod_ { |bool| } // maybe change this later
 	
+	free {CmdPeriod.remove(this);} // overrride to do more complicated things
+	
 	makeGroup { ^this.subclassResponsibility(thisMethod); }
 	
-	name { ^name ? this.class.name } // this is probably a bad idea...
+	name { ^name ? this.class.name } // this is probably a bad idea... need to fix in subclasses
 }
 
 BMAbstractAudioSource : BMAbstractAudioChainElement {

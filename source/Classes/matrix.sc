@@ -124,7 +124,7 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 	}
 	
 	// this defeats CmdPeriod control
-	// Allows for a MatrixManager to control ordering
+	// Allows for a chain manager to control ordering
 	callCmdPeriod_ { |bool|
 		bool.if({ CmdPeriod.add(this); }, {CmdPeriod.remove(this);});
 		callCmdPeriod = bool;
