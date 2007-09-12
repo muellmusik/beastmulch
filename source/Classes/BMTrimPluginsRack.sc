@@ -257,14 +257,18 @@ BMTrimPluginsStripGUI {
 	 		plgin.notNil.if({plgin.gui}); 
 	 	}; // can duplicate
 	 	listView.keyDownAction = { arg view,char,modifiers,unicode,keycode;
-			if((modifiers == 11534600) && (unicode == 63233), {
-				trimPluginsStrip.movePluginDown(listView.value);
-			});
-			if((modifiers == 11534600) && (unicode == 63232), {
-				trimPluginsStrip.movePluginUp(listView.value);
-			});
-			if(unicode == 127, {trimPluginsStrip.removePlugin(listView.value)});
-			listView.defaultKeyDownAction(char,modifiers,unicode);
+	 		block { |break|
+				if((modifiers == 11534600) && (unicode == 63233), {
+					trimPluginsStrip.movePluginDown(listView.value);
+					break.value;
+				});
+				if((modifiers == 11534600) && (unicode == 63232), {
+					trimPluginsStrip.movePluginUp(listView.value);
+					break.value;
+				});
+				if(unicode == 127, {trimPluginsStrip.removePlugin(listView.value)});
+				listView.defaultKeyDownAction(char,modifiers,unicode);
+			}
 		};
 		listView.mouseDownAction = {|view, x, y, modifiers, buttonNumber, clickCount|
 			if(clickCount == 2, {
@@ -279,10 +283,10 @@ BMTrimPluginsStripGUI {
 	 update {|tpv, what|
 	 	if(what == \trim, {ezKnob.value = trimPluginsStrip.trim;});
 	 	listView.items_(trimPluginsStrip.plugins.collect({|plugin| plugin.spec.name}));
-//	 	switch(what,
-//	 		\moveDown, {listView.value = listView.value + 1},
-//	 		\moveUp, {listView.value = listView.value - 1}
-//	 	)
+	 	switch(what,
+	 		\moveDown, {listView.value = listView.value + 1},
+	 		\moveUp, {listView.value = listView.value - 1}
+	 	)
 	 }
 
 }
