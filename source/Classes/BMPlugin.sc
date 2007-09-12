@@ -103,7 +103,7 @@ BMPluginSpec {
 				),	
 				nil, 						// default GUI
 				nil, // no presets
-				"3 Band EQ based on the BEQSuite. A low shelf, mid parametric, and high shelf implemented with cascading Second Order Section (Biquad) filters"
+				"3 Band EQ based on the BEQSuite. A low shelf, mid parametric, and high shelf implemented with cascading Second Order Section (Biquad) filters."
 			);
 		// read application directory for source code files of user plugins specs
 		// or maybe in app

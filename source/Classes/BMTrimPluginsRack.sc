@@ -189,7 +189,8 @@ BMTrimPluginsRackGUI : BMAbstractGUI {
 				.font_(Font("Helvetica-Bold", 12))
 				.beginDragAction_({BMPlugin(piName, 1)}) // one channel for now
 				.mouseDownAction_({
-					descriptionHelpText.string = BMPluginSpec.specs[piName].description;
+					descriptionHelpText.string = piName ++ ": " ++ 
+						BMPluginSpec.specs[piName].description;
 				});
 		});
 		stripGUIs = SCScrollView(window, Rect(0, 0, width - 174, 508))
