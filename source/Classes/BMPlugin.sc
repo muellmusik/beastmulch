@@ -132,6 +132,7 @@ BMPluginSpec {
 						plugin.set(key, setVal);
 					}, initVal
 				);
+				sliders[key].numberView.boxColor = Color.white.alpha_(0.4);
 				SCStaticText(window, Rect(0,0,40,20)).string_(cspec.units);
 			
 			});
