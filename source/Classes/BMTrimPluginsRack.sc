@@ -213,6 +213,7 @@ BMTrimPluginsRackGUI : BMAbstractGUI {
 		TriggerView(window, Rect(0, 0, 20, 20))
 			.caption_(" ?")
 			.font_(Font("Helvetica-Bold", 14))
+			.fillColor_(Color.white.alpha_(0.2))
 			.action_({descriptionHelpText.string = defaultHelpString;});
 
 		window.onClose = { 
