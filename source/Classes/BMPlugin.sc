@@ -297,7 +297,11 @@ BMPlugin {
 		CmdPeriod.remove(this);
 	} // I'm a lame duck...
 	
-	cmdPeriod { synth = nil }
+	cmdPeriod { 
+		synth = nil; 
+		bus.free; 
+		CmdPeriod.remove(this);
+	}
 	
 	gui {
 		spec.guiFunc.value(this);

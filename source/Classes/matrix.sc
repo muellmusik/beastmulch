@@ -52,6 +52,7 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 		defname = "Node" ++ this.hash;
 		this.sendDef;
 		CmdPeriod.add(this);
+		allChainElements[name] = this;
 	}
 	
 	newCollections {

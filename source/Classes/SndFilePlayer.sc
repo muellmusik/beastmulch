@@ -20,6 +20,7 @@ SoundFilePlayer : BMAbstractAudioSource {
 		bus = Bus.audio(server, maxNumChannels);
 		if(group.isNil, {this.makeGroup});
 		CmdPeriod.add(this);
+		allChainElements[name] = this;
 	}
 	
 	read {|path, action|

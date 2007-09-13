@@ -21,11 +21,16 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 			strips[chanName] = BMTrimPluginsStrip(group, ins[chanName]);
 		});
 		CmdPeriod.add(this);
+		allChainElements[name] = this;
 	}
 
 	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
 		^this.new(inAudioArray, group, server, name);
 	}
+	
+	mappings { ^strips.collect({|strip, name| strip.mappings});}
+	
+	mappings_ { |dict| dict.keysValuesDo({|name, mappings| strips[name].mappings_(mappings)}) }
 	
 	at { |channel| ^strips[channel] }
 	
@@ -40,7 +45,7 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 			server.sync;
 			strips.do({|strip|
 				strip.target = group;
-				strip.makeNodes;
+				strip.clear;
 				server.sync;
 			});
 		});
@@ -63,6 +68,11 @@ BMTrimPluginsStrip {
 		^super.new.init(target, input);
 	}
 	
+	clear { 
+		plugins = List.new;
+		this.makeNodes;
+	}
+	
 	init {|argtarget, arginput|
 		target = argtarget.asGroup;
 		server = target.server;
@@ -74,6 +84,28 @@ BMTrimPluginsStrip {
 			server.sync;
 			this.makeNodes; // first time only trim...
 		});
+	}
+	
+	mappings { 
+		var dict;
+		dict = IdentityDictionary.new;
+		dict[\trim] = trim;
+		dict[\plugins] = plugins.collect({|plugin|
+			// could be a problem if pluginspec changes in the meantime
+			[plugin.spec.name, plugin.numChannels, plugin.spec.name.attributes, plugin.values];
+		}); // these are in order
+		^dict;
+	}
+	
+	mappings_ { |dict| 
+		this.trim_(dict[\trim]);
+		dict[\plugins].do({|pluginArray|
+			var plugin;
+			plugin = BMPlugin(pluginArray[0], pluginArray[1], server, pluginArray[2]);
+			this.addPlugin(plugin);
+			pluginArray[3].keysValuesDo({|k, v| plugin.set(k, v)});
+		});
+		this.changed;
 	}
 	
 	sendDef {

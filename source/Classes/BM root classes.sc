@@ -6,6 +6,7 @@ BMOptions {
 // Defines the minimum interface for an AudioChainElement
 
 BMAbstractAudioChainElement {
+	classvar <allChainElements;
 	var <ins, <outs, <inNames, <outNames; // in the default case the getters return nil, as an element need not have both ins and outs
 	var <group, <>server, name, <callCmdPeriod = true;
 	
@@ -16,6 +17,10 @@ BMAbstractAudioChainElement {
 	// maybe don't need two audio arrays here
 	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
 		^this.subclassResponsibility(thisMethod);
+	}
+	
+	*initClass {
+		allChainElements = ();
 	}
 	
 	// this should return an instance of our default GUI class
@@ -32,6 +37,8 @@ BMAbstractAudioChainElement {
 	makeGroup { ^this.subclassResponsibility(thisMethod); }
 	
 	name { ^name ? (this.class.name ++ UniqueID.next)} 
+	
+	release { allChainElements[name] = nil}
 
 }
 
