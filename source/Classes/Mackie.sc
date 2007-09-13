@@ -24,8 +24,8 @@ BMAbstractMackie : BMAbstractController {
 		var titleArray, nameString;
 		uid = arguid;
 		name = argname;
-		server = argserver;
-		
+		server = argserver.postln;
+		("Server: " ++ server).postln;
 		this.setNumFaders;
 		this.setSysexHdr;
 		valueArray = Array.fill(numFaders, {0});
@@ -120,8 +120,8 @@ BMAbstractMackie : BMAbstractController {
 MackieCU : BMAbstractMackie {
 	var buttonRoutine, buttonOffRoutine, buttonFuncDict, masterFaderSynth;
 	
-	init {
-		super.init;
+	init { |arguid, argname, argserver|
+		super.init(arguid, argname, argserver);
 		this.addMasterFaderSynth;
 		CmdPeriod.add(this)
 	}

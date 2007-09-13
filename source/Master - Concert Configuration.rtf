@@ -1,7 +1,7 @@
 {\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf420
 {\fonttbl\f0\fnil\fcharset77 Monaco;}
 {\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
-\red0\green115\blue0;}
+\red0\green115\blue0;\red191\green0\blue0;\red0\green0\blue0;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
 \f0\fs18 \cf0 (\cf2 /// option to clear faders before saving a preset\cf0 \
@@ -32,6 +32,8 @@ s.waitForBoot(\{\
 \cf3 var\cf0  stopBlocked = \cf3 false\cf0 , playBlocked = \cf3 false\cf0 ;\
 \cf3 var\cf0  interpolFunc;\
 \
+var chainManager;\
+\
 \
 \cf3 MIDIClient\cf0 .init(numMackies,numMackies);			\cf2 // explicitly intialize the client\cf0 \
 numMackies.do(\{ \cf3 arg\cf0  i; \
@@ -41,34 +43,9 @@ numMackies.do(\{ \cf3 arg\cf0  i; \
 arrays = \cf3 this\cf0 .executeFile(Document.current.dir ++ \cf4 "/jazzelectro\\ channel\\ list.rtf"\cf0 ).postln;\
 inputArray = arrays[1];\
 outputArray = arrays[0]; outputArray.size.postln;\
+\
+\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf2 // brute force hipass filters for ATCs\cf0 \
-hipassFunc = \{ [\cf5 \\FrntL\cf0 , \cf5 \\FrntL\cf0 , \cf5 \\WideL\cf0 , \cf5 \\WideR\cf0 , \cf5 \\RearL\cf0 , \cf5 \\RearR\cf0 , \cf5 \\SideL\cf0 , \cf5 \\SideR\cf0 ].do(\{\cf3 |item|\cf0  \
-	\cf3 var\cf0  chan;\
-	chan = outputArray[item];\
-	\{\cf3 ReplaceOut\cf0 .ar(chan, \cf3 HPF\cf0 .ar(\cf3 In\cf0 .ar(chan, 1), 80) );\}.play(\cf3 RootNode\cf0 (s), addAction: \cf5 \\addToTail\cf0 );\
-	\
-	\})\
-\};\
-\
-tweetFunc = \{ [\cf5 \\TFrntL\cf0 , \cf5 \\TFrntR\cf0 , \cf5 \\TWideL\cf0 , \cf5 \\TWideR\cf0 , \cf5 \\TSideL\cf0 , \cf5 \\TSideR\cf0 , \cf5 \\TRearL\cf0 , \cf5 \\TRearR\cf0 ].do(\{\cf3 |item|\cf0  \
-	\cf3 var\cf0  chan;\
-	chan = outputArray[item];\
-	\{\cf3 ReplaceOut\cf0 .ar(chan, \cf3 HPF\cf0 .ar(\cf3 In\cf0 .ar(chan, 1), 80) );\}.play(\cf3 RootNode\cf0 (s), addAction: \cf5 \\addToTail\cf0 );\
-	\
-	\})\
-\};\
-\
-\
-\cf2 ////CmdPeriod.add(vdistFunc);\cf0 \
-\cf2 ////vdistFunc.value;\cf0 \
-\cf2 //\cf0 \
-\cf2 //CmdPeriod.add(hipassFunc);\cf0 \
-\cf2 //hipassFunc.value;\cf0 \
-\cf2 //\cf0 \
-\cf2 //CmdPeriod.add(tweetFunc);\cf0 \
-\cf2 //tweetFunc.value;\cf0 \
-\
 \cf2 ///////\cf0 \
 \
 mackieList = \cf3 List\cf0 [];\
@@ -85,6 +62,13 @@ player = \cf3 SoundFilePlayer\cf0 .new(8);\
 ~player = player;\
 playerGUI = \cf3 SoundFilePlayerGUI\cf0 (player);\
 \
+chainManager = \cf3 BMAudioChainManager([player\cf0 , \cf3 InOutArray\cf0 .hardwareInputArray], [\cf5 'Pre-Processing'\cf0 ->\cf3 BMTrimPluginsRack\cf0 , \cf5 'Input Levels'\cf0 ->\cf3 AmpControlMatrix\cf0 ], [\cf5 'Output Levels'\cf0 ->\cf3 AmpControlMatrix, \cf5 'Post-Processing'\cf0 ->\cf3 BMTrimPluginsRack\cf0 ], \cf3 BMAbstractController.\cf0 allControllers.values.collect(\{\cf3 |item|\cf0  item.getInputArray \}).flat.as(\cf3 InputArray\cf0 ), outputArray);\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf3 BMAudioChainManagerGUI(\cf0 chainManager);\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf2 //mackieCU.playFunc = \{player.play\};\cf0 \
 \cf2 //mackieCU.stopFunc = \{player.stop\};\cf0 \
 mackieCU.playFunc = \{playBlocked.not.if(\{playBlocked = \cf3 true\cf0 ; player.play; 	\cf3 SystemClock\cf0 .sched(1.0, \{playBlocked = \cf3 false\cf0 ;\})\});\};\
@@ -93,13 +77,6 @@ mackieCU.ffFunc_(\{player.rate = 8; \}, \{player.rate = 1; \});\
 mackieCU.fbFunc_(\{player.rate = -8; \}, \{player.rate = 1; \});\
 	\
 playerGUI.addDependant(mackieCU);\
-\
-\cf2 //audMatrix = AudioMatrix(InputArray[\\in1 -> 0, \\in2 -> 1].addAll(player.getInputArray), \cf0 \
-\cf2 //	OutputArray.fill(8, \{|i| ("out" ++ (i+1)).asSymbol -> i\}));\cf0 \
-audMatrix = \cf3 AudioMatrix\cf0 (inputArray.addAll(player.getInputArray), outputArray);\
-	\
-ctrlMatrix = \cf3 AmpControlMatrix\cf0 (mackieList.collect(\{\cf3 |item|\cf0  item.getInputArray \}).flat.as(\cf3 InputArray\cf0 ), audMatrix.outs);\
-\cf2 //ctrlMatrix.inNames.postln;\cf0 \
 \
 \
 \cf2 // added (SL)\cf0 \
@@ -115,23 +92,24 @@ presetManager		= \cf3 PresetManager\cf0 (\cf5 \\piece\cf0 );\
 \
 masterWindow = \cf3 SCWindow\cf0 (\cf4 "Master"\cf0 , \cf3 Rect\cf0 (10, 600, 200, 300), \cf3 false\cf0 ).userCanClose = \cf3 false\cf0 ;\
 masterWindow.view.decorator = \cf3 FlowLayout\cf0 (masterWindow.view.bounds, \cf3 Point\cf0 (10, 10), \cf3 Point\cf0 (10, 10));\
-audGUIButton = \cf3 SCButton\cf0 (masterWindow, \cf3 Rect\cf0 (10, 10, 180, 20));\
-audGUIButton.states = [[\cf4 "Audio Matrix"\cf0 , \cf3 Color\cf0 .black,\cf3 Color\cf0 .clear]];\
-audGUIButton.action = \{ \
-	audMatrixGUI.isNil.if(\{\
-		audMatrixGUI = \cf3 MatrixMenuGUI\cf0 (audMatrix, \cf4 "Audio Routing"\cf0 , \cf3 Point\cf0 (420, 360));\
-		audMatrixGUI.onClose = \{audMatrixGUI = \cf3 nil\cf0 ;\};\
-	\});\
-\};\
-\
-ctlGUIButton = \cf3 SCButton\cf0 (masterWindow, \cf3 Rect\cf0 (10, 10, 180, 20));\
-ctlGUIButton.states = [[\cf4 "Controller Mappings"\cf0 , \cf3 Color\cf0 .black,\cf3 Color\cf0 .clear]];\
-ctlGUIButton.action = \{ \
-	ctrlMatrixGUI.isNil.if(\{\
-		ctrlMatrixGUI = \cf3 MatrixMenuGUI\cf0 (ctrlMatrix, \cf4 "Controller Routing"\cf0 , \cf3 Point\cf0 (420, 30));\
-		ctrlMatrixGUI.onClose = \{ctrlMatrixGUI = \cf3 nil\cf0 ;\};\
-	\});\
-\};\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf6 //audGUIButton = SCButton(masterWindow, Rect(10, 10, 180, 20));\cf7 \
+\cf6 //audGUIButton.states = [["Audio Matrix", Color.black,Color.clear]];\cf7 \
+\cf6 //audGUIButton.action = \{ \cf7 \
+\cf6 //	audMatrixGUI.isNil.if(\{\cf7 \
+\cf6 //		audMatrixGUI = MatrixMenuGUI(audMatrix, "Audio Routing", Point(420, 360));\cf7 \
+\cf6 //		audMatrixGUI.onClose = \{audMatrixGUI = nil;\};\cf7 \
+\cf6 //	\});\cf7 \
+\cf6 //\};\cf7 \
+\cf6 //\cf7 \
+\cf6 //ctlGUIButton = SCButton(masterWindow, Rect(10, 10, 180, 20));\cf7 \
+\cf6 //ctlGUIButton.states = [["Controller Mappings", Color.black,Color.clear]];\cf7 \
+\cf6 //ctlGUIButton.action = \{ \cf7 \
+\cf6 //	ctrlMatrixGUI.isNil.if(\{\cf7 \
+\cf6 //		ctrlMatrixGUI = MatrixMenuGUI(ctrlMatrix, "Controller Routing", Point(420, 30));\cf7 \
+\cf6 //		ctrlMatrixGUI.onClose = \{ctrlMatrixGUI = nil;\};\cf7 \
+\cf6 //	\});\cf7 \
+\cf6 //\};\cf0 \
 \
 labelsButton = \cf3 SCButton\cf0 (masterWindow, \cf3 Rect\cf0 (10, 10, 180, 20));\
 labelsButton.states = [[\cf4 "Fader Labels"\cf0 , \cf3 Color\cf0 .black,\cf3 Color\cf0 .clear]];\
@@ -143,6 +121,7 @@ labelsButton.action = \{ \
 \};\
 \
 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf2 // added (SL)\cf0 \
 \
 concertConfigButton		= \cf3 SCButton\cf0 (masterWindow, \cf3 Rect\cf0 (10, 10, 180, 20));\
