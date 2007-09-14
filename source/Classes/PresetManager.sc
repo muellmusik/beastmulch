@@ -124,7 +124,9 @@ NewPresetGUI {
 		var presetName, copyDict;
 		
 		copyDict 	= IdentityDictionary[];
-		window 	= SCWindow("New Preset", Rect(origin.x, origin.y, 340-140+60, 230), false).userCanClose_(false);
+//		window 	= SCWindow("New Preset", Rect(origin.x, origin.y, 340-140+60, 230), false).userCanClose_(false);
+		window 	= SCWindow("New Preset", Rect(origin.x, origin.y + 100, 340-140+60, 230 - 100), false).userCanClose_(false);
+		
 		window.view.decorator = FlowLayout(window.view.bounds, Point(10, 10), Point(10, 10));
 		
 		SCStaticText(window, 50 @ 20).string = "Name:";
@@ -132,7 +134,27 @@ NewPresetGUI {
 						   		    .string_(defaultName)
 						   		    .action_({| field | presetName = field.value });
 
-		[ 'Copy audio routing?' -> true, 'Copy control routing?' -> true, 'Copy fader labels?' -> true, 'Copy initial fader state?' -> false ]
+//		[ 'Copy audio routing?' -> true, 'Copy control routing?' -> true, 'Copy fader labels?' -> true, 'Copy initial fader state?' -> false ]
+//		 .do{| assoc |
+//			 
+//			 copyDict.add(assoc);
+//			 window.view.decorator.nextLine;
+//			 
+//			 ToggleView(window, 240 @ 20)
+//			 		.caption_(assoc.key.asString)
+//			 		.hitColor_(Color.red(alpha: 0.2))
+//			 		.action_({| button | copyDict[assoc.key] = button.value.postln })
+//			 		.value_(assoc.value)
+//			 
+////			 SCButton(window, 180 @ 20)
+////			 	    .states_([ "Yes", "No" ].collect( [ _, Color.black, Color.clear ]))
+////				    .action_({| button | copyDict[assoc.key] = if (button.value == 0) { true } { false } })
+////				    .value_(if (assoc.value) { 0 } { 1 })
+//			 
+//			 };
+
+
+		[ 'Do you want to copy everything?' -> true ]
 		 .do{| assoc |
 			 
 			 copyDict.add(assoc);
@@ -140,7 +162,7 @@ NewPresetGUI {
 			 
 			 ToggleView(window, 240 @ 20)
 			 		.caption_(assoc.key.asString)
-			 		.hitColor_(Color.red(alpha: 0.2))
+			 		.hitColor_(Color.green(alpha: 0.2))
 			 		.action_({| button | copyDict[assoc.key] = button.value.postln })
 			 		.value_(assoc.value)
 			 
@@ -150,7 +172,11 @@ NewPresetGUI {
 //				    .value_(if (assoc.value) { 0 } { 1 })
 			 
 			 };
-		    
+			 
+			 
+			 
+			 
+
 		window.view.decorator.shift(0, 30);
 		
 		SCButton(window, 115 @ 20)
@@ -161,7 +187,7 @@ NewPresetGUI {
 			   		   });
 			   
 		SCButton(window, 115 @ 20)
-			   .states_([[ "OK", Color.white, Color.red ]])
+			   .states_([[ "OK", Color.white, Color.green ]])
 			   .action_({	if (presetNames.indexOfEqual(presetName ? defaultName).isNil)
 			   			   { window.close;
 			   			     this.changed(\OK, presetName ? defaultName, copyDict); 
@@ -180,7 +206,8 @@ NewPresetGUI {
 		var errorWindow;
 		//Rect(origin.x, origin.y, 340-140+60, 230),
 		//Rect(420, 360, 340, 230 + 25)
-		errorWindow = SCWindow("", Rect(490, 360, 260, 230 + 25), false, false)
+//		errorWindow = SCWindow("", Rect(490, 360, 260, 230 + 25), false, false)
+		errorWindow = SCWindow("", Rect(490, 360 + 100, 260, 230 + 25 - 100), false, false)
 					 .alwaysOnTop_(true)
 					 .onClose = { errorWindow = nil };
 		errorWindow.view.background	= Color.red(0.9);
@@ -188,7 +215,7 @@ NewPresetGUI {
 		SCStaticText(errorWindow, Rect(20, 0, 240, 130))
 		 .string_("Preset name already in use. Please enter a different name.")
 		 .stringColor_(Color.white)
-		 .font_(Font("Helvetica", 22));
+		 .font_(Font("Helvetica", 14));
 		
 		SCButton(errorWindow, Rect(70, 180, 118, 20))
 		  .states_([[ "OK", Color.white, Color.red(0.9) ]])

@@ -92,12 +92,14 @@ BMTrimPluginsStrip {
 		dict[\trim] = trim;
 		dict[\plugins] = plugins.collect({|plugin|
 			// could be a problem if pluginspec changes in the meantime
-			[plugin.spec.name, plugin.numChannels, plugin.spec.name.attributes, plugin.values];
+			[plugin.spec.name, plugin.numChannels, plugin.attributes, plugin.values];
 		}); // these are in order
 		^dict;
 	}
 	
 	mappings_ { |dict| 
+		this.plugins.do({|plugin| plugin.release;});
+		plugins = List.new;
 		this.trim_(dict[\trim]);
 		dict[\plugins].do({|pluginArray|
 			var plugin;

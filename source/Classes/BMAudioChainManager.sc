@@ -101,6 +101,7 @@ BMAudioChainManagerGUI : BMAbstractGUI {
 		pseudoTimes = [(1..columns).normalize - 0.5 * 0.68 + 0.5, 0.5 ! (rows - 1)].flat;
 		
 		window = SCWindow(name, Rect.new(x, y, width, 450), false, scroll: true);
+		window.userCanClose_(false);
 		if(width == 450, {window.view.hasHorizontalScroller = false; });
 		chainView = SCUserView(window, Rect(0, 0, width, max(450, rows * 80)));
 		window.view.background = Color.white.alpha_(0.2);
