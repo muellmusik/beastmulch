@@ -172,6 +172,11 @@ SoundFilePlayerGUI : BMAbstractGUI {
 		clockView.align = \center;
 		clust = SCVLayoutView(window,Rect(10,10,200,40));
 		info = SCStaticText.new(clust, Rect(10,10,200,20));
+		player.path.notNil.if({{
+			info.string = player.path.basename; 
+			dur.string =  "Length:" + 
+				(player.buffer.numFrames / player.buffer.sampleRate).asTimeString
+			}.defer });
 		dur = SCStaticText.new(window, Rect(10,10,150,20)).align_(\center);
 		loadButton = SCButton.new(clust, Rect(10,10,200,20));
 		loadButton.states = [["Load File", Color.black,Color.clear]];
