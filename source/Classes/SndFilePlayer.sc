@@ -3,12 +3,18 @@
 
 // currently will respond to any trigger message. Clean up later
 SoundFilePlayer : BMAbstractAudioSource {
+	classvar <allplayers;
 	var maxNumChannels, <latency, <>bus;
 	var <buffer, <synth, <>releaseTime = 0.1, watcher, <rate = 1;
 	var <sampleDur = 2.2675736961451e-05;
+	var blockPlay = false;
 	
 	*new {|maxNumChannels = 2, latency = 0.1, server, group|
 		^super.new.init(maxNumChannels, latency, server ? Server.default, group);
+	}
+	
+	*initClass {
+		allplayers = List.new;
 	}
 	
 	init { |argMaxNumChannels, argLatency, argServer, argGroup|
@@ -23,7 +29,7 @@ SoundFilePlayer : BMAbstractAudioSource {
 		OSCresponderNode(this.server.addr,'/tr',{ arg time,responder,msg;
 			this.changed(\time, msg.last * this.sampleDur);
 		}).add;
-		
+		allplayers.add(this);
 		//allChainElements[name] = this;
 	}
 	
@@ -90,7 +96,10 @@ SoundFilePlayer : BMAbstractAudioSource {
 	}
 	
 	play { |startTime = 0, out|
-		synth.isPlaying.not.if({
+		
+		(synth.isPlaying.not && blockPlay.not && synth.isNil).if({
+			
+			blockPlay = true;
 //			server.makeBundle(latency, {
 				synth = Synth.head(group, this.hash.asString, 
 					[\out, out ? bus.index, \rate, rate]);
@@ -98,11 +107,12 @@ SoundFilePlayer : BMAbstractAudioSource {
 				synth.addDependant(this);
 			//});
 			this.changed(\play);
+			SystemClock.sched(1.0, {blockPlay = false;});
 		});
 		
 	}
 	
-	stop { synth.isPlaying.if({synth.release; watcher.stop; synth = nil; this.changed(\stop);}) }
+	stop { synth.isPlaying.if({blockPlay = true; synth.release; watcher.stop; synth = nil; this.changed(\stop); SystemClock.sched(1.0, {blockPlay = false;});}) }
 	
 	//pause {} // maybe use run here
 	
@@ -136,7 +146,7 @@ SoundFilePlayer : BMAbstractAudioSource {
 		group = Group.head(server);
 	}
 	
-	cmdPeriod { this.makeGroup }
+	cmdPeriod { blockPlay = false; this.makeGroup }
 	
 	name { ^name ? "Soundfile Player" }
 	
@@ -220,7 +230,7 @@ SoundFilePlayerGUI : BMAbstractGUI {
 			\n_end, {this.updateTimeDisplay(0.getTimeString)},
 //			\play, {stopwatch.start;},
 			\bufferFreed, {info.string = ""; dur.string = "";},
-			\stop, {this.updateTimeDisplay(0.getTimeString)},
+			\stop, {"in the name of love".postln; this.updateTimeDisplay(0.getTimeString)},
 			\loading, {info.string = "Loading...";},
 			\loaded, {{info.string = player.path.basename; dur.string =  "Length:" + (player.buffer.numFrames / player.buffer.sampleRate).asTimeString}.defer },
 			\time, { this.updateTimeDisplay(args.first.getTimeString) }

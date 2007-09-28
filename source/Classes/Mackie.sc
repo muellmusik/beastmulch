@@ -189,6 +189,7 @@ MackieCU : BMAbstractMackie {
 	update {|changed, what ...args|
 	
 		if(what == \time, { this.setTimeString(args.first.getTimeString) });
+		if(what == \stop, { SystemClock.sched(1.0, {this.setTimeString(0.getTimeString)}) });
 	}
 
 }

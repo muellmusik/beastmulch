@@ -15,7 +15,6 @@
 			{string = string ++ minutes ++ ":"; });
 		if(seconds<10,{string = string ++ "0" ++ seconds},
 			{string = string ++ seconds});
-			string.postln;
 		if(string.size < 10, {string = string ++ ".0"});
 		^string
     }
