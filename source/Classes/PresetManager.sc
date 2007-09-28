@@ -100,7 +100,7 @@ PresetManager {
 	 
 	 	list	= (presetsDirs[presetType]++"*").standardizePath.pathMatch.collect(_.basename)
 	 		  .sort
-	 		  .collect(_.asSymbol);
+	 		  /*.collect(_.asSymbol)*/;
 	 	^list
 	 
 	 }
@@ -217,7 +217,7 @@ NewPresetGUI {
 		 .stringColor_(Color.white)
 		 .font_(Font("Helvetica", 14));
 		
-		SCButton(errorWindow, Rect(70, 280, 118, 20))
+		SCButton(errorWindow, Rect(70, 180, 118, 20))
 		  .states_([[ "OK", Color.white, Color.red(0.9) ]])
 		  .action_({	errorWindow.close; window.front; presetNameField.focus })
 		  .focus;

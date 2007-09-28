@@ -73,15 +73,15 @@ Stopwatch {
 		milliseconds = (time%60).frac * 1000;
 	}
 	
-	getTimeString {
-		var string;
-		if(hours == 0, {string = "00:"}, {string = hours.asString ++ ":" });
-		if(minutes < 10, {string = string ++ "0" ++ minutes ++ ":"}, 
-			{string = string ++ minutes ++ ":"; });
-		if(seconds<10,{string = string ++ "0" ++ (seconds + (milliseconds * 0.001))},
-			{string = string ++ (seconds + (milliseconds * 0.001))});
-		^string;
-	}
+//	getTimeString {
+//		var string;
+//		if(hours == 0, {string = "00:"}, {string = hours.asString ++ ":" });
+//		if(minutes < 10, {string = string ++ "0" ++ minutes ++ ":"}, 
+//			{string = string ++ minutes ++ ":"; });
+//		if(seconds<10,{string = string ++ "0" ++ (seconds + (milliseconds * 0.001))},
+//			{string = string ++ (seconds + (milliseconds * 0.001))});
+//		^string;
+//	}
 	
 	cmdPeriod { // make sure seconds gets updated 
 		CmdPeriod.remove(this);

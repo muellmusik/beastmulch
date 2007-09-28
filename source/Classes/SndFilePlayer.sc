@@ -20,6 +20,10 @@ SoundFilePlayer : BMAbstractAudioSource {
 		bus = Bus.audio(server, maxNumChannels);
 		if(group.isNil, {this.makeGroup});
 		CmdPeriod.add(this);
+		OSCresponderNode(this.server.addr,'/tr',{ arg time,responder,msg;
+			this.changed(\time, msg.last * this.sampleDur);
+		}).add;
+		
 		//allChainElements[name] = this;
 	}
 	
@@ -137,6 +141,8 @@ SoundFilePlayer : BMAbstractAudioSource {
 	name { ^name ? "Soundfile Player" }
 	
 	gui { ^SoundFilePlayerGUI(this) }
+	
+  
 }
 
 
@@ -152,9 +158,6 @@ SoundFilePlayerGUI : BMAbstractGUI {
 	init { |argplayer, argname|
 		player = argplayer;
 		name = argname ? "Sound File Player";
-		OSCresponderNode(player.server.addr,'/tr',{ arg time,responder,msg;
-			this.updateTimeDisplay(msg.last * player.sampleDur);
-		}).add;
 		player.addDependant(this);
 	}
 	
@@ -202,36 +205,25 @@ SoundFilePlayerGUI : BMAbstractGUI {
 		window.front;
 	}
 	
-	updateTimeDisplay {|time|
-		var string, minutes, hours, seconds;
-		minutes = (time/60).trunc(1);
-		if(minutes >= 60,{ hours = (minutes/60).trunc(1);
-			minutes = minutes%60;
-		},{
-			hours = 0;
-		});
-		seconds = (time%60).trunc(0.1);
-		
-		if(hours == 0, {string = "00:"}, {string = hours.asString ++ ":" });
-		if(minutes < 10, {string = string ++ "0" ++ minutes ++ ":"}, 
-			{string = string ++ minutes ++ ":"; });
-		if(seconds<10,{string = string ++ "0" ++ seconds},
-			{string = string ++ seconds});
-		if(string.size < 10, {string = string ++ ".0"});
-		{ clockView.string = string;}.defer;
-		this.changed(\time, string);
+
+    
+    updateTimeDisplay {| string |
+        
+		{ clockView.string = string }.defer
+	
 	}
 	
 	// always updated from player
-	update {arg changed, what; 
+	update {arg changed, what ...args; 
 		//if(what == \n_end, {stopwatch.stop;});
 		switch(what,
-			\n_end, {this.updateTimeDisplay(0)},
+			\n_end, {this.updateTimeDisplay(0.getTimeString)},
 //			\play, {stopwatch.start;},
 			\bufferFreed, {info.string = ""; dur.string = "";},
-			\stop, {this.updateTimeDisplay(0)},
+			\stop, {this.updateTimeDisplay(0.getTimeString)},
 			\loading, {info.string = "Loading...";},
-			\loaded, {{info.string = player.path.basename; dur.string =  "Length:" + (player.buffer.numFrames / player.buffer.sampleRate).asTimeString}.defer }
+			\loaded, {{info.string = player.path.basename; dur.string =  "Length:" + (player.buffer.numFrames / player.buffer.sampleRate).asTimeString}.defer },
+			\time, { this.updateTimeDisplay(args.first.postln.getTimeString.postln) }
 		)
 	}
 	

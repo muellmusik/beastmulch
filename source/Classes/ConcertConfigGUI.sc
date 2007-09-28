@@ -29,7 +29,7 @@ ConcertConfig {
  
 	add {| piece, indexInList |
 		 
-		if (list.includes(piece).not)
+		if (list.indexOfEqual(piece).isNil)
 		   { if (indexInList.notNil)
 		   	   { list.insert(indexInList + 1, piece) }
 		   	   { list.add(piece) };
@@ -106,7 +106,7 @@ ConcertConfigGUI {
 		SCStaticText.new(concertSection, Rect(0,0,80,0)).string_(" ");// placeholder
 		
 		loadButton				= SCButton(concertSection, Rect(0,0,200,20)).canReceiveDragHandler = false;		loadButton.states 			= [[ "Load Selected Preset", Color.black,Color.clear]];
-		loadButton.action 			= { concertConfig.load(concertView.items[concertView.value].asSymbol) };
+		loadButton.action 			= { concertConfig.load(concertView.item/*s[concertView.value]*//*.asSymbol*/) };
 							  	  		
 		SCStaticText.new(concertSection, Rect(0,0,80,10)).string_(" ");// placeholder
 			
@@ -187,7 +187,7 @@ ConcertConfigGUI {
 									
 									var presetNames, presetDict, concertPresetM;
 									
-									presetNames	= concertConfig.list.collect(_.asString);
+									presetNames	= concertConfig.list/*.collect(_.asString)*/;
 									
 									presetDict	= IdentityDictionary[];
 									presetNames.do{| presetN | 
@@ -230,7 +230,7 @@ ConcertConfigGUI {
 								 	 };
 								 
 								 concertConfig.clear;
-								 presetNames.do{| name | concertConfig.add(name.asSymbol) };
+								 presetNames.do{| name | concertConfig.add(name/*.asSymbol*/) };
 							    }, maxSize:1)
 							   };	
 
@@ -259,6 +259,6 @@ ConcertConfigGUI {
 			
 	update {
 		concertView.items 	= concertConfig.list.asArray;
-		presetView.items 	= presetManager.storedPresets.difference(concertView.items)
+		presetView.items 	= presetManager.storedPresets.collect(_.asSymbol).difference(concertView.items)
 	}
 }
