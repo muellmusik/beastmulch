@@ -188,7 +188,7 @@ MackieCU : BMAbstractMackie {
 	
 	update {|changed, what ...args|
 	
-		if(what == \time, { this.setTimeString(args.postln.first.postln.getTimeString) });
+		if(what == \time, { this.setTimeString(args.first.getTimeString) });
 	}
 
 }

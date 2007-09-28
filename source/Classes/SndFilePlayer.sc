@@ -223,7 +223,7 @@ SoundFilePlayerGUI : BMAbstractGUI {
 			\stop, {this.updateTimeDisplay(0.getTimeString)},
 			\loading, {info.string = "Loading...";},
 			\loaded, {{info.string = player.path.basename; dur.string =  "Length:" + (player.buffer.numFrames / player.buffer.sampleRate).asTimeString}.defer },
-			\time, { this.updateTimeDisplay(args.first.postln.getTimeString.postln) }
+			\time, { this.updateTimeDisplay(args.first.getTimeString) }
 		)
 	}
 	
