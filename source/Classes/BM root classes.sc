@@ -2,7 +2,7 @@
 BMOptions {
 	classvar <>crossfade = 0.1;
 	classvar <>numInputBusChannels = 10;
-	classvar <>numOutputBusChannels = 10;
+	classvar <>numOutputBusChannels = 96;
 }
 
 // Defines the minimum interface for an AudioChainElement
