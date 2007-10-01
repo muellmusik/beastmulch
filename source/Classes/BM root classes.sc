@@ -1,6 +1,8 @@
 // class for storing some library wide options
 BMOptions {
 	classvar <>crossfade = 0.1;
+	classvar <>numInputBusChannels = 10;
+	classvar <>numOutputBusChannels = 10;
 }
 
 // Defines the minimum interface for an AudioChainElement

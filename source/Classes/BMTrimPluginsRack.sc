@@ -30,7 +30,11 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 	
 	mappings { ^strips.collect({|strip, name| strip.mappings});}
 	
-	mappings_ { |dict| dict.keysValuesDo({|name, mappings| strips[name].mappings_(mappings)}) }
+	mappings_ { |dict| dict.keysValuesDo({|name, mappings| 
+		strips[name].notNil.if({
+			strips[name].mappings_(mappings)});
+		},{ error("Plugin Strip:" + name + "not defined.") });
+	}
 	
 	at { |channel| ^strips[channel] }
 	
