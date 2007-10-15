@@ -1,7 +1,10 @@
+// maybe 'mappings' should be preset and used throughout the library
+
+
 // class for storing some library wide options
 BMOptions {
 	classvar <>crossfade = 0.1;
-	classvar <>numInputBusChannels = 10;
+	classvar <>numInputBusChannels = 12;
 	classvar <>numOutputBusChannels = 96;
 }
 
@@ -54,8 +57,11 @@ BMAbstractAudioSource : BMAbstractAudioChainElement {
 	asInOutArray { ^this.subclassResponsibility(thisMethod);}
 }
 
+// valueArray holds the controller value in its native form
+// setFaderValue should convert to 0-1 and send to the bus 
 BMAbstractController {
 	classvar <allControllers;
+	var <name, <bus, <busIndex, valueArray, labelArray, <server, <numFaders;
 	
 	*initClass {
 		allControllers = IdentityDictionary.new;
@@ -64,7 +70,39 @@ BMAbstractController {
 	*dumpAllValues {
 		^allControllers.collect({|elem, key| key->(elem.getAllFaders)});
 	}
-
+	
+	getFaderVal { |faderNum| ^this.subclassResponsibility(thisMethod) }
+	
+	setFaderVal { |faderNum, val| this.subclassResponsibility(thisMethod) }
+	
+	getAllFaders { ^this.subclassResponsibility(thisMethod) }
+	
+	setAllFaders {|array| this.subclassResponsibility(thisMethod)}
+	
+	setLabel { |fader, name|
+		this.subclassResponsibility(thisMethod)
+	}
+	
+	getLabel { |fader| ^this.subclassResponsibility(thisMethod) }
+	
+	getAllLabels { ^this.subclassResponsibility(thisMethod) }
+	
+	setAllLabels { |array| this.subclassResponsibility(thisMethod)}
+	
+	// for faders
+	getInputArray {
+		^this.subclassResponsibility(thisMethod);
+	}
+	
+	// perhaps this should be more generalised and named something else like 'preset'
+	mappings {
+		^IdentityDictionary[\labels->this.getAllLabels, \faders->this.getAllFaders];
+	}
+	
+	mappings_ {|mappings|
+		this.setAllLabels(mappings[\labels]);
+		this.setAllFaders(mappings[\faders]);
+	}
 }
 
 BMAbstractGUI {

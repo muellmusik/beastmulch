@@ -3,8 +3,8 @@
 // assumes MIDIClient is initialised
 
 BMAbstractMackie : BMAbstractController {
-	var <uid, <name, <server, <bus, <busIndex, numFaders, <outPort, <outUid, <midiout, spec;
-	var <>sysexHdr, valueArray, labelArray, faderRoutine;
+	var <uid, <outPort, <outUid, <midiout, spec;
+	var <>sysexHdr, faderRoutine;
 	
 	*new { |uid, name, server|
 		^super.new.init(uid, name, server ? Server.default);
@@ -110,7 +110,7 @@ BMAbstractMackie : BMAbstractController {
 	
 	// for faders
 	getInputArray {
-		^this.faderNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, InputArray);
+		^this.faderNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, InOutArray);
 	}
 	
 	faderNames {^Array.fill(numFaders, {|i| name.asString ++ "-" ++ (i+1)})}
