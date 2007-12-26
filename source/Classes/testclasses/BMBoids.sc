@@ -1,20 +1,20 @@
 BMGrainBoid {
-	var <dim, <pos, <vel, <minDist;
+	var <dim, <pos, <vel;
 
 	*new {|dim = 3, pos, vel, minDist|
-		^super.newCopyArgs(dim, pos ?? {{0.5.rand2} ! dim}, vel ?? {0.0 ! dim}, minDist);
+		^super.newCopyArgs(dim, pos ?? {{0.5.rand2} ! dim}, vel ?? {0.0 ! dim});
 	}
 	
-	move {|boids, centre, limits, velMax, matchCountRecip|
-		vel = vel + 
-			(centre  ) - pos * 0.01 + 				// move towards centering point
-			this.cohere(boids, matchCountRecip) +
-			this.avoid(boids) +					// avoid other boids
-			this.matchVel(boids, matchCountRecip) + 	// match velocity with nearby boids
-			this.boundSpace(pos, limits, velMax);
-		vel = vel.clip2(velMax);
+	move {|boids, centre, limits, velMax, minDist, matchCountRecip|
+		vel = vel * 0.9 + 							// less twitchy
+			this.cohere(boids, matchCountRecip) +		// stick together
+			this.avoid(boids, minDist) +			// avoid other boids
+			this.matchVel(boids, matchCountRecip) +	// match velocity with nearby boids
+			this.boundSpace(pos, limits, velMax);		// stay in the room
 		
-		//pos = boundSpace(pos + vel, limits);
+		centre.notNil.if({vel = vel + (centre - pos * 0.01)}); // move towards centering point
+		vel = vel.clip2(velMax); // limit maximum velocity
+
 		pos = (pos + vel) //.max(limits[0]).min(limits[1]);
 	}
 	
@@ -27,16 +27,17 @@ BMGrainBoid {
 	
 	}
 	
-	avoid {|boids|
+	avoid {|boids, minDist|
 		var vec, posDif;
 		vec = 0.0 ! dim;
-		boids.do({|boid| 
+		boids.reject({|boid| boid === this}).do({|boid| 
 			posDif = boid.pos - pos;
 			//// this is way cheaper than checking Euclidean distance each time
 //			if((posDif.abs < minDist).any({|bool| bool}), {vec = vec - posDif});
 
-			if((posDif.squared.sum.sqrt.abs < minDist), {vec = vec - posDif});
+			if((pos - boid.pos).squared.sum.sqrt < minDist, {vec = vec - posDif});
 		});
+		//postln("avoid:" + vec); 
 		^vec
 	}
 	
@@ -63,7 +64,7 @@ BMGrainBoid {
 }
 
 BMGrainBoidSpace {
-	var <dim, <numBoids, <>centre, limits, <velMax, <minDist;
+	var <dim, <numBoids, <>centre, limits, <>velMax, <>minDist;
 	var <boids, boidStream, matchCountRecip;
 	
 	*new {|dim = 3, numBoids, centre, limits, velMax, minDist| 
@@ -79,7 +80,7 @@ BMGrainBoidSpace {
 	
 	// move a boid
 	moveNext {
-		boidStream.next.move(boids, centre, limits, velMax, matchCountRecip);
+		boidStream.next.move(boids, centre, limits, velMax, minDist, matchCountRecip);
 	}
 	
 }
