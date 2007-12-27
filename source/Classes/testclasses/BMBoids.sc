@@ -5,24 +5,25 @@ BMGrainBoid {
 		^super.newCopyArgs(dim, pos ?? {{0.5.rand2} ! dim}, vel ?? {0.0 ! dim});
 	}
 	
-	move {|boids, centre, limits, velMax, minDist, matchCountRecip|
-		vel = vel * 0.9 + 							// less twitchy
-			this.cohere(boids, matchCountRecip) +		// stick together
+	move {|boids, centre, limits, velMax, velScale, minDist, avoidD, countRecip|
+		vel = vel * 0.9 + 							// damp so less twitchy
+			this.cohere(boids, countRecip) +			// stick together
 			this.avoid(boids, minDist) +			// avoid other boids
-			this.matchVel(boids, matchCountRecip) +	// match velocity with nearby boids
-			this.boundSpace(pos, limits, velMax);		// stay in the room
+			this.matchVel(boids, countRecip) +		// match velocity with nearby boids
+			this.boundSpace(pos, limits, velMax);		// stay in the room, more or less
 		
+		avoidD.if({this.avoidDesk});				// avoid the desk
 		centre.notNil.if({vel = vel + (centre - pos * 0.01)}); // move towards centering point
 		vel = vel.clip2(velMax); // limit maximum velocity
 
-		pos = (pos + vel) //.max(limits[0]).min(limits[1]);
+		pos = (pos + (vel * velScale));
 	}
 	
-	cohere {|boids, matchCountRecip|
+	cohere {|boids, countRecip|
 		var vec;
 		vec = 0.0 ! dim;
 		boids.reject({|boid| boid === this}).do({|boid| vec = vec + boid.pos });
-		vec = vec * matchCountRecip;
+		vec = vec * countRecip;
 		^(vec - pos * 0.02)
 	
 	}
@@ -41,13 +42,13 @@ BMGrainBoid {
 		^vec
 	}
 	
-	matchVel {|boids, matchCountRecip|
+	matchVel {|boids, countRecip|
 		var vec;
 		vec = 0 ! dim;
 		boids.do({|boid| 
 			if(boid !== this, { vec = vec + boid.vel });
 		});
-		vec = vec * matchCountRecip;
+		vec = vec * countRecip;
 		^(vec - vel * 0.125)
 	}
 	
@@ -61,26 +62,31 @@ BMGrainBoid {
 		^vec
 	}
 	
+	avoidDesk{
+		if(hypotApx(pos[0], pos[1] ) < 0.4, { vel[0] = pos[0] * 1.01 + vel[0];  vel[1] = pos[1] * 1.01 + vel[1];});
+	}
+	
 }
 
 BMGrainBoidSpace {
-	var <dim, <numBoids, <>centre, limits, <>velMax, <>minDist;
-	var <boids, boidStream, matchCountRecip;
+	var <dim, <numBoids, <>centre, limits, <>velMax, <>velScale, <>minDist, <>avoidD = false;
+	var <boids, boidStream, countRecip;
 	
-	*new {|dim = 3, numBoids, centre, limits, velMax, minDist| 
+	*new {|dim = 3, numBoids, centre, limits, velMax, velScale, minDist, avoidD = false| 
 		// limits is an array of [[min * dim, [max * dim]]
-		^super.newCopyArgs(dim, numBoids, centre ?? {0.0 ! dim}, limits, velMax, minDist).init;
+		^super.newCopyArgs(dim, numBoids, centre ?? {0.0 ! dim}, limits, velMax, velScale ? 1.0, 
+			minDist, avoidD).init;
 	}
 	
 	init {
 		boids = { BMGrainBoid(dim, minDist: minDist) } ! numBoids;
 		boidStream = Pseq(boids, inf).asStream;
-		matchCountRecip = (numBoids - 1).reciprocal;
+		countRecip = (numBoids - 1).reciprocal;
 	}
 	
 	// move a boid
 	moveNext {
-		boidStream.next.move(boids, centre, limits, velMax, minDist, matchCountRecip);
+		boidStream.next.move(boids, centre, limits, velMax, velScale, minDist, avoidD, countRecip);
 	}
 	
 }
