@@ -84,6 +84,24 @@ BMPluginSpec {
 				}, 								
 				description: "Cuts through that greasy DC buildup..."
 			);
+			BMPluginSpec('Delay', 				// name
+				{|plugin, numChannels, input, delayTime| 
+					DelayC.ar(input, 2, delayTime);
+				},
+				(delayTime: ControlSpec(0.0001, 1, \linear, 0, 0.5, units: " secs")), 
+				description: "Simple Delay with Cubic Interpolation; 1 second maximum"
+			);
+			BMPluginSpec('FreeVerb', 				// name
+				{|plugin, numChannels, input, mix, roomSize, hfDamp| 
+					FreeVerb.ar(input, mix,  roomSize,  hfDamp);
+				},
+				(
+					mix: ControlSpec(0, 1, \linear, 0, 0.25, units: ""),
+					roomSize: ControlSpec(0, 1, \linear, 0, 0.5, units: ""),
+					hfDamp: ControlSpec(0, 1, \linear, 0, 0.5, units: "")
+				), 
+				description: "The classic open source Schroeder/Moorer reverb"
+			);
 			BMPluginSpec('3 Band EQ',
 				{|plugin, numChannels, input, lowFreq, lowGain, midFreq, midrq, midGain
 					hiFreq, hiGain| 
