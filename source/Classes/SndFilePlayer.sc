@@ -96,9 +96,8 @@ SoundFilePlayer : BMAbstractAudioSource {
 	}
 	
 	play { |startTime = 0, out|
-		
-		(synth.isPlaying.not && blockPlay.not && synth.isNil).if({
-			
+		this.rate_(1.0);
+		(synth.isPlaying.not && blockPlay.not && synth.isNil && buffer.notNil).if({
 			blockPlay = true;
 //			server.makeBundle(latency, {
 				synth = Synth.head(group, this.hash.asString, 
@@ -108,15 +107,15 @@ SoundFilePlayer : BMAbstractAudioSource {
 			//});
 			this.changed(\play);
 			SystemClock.sched(1.0, {blockPlay = false;});
-		});
+		}, {buffer.isNil.if({this.changed(\playFailed)})});
 		
 	}
 	
-	stop { synth.isPlaying.if({blockPlay = true; synth.release; watcher.stop; synth = nil; this.changed(\stop); SystemClock.sched(1.0, {blockPlay = false;});}) }
+	stop { synth.isPlaying.if({blockPlay = true; synth.release; watcher.stop; synth = nil; rate = 1; this.changed(\stop); SystemClock.sched(1.0, {blockPlay = false;});}) }
 	
-	//pause {} // maybe use run here
+	pause { this.rate = 0; } // maybe use run here
 	
-	free { this.stop;  server.makeBundle(releaseTime, {buffer.free;}); buffer = nil; 
+	free { this.stop;  server.makeBundle(releaseTime, {buffer.free;}); buffer = nil;
 		this.changed(\bufferFreed);
 	} // free bus somewhere?
 	
@@ -159,7 +158,7 @@ SoundFilePlayer : BMAbstractAudioSource {
 // stopwatch should probably be in player
 SoundFilePlayerGUI : BMAbstractGUI {
 	
-	var player, responder, clockView, loadButton, info, dur, playButton, stopButton, clust, clearButton;
+	var player, responder, clockView, loadButton, info, dur, playButton, stopButton, clust, clust2; 	var clearButton, forwButton, backButton, clockButton, bigClock, bigText;
 	
 	*new { |player, name|
 		^super.new.init(player).makeWindow;
@@ -172,10 +171,13 @@ SoundFilePlayerGUI : BMAbstractGUI {
 	}
 	
 	makeWindow {
-		window = SCWindow.new(name, Rect(220, 700, 650, 100), false)
+		window = SCWindow.new(name, Rect(220, 700, 640, 100), false)
 			.userCanClose = false;
+		window.view.background_(Color.white.alpha_(0.2));
 		window.view.decorator = FlowLayout(window.view.bounds, Point(10, 10), Point(10, 10));
-		clockView = SCStaticText.new(window, Rect(10,10,200,40));
+		
+		//window.drawHook = {Pen.line(20@65, 620@65); Pen.stroke; };
+		clockView = SCStaticText.new(window, Rect(0,0,200,45));
 		clockView.string = "00:00:00.0";
 		//clockView.background = Color.black;
 		clockView.background = HiliteGradient(Color.black.alpha_(0.1), Color.black, \v, 256, 0.5);
@@ -183,17 +185,29 @@ SoundFilePlayerGUI : BMAbstractGUI {
 		//clockView.stringColor = Color.yellow(0.9);
 		clockView.stringColor = Color.new255(106, 90, 205);
 		clockView.align = \center;
+		
+		window.view.decorator.shift(-40, 10);
+		clockButton = RoundButton.new(window, Rect(0,0,25,25)).extrude_( false )
+			.canFocus_(false).radius_( 3 );
+		clockButton.states = [[\clock, Color.white, Color.white.alpha_(0.2)]];
+		clockButton.action = {this.makeBigClock};
+		
+		window.view.decorator.shift(5, -10);
+		
 		clust = SCVLayoutView(window,Rect(10,10,200,40));
-	     info = SCStaticText.new(clust, Rect(10,10,200,20));
-		dur = SCStaticText.new(window, Rect(10,10,150,20)).align_(\center);
+		clust2 = SCVLayoutView(window,Rect(10,10,200,40));
+	     info = SCStaticText.new(clust, Rect(10,10,150,20));
+		dur = SCStaticText.new(clust2, Rect(10,10,150,20));
 		player.path.notNil.if({{
 			info.string = player.path.basename; 
 			dur.string =  "Length:" + 
 				(player.buffer.numFrames / player.buffer.sampleRate).asTimeString
 			}.defer });
 		
-		loadButton = SCButton.new(clust, Rect(10,10,200,20));
-		loadButton.states = [["Load File", Color.black,Color.clear]];
+//		loadButton = SCButton.new(clust, Rect(10,10,200,20));
+//		loadButton.states = [["Load File", Color.black,Color.clear]];
+		loadButton = RoundButton.new(clust, Rect(10,10,200,20)).extrude_(false).canFocus_(false);
+		loadButton.states = [[\folder, Color.black,Color.clear]];
 		loadButton.action = {
 			var oldString;
 			oldString = info.string;
@@ -201,25 +215,62 @@ SoundFilePlayerGUI : BMAbstractGUI {
 				player.read(paths[0]);
 			}, {{info.string = oldString}.defer});
 		};
-		window.view.decorator.nextLine;
-		playButton = SCButton.new(window, Rect(10,10,200,20));
-		playButton.states = [["Play", Color.black,Color.clear]];
-		playButton.action = { player.play; }; // stopwatch started by dependancy
-		//playButton.action = { player.play(0, 0); stopwatch.start; };
-		stopButton = SCButton.new(window, Rect(10,10,200,20));
-		stopButton.states = [["Stop", Color.black,Color.clear]];
-		stopButton.action = { player.stop; }; // stopwatch stopped by dependancy
-		clearButton = SCButton.new(window, Rect(10,10,200,20));
-		clearButton.states = [["Free Buffer", Color.black,Color.clear]];
+		clearButton = RoundButton.new(clust2, Rect(10,10,200,20)).extrude_(false).canFocus_(false);
+		clearButton.states = [[\x, Color.black,Color.clear]];
 		clearButton.action = { player.stop; player.free; }; // stopwatch stopped by dependancy
+		
+		window.view.decorator.nextLine;
+		
+		stopButton = RoundButton.new(window, Rect(10,10,200,20)).extrude_(false).canFocus_(false);
+		stopButton.states = [[\stop]];
+		stopButton.action = { player.stop; }; // stopwatch stopped by dependancy
+		
+		backButton = RoundButton.new(window, Rect(10,10,95,20)).extrude_(false).canFocus_(false);
+		backButton.states = [[\rewind]];
+		backButton.action = { player.rate = -6; playButton.value = 0 };
+		
+//		playButton = SCButton.new(window, Rect(10,10,200,20));
+//		playButton.states = [["Play", Color.black,Color.clear]];
+		playButton = RoundButton.new(window, Rect(10,10,200,20)).extrude_(false).canFocus_(false);
+		playButton.states = [[\play], [\pause]];
+		playButton.action = { |butt|
+			switch (butt.value,
+				1, {player.play;},
+				0, {player.pause}
+			)
+			
+		}; // stopwatch started by dependancy
+		//playButton.action = { player.play(0, 0); stopwatch.start; };
+		
+		
+		forwButton = RoundButton.new(window, Rect(10,10,95,20)).extrude_( false ).canFocus_(false);
+		forwButton.states = [[\forward]];
+		forwButton.action = { player.rate = 6; playButton.value = 0 };
+		
+		
 		window.front;
 	}
 	
-
+	makeBigClock {
+		bigClock.isNil.if({
+			bigClock = SCWindow.new("Big Clock", Rect(600, 800, 800, 180)).alwaysOnTop_(true);
+			bigClock.alpha = 0.95;
+			bigClock.onClose = { bigClock = nil; };
+			bigText = SCStaticText.new(bigClock, Rect(0, 0, 800, 180)).resize_(5);
+			bigText.string = "00:00:00.0";
+			//clockView.background = Color.black;
+			bigText.background = HiliteGradient(Color.black.alpha_(0.3), Color.black, \v, 1024, 0.5);
+			bigText.font = Font("Helvetica-Bold", 120);
+			bigText.stringColor = Color.new255(106, 90, 205);
+			bigText.align = \center;
+			bigClock.front;
+		});
+	}
     
-    updateTimeDisplay {| string |
+    	updateTimeDisplay {| string |
         
-		{ clockView.string = string }.defer
+		{ clockView.string = string; bigClock.notNil.if({bigText.string = string});}.defer;
+		
 	
 	}
 	
@@ -229,8 +280,17 @@ SoundFilePlayerGUI : BMAbstractGUI {
 		switch(what,
 			\n_end, {this.updateTimeDisplay(0.getTimeString)},
 //			\play, {stopwatch.start;},
+			\playFailed, {
+				//"Playing failed".postln; 
+				this.updateTimeDisplay(0.getTimeString);
+				playButton.value = 0;
+				},
 			\bufferFreed, {info.string = ""; dur.string = "";},
-			\stop, {"in the name of love".postln; this.updateTimeDisplay(0.getTimeString)},
+			\stop, {
+				"in the name of love".postln; 
+				this.updateTimeDisplay(0.getTimeString);
+				playButton.value = 0;
+				},
 			\loading, {info.string = "Loading...";},
 			\loaded, {{info.string = player.path.basename; dur.string =  "Length:" + (player.buffer.numFrames / player.buffer.sampleRate).asTimeString}.defer },
 			\time, { this.updateTimeDisplay(args.first.getTimeString) }
