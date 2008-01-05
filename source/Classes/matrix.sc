@@ -245,6 +245,8 @@ InOutArray : List {
 	
 	isInOutArray {^true}
 	
+	isSpeakerArray { ^false } 
+	
 	asInOutArray {^this}
 
 }

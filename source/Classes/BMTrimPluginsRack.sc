@@ -63,6 +63,24 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 	
 	makeGroup { group = Group.tail(server); }
 	
+	// add delays to eliminate precedence effect
+	// assumes distances are in meters
+	compensateDistance { 
+		var rads, diff, farthest, plugin;
+		ins.isSpeakerArray.if({ 
+			rads = ins.collect({|speaker| speaker.rad });
+			farthest = rads.maxItem;
+			ins.do({|speaker| 
+				diff = farthest - speaker.rad;
+				if(diff > 0, { 
+					// speed of sound 344 m/s at 21 degrees C in dry air
+					plugin = BMPlugin('Distance Compensate').set(\delayTime, diff / 344);
+					this[speaker.name].addPlugin(plugin); 
+				});
+			});
+		}, {"Not a BMSpeakerArray, can't distance compensate".warn;}); 
+	}
+	
 }
 
 BMTrimPluginsStrip {
