@@ -68,6 +68,7 @@ BMSpeakerSpec {
 			 specs = ();
 			 
 			 // spl is continuous at 1m
+			 // plugins is [[specname, presetname], ...]
 			 BMSpeakerSpec('SCM50', (brand: 'ATC', minFreq: 38, maxFreq: 20000, spl: 112, powered: false, plugins: [[\highpass, \atcs]]));
 			 BMSpeakerSpec('8030A', (brand: 'Genelec', minFreq: 58, maxFreq: 20000, spl: 97, powered: true));
 			 BMSpeakerSpec('8040A', (brand: 'Genelec', minFreq: 48, maxFreq: 20000, spl: 99, powered: true));
