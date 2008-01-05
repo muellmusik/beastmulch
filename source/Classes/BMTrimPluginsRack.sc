@@ -72,7 +72,7 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 			farthest = rads.maxItem;
 			ins.do({|speaker| 
 				diff = farthest - speaker.rad;
-				if(diff > 0, { 
+				if(diff > 0, { // farthest uncompensated
 					// speed of sound 344 m/s at 21 degrees C in dry air
 					plugin = BMPlugin('Distance Compensate').set(\delayTime, diff / 344);
 					this[speaker.name].addPlugin(plugin); 
@@ -81,6 +81,20 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 		}, {"Not a BMSpeakerArray, can't distance compensate".warn;}); 
 	}
 	
+	// auto add plugins by speaker spec
+	// requires a plugin spec name and a preset
+	autoPlugins { 
+		var plugin;
+		ins.isSpeakerArray.if({ 
+			ins.do({|speaker| 
+				speaker.spec.plugins.do({|plgin| 
+					// name, preset
+					plugin = BMPlugin(plgin[0]).preset_(plgin[1]);
+					this[speaker.name].addPlugin(plugin); 
+				});
+			});
+		}, {"Not a BMSpeakerArray, can't auto add plugins".warn;}); 
+	}
 }
 
 BMTrimPluginsStrip {
