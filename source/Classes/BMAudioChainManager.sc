@@ -75,7 +75,7 @@ BMAudioChainManagerGUI : BMAbstractGUI {
 	var chainView;
 	
 	*new {|manager, name, origin|
-		^super.new.init(manager, name ? "Signal Chain").makeWindow(origin ? (40@200));
+		^super.new.init(manager, name ? "Signal Chain").makeWindow(origin ? (250@550));
 	}
 	
 	init {|argManager, argName|
