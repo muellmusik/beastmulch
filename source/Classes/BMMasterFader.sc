@@ -1,7 +1,8 @@
+// this probably needs a cleanup method for the bus
 BMMasterFader : BMAbstractAudioChainElement {
 
 	
-	var masterFaderSynth, <level = -12, <minLevel = -inf, <maxLevel = 0, <busIndex;
+	var masterFaderSynth, <level = -12, <minLevel = -inf, <maxLevel = 0, bus, <busIndex;
 	
 	*new {| group, server, name |
 		 
@@ -16,9 +17,8 @@ BMMasterFader : BMAbstractAudioChainElement {
 		  name	= argname;
 		  if(group.isNil, {this.makeGroup});
 		  allChainElements[name] = this;
-		  busIndex = BMAbstractController.allControllers[\etherSense].busIndex 
-				    +
-				    BMAbstractController.allControllers[\etherSense].numFaders;
+		  bus = Bus.control(server, 1);
+		  busIndex = bus.index;
 		  this.level	= level;
 		  this.addMasterFaderSynth;
 		  CmdPeriod.add(this);
