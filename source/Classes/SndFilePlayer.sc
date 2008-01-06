@@ -117,7 +117,7 @@ SoundFilePlayer : BMAbstractAudioSource {
 	
 	free { this.stop;  server.makeBundle(releaseTime, {buffer.free;}); buffer = nil;
 		this.changed(\bufferFreed);
-	} // free bus somewhere?
+	} // free bus somewhere? remove from allPlayers list?
 	
 	// maybe a controller better?
 	update {arg changed, what; 
@@ -149,13 +149,12 @@ SoundFilePlayer : BMAbstractAudioSource {
 	
 	name { ^name ? "Soundfile Player" }
 	
-	gui { ^SoundFilePlayerGUI(this) }
+	gui { ^SoundFilePlayerGUI(this, this.name) }
 	
   
 }
 
 
-// stopwatch should probably be in player
 SoundFilePlayerGUI : BMAbstractGUI {
 	
 	var player, responder, clockView, loadButton, info, dur, playButton, stopButton, clust, clust2; 	var clearButton, forwButton, backButton, clockButton, bigClock, bigText;
