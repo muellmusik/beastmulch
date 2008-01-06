@@ -1,0 +1,104 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf440
+{\fonttbl\f0\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red191\green0\blue0;\red0\green0\blue191;
+\red0\green115\blue0;\red96\green96\blue96;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs18 \cf2 [\
+\cf3 // outputs\cf2 \
+\cf4 BMSpeakerArray\cf2 .new.addAll([\
+	\cf3 // subs\cf2 \
+	\cf4 BMSpeaker\cf2 (\cf5 \\SubsFtL\cf2 , 0, spec:\cf5 '7070A'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\SubsFtR\cf2 , 1, spec:\cf5 '7070A'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\SubsRrL\cf2 , 2, spec:\cf5 '7070A'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\SubsRrR\cf2 , 3, spec:\cf5 '7070A'\cf2 ),\
+	\
+	\cf3 // tweets\cf2 \
+	\cf4 BMSpeaker\cf2 (\cf5 \\TweetsL\cf2 , 4, spec:\cf5 'Tweeters'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\TweetsR\cf2 , 5, spec:\cf5 'Tweeters'\cf2 ),\
+	\
+	\cf3 // geography\cf2 \
+	\cf4 BMSpeaker\cf2 (\cf5 \\Mount\cf2 , 6, spec:\cf5 'Circle5'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\Hill\cf2 , 7, spec:\cf5 'Circle3'\cf2 ),\
+	\
+	\cf3 // High\cf2 \
+	\cf4 BMSpeaker\cf2 (\cf5 \\HighFntL\cf2 , 8, spec:\cf5 '8030A'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\HighFntR\cf2 , 9, spec:\cf5 '8030A'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\HighWideL\cf2 , 10, spec:\cf5 '8030A'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\HighWideR\cf2 , 11, spec:\cf5 '8030A'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\HighSideL\cf2 , 12, spec:\cf5 '8030A'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\HighSideR\cf2 , 13, spec:\cf5 '8030A'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\HighRearL\cf2 , 14, spec:\cf5 '8030A'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\HighRearR\cf2 , 15, spec:\cf5 '8030A'\cf2 ),\
+	\
+	\cf3 // floor\cf2 \
+	\cf4 BMSpeaker\cf2 (\cf5 \\FloorWideL\cf2 , 16, spec:\cf5 'Volt'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\FloorWideR\cf2 , 17, spec:\cf5 'Volt'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\FloorSideL\cf2 , 18, spec:\cf5 'Volt'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\FloorSideR\cf2 , 19, spec:\cf5 'Volt'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\FloorRearL\cf2 , 20, spec:\cf5 'Volt'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\FloorRearR\cf2 , 21, spec:\cf5 'Volt'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\FloorFront\cf2 , 22, spec:\cf5 'Volt'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\FloorBack\cf2 , 23, spec:\cf5 'Volt'\cf2 ),\
+	\
+	\cf3 // cube\cf2 \
+	\cf4 BMSpeaker\cf2 (\cf5 \\CubeFntLowL\cf2 , 24, spec:\cf5 '8040A'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\CubeFntLowR\cf2 , 25, spec:\cf5 '8040A'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\CubeFntHiL\cf2 , 26, spec:\cf5 '8040A'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\CubeFntHiR\cf2 , 27, spec:\cf5 '8040A'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\CubeRearHiL\cf2 , 28, spec:\cf5 '8040A'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\CubeRearHiR\cf2 , 29, spec:\cf5 '8040A'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\CubeRearLowL\cf2 , 30, spec:\cf5 '8040A'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\CubeRearLowR\cf2 , 31, spec:\cf5 '8040A'\cf2 ),\
+	\
+	\cf3 // Flood; I'm assuming these are ganged in pairs so only two outputs\cf2 \
+	\cf4 BMSpeaker\cf2 (\cf5 \\FloodL\cf2 , 32, spec:\cf5 'MC24'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\FloodR\cf2 , 33, spec:\cf5 'MC24'\cf2 ),\
+	\
+	\cf3 // Punch\cf2 \
+	\cf4 BMSpeaker\cf2 (\cf5 \\PunchL\cf2 , 34, spec:\cf5 'MC24'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\PunchR\cf2 , 35, spec:\cf5 'MC24'\cf2 ),\
+	\
+	\cf3 // Very Distant\cf2 \
+	\cf4 BMSpeaker\cf2 (\cf5 \\VDistL\cf2 , 36, spec:\cf5 'MC24'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\VDistR\cf2 , 37, spec:\cf5 'MC24'\cf2 ),\
+	\
+	\cf3 // Ref; A or C?\cf2 \
+	\cf4 BMSpeaker\cf2 (\cf5 \\RefL\cf2 , 38, spec:\cf5 '1037A'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\RefR\cf2 , 39, spec:\cf5 '1037A'\cf2 ),\
+	\
+	\cf3 // Distant\cf2 \
+	\cf4 BMSpeaker\cf2 (\cf5 \\DistantL\cf2 , 40, spec:\cf5 '1037C'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\DistantR\cf2 , 41, spec:\cf5 '1037C'\cf2 ),\
+	\
+	\cf3 // ATC ring\cf2 \
+	\cf4 BMSpeaker\cf2 (\cf5 \\MainL\cf2 , 42, spec:\cf5 'SCM50'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\MainR\cf2 , 43, spec:\cf5 'SCM50'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\WideL\cf2 , 44, spec:\cf5 'SCM50'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\WideR\cf2 , 45, spec:\cf5 'SCM50'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\SideL\cf2 , 46, spec:\cf5 'SCM50'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\SideR\cf2 , 47, spec:\cf5 'SCM50'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\RearL\cf2 , 48, spec:\cf5 'SCM50'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\RearR\cf2 , 49, spec:\cf5 'SCM50'\cf2 ),\
+	\
+	\cf3 // Side Fill\cf2 \
+	\cf4 BMSpeaker\cf2 (\cf5 \\SideFillFntL\cf2 , 50, spec:\cf5 'MC24'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\SideFillFntR\cf2 , 51, spec:\cf5 'MC24'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\SideFillRearL\cf2 , 52, spec:\cf5 'MC24'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\SideFillRearR\cf2 , 53, spec:\cf5 'MC24'\cf2 ),\
+	\
+	\cf3 // very rear\cf2 \
+	\cf4 BMSpeaker\cf2 (\cf5 \\VRearL\cf2 , 54, spec:\cf5 'MC24'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\VRearR\cf2 , 55, spec:\cf5 'MC24'\cf2 ),\
+	\
+	\cf3 // desk\cf2 \
+	\cf4 BMSpeaker\cf2 (\cf5 \\DeskL\cf2 , 56, spec:\cf5 '8030A'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\DeskR\cf2 , 57, spec:\cf5 '8030A'\cf2 ),\
+	\
+	\cf3 // overhead\cf2 \
+	\cf4 BMSpeaker\cf2 (\cf5 \\OverL\cf2 , 58, spec:\cf5 '8030A'\cf2 ),\
+	\cf4 BMSpeaker\cf2 (\cf5 \\OverR\cf2 , 59, spec:\cf5 '8030A'\cf2 )\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 ]),\
+\cf3 // inputs\cf2 \
+\cf4 InputArray\cf2 .fill(10, \{\cf4 |i|\cf2  (\cf6 "in"\cf2  ++ (i+1)).asSymbol -> (\cf4 Server\cf2 .default.options.numOutputBusChannels + i)\})];}
