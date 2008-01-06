@@ -1,7 +1,7 @@
 BMMasterFader : BMAbstractAudioChainElement {
 
 	
-	var masterFaderSynth, <level = -12, <minLevel = -92, <maxLevel = 6, <busIndex;
+	var masterFaderSynth, <level = -12, <minLevel = -inf, <maxLevel = 0, <busIndex;
 	
 	*new {| group, server, name |
 		 
@@ -22,7 +22,6 @@ BMMasterFader : BMAbstractAudioChainElement {
 		  this.level	= level;
 		  this.addMasterFaderSynth;
 		  CmdPeriod.add(this);
-
 	}
 	
 	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
@@ -34,8 +33,8 @@ BMMasterFader : BMAbstractAudioChainElement {
 	
 	level_ {| x |
 
-	 	level = x;
-	 	server.sendMsg("/c_set", busIndex, level.postln.dbamp);
+	 	level = x.clip(minLevel, maxLevel);
+	 	server.sendMsg("/c_set", busIndex, level.dbamp.postln);
 	
 	}
 
@@ -80,7 +79,7 @@ BMMasterFader : BMAbstractAudioChainElement {
 
 
 BMMasterFaderGUI : BMAbstractGUI {
-	var masterFader;
+	var masterFader, spec;
 	
 	*new {| masterFader, name |
 		^super.new.init(masterFader, name ? masterFader.name)
@@ -90,7 +89,7 @@ BMMasterFaderGUI : BMAbstractGUI {
 	init {| argMasterFader, argName |
 		 masterFader 	= argMasterFader;
 		 name 		= argName;
-
+		spec = \db.asSpec;
 	}
 	
 	makeWindow {
@@ -107,21 +106,21 @@ BMMasterFaderGUI : BMAbstractGUI {
 		
 		slider 	= SmoothSlider(window, window.view.bounds.resizeBy(-30, -100).moveBy(15, 15))
 					.mode_(\move).canFocus_(false)
-					.value_(masterFader.level.linlin(masterFader.minLevel, masterFader.maxLevel, 0.0, 1.0))
-					.action_({| view | 
-							 masterFader.level	= view.value.linlin(0.0, 1.0, masterFader.minLevel, masterFader.maxLevel);
-							 numberBox.value 	= masterFader.level.round(1)
+					.value_(spec.unmap(masterFader.level))					.action_({| view | 
+							 masterFader.level	= spec.map(view.value);
+							 numberBox.value 	= masterFader.level.round(0.1)
 				     });
 				   
 		numberBox	= ScrollingNBox(window, window.view.bounds
 					.resizeTo(90, 60)
 					.moveBy(15, window.view.bounds.height - 80))
-					.value_(masterFader.level)
-					.font_(Font( "Monaco", 35 ))
+					.value_(masterFader.level.round(0.1))
+					.font_(Font( "Monaco", 22 ))
+					.align_(\center)
 					.action_({| view | 
-							 view.value = view.value.clip(masterFader.minLevel, masterFader.maxLevel);
 							 masterFader.level = view.value;
-							 slider.value = view.value.linlin(masterFader.minLevel, masterFader.maxLevel, 0.0, 1.0)
+							 view.value = masterFader.level.round(0.1);
+							 slider.value = spec.unmap(masterFader.level);
 					});
 		
 		window.onClose = { onClose.value(this) }
