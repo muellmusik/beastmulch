@@ -1,7 +1,8 @@
-{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf440
 {\fonttbl\f0\fnil\fcharset77 Monaco;\f1\fswiss\fcharset77 Helvetica;}
 {\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red191\green0\blue0;\red0\green0\blue191;
-\red96\green96\blue96;\red0\green115\blue0;}
+\red96\green96\blue96;\red0\green115\blue0;\red96\green96\blue96;\red0\green0\blue191;\red0\green115\blue0;
+}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
 \f0\fs18 \cf2 (\cf3 /// option to clear faders before saving a preset\cf2 \
@@ -38,13 +39,14 @@ s.bootSync(cond);\
 \
 0.2.wait;\
 \{\
-\cf4 MIDIClient\cf2 .init(numMackies,numMackies);			\cf3 // explicitly intialize the client\cf2 \
-numMackies.do(\{ \cf4 arg\cf2  i; \
-	\cf4 MIDIIn\cf2 .connect(i, \cf4 MIDIClient\cf2 .sources.at(i));\
-\});\
 \
-arrays = \cf4 this\cf2 .executeFile(\cf4 Document\cf2 .current.dir ++ \cf5 "/MiniBEASTchannellist.rtf"\cf2 );\
-\cf3 //arrays = this.executeFile(String.scDir ++ "/SCClassLibrary/source/MiniBEASTchannellist.rtf");\cf2 \
+\cf3 //MIDIClient.init(numMackies,numMackies);			// explicitly intialize the client\cf2 \
+\cf3 //numMackies.do(\{ arg i; \cf2 \
+\cf3 //	MIDIIn.connect(i, MIDIClient.sources.at(i));\cf2 \
+\cf3 //\});\cf2 \
+\
+arrays = \cf4 this\cf2 .executeFile(\cf4 Document\cf2 .current.dir ++ \cf5 "/january channel list.rtf"\cf2 );\
+\cf3 //arrays = this.executeFile(String.scDir ++ "/SCClassLibrary/source/january channel list.rtf");\cf2 \
 inputArray = arrays[1];\
 outputArray = arrays[0]; outputArray.size.postln;\
 \
@@ -54,7 +56,7 @@ outputArray = arrays[0]; outputArray.size.postln;\
 mackieList = \cf4 List\cf2 [];\
 \
 mackieList.add(etherSense = 
-\f1\fs24 \cf4 BMEtherSense\cf2 (\cf4 NetAddr\cf2 (\cf5 "10.0.0.2"\cf2 , 57120), \cf6 \\etherSense\cf2 ));
+\f1\fs24 \cf4 BMEtherSense\cf2 (\cf4 NetAddr\cf2 (\cf5 "10.0.0.2"\cf2 , 57120), \cf6 \\Faders\cf2 ));
 \f0\fs18 \
 \
 \cf3 ////mackieList.add(mackie1 = MackieXT.new(MIDIClient.sources[0].uid, \\mack1));\cf2 \
@@ -128,14 +130,14 @@ masterWindow.view.decorator = \cf4 FlowLayout\cf2 (masterWindow.view.bounds, \cf
 \cf3 //	\});\cf2 \
 \cf3 //\};\cf2 \
 \
-labelsButton = \cf4 SCButton\cf2 (masterWindow, \cf4 Rect\cf2 (10, 10, 180, 20));\
-labelsButton.states = [[\cf5 "Fader Labels"\cf2 , \cf4 Color\cf2 .black,\cf4 Color\cf2 .clear]];\
-labelsButton.action = \{ \
-	labelsWindow.isNil.if(\{\
-		labelsWindow = \cf4 MackieLabelsGUI\cf2 .new(mackieList);\
-		labelsWindow.onClose = \{labelsWindow = \cf4 nil\cf2 ;\};\
-	\});	\
-\};\
+\cf3 //labelsButton = SCButton(masterWindow, Rect(10, 10, 180, 20));\cf2 \
+\cf3 //labelsButton.states = [["Fader Labels", Color.black,Color.clear]];\cf2 \
+\cf3 //labelsButton.action = \{ \cf2 \
+\cf3 //	labelsWindow.isNil.if(\{\cf2 \
+\cf3 //		labelsWindow = MackieLabelsGUI.new(mackieList);\cf2 \
+\cf3 //		labelsWindow.onClose = \{labelsWindow = nil;\};\cf2 \
+\cf3 //	\});	\cf2 \
+\cf3 //\};\cf2 \
 \
 \
 \cf3 // added (SL)\cf2 \
@@ -148,10 +150,14 @@ concertConfigButton.action	= \{ concertConfigGUI.isNil.if(\{\
 						    \})\
 				  		   \};\
 				  \
-\cf4 SCStaticText\cf2 .new(masterWindow, \cf4 Rect\cf2 (0,0,180,80)).string_(\cf5 "Beast"\cf2 ).font_(\cf4 Font\cf2 (\cf5 "CoffeeCup"\cf2 , 40)).align_(\cf6 \\center\cf2 ).stringColor(\cf4 Color\cf2 .black.alpha_(0.3));\
+\cf4 SCStaticText\cf2 .new(masterWindow, \cf4 Rect\cf2 (0,0,180,80)).string_(\cf5 "BEAST"\cf2 ).font_(\cf4 Font\cf2 (\cf7 "Helvetica-Bold\cf5 "\cf2 , 50)).align_(\cf6 \\center\cf2 ).stringColor(\cf4 Color\cf2 .black.alpha_(0.3));\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf8 SCStaticText\cf0 .new(masterWindow, \cf8 Rect\cf0 (0,0,180,80)).string_(\cf7 "BEASTMulch System"\cf0 ).font_(\cf8 Font\cf0 (\cf7 "Helvetica-Bold"\cf0 , 15)).align_(\cf9 \\center\cf0 ).stringColor(\cf8 Color\cf0 .black.alpha_(0.3));\cf2 \
 \
 masterWindow.front;\
 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf3 //--\cf2 \
 \
 \cf3 //// preset window\cf2 \
