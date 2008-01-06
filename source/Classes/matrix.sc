@@ -292,7 +292,7 @@ MatrixMenuGUI : BMAbstractGUI {
 		window.view.decorator = FlowLayout(window.view.bounds, Point(10, 10), Point(10, 10));
 		
 		inputSection = SCVLayoutView(window, Rect(0, 0, 200, 300));
-		SCStaticText.new(inputSection, Rect(0,0,180,20)).font_(Font("Crush49", 14))
+		SCStaticText.new(inputSection, Rect(0,0,180,20)).font_(Font("Helvetica-Bold", 14))
 			.string = "Inputs";
 		inputView = SCListView(inputSection, Rect(0, 0, 200, 250)).canReceiveDragHandler = false;
 		inputView.items = matrix.inNames;
@@ -302,7 +302,7 @@ MatrixMenuGUI : BMAbstractGUI {
 		
 		assignSection = SCVLayoutView(window, Rect(0, 0, 200, 300));
 		labelPlusButton = SCHLayoutView(assignSection, Rect(0, 0, 200, 20));
-		SCStaticText.new(labelPlusButton, Rect(0,0,180,20)).font_(Font("Crush49", 14))
+		SCStaticText.new(labelPlusButton, Rect(0,0,180,20)).font_(Font("Helvetica-Bold", 14))
 			.string = "Assignments";
 //		SCStaticText.new(labelPlusButton, Rect(0,0,100,20)).font_(Font("Arial Bold", 10))
 //			.string = "(delete to remove)";
@@ -320,7 +320,7 @@ MatrixMenuGUI : BMAbstractGUI {
 		
 		outputSection = SCVLayoutView(window, Rect(0, 0, 200, 300));
 		labelPlusButton = SCHLayoutView(outputSection, Rect(0, 0, 200, 20));
-		SCStaticText.new(labelPlusButton, Rect(0,0,80,20)).font_(Font("Crush49", 14))
+		SCStaticText.new(labelPlusButton, Rect(0,0,80,20)).font_(Font("Helvetica-Bold", 14))
 			.string = "Outputs";
 		assignButton = SCButton(labelPlusButton, Rect(0,0,110,20)).canReceiveDragHandler = false;		assignButton.states = [["<", Color.black,Color.clear]];
 		assignButton.action = { matrix.connect(inputView.item, outputView.item);};
@@ -355,12 +355,13 @@ MatrixMenuGUI : BMAbstractGUI {
 	}
 }
 
+// could calculate hoffset and voffset using String:bounds
 MatrixGUI : BMAbstractGUI {
 
 	var h = 700, v = 700, numIns = 10, numOuts = 10, dotSize = 10;
 	var hinterval, vinterval, tabletView;
 	var cellsize = 70, screenBounds; // maximum cellsize
-	var hoffset = 60, voffset = 20;
+	var hoffset = 80, voffset = 100;
 	var color, ringColor;
 	var lastx, lasty, on = false;
 	var ins, outs;
@@ -386,21 +387,22 @@ MatrixGUI : BMAbstractGUI {
 		
 		// scale size to available monitor size
 		screenBounds = SCWindow.screenBounds;
-		cellsize = cellsize min: (screenBounds.width - 40 - hoffset / numOuts); cellsize.postln;
-		cellsize = cellsize min: (screenBounds.height - 40 - voffset / numIns); cellsize.postln;
+		cellsize = cellsize min: (screenBounds.width - 40 - hoffset / numOuts);
+		cellsize = cellsize min: (screenBounds.height - 40 - voffset / numIns);
 		dotSize = cellsize * 0.33 min: 15; // maximum dot size
-		if(cellsize < 35, {voffset = 35}); // double line of top labels
+		//if(cellsize < 35, {voffset = 35}); // double line of top labels
 		h = numOuts * cellsize + hoffset;
 		v = numIns * cellsize + voffset;
 		
 		
 		 
 		//color = Color.rand(0.0,1.0).alpha_(rrand(0.1,0.7)).set;
-		color = Color.blue.alpha_(0.3).set;
-		ringColor = color.copy.alpha_(1);
+		color = Color.blue.alpha_(0.5).set;
+		//ringColor = color.copy.alpha_(1);
+		ringColor = Color.black;
 		
 		window = SCWindow(name, Rect(40, 40, h, v), false);
-		window.alpha = 0.9;
+		window.alpha = 0.98;
 		//window.view.background = Color.rand(0,0.3);
 		window.view.background = Color.new255(140, 38, 255);
 		hinterval = window.bounds.width - hoffset / (numOuts + 1);
@@ -444,12 +446,13 @@ MatrixGUI : BMAbstractGUI {
 			Pen.width = 2;
 			
 			Pen.use {
-				ringColor.set;
+				//ringColor.set;
 				// border lines
 		
 				Pen.line(hoffset@voffset, window.bounds.width@voffset);
 				Pen.line(hoffset@voffset, hoffset@window.bounds.height);
-		
+				//Pen.stroke;
+				
 				color.set;
 				numIns.do { |i|
 					Pen.line((1 + hoffset)@(vinterval + voffset + (i * vinterval)), 
@@ -477,27 +480,62 @@ MatrixGUI : BMAbstractGUI {
 				});
 				
 			};
+			outs.do({|item, i|
+			var y, t;
+			//if(voffset > 20, { y = [10, 25].wrapAt(i) }, { y = 10 });
+//			t = SCStaticText(window,
+//				Rect.aboutPoint((hoffset + hinterval + (hinterval * i))@y, 40, 10)
+//			);
+//			t = SCStaticText(window,
+//				Rect.aboutPoint((hoffset + hinterval + (hinterval * i))@(voffset / 2), 40, 10)
+//			);
+//			t.string = item.asString;
+//			t.stringColor = Color.black;
+//			t.font = Font("Andale Mono", 12);
+//			t.align = \center;
+			
+			Pen.use({
+				Pen.translate((hoffset + hinterval + (hinterval * i)), (voffset / 2));
+				Pen.rotate(0.5pi);
+				item.asString.drawCenteredIn(Rect.aboutPoint(0@0, 40, 10), 
+					Font("Andale Mono", 12),
+					Color.black
+				);
+			});
+		});
 
 		};
 		
 		// write labels
-		outs.do({|item, i|
-			var y, t;
-			if(voffset > 20, { y = [10, 25].wrapAt(i) }, { y = 10 });
-			t = SCStaticText(window,
-				Rect.aboutPoint((hoffset + hinterval + (hinterval * i))@y, 40, 10)
-			);
-			t.string = item.asString;
-			t.stringColor = Color.black;
-			t.font = Font("Andale Mono", 12);
-			t.align = \center;
-		});
+		//outs.do({|item, i|
+//			var y, t;
+//			//if(voffset > 20, { y = [10, 25].wrapAt(i) }, { y = 10 });
+////			t = SCStaticText(window,
+////				Rect.aboutPoint((hoffset + hinterval + (hinterval * i))@y, 40, 10)
+////			);
+////			t = SCStaticText(window,
+////				Rect.aboutPoint((hoffset + hinterval + (hinterval * i))@(voffset / 2), 40, 10)
+////			);
+////			t.string = item.asString;
+////			t.stringColor = Color.black;
+////			t.font = Font("Andale Mono", 12);
+////			t.align = \center;
+//			
+//			Pen.use({
+//				Pen.translate((hoffset + hinterval + (hinterval * i)), (voffset / 2));
+//				Pen.rotate(0.5pi);
+//				item.asString.drawCenteredIn(Rect.aboutPoint(0@0, 40, 10).postln, 
+//					Font("Andale Mono", 12),
+//					Color.black
+//				);
+//			});
+//		});
 		ins.do({|item, i| 
 			var t;
 			t = SCStaticText(window,
 				Rect.aboutPoint((hoffset / 2)@(voffset + vinterval + (vinterval * i)), 40, 10)
 			);
-			t.string = item.asString.postln;
+			t.string = item.asString;
 			t.stringColor = Color.black;
 			t.font = Font("Andale Mono", 12);
 			t.align = \center;
