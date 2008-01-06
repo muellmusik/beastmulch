@@ -68,14 +68,14 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 	compensateDistance { 
 		var rads, diff, farthest, plugin;
 		ins.isSpeakerArray.if({ 
-			rads = ins.collect({|speaker| speaker.rad });
+			rads = ins.collect({|speaker| speaker.value.rad });
 			farthest = rads.maxItem;
 			ins.do({|speaker| 
-				diff = farthest - speaker.rad;
+				diff = farthest - speaker.value.rad;
 				if(diff > 0, { // farthest uncompensated
 					// speed of sound 344 m/s at 21 degrees C in dry air
 					plugin = BMPlugin('Distance Compensate').set(\delayTime, diff / 344);
-					this[speaker.name].addPlugin(plugin); 
+					this[speaker.value.name].addPlugin(plugin); 
 				});
 			});
 		}, {"Not a BMSpeakerArray, can't distance compensate".warn;}); 
@@ -87,10 +87,10 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 		var plugin;
 		ins.isSpeakerArray.if({ 
 			ins.do({|speaker| 
-				speaker.spec.plugins.do({|plgin| 
+				speaker.value.spec.plugins.do({|plgin| 
 					// name, preset
 					plugin = BMPlugin(plgin[0]).preset_(plgin[1]);
-					this[speaker.name].addPlugin(plugin); 
+					this[speaker.value.name].addPlugin(plugin); 
 				});
 			});
 		}, {"Not a BMSpeakerArray, can't auto add plugins".warn;}); 
@@ -226,6 +226,7 @@ BMTrimPluginsStrip {
 	}
 }
 
+// should disable autoPlugins and compensateDistance buttons if in not a SpeakerArray
 BMTrimPluginsRackGUI : BMAbstractGUI {
 	var trimPluginsRack, trimPluginsStripGUIs, defaultHelpString, descriptionHelpText;
 	
@@ -241,7 +242,7 @@ BMTrimPluginsRackGUI : BMAbstractGUI {
 	}
 	
 	makeWindow {|origin|
-		var x, y, width, pluglist, numTypes, numStrips, stripGUIs;
+		var x, y, width, pluglist, numTypes, numStrips, stripGUIs, buttons;
 		x = origin.x;
 		y = origin.y;
 		width = 4 + 170 + 4 + min(104 * trimPluginsRack.ins.size, 1078); // max 7 visible
@@ -280,11 +281,23 @@ BMTrimPluginsRackGUI : BMAbstractGUI {
 		descriptionHelpText = SCStaticText(window, Rect(0, 0, width - 58, 80))
 			.string_(defaultHelpString)
 			.font_(Font("Helvetica-Bold", 12));
-		TriggerView(window, Rect(0, 0, 20, 20))
+		
+		buttons = SCVLayoutView(window, Rect(0, 0, 20, 70));
+		TriggerView(buttons, Rect(0, 0, 20, 20))
 			.caption_(" ?")
 			.font_(Font("Helvetica-Bold", 14))
 			.fillColor_(Color.white.alpha_(0.2))
 			.action_({descriptionHelpText.string = defaultHelpString;});
+		TriggerView(buttons, Rect(0, 0, 20, 20))
+			.caption_("API")
+			.font_(Font("Helvetica-Bold", 8))
+			.fillColor_(Color.white.alpha_(0.2))
+			.action_({|v|v.value.if{trimPluginsRack.autoPlugins}});
+		TriggerView(buttons, Rect(0, 0, 20, 20))
+			.caption_("dT")
+			.font_(Font("Helvetica-Bold", 12))
+			.fillColor_(Color.white.alpha_(0.2))
+			.action_({|v|v.value.if{trimPluginsRack.compensateDistance}});
 
 		window.onClose = { 
 			trimPluginsStripGUIs.do({|tpisg|
@@ -313,7 +326,7 @@ BMTrimPluginsStripGUI {
 	 	containerView = SCCompositeView(parent, Rect(origin.x, origin.y, 100, 500));
 	 	containerView.decorator = FlowLayout(containerView.bounds);
 	 	labelView = SCStaticText(containerView, Rect(0, 0, 100, 30))
-	 		.font_(Font("Helvetica-Bold", 14))
+	 		.font_(Font("Helvetica-Bold", 13))
 	 		.background_(Color.grey.alpha_(0.3))
 	 		.string_(" " ++ name);
 	 	ezKnob = EZKnob(containerView, 50@20, " Trim (dBFS)", \db.asSpec, 
