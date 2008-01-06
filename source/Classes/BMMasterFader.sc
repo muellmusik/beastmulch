@@ -34,7 +34,7 @@ BMMasterFader : BMAbstractAudioChainElement {
 	level_ {| x |
 
 	 	level = x.clip(minLevel, maxLevel);
-	 	server.sendMsg("/c_set", busIndex, level.dbamp.postln);
+	 	server.sendMsg("/c_set", busIndex, level.dbamp);
 	
 	}
 
