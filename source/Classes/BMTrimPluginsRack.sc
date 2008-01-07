@@ -63,6 +63,8 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 	
 	makeGroup { group = Group.tail(server); }
 	
+	////// Automated Stuff
+	
 	// add delays to eliminate precedence effect
 	// assumes distances are in meters
 	compensateDistance { 
@@ -94,6 +96,24 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 				});
 			});
 		}, {"Not a BMSpeakerArray, can't auto add plugins".warn;}); 
+	}
+	
+	// balance powered speakers
+	autoTrim { 
+		var powered, min, diff;
+		
+		ins.isSpeakerArray.if({
+			powered = ins.select({|speaker| 
+				speaker.value.spec.powered &&  speaker.value.spec.spl.notNil;
+			});
+			min = powered.collect({|speaker| speaker.value.spec.spl }).minItem; 
+			powered.do({|speaker| 
+				diff = min - speaker.value.spec.spl;
+				if(diff < 0, { 
+					this[speaker.value.name].trim_(diff); 
+				});
+			});
+		}, {"Not a BMSpeakerArray, can't auto trim".warn;}); 
 	}
 }
 
@@ -246,7 +266,7 @@ BMTrimPluginsRackGUI : BMAbstractGUI {
 		x = origin.x;
 		y = origin.y;
 		width = 4 + 170 + 4 + min(104 * trimPluginsRack.ins.size, 1078); // max 7 visible
-		window = SCWindow(name, Rect.new(x, y, width, 608), false);
+		window = SCWindow(name, Rect.new(x, y, width, 618), false);
 		window.view.decorator = FlowLayout(window.view.bounds);
 		pluglist = SCScrollView(window, Rect(0, 0, 160, 508))
 			.hasHorizontalScroller_(false)
@@ -278,7 +298,7 @@ BMTrimPluginsRackGUI : BMAbstractGUI {
 		window.view.decorator.nextLine;
 		window.view.decorator.shift(20, 0);
 		
-		descriptionHelpText = SCStaticText(window, Rect(0, 0, width - 58, 80))
+		descriptionHelpText = SCStaticText(window, Rect(0, 0, width - 58, 100))
 			.string_(defaultHelpString)
 			.font_(Font("Helvetica-Bold", 12));
 		
@@ -289,10 +309,15 @@ BMTrimPluginsRackGUI : BMAbstractGUI {
 			.fillColor_(Color.white.alpha_(0.2))
 			.action_({descriptionHelpText.string = defaultHelpString;});
 		TriggerView(buttons, Rect(0, 0, 20, 20))
-			.caption_("API")
+			.caption_("APi")
 			.font_(Font("Helvetica-Bold", 8))
 			.fillColor_(Color.white.alpha_(0.2))
 			.action_({|v|v.value.if{trimPluginsRack.autoPlugins}});
+		TriggerView(buttons, Rect(0, 0, 20, 20))
+			.caption_("ATr")
+			.font_(Font("Helvetica-Bold", 8))
+			.fillColor_(Color.white.alpha_(0.2))
+			.action_({|v|v.value.if{trimPluginsRack.autoTrim}});
 		TriggerView(buttons, Rect(0, 0, 20, 20))
 			.caption_("dT")
 			.font_(Font("Helvetica-Bold", 12))
