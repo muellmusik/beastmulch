@@ -53,7 +53,7 @@ BMEtherSense : BMAbstractController {
 	
 	// 32 faders
 	setAllFaders {|array|
-		server.sendMsg("/c_setn", busIndex, 32, spec.at(array));
+		server.sendMsg("/c_setn", busIndex, 32, *(array.collect({|val| spec.at(val)})));
 		valueArray = array.reshape(2, 16);
 	}
 	

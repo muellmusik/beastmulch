@@ -1,4 +1,4 @@
-{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf440
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
 {\fonttbl\f0\fnil\fcharset77 Monaco;\f1\fswiss\fcharset77 Helvetica;}
 {\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
 \red0\green115\blue0;}
@@ -16,7 +16,6 @@
 \
 \cf2 //BMAbstractController.dumpAllValues\cf0 \
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf3 Routine\cf0 (\{\
 \
 \cf3 var\cf0  audMatrix, audMatrixGUI, ctrlMatrix, ctrlMatrixGUI, concertConfig, concertConfigGUI;\
@@ -40,7 +39,6 @@ s.bootSync(cond);\
 0.2.wait;\
 \{\
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf2 //MIDIClient.init(numMackies,numMackies);			// explicitly intialize the client\cf0 \
 \cf2 //numMackies.do(\{ arg i; \cf0 \
 \cf2 //	MIDIIn.connect(i, MIDIClient.sources.at(i));\cf0 \
@@ -50,6 +48,7 @@ arrays = \cf3 this\cf0 .executeFile(\cf3 Document\cf0 .current.dir ++ \cf4 "/jan
 \cf2 //arrays = this.executeFile(String.scDir ++ "/SCClassLibrary/source/january channel list.rtf");\cf0 \
 inputArray = arrays[1];\
 outputArray = arrays[0]; outputArray.size.postln;\
+~outs = outputArray;\
 \
 \
 \cf2 ///////\cf0 \
@@ -140,12 +139,10 @@ masterWindow.view.decorator = \cf3 FlowLayout\cf0 (masterWindow.view.bounds, \cf
 \cf2 //	\});	\cf0 \
 \cf2 //\};\cf0 \
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf3 SCStaticText\cf0 .new(masterWindow, \cf3 Rect\cf0 (0,0,180,80)).string_(\cf4 "BEAST"\cf0 ).font_(\cf3 Font\cf0 (\cf4 "Helvetica-Bold"\cf0 , 50)).align_(\cf5 \\center\cf0 ).stringColor(\cf3 Color\cf0 .black.alpha_(0.3));\
 \
 \cf3 SCStaticText\cf0 .new(masterWindow, \cf3 Rect\cf0 (0,0,180,80)).string_(\cf4 "BEASTMulch System"\cf0 ).font_(\cf3 Font\cf0 (\cf4 "Helvetica-Bold"\cf0 , 15)).align_(\cf5 \\center\cf0 ).stringColor(\cf3 Color\cf0 .black.alpha_(0.3));\
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf2 // added (SL)\cf0 \
 \
 concertConfigButton		= \cf3 SCButton\cf0 (masterWindow, \cf3 Rect\cf0 (10, 10, 180, 20));\
@@ -185,11 +182,9 @@ presetNames	= [ \cf4 "all off"\cf0  ];\
 						   ]\
 			  ].deepCopy;\
 			  \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf3 BMAbstractAudioChainElement\cf0 .allChainElements.keysValuesDo\{\cf3 | key, value |\cf0  presetDict[\cf5 'all off'\cf0 ].add(key -> value.mappings.deepCopy) \};\
 			  \
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf2 // added (SL)\cf0 \
 \
 presetManager.presetName = presetNames[0];\
@@ -232,7 +227,6 @@ presetUpdater		= \{\cf3 | preset |\cf0 		\cf2 // taken from presetMenu.action\cf
 					 \}.fork\
 				     \};\
 				     \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf3 Updater\cf0 (player, \{\cf3 | changed, change |\cf0  \
 			   \cf3 var\cf0  presetName, zeroPad = 4, filelessID;\
 			   \
@@ -265,7 +259,6 @@ presetUpdater		= \{\cf3 | preset |\cf0 		\cf2 // taken from presetMenu.action\cf
 \
 \cf3 Updater\cf0 (concertConfig,  \{ \cf3 | changed, change, name |\cf0 \
 					   \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf2 //					   name.class.postln.postln;\cf0 \
 					   switch (change,\
 					   		  \cf5 \\load\cf0 ,	 	\{ \{ presetMenu.valueAction = presetMenu.items.indexOfEqual(name) \}.defer \},\
@@ -394,14 +387,12 @@ presetMenu.action		= \{ \cf3 var\cf0  path;\
 \cf2 // -------------\cf0 \
 \
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf3 CmdPeriod\cf0 .add(\{presetMenu.value_(0)\}); \cf2 // jump to all clear\cf0 \
 \
 \cf3 SCStaticText\cf0 .new(presetWindow, \cf3 Rect\cf0 (10,10,180,20)).string = \cf4 "Select Preset"\cf0 ;\
 presetWindow.view.decorator.nextLine;\
 \
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf2 // added (SL)\cf0 \
 \
 addButton 			= \cf3 SCButton\cf0 .new(presetWindow, \cf3 Rect\cf0 (10,10,180,20));\
@@ -543,11 +534,9 @@ historyTextFunc.value(historyPos = presetManager.lastID);\
 presetWindow.view.decorator.shift(0, 10);\
 \
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf2 // -------------\cf0 \
 \
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf3 SCStaticText\cf0 .new(presetWindow, \cf3 Rect\cf0 (10,10,180,20)).string = \cf4 "Import / Export"\cf0 ;\
 presetWindow.view.decorator.nextLine;\
 \
@@ -583,7 +572,6 @@ importButton.action 	= \{ \cf3 CocoaDialog\cf0 .getPaths(\{\cf3 |paths|\cf0  \
 					    \}, maxSize:1)\
 					   \};		\
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf2 // auto load presets\cf0 \
 \cf2 //\{\cf0 \
 \cf2 //	var recalled;\cf0 \
