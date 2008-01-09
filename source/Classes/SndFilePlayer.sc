@@ -277,7 +277,9 @@ SoundFilePlayerGUI : BMAbstractGUI {
 	update {arg changed, what ...args; 
 		//if(what == \n_end, {stopwatch.stop;});
 		switch(what,
-			\n_end, {this.updateTimeDisplay(0.getTimeString)},
+			\n_end, {this.updateTimeDisplay(0.getTimeString);
+				{playButton.value = 0;}.defer;
+			},
 //			\play, {stopwatch.start;},
 			\playFailed, {
 				//"Playing failed".postln; 
