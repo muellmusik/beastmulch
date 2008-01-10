@@ -81,17 +81,25 @@ m.start;\
 \cf4 // dim = 3, numBoids, centre, limits, velMax, velScale, minDist\cf0 \
 b = \cf2 BMGrainBoidSpace\cf0 (3, ~numGrains, \cf2 nil\cf0 , [[-0.9, ~lowY * 0.9, ~lowZ * 0.9], [0.9, ~hiY * 0.9, ~hiZ * 0.9]], 0.2, 1, 0.07);\
 \
+c = \cf2 BMGrainBoidSpace\cf0 (3, ~numGrains, \cf2 nil\cf0 , [[-0.9, ~lowY * 0.9, ~lowZ * 0.9], [0.9, ~hiY * 0.9, ~hiZ * 0.9]], 0.2, 1, 0.07);\
+\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
 \cf0 ~treeRout = \cf2 Routine\cf0 (\{\
 	loop(\{\
 		k.nearest(b.moveNext.pos)[0].label.yield\
 	\})\
 \});\
+\
+~treeRout2 = \cf2 Routine\cf0 (\{\
+	loop(\{\
+		k.nearest(c.moveNext.pos)[0].label.yield\
+	\})\
+\});\
 \pard\pardeftab560\ql\qnatural
 \cf0 \
 \cf2 AppClock\cf0 .sched(0, \{\
 \cf4 //b.numBoids.do(\{b.moveNext\});\cf0 \
-m.positions = b.boids.collect(\cf2 _\cf0 .pos);\
+m.positions = b.boids.collect(\cf2 _\cf0 .pos) ++ c.boids.collect(\cf2 _\cf0 .pos);\
 0.05\
 \});\
 )\
@@ -139,6 +147,19 @@ b.velScale = 3\
 \cf0 (\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
 \cf2 var\cf0  path, soundFile, sRate;\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 SynthDef\cf0 (\cf3 "PodGrainR"\cf0 ,\{ \cf2 arg\cf0  i_out=0, i_sampbufnum, pitchScale = 1.0, dur = 0.05, \
+			pointer, offset = 0.0, level = 1.0, loop;\
+			\cf2 var\cf0  thisStart, thisDur, grain;\
+			thisStart = pointer + \cf2 IRand\cf0 (0, offset);\
+			grain = \cf2 EnvGen\cf0 .ar(\cf2 Env\cf0 .sine, 1.0, level, 0.0, dur, 2) \
+				* \cf2 PlayBuf\cf0 .ar(2,i_sampbufnum,pitchScale * \cf2 BufRateScale\cf0 .ir(i_sampbufnum),\
+					1, thisStart,loop);\
+			\cf2 OffsetOut\cf0 .ar(i_out,grain[1]);\
+		\}).send(s);\
+		\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
 \cf2 CocoaDialog\cf0 .getPaths(\{\cf2 arg\cf0  paths;\
 	\
 	path = paths[0];\
@@ -146,12 +167,28 @@ b.velScale = 3\
 	soundFile.openRead(path);\
 	sRate = soundFile.sampleRate;\
 	~buf = \cf2 Buffer\cf0 .read(s,path);\
-	~myGran = \cf2 BMSwarmGranulator\cf0 .new(~buf.bufnum, 64, sRate); \cf4 //numChan for env only\cf0 \
-\
+	~myGran = \cf2 BMSwarmGranulator\cf0 .new(~buf.bufnum, 64, sRate); \cf4 //numChan for env only\
+	//~myGran2 \cf0 = \cf2 BMSwarmGranulator\cf0 .new(~buf.bufnum, 64, sRate, targetDef: \cf3 "PodGrainR"\cf0 );\
+	\
 \}, \cf2 nil\cf0 , 1);\
 )\
 \
-~myGran.play(numGrains: ~numGrains, outFunc: ~treeRout, mul: 1);\
+(\
+\cf2 var\cf0  path, soundFile, sRate;\
+\cf2 CocoaDialog\cf0 .getPaths(\{\cf2 arg\cf0  paths;\
+	\
+	path = paths[0];\
+	soundFile = \cf2 SoundFile\cf0 .new;\
+	soundFile.openRead(path);\
+	sRate = soundFile.sampleRate;\
+	~buf = \cf2 Buffer\cf0 .read(s,path);\
+	//~myGran = \cf2 BMSwarmGranulator\cf0 .new(~buf.bufnum, 64, sRate); \cf4 //numChan for env only\
+	~myGran2 \cf0 = \cf2 BMSwarmGranulator\cf0 .new(~buf.bufnum, 64, sRate, targetDef: \cf3 "PodGrainR"\cf0 );\
+	\
+\}, \cf2 nil\cf0 , 1);\
+)\
+\
+~myGran.play(numGrains: ~numGrains, outFunc: ~treeRout, mul: 1);~myGran2.play(numGrains: ~numGrains, outFunc: ~treeRout2, mul: 1);\
 \
 ~myGran.stretch = 0.33\
 ~myGran.dur = 0.02\
