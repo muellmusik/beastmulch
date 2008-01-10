@@ -84,9 +84,9 @@ BMGrainBoidSpace {
 		countRecip = (numBoids - 1).reciprocal;
 	}
 	
-	// move a boid
+	// move and return a boid
 	moveNext {
-		boidStream.next.move(boids, centre, limits, velMax, velScale, minDist, avoidD, countRecip);
+		^boidStream.next.move(boids, centre, limits, velMax, velScale, minDist, avoidD, countRecip);
 	}
 	
 }

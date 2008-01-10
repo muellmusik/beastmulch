@@ -48,7 +48,7 @@ BMSwarmGranulator {
 			input = In.ar(i_in, numChannels);
 			output = input * EnvGen.kr(Env.asr(attack, 1.0, decay), gate, amp, 0, 1.0, 7);
 			// free the nodes in the group when released
-			Out.ar(i_out, output);
+			OffsetOut.ar(i_out, output);
 		}).send(server);
 	}
 	
