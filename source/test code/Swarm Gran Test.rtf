@@ -23,18 +23,21 @@ w = \cf3 SCWindow\cf2 (\cf4 "Swarm Granulate"\cf2 , ~rect = \cf3 Rect\cf2 (100,2
 m = \cf3 SCQuartzComposerView\cf2 (w, ~rect.moveTo(0,0));\
 m.path = \cf3 Document\cf2 .current.path.dirname ++ \cf4 "/SwarmLayout3.qtz"\cf2 ;\
 \
-\cf5 //~colours = Pseq\cf2 \
+~colours = \cf3 Pseq\cf2 ([\cf3 Color\cf2 .green.alpha_(0.6), \cf3 Color\cf2 .red.alpha_(0.6), \cf3 Color\cf2 .blue.alpha_(0.6), \cf3 Color\cf2 .yellow.alpha_(0.6), \cf3 Color\cf2 .white.alpha_(0.6)], \cf3 inf\cf2 ).asStream;\
 m.startY = ~hiY;\
 m.endY = ~lowY;\
 ~floorZ = ~outs.collect(\{\cf3 |assoc|\cf2  assoc.value.z \}).minItem / ~maxX;\
 m.floorZ = ~floorZ;\
+\
 r = ~outs.collect(\{\cf3 |assoc|\cf2  \
-	\cf3 var\cf2  x, y, z;\
+	\cf3 var\cf2  x, y, z, nameStart, colour;\
 	x = assoc.value.x / ~maxX;\
 	y = assoc.value.y / ~maxX;\
 	z = assoc.value.z / ~maxX;\
-	\
-	[x, y, z, \cf3 Color\cf2 .green.alpha_(0.6), \cf3 Point\cf2 (x, y).theta * 57.295779513082, assoc.key.asString] \
+	nameStart = assoc.value.name.asString.copyFromStart(3);\
+	if(nameStart == ~oldNameStart, \{ colour = ~oldColour\}, \{colour = ~colours.next\});\
+	~oldNameStart = nameStart; ~oldColour = colour;\
+	[x, y, z, colour, \cf3 Point\cf2 (x, y).theta * 57.295779513082, assoc.key.asString] \
 	\
 \});\
 \
@@ -48,7 +51,7 @@ k = \cf3 KDTree\cf2 (~outs.collect(\{\cf3 |assoc|\cf2  \
 	\
 \}), lastIsLabel: \cf3 true\cf2 );\
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
 \cf2 \
 \pard\pardeftab560\ql\qnatural
 \cf2 \
@@ -72,18 +75,18 @@ k = \cf3 KDTree\cf2 (~outs.collect(\{\cf3 |assoc|\cf2  \
 m.speakers = r;\
 m.start;\
 \cf5 // dim = 3, numBoids, centre, limits, velMax, velScale, minDist\cf2 \
-b = \cf3 BMGrainBoidSpace\cf2 (3, \cf0 ~numGrains\cf2 , \cf3 nil\cf2 , [[-0.9, ~lowZ * 0.9, ~lowZ * 0.9], [0.9, ~hiY * 0.9, ~hiZ * 0.9]], 0.2, 1, 0.07);\
+b = \cf3 BMGrainBoidSpace\cf2 (3, ~numGrains, \cf3 nil\cf2 , [[-0.9, ~lowZ * 0.9, ~lowZ * 0.9], [0.9, ~hiY * 0.9, ~hiZ * 0.9]], 0.2, 1, 0.07);\
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf0 ~treeRout = Routine(\{\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf2 ~treeRout = \cf3 Routine\cf2 (\{\
 	loop(\{\
 		k.nearest(b.moveNext.pos)[0].label.yield\
 	\})\
-\});\cf2 \
+\});\
 \pard\pardeftab560\ql\qnatural
 \cf2 \
 \cf3 AppClock\cf2 .sched(0, \{\
-//b.numBoids.do(\{b.moveNext\});\
+\cf5 //b.numBoids.do(\{b.moveNext\});\cf2 \
 m.positions = b.boids.collect(\cf3 _\cf2 .pos);\
 0.05\
 \});\
@@ -112,7 +115,7 @@ b.velScale = 0.9\
 \
 \cf5 ///////////////\cf2 \
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
 \cf2 (\
 \cf3 var\cf2  path, soundFile, sRate;\
 \cf3 CocoaDialog\cf2 .getPaths(\{\cf3 arg\cf2  paths;\
@@ -122,11 +125,11 @@ b.velScale = 0.9\
 	soundFile.openRead(path);\
 	sRate = soundFile.sampleRate;\
 	~buf = \cf3 Buffer\cf2 .read(s,path);\
-	~myGran = \cf3 BMSwarmGranulator\cf2 .new(~buf.bufnum, 64, sRate); //numChan for env only\
+	~myGran = \cf3 BMSwarmGranulator\cf2 .new(~buf.bufnum, 64, sRate); \cf5 //numChan for env only\cf2 \
 \
 \}, \cf3 nil\cf2 , 1);\
 )\
 \
-~myGran.play(numGrains: \cf0 ~numGrains, \cf2 outFunc: ~treeRout)\
+~myGran.play(numGrains: ~numGrains, outFunc: ~treeRout)\
 \
-\cf0 ~myGran.release;}
+~myGran.release;}
