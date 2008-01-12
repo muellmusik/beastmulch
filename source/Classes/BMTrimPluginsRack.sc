@@ -98,23 +98,38 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 		}, {"Not a BMSpeakerArray, can't auto add plugins".warn;}); 
 	}
 	
-	// balance powered speakers
+	// balance speakers
 	autoTrim { 
 		var powered, min, diff;
 		
 		ins.isSpeakerArray.if({
-			powered = ins.select({|speaker| 
-				speaker.value.spec.powered &&  speaker.value.spec.spl.notNil;
-			});
-			min = powered.collect({|speaker| speaker.value.spec.spl }).minItem; 
-			powered.do({|speaker| 
-				diff = min - speaker.value.spec.spl;
+			min = ins.collect({|speaker| speaker.value.autoTrim }).minItem; 
+			ins.do({|speaker| 
+				diff = min - speaker.value.autoTrim;
 				if(diff < 0, { 
 					this[speaker.value.name].trim_(diff); 
 				});
 			});
 		}, {"Not a BMSpeakerArray, can't auto trim".warn;}); 
 	}
+	
+	// balance powered speakers
+//	autoTrim { 
+//		var powered, min, diff;
+//		
+//		ins.isSpeakerArray.if({
+//			powered = ins.select({|speaker| 
+//				speaker.value.spec.powered &&  speaker.value.spec.spl.notNil;
+//			});
+//			min = powered.collect({|speaker| speaker.value.spec.spl }).minItem; 
+//			powered.do({|speaker| 
+//				diff = min - speaker.value.spec.spl;
+//				if(diff < 0, { 
+//					this[speaker.value.name].trim_(diff); 
+//				});
+//			});
+//		}, {"Not a BMSpeakerArray, can't auto trim".warn;}); 
+//	}
 }
 
 BMTrimPluginsStrip {

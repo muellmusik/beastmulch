@@ -16,6 +16,10 @@ BMSpeaker {
 	var <>ele; // above azimuthal plane
 	var <>rad; // in meters from (0, 0, 0), which should be audience centre
 	
+	// dBFS cut populated by auto balncing function. This may be arbitrarily low, 
+	// so it should only be used for comparison purposes or normalised across an array
+	var <>autoTrim = 0;
+	
 	*new {|name, index, x = 1, y = 1, z = 1, spec|
 		^super.newCopyArgs(name, index, x, y, z, BMSpeakerSpec.specs[spec.asSymbol]).init;
 	}
