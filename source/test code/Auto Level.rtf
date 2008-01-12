@@ -1,35 +1,36 @@
-{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf440
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
 {\fonttbl\f0\fnil\fcharset77 Monaco;}
-{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
-\red9\green31\blue177;\red0\green0\blue191;\red0\green115\blue0;\red191\green0\blue0;\red96\green96\blue96;
-}
-\deftab560
-\pard\pardeftab560\ql\qnatural
+{\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red96\green96\blue96;\red9\green31\blue177;
+\red0\green115\blue0;\red191\green0\blue0;\red0\green0\blue192;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\f0\fs18 \cf2 (\
-~outs = \cf3 this\cf2 .executeFile(\cf3 Document\cf2 .current.dir.dirname ++ \cf4 "/january channel list.rtf"\cf2 .standardizePath)[0];\
+\f0\fs18 \cf0 s.options.numOutputBusChannels = 64;\
+\pard\pardeftab560\ql\qnatural
+\cf0 \
+(\
+~outs = \cf2 this\cf0 .executeFile(\cf2 Document\cf0 .current.dir.dirname ++ \cf3 "/january channel list.rtf"\cf0 .standardizePath)[0];\
 \
-\cf3 SynthDef\cf2 (\cf4 "autoLevel"\cf2 , \{\cf3 |out, in = 1, amp = 0.4|\cf2 \
+\cf2 SynthDef\cf0 (\cf3 "autoLevel"\cf0 , \{\cf2 |out, in = 1, amp = 0.3|\cf0 \
 	var max;\
-	\cf3 Out\cf2 .ar(out, \cf3 PinkNoise\cf2 .ar(amp) * \cf5 EnvGen.kr(Env.linen, timeScale: 0.3, doneAction: 2)\cf2 );\
-	max = \cf3 RunningMax\cf2 .kr(\cf3 Amplitude\cf2 .kr(\cf3 AudioIn\cf2 .ar(in)));\
-	\cf3 SharedOut\cf2 .kr(0, max);\
+	\cf2 Out\cf0 .ar(out, \cf2 PinkNoise\cf0 .ar(amp) * \cf4 EnvGen.kr(Env.linen, timeScale: 0.3, doneAction: 2)\cf0 );\
+	max = \cf2 RunningMax\cf0 .kr(\cf2 Amplitude\cf0 .kr(\cf2 AudioIn\cf0 .ar(in)));\
+	\cf2 SharedOut\cf0 .kr(0, max);\
 \}).send(s);\
 \
 )\
 \
 (\
 \{\
-s.\cf0 setSharedControl(0, 0);\
-0.1.wait;\cf2 \
-~outs.scramble.do(\{\cf3 |assoc|\cf2 \
-	\cf3 var\cf2  speaker, max, array, trim;\
+s.setSharedControl(0, 0);\
+0.1.wait;\
+~outs.do(\{\cf2 |assoc|\cf0 \
+	\cf2 var\cf0  speaker, max, array, trim;\
 	speaker = assoc.value;\
 	speaker.name.postln;\
-	array = \cf3 Array\cf2 .new(3);\
-	3.do(\{\cf3 |i|\cf2 \
-	x = \cf3 Synth\cf2 (\cf4 "autoLevel"\cf2 , [out: speaker]);\
-	0.3.wait;\
+	array = \cf2 Array\cf0 .new(3);\
+	3.do(\{\cf2 |i|\cf0 \
+	x = \cf2 Synth\cf0 (\cf3 "autoLevel"\cf0 , [out: speaker]);\
+	1.wait;\
 	array.add(s.getSharedControl(0));\
 	\});\
 	speaker.autoTrim = array.postln.mean.ampdb.postln;\
@@ -40,73 +41,149 @@ s.\cf0 setSharedControl(0, 0);\
 )\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 r = \cf6 BMTrimPluginsRack\cf0 (~outs, name: \cf7 \\foo\cf0 );\
+\cf0 ~outs.writeArchive(\cf2 Document\cf0 .current.dir.dirname ++"\cf3 /january channel listLev.rtf");\cf0 \
+\pard\pardeftab560\ql\qnatural
+\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural\pardirnatural
+\cf0 r = \cf2 BMTrimPluginsRack\cf0 (~outs, name: \cf5 \\foo\cf0 );\
 r.gui;\
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
 \cf0 (\
-\cf6 var\cf0  w, startButton, synth;\
-\cf6 var\cf0  outputControl, ampControl;\
-\cf6 var\cf0  cmdPeriodFunc;\
+\cf2 var\cf0  w, startButton, synth;\
+\cf2 var\cf0  outputControl, ampControl;\
+\cf2 var\cf0  cmdPeriodFunc;\
 s.waitForBoot(\{\
-\cf6 SynthDef\cf0 (\cf7 \\PinkTest\cf0 , \{\cf6 |out, amp|\cf0  \cf6 Out\cf0 .ar(out, \cf6 PinkNoise\cf0 .ar(amp)); \}).load(s);\
+\cf2 SynthDef\cf0 (\cf5 \\PinkTest\cf0 , \{\cf2 |out, amp|\cf0  \cf2 Out\cf0 .ar(out, \cf2 PinkNoise\cf0 .ar(amp)); \}).load(s);\
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf8 // make the window\cf0 \
-w = \cf6 SCWindow\cf0 (\cf9 "PinkNoise Tester"\cf0 , \cf6 Rect\cf0 (20, 400, 440, 180));\
-w.front; \cf8 // make window visible and front window.\cf0 \
-w.view.decorator = \cf6 FlowLayout\cf0 (w.view.bounds);\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf6 // make the window\cf0 \
+w = \cf2 SCWindow\cf0 (\cf3 "PinkNoise Tester"\cf0 , \cf2 Rect\cf0 (20, 400, 440, 180));\
+w.front; \cf6 // make window visible and front window.\cf0 \
+w.view.decorator = \cf2 FlowLayout\cf0 (w.view.bounds);\
 \
-w.view.background = \cf6 HiliteGradient\cf0 (\cf6 Color\cf0 .rand(0.0,1.0),\cf6 Color\cf0 .rand(0.0,1.0),\
-					[\cf7 \\h\cf0 ,\cf7 \\v\cf0 ].choose, 100, rrand(0.1,0.9));\
+w.view.background = \cf2 HiliteGradient\cf0 (\cf2 Color\cf0 .rand(0.0,1.0),\cf2 Color\cf0 .rand(0.0,1.0),\
+					[\cf5 \\h\cf0 ,\cf5 \\v\cf0 ].choose, 100, rrand(0.1,0.9));\
 \
-\cf8 // add a button to start and stop the sound.\cf0 \
-startButton = \cf6 SCButton\cf0 (w, 75 @ 24);\
+\cf6 // add a button to start and stop the sound.\cf0 \
+startButton = \cf2 SCButton\cf0 (w, 75 @ 24);\
 startButton.states = [\
-	[\cf9 "Start"\cf0 , \cf6 Color\cf0 .black, \cf6 Color\cf0 .green],\
-	[\cf9 "Stop"\cf0 , \cf6 Color\cf0 .white, \cf6 Color\cf0 .red]\
+	[\cf3 "Start"\cf0 , \cf2 Color\cf0 .black, \cf2 Color\cf0 .green],\
+	[\cf3 "Stop"\cf0 , \cf2 Color\cf0 .white, \cf2 Color\cf0 .red]\
 ];\
-startButton.action = \{\cf6 |view|\cf0 \
+startButton.action = \{\cf2 |view|\cf0 \
 		if (view.value == 1) \{\
-			\cf8 // start sound\cf0 \
+			\cf6 // start sound\cf0 \
 			\
-			synth = \cf6 Synth\cf0 (\cf7 \\PinkTest\cf0 , [\cf7 \\amp\cf0 , ampControl.value.dbamp, \cf7 \\out\cf0 , \
+			synth = \cf2 Synth\cf0 (\cf5 \\PinkTest\cf0 , [\cf5 \\amp\cf0 , ampControl.value.dbamp, \cf5 \\out\cf0 , \
 				outputControl.value - 1]);\
 			\
 		\};\
 		if (view.value == 0) \{\
-			\cf8 // stop sound\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+			\cf6 // stop sound\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
 \cf0 			synth.free;\
 		\};\
 \};\
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf8 // create controls for all parameters\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf6 // create controls for all parameters\cf0 \
 w.view.decorator.nextLine;\
-outputControl = \cf6 EZSlider\cf0 (w, 400 @ 24, \cf9 "Hardware Out"\cf0 , \cf6 ControlSpec\cf0 (1, 98, \cf7 \\lin\cf0 , 1), \
-	\{\cf6 |ez|\cf0  synth.set( \cf9 "out"\cf0 , ez.value -1); \}, 1);\
+outputControl = \cf2 EZSlider\cf0 (w, 400 @ 24, \cf3 "Hardware Out"\cf0 , \cf2 ControlSpec\cf0 (1, 98, \cf5 \\lin\cf0 , 1), \
+	\{\cf2 |ez|\cf0  synth.set( \cf3 "out"\cf0 , ez.value -1); \}, 1);\
 	\
 w.view.decorator.nextLine;\
-ampControl = \cf6 EZSlider\cf0 (w, 400 @ 24, \cf9 "Amp"\cf0 , \cf7 \\db\cf0 , \
-	\{\cf6 |ez|\cf0  synth.set(\cf9 "amp"\cf0 , ez.value.dbamp); \}, -34);\
+ampControl = \cf2 EZSlider\cf0 (w, 400 @ 24, \cf3 "Amp"\cf0 , \cf5 \\db\cf0 , \
+	\{\cf2 |ez|\cf0  synth.set(\cf3 "amp"\cf0 , ez.value.dbamp); \}, -34);\
 \
 w.view.decorator.nextLine;\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf6 SCStaticText\cf0 .new(w, \cf6 Rect\cf0 (0,0,300,80)).string_(\cf9 "Outputs are Hardware, not SC, i.e. 1 = 1"\cf0 );\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf2 SCStaticText\cf0 .new(w, \cf2 Rect\cf0 (0,0,300,80)).string_(\cf3 "Outputs are Hardware, not SC, i.e. 1 = 1"\cf0 );\
 			\
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf8 // set start button to zero upon a cmd-period\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf6 // set start button to zero upon a cmd-period\cf0 \
 cmdPeriodFunc = \{ startButton.value = 0; \};\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf6 CmdPeriod\cf0 .add(cmdPeriodFunc);\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf2 CmdPeriod\cf0 .add(cmdPeriodFunc);\
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf8 // stop the sound when window closes and remove cmdPeriodFunc.\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf6 // stop the sound when window closes and remove cmdPeriodFunc.\cf0 \
 w.onClose = \{\
 	synth.free;\
-	\cf6 CmdPeriod\cf0 .remove(cmdPeriodFunc);\
+	\cf2 CmdPeriod\cf0 .remove(cmdPeriodFunc);\
+\};\
+\})\
+)\
+\
+(\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf2 var\cf0  w, startButton, synth;\
+\cf2 var\cf0  outputControl, ampControl;\
+\cf2 var\cf0  cmdPeriodFunc;\
+s.waitForBoot(\{\
+\pard\pardeftab560\ql\qnatural
+\cf0 b = \cf7 Buffer\cf0 .read(s,\cf3 "sounds/a11wlk01.wav"\cf0 );\cf2 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf2 SynthDef\cf0 (\cf5 \\Columbia\cf0 , \{\cf2 |out, amp|\cf0  \cf2 Out\cf0 .ar(out, \cf2 PlayBuf\cf0 .ar(1, b, \cf7 BufRateScale\cf0 .kr(b),loop:1) * amp); \}).send(s);\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf6 // make the window\cf0 \
+w = \cf2 SCWindow\cf0 (\cf3 "Columbia"\cf0 , \cf2 Rect\cf0 (20, 400, 440, 180));\
+w.front; \cf6 // make window visible and front window.\cf0 \
+w.view.decorator = \cf2 FlowLayout\cf0 (w.view.bounds);\
+\
+w.view.background = \cf2 HiliteGradient\cf0 (\cf2 Color\cf0 .rand(0.0,1.0),\cf2 Color\cf0 .rand(0.0,1.0),\
+					[\cf5 \\h\cf0 ,\cf5 \\v\cf0 ].choose, 100, rrand(0.1,0.9));\
+\
+\cf6 // add a button to start and stop the sound.\cf0 \
+startButton = \cf2 SCButton\cf0 (w, 75 @ 24);\
+startButton.states = [\
+	[\cf3 "Start"\cf0 , \cf2 Color\cf0 .black, \cf2 Color\cf0 .green],\
+	[\cf3 "Stop"\cf0 , \cf2 Color\cf0 .white, \cf2 Color\cf0 .red]\
+];\
+startButton.action = \{\cf2 |view|\cf0 \
+		if (view.value == 1) \{\
+			\cf6 // start sound\cf0 \
+			\
+			synth = \cf2 Synth\cf0 (\cf5 \\Columbia\cf0 , [\cf5 \\amp\cf0 , ampControl.value.dbamp, \cf5 \\out\cf0 , \
+				outputControl.value - 1]);\
+			\
+		\};\
+		if (view.value == 0) \{\
+			\cf6 // stop sound\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf0 			synth.free;\
+		\};\
+\};\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf6 // create controls for all parameters\cf0 \
+w.view.decorator.nextLine;\
+outputControl = \cf2 EZSlider\cf0 (w, 400 @ 24, \cf3 "Hardware Out"\cf0 , \cf2 ControlSpec\cf0 (1, 98, \cf5 \\lin\cf0 , 1), \
+	\{\cf2 |ez|\cf0  synth.set( \cf3 "out"\cf0 , ez.value -1); \}, 1);\
+	\
+w.view.decorator.nextLine;\
+ampControl = \cf2 EZSlider\cf0 (w, 400 @ 24, \cf3 "Amp"\cf0 , \cf5 \\db\cf0 , \
+	\{\cf2 |ez|\cf0  synth.set(\cf3 "amp"\cf0 , ez.value.dbamp); \}, -34);\
+\
+w.view.decorator.nextLine;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf2 SCStaticText\cf0 .new(w, \cf2 Rect\cf0 (0,0,300,80)).string_(\cf3 "Outputs are Hardware, not SC, i.e. 1 = 1"\cf0 );\
+			\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf6 // set start button to zero upon a cmd-period\cf0 \
+cmdPeriodFunc = \{ startButton.value = 0; \};\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf2 CmdPeriod\cf0 .add(cmdPeriodFunc);\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf6 // stop the sound when window closes and remove cmdPeriodFunc.\cf0 \
+w.onClose = \{\
+	synth.free;\
+	\cf2 CmdPeriod\cf0 .remove(cmdPeriodFunc);\
 \};\
 \})\
 )}
