@@ -1,0 +1,212 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf440
+{\fonttbl\f0\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red96\green96\blue96;\red191\green0\blue0;
+}
+\deftab560
+\pard\pardeftab560\ql\qnatural
+
+\f0\fs18 \cf0 (\
+~numGrains = 5;\
+~outs = \cf2 this\cf0 .executeFile(\cf2 Document\cf0 .current.dir.dirname ++ \cf3 "/january channel list2.rtf"\cf0 .standardizePath)[0];\
+~maxX = ~outs.collect(\{\cf2 |assoc|\cf0  assoc.value.x.abs \}).maxItem;\
+~yvals = ~outs.collect(\{\cf2 |assoc|\cf0  assoc.value.y \});\
+~hiY = ~yvals.maxItem / ~maxX;\
+~lowY = ~yvals.minItem / ~maxX;\
+~ySIze = ~hiY - ~lowY;\
+w = \cf2 SCWindow\cf0 (\cf3 "Swarm Granulate"\cf0 , ~rect = \cf2 Rect\cf0 (100,200, 1000 / ([~hiY, ~lowY].abs.maxItem) * 0.8, 1020)).front;\
+\
+~hiZ = ~outs.collect(\{\cf2 |assoc|\cf0  assoc.value.z \}).maxItem / ~maxX;\
+~lowZ = ~outs.collect(\{\cf2 |assoc|\cf0  assoc.value.z \}).minItem / ~maxX;\
+\pard\pardeftab560\ql\qnatural
+\cf4 //SCButton(w, Rect(0, 0, 150, 20))\cf0 \
+\cf4 //	.states_([["pick another QC file"]])\cf0 \
+\cf4 //	.action_(\{ File.openDialog("", \{ |path| m.path_(path) \}) \});\
+\pard\pardeftab560\ql\qnatural
+\cf0 z = \cf2 SCSlider\cf0 (w, \cf2 Rect\cf0 (0,0,~rect.width, 20));\
+m = \cf2 SCQuartzComposerView\cf0 (w, ~rect.moveTo(0,20));\
+m.resize_(5);\
+z.action = \{m.zoom = z.value * 2;\};\
+m.path = \cf2 Document\cf0 .current.path.dirname ++ \cf3 "/SwarmLayout4.qtz"\cf0 ;\
+m.sphereScale = 0.02;\
+\
+~colours = \cf2 Pseq\cf0 ([\cf2 Color\cf0 .green.alpha_(0.6), \cf2 Color\cf0 .red.alpha_(0.6), \cf2 Color\cf0 .blue.alpha_(0.6), \cf2 Color\cf0 .yellow.alpha_(0.6), \cf2 Color\cf0 .white.alpha_(0.6)], \cf2 inf\cf0 ).asStream;\
+m.startY = ~hiY;\
+m.endY = ~lowY;\
+~floorZ = ~outs.collect(\{\cf2 |assoc|\cf0  assoc.value.z \}).minItem / ~maxX;\
+m.floorZ = ~floorZ;\
+\
+r = ~outs.collect(\{\cf2 |assoc|\cf0  \
+	\cf2 var\cf0  x, y, z, nameStart, colour;\
+	x = assoc.value.x / ~maxX;\
+	y = assoc.value.y / ~maxX;\
+	z = assoc.value.z / ~maxX;\
+	nameStart = assoc.value.name.asString.copyFromStart(3);\
+	if(nameStart == ~oldNameStart, \{ colour = ~oldColour\}, \{colour = ~colours.next\});\
+	~oldNameStart = nameStart; ~oldColour = colour;\
+	[x, y, z, colour, \cf2 Point\cf0 (x, y).theta * 57.295779513082, assoc.key.asString] \
+	\
+\});\
+\
+k = \cf2 KDTree\cf0 (~outs.collect(\{\cf2 |assoc|\cf0  \
+	\cf2 var\cf0  x, y, z;\
+	x = assoc.value.x / ~maxX;\
+	y = assoc.value.y / ~maxX;\
+	z = assoc.value.z / ~maxX;\
+	\
+	[x, y, z, assoc.value.index] \
+	\
+\}), lastIsLabel: \cf2 true\cf0 );\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf0 \
+\pard\pardeftab560\ql\qnatural
+\cf0 \
+\pard\pardeftab560\ql\qnatural
+\cf4 //k.nearest([0, 0, 0])[0].label\cf0 \
+\
+\cf4 //\cf0 \
+\cf4 //\cf0 \
+\cf4 //p = Polar(0.5, 0);\cf0 \
+\cf4 //r = \{ p = p.rotate(0.25pi); [p.asPoint.x, p.asPoint.y, 0.1, Color.new255(139, 123, 139).alpha_(0.6), p.theta * 57.295779513082, "8030"]\} ! 8;\cf0 \
+\cf4 //\cf0 \
+\cf4 //p = p.rotate(0.125pi);\cf0 \
+\cf4 //\cf0 \
+\cf4 //p = p.scale(0.8);\cf0 \
+\cf4 //r = r ++ (\{ p = p.rotate(0.25pi); [p.asPoint.x, p.asPoint.y, 0.2, Color.green.alpha_(0.6), p.theta * 57.295779513082, "8040"]\} ! 8);\cf0 \
+\cf4 //\cf0 \
+\cf4 //p = p.scale(2);\cf0 \
+\cf4 //\cf0 \
+\cf4 //r = r ++ (\{ p = p.rotate(0.25pi); [p.asPoint.x, p.asPoint.y, 0.15, Color.red.alpha_(0.6), p.theta * 57.295779513082, "ATC"]\} ! 8);\cf0 \
+\
+\cf4 //m.showSpeakers = false;\cf0 \
+m.speakers = r;\
+m.start;\
+\cf4 // dim = 3, numBoids, centre, limits, velMax, velScale, minDist\cf0 \
+b = \cf2 BMGrainBoidSpace\cf0 (3, ~numGrains, \cf2 nil\cf0 , [[-0.9, ~lowY * 0.9, ~lowZ * 0.9], [0.9, ~hiY * 0.9, ~hiZ * 0.9]], 0.2, 1, 0.07);\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf4 //~treeRout = Routine(\{\cf0 \
+\cf4 //	loop(\{\cf0 \
+\cf4 //		k.nearest(b.moveNext.pos)[0].label.yield\cf0 \
+\cf4 //	\})\cf0 \
+\cf4 //\});\cf0 \
+\
+~treeRout = \cf2 Routine\cf0 (\{\
+	var boid, gains, keys;\
+	loop(\{\
+		//k.nearest(b.moveNext.pos)[0].label.yield\
+		boid = b.moveNext.pos;\
+		gains = ~outs.collect(\{|assoc|\
+			var speaker;\
+			speaker = assoc.value;\
+			(assoc.key -> ([speaker.x, speaker.y, speaker.z] - boid).squared.sum.sqrt)\
+		\});\
+		\
+		gains = gains.sort(\{ \cf2 arg\cf0  a, b; a.value <= b.value \});\
+		//\\foo.postln;\
+		gains = gains.copyFromStart(2);\
+		keys = gains.collect(\{|assoc| assoc.key \});\
+		~outputValues = [keys.collect(\{|key| ~outs[key]\}), \
+			(gains.collect(\{|assoc| assoc.value \}) * 0.5pi).cos\
+		];\
+		//\\bar.postln;\
+		1.yield;\
+	\})\
+\});\
+\pard\pardeftab560\ql\qnatural
+\cf0 \
+\cf2 AppClock\cf0 .sched(0, \{\
+\pard\pardeftab560\ql\qnatural
+\cf4 //b.numBoids.do(\{b.moveNext\});\cf0 \
+m.positions = b.boids.collect(\cf2 _\cf0 .pos);\
+0.05\
+\});\
+)\
+\
+m.showSpeakers = \cf2 true\cf0 \
+m.showSpeakers = \cf2 false\cf0 \
+\
+b.centre = [0.5, 0.5, 0]\
+\
+b.centre = [0, 0, 0.2]\
+\
+b.centre = [0, -2, 1]\
+\
+b.centre = \cf2 nil\cf0 ;\
+\
+b.boids.collect(\cf2 _\cf0 .pos);\
+\
+b.minDist = 0.2\
+  \
+b.velMax = 0.5\
+\
+b.avoidD = \cf2 false\cf0 ;\
+\
+b.velScale = 0.1\
+\
+b.velScale = 3\
+\
+(\
+~mouseCentre = Routine(\{\
+	loop(\{\
+		if(m.mouseRight, \{\
+			b.centre = [m.mouseX, m.mouseY, ~hiZ -~lowZ].postln;\
+		\});\
+		0.2.wait;\
+	\})\
+\});\
+~mouseCentre.play(AppClock)\
+)\
+\
+~mouseCentre.stop;\
+\
+\cf4 ///////////////\cf0 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf0 (\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf2 var\cf0  path, soundFile, sRate;\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural\pardirnatural
+\cf2 SynthDef\cf0 (\cf3 "PodGrainTri"\cf0 ,\{ \cf2 arg\cf0  i_out=0, i_sampbufnum, pitchScale = 1.0, dur = 0.05, \
+			pointer, offset = 0.0, level = 1.0, loop, out1, out2, out3, gain1, gain2, gain3;\
+			\cf2 var\cf0  thisStart, thisDur, grain;\
+			thisStart = pointer + \cf2 IRand\cf0 (0, offset);\
+			grain = \cf2 EnvGen\cf0 .ar(\cf2 Env\cf0 .sine, 1.0, level, 0.0, dur, 2) \
+				* \cf2 PlayBuf\cf0 .ar(1,i_sampbufnum,pitchScale * \cf2 BufRateScale\cf0 .ir(i_sampbufnum),\
+					1, thisStart,loop);\
+			\cf2 OffsetOut\cf0 .ar([out1, out2, out3],grain * [gain1, gain2, gain3]);\
+		\}).send(s);\
+		\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf2 CocoaDialog\cf0 .getPaths(\{\cf2 arg\cf0  paths;\
+	\
+	path = paths[0];\
+	soundFile = \cf2 SoundFile\cf0 .new;\
+	soundFile.openRead(path);\
+	sRate = soundFile.sampleRate;\
+	~buf = \cf2 Buffer\cf0 .read(s,path);\
+	~myGran = \cf2 BMSwarmGranulator\cf0 .new(~buf.bufnum, 64, sRate, targetDef: \cf3 "PodGrainTri"\cf0 ); \cf4 //numChan for env only\cf0 \
+\
+\}, \cf2 nil\cf0 , 1);\
+)\
+\
+~myGran.play(numGrains: ~numGrains, outFunc: ~treeRout, mul: 3, targetArgs: \{\
+	var outs, gains;\
+	outs = ~outputValues[0].asUGenInput.postln;\
+	gains = ~outputValues[1];\
+	[out1: outs[0], out2: outs[1], out3: outs[2], gain1: gains[0], gain2: gains[1], gain3: gains[2]]\
+\});\
+\
+~myGran.stretch = 0.33\
+~myGran.dur = 0.02\
+~myGran.durRand = 3\
+~myGran.delRand = 0\
+\
+~myGran.offset = 0.125\
+~myGran.pitch = Prand([1, 0.5, 0.25], inf).asStream\
+~myGran.pitch = 1\
+~myGran.offset = 1\
+\
+~myGran.release;}
