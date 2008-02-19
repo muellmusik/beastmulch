@@ -184,7 +184,7 @@ VBAPSpeakerArray {
 		v2 = this.unq_cross_prod(speakers[k], speakers[l]);
 		v3 = this.unq_cross_prod(v1, v2);
 		
-		neg_v3 = Speaker.new;
+		neg_v3 = VBAPSpeaker.new;
 		neg_v3.x= 0.0 - v3.x;
 		neg_v3.y= 0.0 - v3.y;
 		neg_v3.z= 0.0 - v3.z;
@@ -235,7 +235,7 @@ VBAPSpeakerArray {
 	/* vector cross product */
 	unq_cross_prod { |v1, v2|
   		var length, result;
-  		result = Speaker.new;
+  		result = VBAPSpeaker.new;
   		result.x = (v1.y * v2.z ) - (v1.z * v2.y);
   		result.y = (v1.z * v2.x ) - (v1.x * v2.z);
 		result.z = (v1.x * v2.y ) - (v1.y * v2.x);
