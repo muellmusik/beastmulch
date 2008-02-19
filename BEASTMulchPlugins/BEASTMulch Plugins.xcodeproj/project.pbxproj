@@ -25,6 +25,13 @@
 /* Begin PBXBuildFile section */
 		FE2BB3F30BB5975C009F34F8 /* BEASTMulchVBAP.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB3F20BB5975C009F34F8 /* BEASTMulchVBAP.h */; };
 		FE5386600C1EDD8B00E7E247 /* SC_InlineBinaryOp.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB3D90BB59628009F34F8 /* SC_InlineBinaryOp.h */; };
+		FE5B59350D6B22F2008C3FE7 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
+		FE5B594B0D6B23F8008C3FE7 /* fastInverseSqrt.h in Headers */ = {isa = PBXBuildFile; fileRef = FE5B594A0D6B23F8008C3FE7 /* fastInverseSqrt.h */; };
+		FE5B594C0D6B2445008C3FE7 /* BEASTMulchLoris.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE5B59480D6B2385008C3FE7 /* BEASTMulchLoris.cpp */; };
+		FE5B5AFB0D6B30F6008C3FE7 /* fastInverseSqrt.h in Headers */ = {isa = PBXBuildFile; fileRef = FE5B594A0D6B23F8008C3FE7 /* fastInverseSqrt.h */; };
+		FE5B5AFC0D6B3110008C3FE7 /* SC_Altivec.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB3F70BB597D5009F34F8 /* SC_Altivec.h */; };
+		FE5B5B120D6B3209008C3FE7 /* SC_PlugIn.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB3DE0BB59628009F34F8 /* SC_PlugIn.h */; };
+		FE5B5B190D6B32D7008C3FE7 /* BEASTMulchLoris.h in Headers */ = {isa = PBXBuildFile; fileRef = FE5B5B180D6B32D7008C3FE7 /* BEASTMulchLoris.h */; };
 		FEC02E0B0C4D1E72009EC06B /* SC_Lock.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB40F0BB5995A009F34F8 /* SC_Lock.h */; };
 		FEC02E1B0C4D1F5F009EC06B /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92CCC51F045B4BDE00CA2167 /* Carbon.framework */; };
 		FEC02EB10C4D1FA5009EC06B /* SC_Altivec.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB3F70BB597D5009F34F8 /* SC_Altivec.h */; };
@@ -54,21 +61,21 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = FE2BB36C0BB59278009F34F8 /* BEASTMulchVBAP */;
+			remoteGlobalIDString = FE2BB36C0BB59278009F34F8;
 			remoteInfo = BEASTMulchVBAP;
 		};
 		FEDA69440C949E23007670AE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = FEC9FE4A0BFCD6C500237BCA /* BEASTMulchPV */;
+			remoteGlobalIDString = FEC9FE4A0BFCD6C500237BCA;
 			remoteInfo = BEASTMulchPV;
 		};
 		FEDA69460C949E25007670AE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = FEC02E080C4D1E72009EC06B /* BEASTMulchPlaySendIndex */;
+			remoteGlobalIDString = FEC02E080C4D1E72009EC06B;
 			remoteInfo = BEASTMulchPlaySendIndex;
 		};
 /* End PBXContainerItemProxy section */
@@ -109,6 +116,11 @@
 		FE2BB4080BB598CF009F34F8 /* BEASTMulchPV.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BEASTMulchPV.cpp; sourceTree = "<group>"; };
 		FE2BB40A0BB598CF009F34F8 /* SC_SyncCondition.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SC_SyncCondition.cpp; sourceTree = "<group>"; };
 		FE2BB40F0BB5995A009F34F8 /* SC_Lock.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SC_Lock.h; sourceTree = "<group>"; };
+		FE5B593E0D6B22F2008C3FE7 /* BEASTMulchLoris.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = BEASTMulchLoris.scx; sourceTree = BUILT_PRODUCTS_DIR; };
+		FE5B59480D6B2385008C3FE7 /* BEASTMulchLoris.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BEASTMulchLoris.cpp; sourceTree = "<group>"; };
+		FE5B594A0D6B23F8008C3FE7 /* fastInverseSqrt.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = fastInverseSqrt.h; sourceTree = "<group>"; };
+		FE5B5B160D6B328E008C3FE7 /* BEASTMulchLoris.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BEASTMulchLoris.h; sourceTree = "<group>"; };
+		FE5B5B180D6B32D7008C3FE7 /* BEASTMulchLoris.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BEASTMulchLoris.h; sourceTree = "<group>"; };
 		FEC02E180C4D1E72009EC06B /* BEASTMulchSendIndex.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = BEASTMulchSendIndex.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		FEC02ECE0C4D22F8009EC06B /* MsgFifo.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MsgFifo.h; sourceTree = "<group>"; };
 		FEC02ED70C4D234B009EC06B /* SC_SyncCondition.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SC_SyncCondition.h; sourceTree = "<group>"; };
@@ -130,6 +142,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FE5B59340D6B22F2008C3FE7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FE5B59350D6B22F2008C3FE7 /* vecLib.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -156,11 +176,13 @@
 		F50D04F802E68E8201CA2799 = {
 			isa = PBXGroup;
 			children = (
+				FE5B5B180D6B32D7008C3FE7 /* BEASTMulchLoris.h */,
 				FE2BB3B40BB595ED009F34F8 /* headers */,
 				FE2BB4040BB598CF009F34F8 /* source */,
 				F50D060302E69C2101CA2799 /* Products */,
 				F50D069402E6A1C601CA2799 /* Frameworks */,
 				F50D069D02E6A1C601CA2799 /* Resources */,
+				FE5B5B160D6B328E008C3FE7 /* BEASTMulchLoris.h */,
 			);
 			sourceTree = "<group>";
 		};
@@ -170,6 +192,7 @@
 				FE2BB3780BB59278009F34F8 /* BEASTMulchVBAP.scx */,
 				FEC9FE5A0BFCD6C500237BCA /* BEASTMulchPV.scx */,
 				FEC02E180C4D1E72009EC06B /* BEASTMulchSendIndex.scx */,
+				FE5B593E0D6B22F2008C3FE7 /* BEASTMulchLoris.scx */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -237,6 +260,7 @@
 		FE2BB3F10BB5975C009F34F8 /* plugin headers */ = {
 			isa = PBXGroup;
 			children = (
+				FE5B594A0D6B23F8008C3FE7 /* fastInverseSqrt.h */,
 				FEC9FE6C0BFCD7D800237BCA /* BEASTMulchPV.h */,
 				FE2BB3F20BB5975C009F34F8 /* BEASTMulchVBAP.h */,
 			);
@@ -274,6 +298,7 @@
 		FE2BB4070BB598CF009F34F8 /* plugin source */ = {
 			isa = PBXGroup;
 			children = (
+				FE5B59480D6B2385008C3FE7 /* BEASTMulchLoris.cpp */,
 				FEC02F4C0C4D2EAF009EC06B /* BEASTMulchSendIndex.cpp */,
 				FEC9FE710BFCD85700237BCA /* BEASTMulchVBAP.cpp */,
 				FE2BB4080BB598CF009F34F8 /* BEASTMulchPV.cpp */,
@@ -324,6 +349,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		FE5B5AF90D6B30E8008C3FE7 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FE5B5AFC0D6B3110008C3FE7 /* SC_Altivec.h in Headers */,
+				FE5B5AFB0D6B30F6008C3FE7 /* fastInverseSqrt.h in Headers */,
+				FE5B5B190D6B32D7008C3FE7 /* BEASTMulchLoris.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FEC02E090C4D1E72009EC06B /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -338,6 +373,7 @@
 				FEC02F3F0C4D29CB009EC06B /* HashTable.h in Headers */,
 				FEC02F440C4D2A79009EC06B /* SC_Str4.h in Headers */,
 				FEC02FED0C4D5CC9009EC06B /* sndfile.h in Headers */,
+				FE5B594B0D6B23F8008C3FE7 /* fastInverseSqrt.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -345,6 +381,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FE5B5B120D6B3209008C3FE7 /* SC_PlugIn.h in Headers */,
 				FEC9FE4D0BFCD6C500237BCA /* SCComplex.h in Headers */,
 				FEC9FE4E0BFCD6C500237BCA /* SC_Lock.h in Headers */,
 				FEC9FE6D0BFCD7D800237BCA /* BEASTMulchPV.h in Headers */,
@@ -372,6 +409,26 @@
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = FE2BB3780BB59278009F34F8 /* BEASTMulchVBAP.scx */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		FE5B59240D6B22F2008C3FE7 /* BEASTMulchLoris */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FE5B593A0D6B22F2008C3FE7 /* Build configuration list for PBXNativeTarget "BEASTMulchLoris" */;
+			buildPhases = (
+				FE5B5AF90D6B30E8008C3FE7 /* Headers */,
+				FE5B59300D6B22F2008C3FE7 /* Sources */,
+				FE5B59340D6B22F2008C3FE7 /* Frameworks */,
+				FE5B59380D6B22F2008C3FE7 /* Rez */,
+				FE5B59390D6B22F2008C3FE7 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BEASTMulchLoris;
+			productInstallPath = /usr/local/lib;
+			productName = BinaryOpUGens;
+			productReference = FE5B593E0D6B22F2008C3FE7 /* BEASTMulchLoris.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		FEC02E080C4D1E72009EC06B /* BEASTMulchPlaySendIndex */ = {
@@ -429,12 +486,20 @@
 				FE2BB36C0BB59278009F34F8 /* BEASTMulchVBAP */,
 				FEC9FE4A0BFCD6C500237BCA /* BEASTMulchPV */,
 				FEC02E080C4D1E72009EC06B /* BEASTMulchPlaySendIndex */,
+				FE5B59240D6B22F2008C3FE7 /* BEASTMulchLoris */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXRezBuildPhase section */
 		FE2BB3720BB59278009F34F8 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FE5B59380D6B22F2008C3FE7 /* Rez */ = {
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -459,6 +524,15 @@
 
 /* Begin PBXShellScriptBuildPhase section */
 		FE2BB3730BB59278009F34F8 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
+		};
+		FE5B59390D6B22F2008C3FE7 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -493,6 +567,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				FEC9FE720BFCD85700237BCA /* BEASTMulchVBAP.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FE5B59300D6B22F2008C3FE7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FE5B594C0D6B2445008C3FE7 /* BEASTMulchLoris.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -722,6 +804,121 @@
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
 				SYMROOT = "$(PROJECT_DIR)/build/VBAP";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Default;
+		};
+		FE5B593B0D6B22F2008C3FE7 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OBJROOT = "$(SYMROOT)/..";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = BEASTMulchLoris;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "$(PROJECT_DIR)/build/Loris/";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Development;
+		};
+		FE5B593C0D6B22F2008C3FE7 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OBJROOT = "$(SYMROOT)/..";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = BEASTMulchLoris;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "$(PROJECT_DIR)/build/Loris/";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		FE5B593D0D6B22F2008C3FE7 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OBJROOT = "$(SYMROOT)/..";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = BEASTMulchLoris;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "$(PROJECT_DIR)/build/Loris/";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -978,6 +1175,16 @@
 				FE2BB3750BB59278009F34F8 /* Development */,
 				FE2BB3760BB59278009F34F8 /* Deployment */,
 				FE2BB3770BB59278009F34F8 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		FE5B593A0D6B22F2008C3FE7 /* Build configuration list for PBXNativeTarget "BEASTMulchLoris" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FE5B593B0D6B22F2008C3FE7 /* Development */,
+				FE5B593C0D6B22F2008C3FE7 /* Deployment */,
+				FE5B593D0D6B22F2008C3FE7 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
