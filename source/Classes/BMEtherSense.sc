@@ -1,3 +1,7 @@
+////// ************ port is 57120 or -8416 on Ethersense
+// Open EtherSense MaxPlay. Choose interface manually, 10.0.0.2 port -8416
+// Set send rate to 20 ms
+
 // valueArray holds the controller value in its native form
 // setFaderValue should convert to 0-1 and send to the bus 
 BMEtherSense : BMAbstractController {
