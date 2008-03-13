@@ -366,6 +366,7 @@ MatrixGUI : BMAbstractGUI {
 	var lastx, lasty, on = false;
 	var ins, outs;
 	var matrix;
+	var linex, liney;
 	
 	*new {|matrix, name|
 		^super.new.init(matrix, name ? matrix.name).makeWindow;
@@ -424,6 +425,8 @@ MatrixGUI : BMAbstractGUI {
 			x = outs[(inx - hoffset/ hinterval).round.clip(1, numOuts) - 1];
 			y = ins[(iny - voffset/ vinterval).round.clip(1, numIns) - 1];
 			if((x != lastx) || (y != lasty), {
+				linex = outs[(inx - hoffset/ hinterval).round.clip(1, numOuts) - 1];
+				liney = ins[(iny - voffset/ vinterval).round.clip(1, numIns) - 1];
 				if(on, {
 						if(matrix.mappings[y].indexOf(x).isNil, {
 							matrix.connect(y, x);
@@ -435,11 +438,22 @@ MatrixGUI : BMAbstractGUI {
 							//window.refresh;
 						});
 				});
+				window.refresh;
 				
 			});
 			lastx = x; lasty = y;
 		};
 		
+		// draw line for easy view
+		tabletView.mouseOverAction = { arg view,inx,iny;
+			//\over.postln;
+			linex = outs[(inx - hoffset/ hinterval).round.clip(1, numOuts) - 1];
+			liney = ins[(iny - voffset/ vinterval).round.clip(1, numIns) - 1];
+			
+			window.refresh;
+		};
+		
+		window.acceptsMouseOver = true;
 		window.front;
 		window.drawHook = {
 		
@@ -455,13 +469,17 @@ MatrixGUI : BMAbstractGUI {
 				
 				color.set;
 				numIns.do { |i|
+					if(ins[i] == liney, {Pen.stroke; Color.white.set;});
 					Pen.line((1 + hoffset)@(vinterval + voffset + (i * vinterval)), 
 						(window.bounds.width + hoffset)@(vinterval + voffset + 
 						(i * vinterval)));
+					if(ins[i] == liney, {Pen.stroke; color.set;});
 				};
 				numOuts.do { |i|	 
+					if(outs[i] == linex, {Pen.stroke; Color.white.set;});
 					Pen.line((hinterval + hoffset + (i * hinterval))@(1 + voffset), (hinterval + 
 						hoffset + (i * hinterval))@(window.bounds.height + voffset)); 
+					if(outs[i] == linex, {Pen.stroke; color.set;});
 				};
 				Pen.stroke;
 				matrix.matrixArray.do({ arg row, y;
