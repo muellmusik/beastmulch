@@ -55,6 +55,10 @@ BMAbstractAudioSource : BMAbstractAudioChainElement {
 	}
 	
 	asInOutArray { ^this.subclassResponsibility(thisMethod);}
+	
+	newPieceQuery {
+	
+	}
 }
 
 // valueArray holds the controller value in its native form
