@@ -27,15 +27,11 @@ BMConcert {
 	
 	add {| pieceEvent, indexInList |
 		 
-//		if (list.indexOfEqual(piece).isNil)
-//		   { 
 		   if (indexInList.notNil)
 		   	   { concert.pieces.insert(indexInList + 1, pieceEvent) }
 		   	   { concert.pieces.add(pieceEvent) };
 		   	   
 		   	this.changed(\add, pieceEvent)
-//		   }
-//		   { warn(piece ++ " was already added to the Concert") }
 		   
 	}
 	
@@ -107,7 +103,7 @@ BMConcertGUI  {
 									  };
 		
 		concertListView.action			= {| view | 
-									   postf("from the Concert Edeitor, listview action, the value of the view is %\n", view.value);
+									   postf("from the Concert Editor, listview action, the value of the view is %\n", view.value);
 									   
 								   	   if (pieceLoaded) 
 								   	   		{ pieceLoaded = false; 
@@ -145,8 +141,9 @@ BMConcertGUI  {
 							    	  	    if ((viewIndex == (concert.concert.pieces.size)) and: { concert.concert.pieces.size > 0 })
 							    	  	    	   { concertListView.valueAction = viewIndex - 1 }
 							    	  	    	   { if (viewIndex > 0) 
-							    	  	    	   	   { concertListView.action.value(viewIndex) }
-							    	  	    	   	   {  configText.string = "" } 
+							    	  	    	   	   { concertListView.valueAction = viewIndex }
+							    	  	    	   	   {  configText.string = "";
+							    	  	    	   	      loadButton.states = [[ "No Pieces Available", Color.black, Color.white.alpha_(0.8) ]] } 
 							    	  	    	   }
 							    	  	  }
 							       };
@@ -191,7 +188,7 @@ BMConcertGUI  {
 		buttonSection.decorator 	= FlowLayout(buttonSection.bounds, Point(10, 10), Point(10, 10));
 		buttonSection.decorator.shift(0, 20);
 				
-		loadButton				= RoundButton(buttonSection, 180 @ 20).extrude_(false).canFocus_(false);		loadButton.states 			= [[ "Load Selected Piece", Color.black, Color.white.alpha_(0.8) ]];
+		loadButton				= RoundButton(buttonSection, 180 @ 20).extrude_(false).canFocus_(false);		loadButton.states 			= [[ "No Pieces Available", Color.black, Color.white.alpha_(0.8) ]];
 				
 		loadButton.action 			= {| view |  
 								   if (selectable)
@@ -355,7 +352,7 @@ BMConcertGUI  {
 		
 	makeNewPieceWindow {| event, origin |
 
-		var window, name, pieceNameField, okButton, suggestedName;
+		var window, name, pieceNameField, okButton, suggestedName, alreadyTakenText;
 		 
 		suggestedName		= if (event[\path].notNil)	{ event[\path].basename.splitext[0] } { "Fileless Piece" };
 									
@@ -365,14 +362,33 @@ BMConcertGUI  {
 		SCStaticText(window, 50 @ 20).string = "Name:";
 
 		pieceNameField	= SCTextView(window, 180 @ 20)
-							.keyDownAction_({|view, key| if ((key == 3.asAscii) || (key == $\r) || (key == $\n), { view.doAction })})
+							.keyDownAction_({|view, key| 
+										   if ((key == 3.asAscii) || (key == $\r) || (key == $\n)) 
+										   	 { view.doAction } 
+										   	 { // I am currently workin on this
+										   	   if (concert.concert.pieces.any{| e | [ e.name,(view.string++key) ].postln; (e.name.asSymbol == (view.string++key).asSymbol).postln })
+										   	 	 { alreadyTakenText.visible = true;
+										   	 	   okButton.enabled = false
+										   	 	 }
+										   	 	 { alreadyTakenText.visible = false;
+										   	 	   okButton.enabled = true
+										   	 	 }
+										   	 }	
+										   })
 							.string_(suggestedName)
 							.action_({ pieceNameField.string })
 							.hasVerticalScroller_(false)
 							.hasHorizontalScroller_(false)
 							.enterInterpretsSelection_(false);
-					
-		window.view.decorator.shift(0, 30);
+		
+		window.view.decorator.nextLine;			
+		window.view.decorator.shift(70, 0);
+
+		alreadyTakenText = SCStaticText(window, 180 @ 20)
+						 .string_("This name is already taken")
+						 .stringColor_(Color.gray(0.9))
+						 .visible_(false);
+
 		
 		RoundButton(window, 115 @ 20)
 			   .extrude_(false).canFocus_(false)
