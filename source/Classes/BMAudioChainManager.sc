@@ -44,8 +44,6 @@ BMConfigurations {// move this classe to the signal chain file
 	 
 	add {| configuration, indexInNamesList |
 		
-//		if (names.indexOfEqual(configuration.key).isNil)
-//		   { 
 		     if (indexInNamesList.notNil)
 		   	   { names.insert(indexInNamesList + 1, configuration.key);
 		   	     dict.add(configuration) }
@@ -54,9 +52,7 @@ BMConfigurations {// move this classe to the signal chain file
 		   	    };
 		   	
 		   	this.changed(\add, configuration.key);
-//		   }
-//		   { warn(configuration ++ " was already added to the Configurations") }
-		   
+	   
 	}
 	
 	removeAt {| configurationIndex |
@@ -380,19 +376,34 @@ BMAudioChainManagerGUI : BMAbstractGUI {
 				   			
 				   			name = pieceNameField.string;
 				   			if (name.size > 0) 
-				   				{ window.close;
+				   				{ name = name.asSymbol;
+				   				  if (configurations.names.any{| nameInList | nameInList == name })
+				   			        	{ BMAlert( "The name \"" ++ name ++ "\" is already taken. Please choose a different name.", 
+				   			        			 [[ "OK", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ]],
+				   			        			 background: Color.clear,
+				   			        			 color: Color.red,
+				   			        			 border: false
+				   			        	 ) 
+				   			          }
+				   			          { 
+				   				
+				   				 window.close;
 				   				  if (method == "New")
-				   				  	{ configurations.add(name.asSymbol -> configurations.dict['all off'].deepCopy, 
+				   				  	{ configurations.add(name -> configurations.dict['all off'].deepCopy, 
 				   				  				       configListView.value
 				   				  	  ) 
 				   				  	}
-				   				  	{ configurations.add(name.asSymbol -> configurations.dict[configListView.item].deepCopy,
+				   				  	{ configurations.add(name -> configurations.dict[configListView.item].deepCopy,
 				   				  				       configListView.value
 				   				  	  ) 
 				   				  	};
 				   				   configListView.value = configListView.value + 1;
-				   				   configurations.currentConfig_(name.asSymbol, \configurationEditor);
+				   				   configurations.currentConfig_(name, \configurationEditor);
 				   				 }
+				   				 
+				   				 
+				   				 }
+				   				 
 
 				   		   });
 		pieceNameField.focus;

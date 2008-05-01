@@ -352,7 +352,7 @@ BMConcertGUI  {
 		
 	makeNewPieceWindow {| event, origin |
 
-		var window, name, pieceNameField, okButton, suggestedName, alreadyTakenText;
+		var window, name, pieceNameField, okButton, suggestedName;
 		 
 		suggestedName		= if (event[\path].notNil)	{ event[\path].basename.splitext[0] } { "Fileless Piece" };
 									
@@ -362,32 +362,14 @@ BMConcertGUI  {
 		SCStaticText(window, 50 @ 20).string = "Name:";
 
 		pieceNameField	= SCTextView(window, 180 @ 20)
-							.keyDownAction_({|view, key| 
-										   if ((key == 3.asAscii) || (key == $\r) || (key == $\n)) 
-										   	 { view.doAction } 
-										   	 { // I am currently workin on this
-										   	   if (concert.concert.pieces.any{| e | [ e.name,(view.string++key) ].postln; (e.name.asSymbol == (view.string++key).asSymbol).postln })
-										   	 	 { alreadyTakenText.visible = true;
-										   	 	   okButton.enabled = false
-										   	 	 }
-										   	 	 { alreadyTakenText.visible = false;
-										   	 	   okButton.enabled = true
-										   	 	 }
-										   	 }	
-										   })
 							.string_(suggestedName)
-							.action_({ pieceNameField.string })
+							.action_({| view | view.string })
 							.hasVerticalScroller_(false)
 							.hasHorizontalScroller_(false)
 							.enterInterpretsSelection_(false);
 		
-		window.view.decorator.nextLine;			
-		window.view.decorator.shift(70, 0);
-
-		alreadyTakenText = SCStaticText(window, 180 @ 20)
-						 .string_("This name is already taken")
-						 .stringColor_(Color.gray(0.9))
-						 .visible_(false);
+		
+		window.view.decorator.shift(0, 30);
 
 		
 		RoundButton(window, 115 @ 20)
@@ -402,16 +384,28 @@ BMConcertGUI  {
 				   			
 				   			name = pieceNameField.string;
 				   			if (name.size > 0) 
-				   				{ window.close;
-				   				  event.add(\name -> pieceNameField.string.asSymbol);
-				   				  concert.add(event, concertListView.value);
-				   				  if (selectable.not) { this.listViewSelection(selectable = true, concertListView, configText, loadButton) };
-				   				  concertListView.valueAction = concertListView.value + 1
-				   				}
+				   			   { name = name.asSymbol;
+				   			     if (concert.concert.pieces.any{| e | e.name == name })
+				   			        	{ BMAlert( "The name \"" ++ name ++ "\" is already taken. Please choose a different name.", 
+				   			        			 [[ "OK", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ]],
+				   			        			 background: Color.white,
+				   			        			 color: Color.red,
+				   			        			 border:false
+				   			        	 ) 
+				   			          }
+				   			    
+					   				{ window.close;
+					   				  event.add(\name -> name);
+					   				  concert.add(event, concertListView.value);
+					   				  if (selectable.not) { this.listViewSelection(selectable = true, concertListView, configText, loadButton) };
+					   				  concertListView.valueAction = concertListView.value + 1
+					   				}
+					   		   }
 				   		   });
 		pieceNameField.focus;
 		window.front
 	}
+
 	
 	listViewSelection {| condition, concertListView, configText, loadButton |
 					
