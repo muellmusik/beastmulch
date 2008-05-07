@@ -2,37 +2,50 @@ BMConfigurations {// move this classe to the signal chain file
 	var <dict, <names, <currentConfig;
 
 	*new {
-	
 		  ^super.new.init;
 	
 	}
 
-	init { 
-		   
-		   this.clear;
-		   CmdPeriod.add(this) 
-		   
+	init { 	   
+		   dict	= IdentityDictionary[];
+		   names	= List[];
+		   this.addAllOff;
+		   CmdPeriod.add(this)  
 	}
-		  
-	clear { 
 	
-		   dict = IdentityDictionary[];
-		   names = List[];
+	addAllOff{
+		   dict.add('all off' -> 
+					 IdentityDictionary[
+				
+						\mackies -> BMAbstractController
+									.allControllers
+									.collect({|interface, name|
+										      IdentityDictionary[
+										         \faders -> interface.getAllFaders
+										      ]
+								      })			      
+				   	 ].deepCopy
+			  	);
 		   
+		   BMAbstractAudioChainElement
+		    .allChainElements.keysValuesDo{| key, value | dict['all off'].add(key -> value.mappings.deepCopy) };
+		   
+		   names.add('all off');
+	}	
+	  
+	clear { 
+		   dict 	= IdentityDictionary['all off' -> dict['all off']];
+		   names	= List['all off']
 	}
 	
 	dict_{| x |
-	 
 		 dict = x;
 		 this.changed(\dict);
-		 
 	}
 	
 	names_{| x |
-	 
 		 names = x;
-		 this.changed(\names)
-		 
+		 this.changed(\names) 
 	}
 	
 	currentConfig_{| configName, from |
@@ -43,28 +56,22 @@ BMConfigurations {// move this classe to the signal chain file
 	}
 	 
 	add {| configuration, indexInNamesList |
-		
-		     if (indexInNamesList.notNil)
-		   	   { names.insert(indexInNamesList + 1, configuration.key);
-		   	     dict.add(configuration) }
-		   	   { if (names.indexOfEqual(configuration.key).isNil) { names.add(configuration.key) };
-		   	     dict.add(configuration);
-		   	    };
-		   	
-		   	this.changed(\add, configuration.key);
-	   
+	     if (indexInNamesList.notNil)
+	   	   { names.insert(indexInNamesList + 1, configuration.key);
+	   	     dict.add(configuration) }
+	   	   { if (names.indexOfEqual(configuration.key).isNil) { names.add(configuration.key) };
+	   	     dict.add(configuration);
+	   	    };
+	   	
+	   	this.changed(\add, configuration.key);	   
 	}
 	
 	removeAt {| configurationIndex |
-		    
 		    dict.removeAt(names[configurationIndex]);
 		    names.removeAt(configurationIndex);
 		    this.changed(\removeAt)
-		    
 	}
 	
-	
-
 	loadConfig {| configName |
 		   "loadConfig was called".postln;
    		   BMAbstractAudioChainElement
@@ -73,8 +80,6 @@ BMConfigurations {// move this classe to the signal chain file
 			 			 BMAbstractAudioChainElement.allChainElements[key].mappings = this.dict[configName][key]
 			 };
 		   (configName.asString ++ " was loaded").postln
-		   	 
-	
 	}
 	
 }
@@ -174,9 +179,7 @@ BMAudioChainManagerGUI : BMAbstractGUI {
 	makeWindow {|origin|
 		var x, y, rows, columns, width, pseudoLevels, pseudoTimes, count = 0, selected;
 		var points, rects, selectedIndex;
-		
 
-		
 		x 			= origin.x;
 		y			= origin.y;
 		objects 		= manager.sources 
@@ -201,7 +204,7 @@ BMAudioChainManagerGUI : BMAbstractGUI {
 		configView.decorator 	= FlowLayout(configView.bounds, Point(5, 5), Point(5, 5));
 		configView.background	= Color.white.alpha_(0.2);
 		SCStaticText(configView, 180 @ 20).string_("Configurations");
-		
+		configView.decorator.shift(0, 5);
 		configListView		= SCListView(configView, 200 @ 373).canReceiveDragHandler = false;
 		configListView.background_(Color.white).hiliteColor_(Color.new255(51, 111, 203, 255 * 0.95));
 
@@ -240,6 +243,7 @@ BMAudioChainManagerGUI : BMAbstractGUI {
 					    	  	    	   		{ if ((viewIndex > 0).postln) { configListView.value(viewIndex) }};
 					    	  	    	     configurations.currentConfig_(configListView.item, \configurationEditor);
 					    	  	    	   }
+					    	  	    	   { "The Configuration \"all off\" cannot be deleted".error }
 						    	  	   
 						       };
 						       
@@ -281,8 +285,7 @@ BMAudioChainManagerGUI : BMAbstractGUI {
 									 			 configurations.dict[name].add(key -> value.mappings.deepCopy)
 									 		  }
 								 		  }
-								 		  { "This Configuration cannot be modified".error }
-								    						
+								 		  { "The Configuration \"all off\" cannot be modified".error }
 					     	  });
 
 
@@ -355,9 +358,6 @@ BMAudioChainManagerGUI : BMAbstractGUI {
 		SCStaticText(window, 50 @ 20).string = "Name:";
 
 		pieceNameField	= SCTextView(window, 180 @ 20)
-							.keyDownAction_({|view, key| if ((key == 3.asAscii) || (key == $\r) || (key == $\n), { view.doAction })})
-							.string_("")
-							.action_({ pieceNameField.string.postln })
 							.hasVerticalScroller_(false)
 							.hasHorizontalScroller_(false)
 							.enterInterpretsSelection_(false);
@@ -380,7 +380,7 @@ BMAudioChainManagerGUI : BMAbstractGUI {
 				   				  if (configurations.names.any{| nameInList | nameInList == name })
 				   			        	{ BMAlert( "The name \"" ++ name ++ "\" is already taken. Please choose a different name.", 
 				   			        			 [[ "OK", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ]],
-				   			        			 background: Color.clear,
+				   			        			 background: Color.white,
 				   			        			 color: Color.red,
 				   			        			 border: false
 				   			        	 ) 
@@ -418,7 +418,8 @@ BMAudioChainManagerGUI : BMAbstractGUI {
 	         configListView.items 		= configurations.names.asArray;
 	         
 	         if ((change == \currentConfig) and: { from == \concertEditor }) 
-	         	   { "if currentConfig and from concertEditor".postln; configListView.value = configurations.names.indexOf(configName) };
+	         	   { "if currentConfig and from concertEditor".postln; 
+	         	   	configListView.value = configurations.names.indexOf(configName) };
 	         ("configListView.value at the end of update" +configListView.value).postln;
 
 	}

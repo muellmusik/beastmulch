@@ -1,51 +1,39 @@
 
 BMConcert {
 	
-	var system;
-	var <concert;
+	var speakers, controllers;
+	var <concert, <pieces;
 	
 
-	*new {| system | 
-	
-		  ^super.newCopyArgs(system).init
-	
+	*new {| speakers, controllers | 
+		  ^super.newCopyArgs(speakers, controllers).init
 	}
 
 	init { 
-		   concert = (system: system, pieces: List[]);
-		   CmdPeriod.add(this) 
-		   
+		concert = (system: (speakers: speakers.deepCopy, controllers: controllers.deepCopy), pieces: List[]);
+		CmdPeriod.add(this) 
 	}
 	
 	concert_{| x |
-	 
-		 concert = x;
-		 this.changed
-		 
+		"concert setter".postln;
+		concert = x;
+		this.changed
 	}
 	
-	
-	add {| pieceEvent, indexInList |
-		 
-		   if (indexInList.notNil)
-		   	   { concert.pieces.insert(indexInList + 1, pieceEvent) }
-		   	   { concert.pieces.add(pieceEvent) };
-		   	   
-		   	this.changed(\add, pieceEvent)
-		   
+	add {| pieceEvent, indexInList |	 
+		if (indexInList.notNil)
+		   { concert.pieces.insert(indexInList + 1, pieceEvent) }
+		   { concert.pieces.add(pieceEvent) };
+		this.changed(\add, pieceEvent)
 	}
 	
 	removeAt {| pieceEventIndex |
-		    
-		    concert.pieces.removeAt(pieceEventIndex);
-		    this.changed
-		    
+		concert.pieces.removeAt(pieceEventIndex);
+		this.changed
 	}
 	
 	loadAt  {| pieceEventIndex |
-		   
-		    this.changed(\loadPiece, concert.pieces[pieceEventIndex])
-	
+		this.changed(\loadPiece, concert.pieces[pieceEventIndex])
 	}
 	
 }
@@ -105,15 +93,14 @@ BMConcertGUI  {
 		concertListView.action			= {| view | 
 									   postf("from the Concert Editor, listview action, the value of the view is %\n", view.value);
 									   
-								   	   if (pieceLoaded) 
-								   	   		{ pieceLoaded = false; 
-								   	   		  loadButton.states = [[ "Load Selected Piece", Color.black, Color.white.alpha_(0.8) ]];
-								   		 	};
-								   	  
-									   if (concert.concert.pieces.size > 0)
-									      { configText.string = concert.concert.pieces[concertListView.value].config } 
-									      { configText.string = "" }
-									      
+									   pieceLoaded = false; 
+								   	   
+								   	   if ((concert.concert.pieces.size > 0))
+									      { configText.string = concert.concert.pieces[concertListView.value].config;
+									        loadButton.states = [[ "Load Selected Piece", Color.black, Color.white.alpha_(0.8) ]]; } 
+									      { configText.string = "";
+									        loadButton.states = [[ "No Pieces Available", Color.black, Color.white.alpha_(0.8) ]]
+							    	  	    	  }
 								  	  };
 								  						concertListView.mouseDownAction  = {| view |
 								  													   postf("from mouse action, the value of the view is %\n", view.value);
@@ -140,11 +127,7 @@ BMConcertGUI  {
 							    	  	    concert.removeAt(viewIndex);
 							    	  	    if ((viewIndex == (concert.concert.pieces.size)) and: { concert.concert.pieces.size > 0 })
 							    	  	    	   { concertListView.valueAction = viewIndex - 1 }
-							    	  	    	   { if (viewIndex > 0) 
-							    	  	    	   	   { concertListView.valueAction = viewIndex }
-							    	  	    	   	   {  configText.string = "";
-							    	  	    	   	      loadButton.states = [[ "No Pieces Available", Color.black, Color.white.alpha_(0.8) ]] } 
-							    	  	    	   }
+							    	  	    	   { concertListView.action.value(viewIndex) }
 							    	  	  }
 							       };
 
@@ -166,7 +149,7 @@ BMConcertGUI  {
 		downButton				= RoundButton(concertView, 20 @ 20).extrude_(false).canFocus_(false);		downButton.states 			= [[ \down, Color.black,  Color.white.alpha_(0.8) ]];
 		downButton.action 			= { var index;
 			
-								    index 	= concert.concert.pieces.collect{|x| x.name }.indexOf(concertListView.item).postln;
+								    index 	= concert.concert.pieces.collect{|x| x.name }.indexOf(concertListView.item);
 								    if (index.notNil and: { index < (concert.concert.pieces.size - 1) })
 								    	  { concert.concert.pieces = concert.concert.pieces.swap(index, index + 1);
 								    	    concert.changed;
@@ -178,9 +161,6 @@ BMConcertGUI  {
 		storeButton				= RoundButton(concertView, 46 @ 20).extrude_(false).canFocus_(false)
 					 			  .font_(Font("Arial", 11)).states_([["Store", Color.black,  Color.white.alpha_(0.8) ]]);
 
-
-		
-						  
 								  
 		// Second Column -------------
 						  
@@ -210,53 +190,97 @@ BMConcertGUI  {
 		
 		importButton 			= RoundButton(buttonSection, 180 @ 20).extrude_(false).canFocus_(false);
 		importButton.states 	= [[ "Import Concert", Color.black, Color.white.alpha_(0.8)  ]];
-		importButton.action 	= {/* CocoaDialog.getPaths({| path | 
-								 var recalled, presetNames, presetDict, systemSetup, concertPresetM;
+		importButton.action 	= {CocoaDialog.getPaths({| path | 
 								
-								 recalled 		= Object.readTextArchive(path[0]);
-								 concertPresetM	= PresetManager(\concert, path[0].basename.splitext[0]);
-								 concertPresetM.add(presetDict.deepCopy);
-								 
-								 systemSetup		= recalled[\systemSetup];
-								 presetNames 		= recalled[\presetNames];
-								 presetDict 		= recalled[\presetDict];
-								 
-								 presetDict.keysValuesDo
-								 	{| key, value |
-								 	  presetManager.presetName = key.asString;
-								 	  presetManager.add(value.deepCopy)
-								 	 };
-								 
-								 concert.clear;
-								 presetNames.do{| name | concert.add(name/*.asSymbol*/) };
-							    }, maxSize:1)
-							   */};	
+								var recalled;
+								
+								recalled			= Object.readTextArchive(path[0]);
+								concert.concert.pieces = recalled.concert.pieces.deepCopy;
+								configurations.currentConfig_('all off', \concertEditor);
+								configurations.clear;
+								
+								if (recalled.configurations.names.indexOf('all off').notNil)
+									{ recalled.configurations.dict.removeAt('all off');
+									  recalled.configurations.names.removeAt(recalled.configurations.names.indexOf('all off'))
+									};
+								
+								recalled.configurations.names
+									.do{| name | 
+										configurations.dict.add(name -> recalled.configurations.dict[name])
+									   };
+								configurations.names = configurations.names ++ recalled.configurations.names;
+								if (selectable.not) { this.listViewSelection(selectable = true, concertListView, configText, loadButton) };
+								concertListView.action.value(0);
+								
+//		 						var recalled, presetNames, presetDict, systemSetup, concertPresetM;
+//								
+//								 recalled 		= Object.readTextArchive(path[0]);
+//								 concertPresetM	= PresetManager(\concert, path[0].basename.splitext[0]);
+//								 concertPresetM.add(presetDict.deepCopy);
+//								 
+//								 systemSetup		= recalled[\systemSetup];
+//								 presetNames 		= recalled[\presetNames];
+//								 presetDict 		= recalled[\presetDict];
+//								 
+//								 presetDict.keysValuesDo
+//								 	{| key, value |
+//								 	  presetManager.presetName = key.asString;
+//								 	  presetManager.add(value.deepCopy)
+//								 	 };
+//								 
+//								 concert.clear;
+//								 presetNames.do{| name | concert.add(name/*.asSymbol*/) };
+							    
+								}, maxSize:1)
+							   };	
 		
 		exportButton 			= RoundButton(buttonSection,180 @ 20).extrude_(false).canFocus_(false);
-		exportButton.states 	= [[ "Export Concert", Color.black, Color.white.alpha_(0.8)  ],[ "Export Concert", Color.black, Color.white.alpha_(0.8)  ]];
-		exportButton.action 	= {/* CocoaDialog.savePanel({| path | 
+		exportButton.states 	= [[ "Export Concert", Color.black, Color.white.alpha_(0.8)  ],[ "Export Concert", Color.black, Color.white.alpha_(0.8) ]];
+		exportButton.action 	= { CocoaDialog.savePanel({| path | 
+		
+									var names, dict;
 									
-									var presetNames, presetDict, concertPresetM;
+									names	= List[];
+									dict		= ();
 									
-									presetNames	= concert.list/*.collect(_.asString)*/;
+									concert.concert.pieces
+										.do{| piece | 
+										    var configName = piece.config;
+										    
+										    if (names.indexOf(configName).isNil) 
+										    	  { dict.add(configName -> configurations.dict[configName]);
+										    	    names.add(configName)
+										    	  }
+										};
 									
-									presetDict	= IdentityDictionary[];
-									presetNames.do{| presetN | 
-												 presetManager.presetName = presetN;
-												 presetDict.add(presetN.asSymbol -> presetManager.get(presetManager.lastID).deepCopy);
-												 };
-									IdentityDictionary[ \systemSetup -> systemSetup,
-												      \presetNames -> presetNames, 
-												      \presetDict -> presetDict
-												    ]
-										.writeTextArchive(path);
+									(
+									 concert: concert.concert.deepCopy, 
+									 configurations: (dict: dict.deepCopy, names: names)
+									).writeTextArchive(path);
+
 									
-									concertPresetM= PresetManager(\concert, path.basename.splitext[0]);
-									concertPresetM.add(presetDict.deepCopy);
+									
+//									var presetNames, presetDict, concertPresetM;
+//									
+//									presetNames	= concert.list/*.collect(_.asString)*/;
+//									
+//									presetDict	= IdentityDictionary[];
+//									presetNames.do{| presetN | 
+//												 presetManager.presetName = presetN;
+//												 presetDict.add(presetN.asSymbol -> presetManager.get(presetManager.lastID).deepCopy);
+//												 };
+//									IdentityDictionary[ \systemSetup -> systemSetup,
+//												      \presetNames -> presetNames, 
+//												      \presetDict -> presetDict
+//												    ]
+//										.writeTextArchive(path);
+//									
+//									concertPresetM= PresetManager(\concert, path.basename.splitext[0]);
+//									concertPresetM.add(presetDict.deepCopy);
 									
 							    
 							    })
-							  */};
+							   };
 
 		
 	    this.update; 
@@ -272,8 +296,7 @@ BMConcertGUI  {
 		    "concert window' update function called".postln;
 		    if ((change == \currentConfig) and: { from == \configurationEditor }) 
 		    	  { 	if (selectable) { this.listViewSelection(selectable = false, concertListView, configText, loadButton) } }
-			  {
-			  	postf("Pieces in concert: %\n", concert.concert.pieces);
+			  {  postf("Pieces in concert: %\n", concert.concert.pieces);
 			  	concertListView.items 	= concert.concert.pieces.collect{| x | x.name }.asArray
 			  }
 		
@@ -363,7 +386,6 @@ BMConcertGUI  {
 
 		pieceNameField	= SCTextView(window, 180 @ 20)
 							.string_(suggestedName)
-							.action_({| view | view.string })
 							.hasVerticalScroller_(false)
 							.hasHorizontalScroller_(false)
 							.enterInterpretsSelection_(false);
