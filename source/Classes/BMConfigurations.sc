@@ -1,19 +1,25 @@
-BMConfigurations {// move this classe to the signal chain file
+BMConfigurations {
+	var <backupManager;
 	var <dict, <names, <currentConfig;
 
-	*new {
-		  ^super.new.init;
-	
+	*new {| backupManager |
+		  ^super.newCopyArgs(backupManager).init;
 	}
 
-	init { 	   
-		   dict	= IdentityDictionary[];
-		   names	= List[];
-		   this.addAllOff;
-		   CmdPeriod.add(this)  
+	init {
+   	 	if (backupManager.lastStoredSession.notNil)
+   	 	   { dict 	= backupManager.lastStoredSession.configurations.dict ?? { IdentityDictionary[] };
+   	 	     names	= backupManager.lastStoredSession.configurations.names ?? { List['all off'] }
+   	 	   }
+   	 	   { dict		= IdentityDictionary[];
+   	 	     names	= List['all off'];
+   	 	   };
+		this.addAllOff;
+		CmdPeriod.add(this)  
 	}
 	
 	addAllOff{
+		("this is dict"+ dict).postln;
 		   dict.add('all off' -> 
 					 IdentityDictionary[
 				
@@ -29,13 +35,12 @@ BMConfigurations {// move this classe to the signal chain file
 		   
 		   BMAbstractAudioChainElement
 		    .allChainElements.keysValuesDo{| key, value | dict['all off'].add(key -> value.mappings.deepCopy) };
-		   
-		   names.add('all off');
+
 	}	
 	  
 	clear { 
-		   dict 	= IdentityDictionary['all off' -> dict['all off']];
-		   names	= List['all off']
+		   dict 	= IdentityDictionary[ 'all off' -> dict['all off'] ];
+		   names	= List[ 'all off' ]
 	}
 	
 	dict_{| x |
@@ -57,12 +62,10 @@ BMConfigurations {// move this classe to the signal chain file
 	 
 	add {| configuration, indexInNamesList |
 	     if (indexInNamesList.notNil)
-	   	   { names.insert(indexInNamesList + 1, configuration.key);
-	   	     dict.add(configuration) }
-	   	   { if (names.indexOfEqual(configuration.key).isNil) { names.add(configuration.key) };
-	   	     dict.add(configuration);
-	   	    };
-	   	
+	   	   { names.insert(indexInNamesList + 1, configuration.key) }
+	   	   { names.add(configuration.key) };
+	   	 dict.add(configuration);
+	   	   	
 	   	this.changed(\add, configuration.key);	   
 	}
 	
@@ -158,19 +161,20 @@ BMAudioChainManager {
 
 // display an element order and generates and tracks element GUIs
 // if an item in chain is an array it goes at the same level
-BMAudioChainManagerGUI : BMAbstractGUI {
-	var <manager, configurations, name, guis, objects;
+BMConfigurationsGUI : BMAbstractGUI {
+	var <chainManager, configurations, concertManager, name, guis, objects;
 	var chainView;
 	var configView, configViewWidth, chainView, configListView;
 	var newButton, copyButton, deleteButton, storeButton, upButton, downButton;
 	
-	*new {|manager, configurations, name, origin|
-		^super.new.init(manager, configurations, name ? "Signal Chain").makeWindow(origin ? (250@550));
+	*new {|chainManager, configurations, concertManager, name, origin|
+		^super.new.init(chainManager, configurations, concertManager, name ? "Signal Chain").makeWindow(origin ? (250@550));
 	}
 	
-	init {|argManager, argConfigurations, argName|
-		manager = argManager;
+	init {|argChainManager, argConfigurations, argConcertManager, argName|
+		chainManager = argChainManager;
 		configurations = argConfigurations;
+		concertManager = argConcertManager;
 		name = argName;
 		guis = IdentityDictionary.new; // use Objects as keys
 		configurations.addDependant(this);
@@ -182,11 +186,11 @@ BMAudioChainManagerGUI : BMAbstractGUI {
 
 		x 			= origin.x;
 		y			= origin.y;
-		objects 		= manager.sources 
-					  ++ [manager.sourceProcessing, manager.audioMatrix, manager.outputProcessing].flat;
+		objects 		= chainManager.sources 
+					  ++ [chainManager.sourceProcessing, chainManager.audioMatrix, chainManager.outputProcessing].flat;
 		selected 		= false ! objects.size;
-		rows 		= objects.size - manager.sources.size + 1;
-		columns		= manager.sources.size;
+		rows 		= objects.size - chainManager.sources.size + 1;
+		columns		= chainManager.sources.size;
 		width 		= max(450, columns * 150);
 		
 		pseudoLevels 	= (1..rows).normalize * 0.8 + 0.1;
@@ -283,7 +287,10 @@ BMAudioChainManagerGUI : BMAbstractGUI {
 											BMAbstractAudioChainElement.allChainElements
 											 .keysValuesDo{| key, value |
 									 			 configurations.dict[name].add(key -> value.mappings.deepCopy)
-									 		  }
+									 		  };
+									 		configurations.backupManager
+									 			          .makeSessionBackup(concertManager, configurations)
+									 			          .add(\configuration, name, configurations.dict[name].deepCopy)
 								 		  }
 								 		  { "The Configuration \"all off\" cannot be modified".error }
 					     	  });
@@ -344,8 +351,23 @@ BMAudioChainManagerGUI : BMAbstractGUI {
 		
 		
 		this.update;
+		configListView.value = configurations.names.indexOf('all off');
 		window.onClose = { onClose.value(this) };
 		window.front;
+	}
+	
+	update {| changed, change, configName, from |
+			"configuration window' update function called".postln;
+			[ changed, change, configName ].postln;
+	 		
+	         ("configListView.value at the beginning of update" +configListView.value).postln;
+	         configListView.items 		= configurations.names.asArray.postln;
+	         
+	         if ((change == \currentConfig) and: { from == \concertEditor }) 
+	         	   { "if currentConfig and from concertEditor".postln; 
+	         	   	configListView.value = configurations.names.indexOf(configName) };
+	         ("configListView.value at the end of update" +configListView.value).postln;
+
 	}
 	
 	makeNewConfigWindow {| method, origin |
@@ -409,19 +431,4 @@ BMAudioChainManagerGUI : BMAbstractGUI {
 		pieceNameField.focus;
 		window.front
 	}
-	
-	update {| changed, change, configName, from |
-			"configuration window' update function called".postln;
-			[ changed, change, configName ].postln;
-	 		
-	         ("configListView.value at the beginning of update" +configListView.value).postln;
-	         configListView.items 		= configurations.names.asArray;
-	         
-	         if ((change == \currentConfig) and: { from == \concertEditor }) 
-	         	   { "if currentConfig and from concertEditor".postln; 
-	         	   	configListView.value = configurations.names.indexOf(configName) };
-	         ("configListView.value at the end of update" +configListView.value).postln;
-
-	}
-	
 }

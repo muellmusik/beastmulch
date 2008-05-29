@@ -26,7 +26,7 @@
 \cf3 var\cf0  masterWindow, audGUIButton, ctlGUIButton, concertConfigButton;\
 \cf3 var\cf0  numMackies = 6;\
 \cf3 var\cf0  presetMenu, presetWindow, addField, removeButton, exportButton, importButton;\
-\cf3 var\cf0  pieceUpdater,  changeFromPlayerGUI = \cf3 true\cf0 , newPresetGUIFunc, addButton, presetManager;\
+\cf3 var\cf0  pieceUpdater,  changeFromPlayerGUI = \cf3 true\cf0 , newPresetGUIFunc, addButton, backupManager;\
 \cf3 var\cf0  historyBackButton, historyFwdButton, historyCurrent, historyPos, historyText, historyTextFunc, versionNotStored;\
 \cf3 var\cf0  storeButton, labelsButton, labelsWindow;\
 \cf3 var\cf0  arrays, inputArray, outputArray;\
@@ -79,18 +79,13 @@ chainManager	= \cf3 BMAudioChainManager\cf0 ( [player, \cf3 InOutArray\cf0 .hard
 							   outputArray\
 			);\
 			\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf0 presetManager	= \cf3 PresetManager\cf0 (\cf5 \\piece\cf0 );\
-concertManager= \cf3 BMConcert\cf0 (arrays, \cf3 BMAbstractController\cf0 .allControllers);\
-configManager	= \cf3 BMConfigurations\cf0 .new;\
-\
-\{ \
-  \cf3 BMConcertGUI\cf0 (concertManager, configManager, presetManager, \cf4 "Concert Editor"\cf0 , 110 @ 600);\
-  \cf3 BMAudioChainManagerGUI\cf0 (chainManager, configManager, \cf4 "Configuration Editor"\cf0 , 550 @ 550); \cf2 //maybe this class should be called BMConfigurationsGUI\cf0 \
-\
+backupManager	= \cf3 BMBackup\cf0 .new;\
+concertManager= \cf3 BMConcert\cf0 (arrays, \cf3 BMAbstractController\cf0 .allControllers, backupManager);\
+configManager	= \cf3 BMConfigurations\cf0 (backupManager);\
+\{ \cf3 BMConcertGUI\cf0 (concertManager, configManager, \cf4 "Concert Editor"\cf0 , 110 @ 600);\
+  \cf3 BMConfigurationsGUI\cf0 (chainManager, configManager, concertManager, \cf4 "Configuration Editor"\cf0 , 550 @ 550);\
 \}.defer;\
+\
 \
 \
 \cf2 // ----------\cf0 \
