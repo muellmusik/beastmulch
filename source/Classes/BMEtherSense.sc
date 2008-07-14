@@ -45,7 +45,7 @@ BMEtherSense : BMAbstractController {
 		}).add;
 	}
 	
-	stopListening { responders.do(_.remove); }
+	stopListening { responders.do(_.remove); responders = Array.newClear(2); }
 	
 	// assumes fader 1 = 1 not 0
 	// returns 16 bit value
@@ -85,4 +85,9 @@ BMEtherSense : BMAbstractController {
 	getAllLabels { ^this.shouldNotImplement(thisMethod) }
 	
 	setAllLabels { |array| this.shouldNotImplement(thisMethod)}
+	
+	initFromArchive { this.startListening }
+	
+	asTextArchive { this.stopListening; ^super.asTextArchive; }
+
 }
