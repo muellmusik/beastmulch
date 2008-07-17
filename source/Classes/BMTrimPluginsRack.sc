@@ -303,7 +303,9 @@ BMTrimPluginsRackGUI : BMAbstractGUI {
 			.hasVerticalScroller_(false)
 			.hasBorder_(true);
 		stripGUIs.action = {window.refresh};
-		stripGUIs = SCHLayoutView(stripGUIs, Rect(4, 4, 104 * numStrips + 4, 500));
+		//stripGUIs = SCHLayoutView(stripGUIs, Rect(4, 4, 104 * numStrips + 4, 500));
+		stripGUIs = SCCompositeView(stripGUIs, Rect(4, 4, 104 * numStrips + 4, 500));
+		stripGUIs.decorator = FlowLayout(stripGUIs.bounds, 0@0);
 		trimPluginsRack.inNames.do({|chanName|
 			trimPluginsStripGUIs.add(
 				BMTrimPluginsStripGUI(trimPluginsRack[chanName], stripGUIs, chanName)
