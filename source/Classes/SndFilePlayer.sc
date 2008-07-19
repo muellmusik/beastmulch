@@ -37,7 +37,9 @@ SoundFilePlayer : BMAbstractAudioSource {
 		
 		Routine.run {
 			var condition, bundle;
+			this.dependants.postln;
 			this.changed(\loading);
+			
 			// create a condition variable to control execution of the Routine
 			condition = Condition.new;
 			this.stop;
@@ -47,9 +49,9 @@ SoundFilePlayer : BMAbstractAudioSource {
 			server.sync(condition, bundle);
 			"Old Buffer Freed".postln;
 			buffer = Buffer.read(server, path, action: {(path + "loaded").postln;
-				sampleDur = buffer.sampleRate.reciprocal;
-				this.changed(\loaded);
-				this.sendDef; action.value });
+			sampleDur = buffer.sampleRate.reciprocal;
+			this.changed(\loaded);
+			this.sendDef; action.value });
 		};
 
 		
@@ -245,7 +247,11 @@ SoundFilePlayerGUI : BMAbstractGUI {
 		forwButton.states = [[\forward]];
 		forwButton.action = { player.rate = 6; playButton.value = 0 };
 		
-		
+		window.onClose_({
+			player.removeDependant(this); 
+			bigClock.notNil.if({bigClock.close});
+			onClose.value(this);
+		});
 		window.front;
 	}
 	
