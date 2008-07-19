@@ -6,7 +6,7 @@
 
 \f0\fs18 \cf0 s.boot;\
 \
-x = \cf2 SoundFilePlayer\cf0 .new;\
+x = \cf2 BMSoundFilePlayer\cf0 .new;\
 \
 x.read(\cf3 "sounds/a11wlk01.wav"\cf0 , \{\cf4 \\foo\cf0 .postln\});\
 \
@@ -37,14 +37,14 @@ x.free\
 \
 s.boot;\
 \
-x = \cf2 SoundFilePlayer\cf0 .new(8);\
+x = \cf2 BMSoundFilePlayer\cf0 .new(8);\
 x.rate = 0.5;\
 x.rate = -1;\
 x.rate = 1;\
 x.rate = 2;\
 x.bus = Bus.new;\
 \
-y = \cf2 SoundFilePlayerGUI\cf0 (x);\
+y = \cf2 BMSoundFilePlayerGUI\cf0 (x);\
 \
 x.rate = 1;\
 \
@@ -59,7 +59,7 @@ x = \cf2 SoundFileMultiStreamer\cf0 .new;\
 \
 x.read([\cf3 "sounds/a11wlk01.wav"]\cf0 , \{\cf4 \\foo\cf0 .postln\});\
 \
-y = \cf2 SoundFileMultiStreamerGUI\cf0 (x);\
+y = \cf2 BMSoundFileMultiStreamerGUI\cf0 (x);\
 x.buffer;\
 \
 x.play(0,0);\

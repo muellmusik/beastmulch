@@ -70,7 +70,7 @@ controllersList.add(etherSense = \cf3 BMEtherSense\cf0 (\cf3 NetAddr\cf0 (\cf4 "
 \
 \
 \
-player		= \cf3 SoundFilePlayer\cf0 .new(8);\
+player		= \cf3 BMSoundFilePlayer\cf0 .new(8);\
 ~player		= player;\
 chainManager	= \cf3 BMAudioChainManager\cf0 ( [player, \cf3 InOutArray\cf0 .hardwareInputArray], \
 							   [\cf5 'Pre-Processing'\cf0 ->\cf3 BMTrimPluginsRack\cf0 , \cf5 'Input Levels'\cf0 ->\cf3 AmpControlMatrix\cf0 ], \

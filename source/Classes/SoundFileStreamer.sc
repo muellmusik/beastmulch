@@ -141,7 +141,7 @@ SoundFileMultiStreamer {
 	}
 }
 
-SoundFileMultiStreamerGUI : SoundFilePlayerGUI {
+BMSoundFileMultiStreamerGUI : BMSoundFilePlayerGUI {
 	
 	init {
 //		OSCresponderNode(player.server.addr,'/tr',{ arg time,responder,msg;

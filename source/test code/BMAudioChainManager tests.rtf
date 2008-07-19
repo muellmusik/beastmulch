@@ -7,7 +7,7 @@
 \
 ~contollers = [\cf2 \\Fader1, \\Fader2\cf0 ].collectAs(\{\cf3 |item, i|\cf0  item -> i\}, \cf3 InOutArray\cf0 );\
 \
-~manager = \cf3 BMAudioChainManager\cf0 ([\cf3 SoundFilePlayer\cf0 (8), \cf3 InOutArray\cf0 .hardwareInputArray], [\cf2 \\foo\cf0 ->\cf3 AmpControlMatrix\cf0 , \cf2 \\bar\cf0 ->\cf3 AmpControlMatrix\cf0 ], [\cf2 \\foobar\cf0 ->\cf3 AmpControlMatrix\cf0 ], ~contollers, ~outs);\
+~manager = \cf3 BMAudioChainManager\cf0 ([\cf3 BMSoundFilePlayer\cf0 (8), \cf3 InOutArray\cf0 .hardwareInputArray], [\cf2 \\foo\cf0 ->\cf3 AmpControlMatrix\cf0 , \cf2 \\bar\cf0 ->\cf3 AmpControlMatrix\cf0 ], [\cf2 \\foobar\cf0 ->\cf3 AmpControlMatrix\cf0 ], ~contollers, ~outs);\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf3 b = BMAudioChainManagerGUI\cf0 (~manager);\
@@ -15,7 +15,7 @@
 ///\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf0 ~manager = \cf3 BMAudioChainManager\cf0 ([\cf3 SoundFilePlayer\cf0 (8), \cf3 InOutArray\cf0 .hardwareInputArray], [\cf2 \\foo\cf0 ->\cf3 AmpControlMatrix\cf0 , \cf2 \\bar\cf0 ->\cf3 AmpControlMatrix, \cf2 \\foopbar\cf0 ->\cf3 AmpControlMatrix\cf0 ], [\cf2 \\foobar\cf0 ->\cf3 AmpControlMatrix, \cf2 \\fubar\cf0 ->\cf3 AmpControlMatrix, \cf2 \\fobar\cf0 ->\cf3 AmpControlMatrix\cf0 ], ~contollers, ~outs);\
+\cf0 ~manager = \cf3 BMAudioChainManager\cf0 ([\cf3 BMSoundFilePlayer\cf0 (8), \cf3 InOutArray\cf0 .hardwareInputArray], [\cf2 \\foo\cf0 ->\cf3 AmpControlMatrix\cf0 , \cf2 \\bar\cf0 ->\cf3 AmpControlMatrix, \cf2 \\foopbar\cf0 ->\cf3 AmpControlMatrix\cf0 ], [\cf2 \\foobar\cf0 ->\cf3 AmpControlMatrix, \cf2 \\fubar\cf0 ->\cf3 AmpControlMatrix, \cf2 \\fobar\cf0 ->\cf3 AmpControlMatrix\cf0 ], ~contollers, ~outs);\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf3 BMAudioChainManagerGUI\cf0 (~manager);\
@@ -23,7 +23,7 @@
 ////\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf0 ~manager = \cf3 BMAudioChainManager\cf0 ([\cf3 SoundFilePlayer\cf0 (8), \cf3 InOutArray\cf0 .hardwareInputArray, \cf3 SoundFilePlayer\cf0 (6), \cf3 SoundFilePlayer\cf0 (9)], [\cf2 \\foo\cf0 ->\cf3 AmpControlMatrix\cf0 , \cf2 \\bar\cf0 ->\cf3 AmpControlMatrix, \cf2 \\foopbar\cf0 ->\cf3 AmpControlMatrix\cf0 ], [\cf2 \\foobar\cf0 ->\cf3 AmpControlMatrix, \cf2 \\fubar\cf0 ->\cf3 AmpControlMatrix, \cf2 \\fobar\cf0 ->\cf3 AmpControlMatrix\cf0 ], ~contollers, ~outs);\
+\cf0 ~manager = \cf3 BMAudioChainManager\cf0 ([\cf3 BMSoundFilePlayer\cf0 (8), \cf3 InOutArray\cf0 .hardwareInputArray, \cf3 BMSoundFilePlayer\cf0 (6), \cf3 BMSoundFilePlayer\cf0 (9)], [\cf2 \\foo\cf0 ->\cf3 AmpControlMatrix\cf0 , \cf2 \\bar\cf0 ->\cf3 AmpControlMatrix, \cf2 \\foopbar\cf0 ->\cf3 AmpControlMatrix\cf0 ], [\cf2 \\foobar\cf0 ->\cf3 AmpControlMatrix, \cf2 \\fubar\cf0 ->\cf3 AmpControlMatrix, \cf2 \\fobar\cf0 ->\cf3 AmpControlMatrix\cf0 ], ~contollers, ~outs);\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf3 BMAudioChainManagerGUI\cf0 (~manager);}

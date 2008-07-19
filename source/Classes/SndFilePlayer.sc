@@ -2,7 +2,7 @@
 // start time currently broken
 
 // currently will respond to any trigger message. Clean up later
-SoundFilePlayer : BMAbstractAudioSource {
+BMSoundFilePlayer : BMAbstractAudioSource {
 	classvar <allplayers;
 	var maxNumChannels, <latency, <>bus;
 	var <buffer, <synth, <>releaseTime = 0.1, watcher, <rate = 1;
@@ -151,13 +151,13 @@ SoundFilePlayer : BMAbstractAudioSource {
 	
 	name { ^name ? "Soundfile Player" }
 	
-	gui { ^SoundFilePlayerGUI(this, this.name) }
+	gui { ^BMSoundFilePlayerGUI(this, this.name) }
 	
   
 }
 
 
-SoundFilePlayerGUI : BMAbstractGUI {
+BMSoundFilePlayerGUI : BMAbstractGUI {
 	
 	var player, responder, clockView, loadButton, info, dur, playButton, stopButton, clust, clust2; 	var clearButton, forwButton, backButton, clockButton, bigClock, bigText;
 	

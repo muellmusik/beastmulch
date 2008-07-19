@@ -78,10 +78,10 @@ g.window.userCanClose_(\cf4 false\cf2 );\
 mackie1.setAllFaders(0.5 ! 16);\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf2 \
-player = \cf4 SoundFilePlayer\cf2 .new(14);\
+player = \cf4 BMSoundFilePlayer\cf2 .new(14);\
 \
 ~player = player;\
-\cf3 //playerGUI = SoundFilePlayerGUI(player);\cf2 \
+\cf3 //playerGUI = BMSoundFilePlayerGUI(player);\cf2 \
 \
 chainManager = \cf4 BMAudioChainManager\cf2 ([player, \cf4 InOutArray\cf2 .hardwareInputArray], [\cf6 'Pre-Processing'\cf2 ->\cf4 BMTrimPluginsRack\cf2 , \cf6 'Input Levels'\cf2 ->\cf4 AmpControlMatrix\cf2 ], [\cf6 'Output Levels'\cf2 ->\cf4 AmpControlMatrix\cf2 , \cf6 'Post-Processing'\cf2 ->\cf4 BMTrimPluginsRack\cf2 ], \cf4 BMAbstractController\cf2 .allControllers.values.collect(\{\cf4 |item|\cf2  item.getInputArray \}).flat.as(\cf4 InputArray\cf2 ), outputArray);\
 \

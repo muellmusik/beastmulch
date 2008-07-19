@@ -76,10 +76,10 @@ mackieList = \cf3 List\cf0 [];\
 \cf2 mackieList.add(mackieCU = MackieCU.new(MIDIClient.sources[0].uid, \\mackCU));\cf0 \
 \cf2 //mackieList.add(mackie6 = MackieCUNoMaster.new(MIDIClient.sources[5].uid, \\mack6));\cf0 \
 \
-player = \cf3 SoundFilePlayer\cf0 .new(8);\
+player = \cf3 BMSoundFilePlayer\cf0 .new(8);\
 \
 ~player = player;\
-playerGUI = \cf3 SoundFilePlayerGUI\cf0 (player);\
+playerGUI = \cf3 BMSoundFilePlayerGUI\cf0 (player);\
 \
 \cf2 //mackieCU.playFunc = \{player.play\};\cf0 \
 \cf2 //mackieCU.stopFunc = \{player.stop\};\cf0 \
