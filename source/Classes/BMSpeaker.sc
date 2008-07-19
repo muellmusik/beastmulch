@@ -109,5 +109,7 @@ BMSpeakerArray : InOutArray {
 		super.add(speaker.name -> speaker);
 	}
 	
+	getSubArray {|name| ^subArrays[name].collectAs({|key| this[key]}, this.class); }
+	
 	isSpeakerArray { ^true } 		
 }

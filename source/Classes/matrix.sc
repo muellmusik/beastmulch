@@ -211,6 +211,7 @@ AmpControlMatrix : BMAbstractMatrix {
 InOutArray : List {
 
 	var <keys;
+	var subArrays; // a dictionary of subArrayName->[key1, key2...]
 	
 	*new {|size|
 		^super.new(size).init;
@@ -223,7 +224,14 @@ InOutArray : List {
 	
 	init {
 		keys = Array.new;
+		subArrays = IdentityDictionary.new;
 	}
+	
+	defineSubArray {|name, elementNames| subArrays[name] = elementNames }
+	
+	removeSubArray {|name| subArrays[name] = nil }
+	
+	getSubArray {|name| ^subArrays[name].collectAs({|key| key->this[key]}, this.class); }
 	
 	add { |assoc| var index;
 		index = keys.indexOf(assoc.key);
