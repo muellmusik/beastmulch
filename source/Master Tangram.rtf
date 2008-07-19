@@ -94,11 +94,11 @@ mackieCU.fbFunc_(\{player.rate = -4; \}, \{player.rate = 1; \});\
 	\
 playerGUI.addDependant(mackieCU);\
 \
-\cf2 //audMatrix = AudioMatrix(InputArray[\\in1 -> 0, \\in2 -> 1].addAll(player.getInputArray), \cf0 \
+\cf2 //audMatrix = BMAudioMatrix(InputArray[\\in1 -> 0, \\in2 -> 1].addAll(player.getInputArray), \cf0 \
 \cf2 //	OutputArray.fill(8, \{|i| ("out" ++ (i+1)).asSymbol -> i\}));\cf0 \
-audMatrix = \cf3 AudioMatrix\cf0 (inputArray.addAll(player.getInputArray), outputArray);\
+audMatrix = \cf3 BMAudioMatrix\cf0 (inputArray.addAll(player.getInputArray), outputArray);\
 	\
-ctrlMatrix = \cf3 AmpControlMatrix\cf0 (mackieList.collect(\{\cf3 |item|\cf0  item.getInputArray \}).flat.as(\cf3 InputArray\cf0 ), audMatrix.outs);\
+ctrlMatrix = \cf3 BMAmpControlMatrix\cf0 (mackieList.collect(\{\cf3 |item|\cf0  item.getInputArray \}).flat.as(\cf3 InputArray\cf0 ), audMatrix.outs);\
 \
 \cf2 //ctrlMatrix.inNames.postln;\cf0 \
 \
@@ -108,7 +108,7 @@ audGUIButton = \cf3 SCButton\cf0 (masterWindow, \cf3 Rect\cf0 (10, 10, 180, 20))
 audGUIButton.states = [[\cf4 "Audio Matrix"\cf0 , \cf3 Color\cf0 .black,\cf3 Color\cf0 .clear]];\
 audGUIButton.action = \{ \
 	audMatrixGUI.isNil.if(\{\
-		audMatrixGUI = \cf3 MatrixMenuGUI\cf0 (audMatrix, \cf4 "Audio Routing"\cf0 , \cf3 Point\cf0 (420, 360));\
+		audMatrixGUI = \cf3 BMMatrixMenuGUI\cf0 (audMatrix, \cf4 "Audio Routing"\cf0 , \cf3 Point\cf0 (420, 360));\
 		audMatrixGUI.onClose = \{audMatrixGUI = \cf3 nil\cf0 ;\};\
 	\});\
 \};\
@@ -117,7 +117,7 @@ ctlGUIButton = \cf3 SCButton\cf0 (masterWindow, \cf3 Rect\cf0 (10, 10, 180, 20))
 ctlGUIButton.states = [[\cf4 "Controller Mappings"\cf0 , \cf3 Color\cf0 .black,\cf3 Color\cf0 .clear]];\
 ctlGUIButton.action = \{ \
 	ctrlMatrixGUI.isNil.if(\{\
-		ctrlMatrixGUI = \cf3 MatrixMenuGUI\cf0 (ctrlMatrix, \cf4 "Controller Routing"\cf0 , \cf3 Point\cf0 (420, 30));\
+		ctrlMatrixGUI = \cf3 BMMatrixMenuGUI\cf0 (ctrlMatrix, \cf4 "Controller Routing"\cf0 , \cf3 Point\cf0 (420, 30));\
 		ctrlMatrixGUI.onClose = \{ctrlMatrixGUI = \cf3 nil\cf0 ;\};\
 	\});\
 \};\

@@ -138,7 +138,7 @@ BMAudioChainManager {
 			item.value.newFromChain(controllerArray, sourceArray, sourceArray, nil, group.server, 
 				item.key);
 		});
-		audioMatrix = AudioMatrix(sourceArray, outputArray, nil, group.server, 'Audio Routing');
+		audioMatrix = BMAudioMatrix(sourceArray, outputArray, nil, group.server, 'Audio Routing');
 		outputProcessing = outputProcessing.collect({|item|
 			item.value.newFromChain(controllerArray, outputArray, outputArray, nil, group.server, 
 				item.key);

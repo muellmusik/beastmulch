@@ -83,7 +83,7 @@ player = \cf3 BMSoundFilePlayer\cf0 .new(8);\
 ~player = player;\
 \cf2 //playerGUI = BMSoundFilePlayerGUI(player);\cf0 \
 \
-chainManager = \cf3 BMAudioChainManager\cf0 ([player, \cf3 InOutArray\cf0 .hardwareInputArray], [\cf5 'Pre-Processing'\cf0 ->\cf3 BMTrimPluginsRack\cf0 , \cf5 'Input Levels'\cf0 ->\cf3 AmpControlMatrix\cf0 ], [\cf5 'Output Levels'\cf0 ->\cf3 AmpControlMatrix\cf0 , \cf5 'Post-Processing'\cf0 ->\cf3 BMTrimPluginsRack, \cf0  \cf5 'Master Fader'\cf0  -> \cf3 BMMasterFader\cf0 ], \cf3 BMAbstractController\cf0 .allControllers.values.collect(\{\cf3 |item|\cf0  item.getInputArray \}).flat.as(\cf3 InputArray\cf0 ), outputArray);\
+chainManager = \cf3 BMAudioChainManager\cf0 ([player, \cf3 InOutArray\cf0 .hardwareInputArray], [\cf5 'Pre-Processing'\cf0 ->\cf3 BMTrimPluginsRack\cf0 , \cf5 'Input Levels'\cf0 ->\cf3 BMAmpControlMatrix\cf0 ], [\cf5 'Output Levels'\cf0 ->\cf3 BMAmpControlMatrix\cf0 , \cf5 'Post-Processing'\cf0 ->\cf3 BMTrimPluginsRack, \cf0  \cf5 'Master Fader'\cf0  -> \cf3 BMMasterFader\cf0 ], \cf3 BMAbstractController\cf0 .allControllers.values.collect(\{\cf3 |item|\cf0  item.getInputArray \}).flat.as(\cf3 InputArray\cf0 ), outputArray);\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf0 \{\cf3 BMAudioChainManagerGUI\cf0 (chainManager);\}.defer;\
@@ -118,7 +118,7 @@ masterWindow.view.decorator = \cf3 FlowLayout\cf0 (masterWindow.view.bounds, \cf
 \cf2 //audGUIButton.states = [["Audio Matrix", Color.black,Color.clear]];\cf0 \
 \cf2 //audGUIButton.action = \{ \cf0 \
 \cf2 //	audMatrixGUI.isNil.if(\{\cf0 \
-\cf2 //		audMatrixGUI = MatrixMenuGUI(audMatrix, "Audio Routing", Point(420, 360));\cf0 \
+\cf2 //		audMatrixGUI = BMMatrixMenuGUI(audMatrix, "Audio Routing", Point(420, 360));\cf0 \
 \cf2 //		audMatrixGUI.onClose = \{audMatrixGUI = nil;\};\cf0 \
 \cf2 //	\});\cf0 \
 \cf2 //\};\cf0 \
@@ -127,7 +127,7 @@ masterWindow.view.decorator = \cf3 FlowLayout\cf0 (masterWindow.view.bounds, \cf
 \cf2 //ctlGUIButton.states = [["Controller Mappings", Color.black,Color.clear]];\cf0 \
 \cf2 //ctlGUIButton.action = \{ \cf0 \
 \cf2 //	ctrlMatrixGUI.isNil.if(\{\cf0 \
-\cf2 //		ctrlMatrixGUI = MatrixMenuGUI(ctrlMatrix, "Controller Routing", Point(420, 30));\cf0 \
+\cf2 //		ctrlMatrixGUI = BMMatrixMenuGUI(ctrlMatrix, "Controller Routing", Point(420, 30));\cf0 \
 \cf2 //		ctrlMatrixGUI.onClose = \{ctrlMatrixGUI = nil;\};\cf0 \
 \cf2 //	\});\cf0 \
 \cf2 //\};\cf0 \

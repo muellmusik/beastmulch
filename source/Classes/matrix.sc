@@ -137,13 +137,13 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 	}
 	
 	gui {
-		^MatrixMenuGUI(this);
+		^BMMatrixMenuGUI(this);
 	}
 
 }
 
 // maps ins to outs
-AudioMatrix : BMAbstractMatrix {
+BMAudioMatrix : BMAbstractMatrix {
 	
 	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
 		^this.new(inAudioArray, outAudioArray, group, server, name);
@@ -166,7 +166,7 @@ AudioMatrix : BMAbstractMatrix {
 // maps amp scales to control busses
 // roll your own curves etc. elsewhere
 // this should in fact only allow an output to be connected to a single input 
-AmpControlMatrix : BMAbstractMatrix {
+BMAmpControlMatrix : BMAbstractMatrix {
 	
 	var outmappings;
 	
@@ -275,7 +275,7 @@ OutputArray : InOutArray {
 
 }
 
-MatrixMenuGUI : BMAbstractGUI {
+BMMatrixMenuGUI : BMAbstractGUI {
 
 	var matrix;
 	var inputSection, assignSection, outputSection, inputView, assignView, outputView;
