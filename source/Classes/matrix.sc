@@ -3,7 +3,7 @@
 // ins and outs are either arrays of symbols corresponding to names
 // in which case size equals the number of mappable inputs
 // and index = busnum
-// or InOutArrays of name -> busNum
+// or BMInOutArrays of name -> busNum
 // use the latter for arbitrary indices
 
 // mappings is an Dictionary with in names as keys, and Lists of output names
@@ -14,7 +14,7 @@
 
 //InputArray and OutputArray classes should take care of indexes automatically. Keep the matrices stupid.
 
-// Should InOutArrays for ins and outs offset channels by 1?
+// Should BMInOutArrays for ins and outs offset channels by 1?
 
 // CmdPeriod registration is automatic, unless turned off manually or by a MatrixManager
 
@@ -38,12 +38,12 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 		name = argname;
 		// allow for arrays as well as Dictionaries
 		// if array, offset by input channels
-		if(ins.isInOutArray.not, 
+		if(ins.isBMInOutArray.not, 
 			{ins = ins.collectAs({|item, i| item -> (i + server.options.numInputBusChannels)}, 
-				InOutArray);
+				BMInOutArray);
 		});
-		if(outs.isInOutArray.not, 
-			{outs = outs.collectAs({|item, i| item -> i}, InOutArray)});
+		if(outs.isBMInOutArray.not, 
+			{outs = outs.collectAs({|item, i| item -> i}, BMInOutArray)});
 		// used for indices for matrix lookup
 		inNames = ins.keys;
 		outNames = outs.keys;
@@ -208,7 +208,7 @@ BMAmpControlMatrix : BMAbstractMatrix {
 }
 
 // An Ordered Dictionary of associations (\name->index);
-InOutArray : List {
+BMInOutArray : List {
 
 	var <keys;
 	var subArrays; // a dictionary of subArrayName->[key1, key2...]
@@ -219,7 +219,7 @@ InOutArray : List {
 	
 	*hardwareInputArray {|server|
 		server = server.asTarget.server; // account for nil
-		^HardwareInputsProxy.fill(server.options.numInputBusChannels, {|i| ("in" ++ (i+1)).asSymbol -> 			(server.options.numOutputBusChannels + i)});
+		^BMHardwareInputsProxy.fill(server.options.numInputBusChannels, {|i| ("in" ++ (i+1)).asSymbol -> 			(server.options.numOutputBusChannels + i)});
 	}
 	
 	init {
@@ -251,15 +251,15 @@ InOutArray : List {
 	
 	++ {|aCollection| ^this.addAll(aCollection)}
 	
-	isInOutArray {^true}
+	isBMInOutArray {^true}
 	
 	isSpeakerArray { ^false } 
 	
-	asInOutArray {^this}
+	asBMInOutArray {^this}
 
 }
 
-HardwareInputsProxy : InOutArray {
+BMHardwareInputsProxy : BMInOutArray {
 
 	name { ^"Hardware Inputs"; }
 	
@@ -267,11 +267,11 @@ HardwareInputsProxy : InOutArray {
 }
 
 //temp
-InputArray : InOutArray {
+InputArray : BMInOutArray {
 
 }
 
-OutputArray : InOutArray {
+OutputArray : BMInOutArray {
 
 }
 

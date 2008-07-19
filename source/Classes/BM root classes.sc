@@ -54,7 +54,7 @@ BMAbstractAudioSource : BMAbstractAudioChainElement {
 		^this.shouldNotImplement(thisMethod);
 	}
 	
-	asInOutArray { ^this.subclassResponsibility(thisMethod);}
+	asBMInOutArray { ^this.subclassResponsibility(thisMethod);}
 	
 	newPieceQuery {
 	

@@ -83,7 +83,7 @@ player = \cf4 BMSoundFilePlayer\cf2 .new(14);\
 ~player = player;\
 \cf3 //playerGUI = BMSoundFilePlayerGUI(player);\cf2 \
 \
-chainManager = \cf4 BMAudioChainManager\cf2 ([player, \cf4 InOutArray\cf2 .hardwareInputArray], [\cf6 'Pre-Processing'\cf2 ->\cf4 BMTrimPluginsRack\cf2 , \cf6 'Input Levels'\cf2 ->\cf4 BMAmpControlMatrix\cf2 ], [\cf6 'Output Levels'\cf2 ->\cf4 BMAmpControlMatrix\cf2 , \cf6 'Post-Processing'\cf2 ->\cf4 BMTrimPluginsRack\cf2 ], \cf4 BMAbstractController\cf2 .allControllers.values.collect(\{\cf4 |item|\cf2  item.getInputArray \}).flat.as(\cf4 InputArray\cf2 ), outputArray);\
+chainManager = \cf4 BMAudioChainManager\cf2 ([player, \cf4 BMInOutArray\cf2 .hardwareInputArray], [\cf6 'Pre-Processing'\cf2 ->\cf4 BMTrimPluginsRack\cf2 , \cf6 'Input Levels'\cf2 ->\cf4 BMAmpControlMatrix\cf2 ], [\cf6 'Output Levels'\cf2 ->\cf4 BMAmpControlMatrix\cf2 , \cf6 'Post-Processing'\cf2 ->\cf4 BMTrimPluginsRack\cf2 ], \cf4 BMAbstractController\cf2 .allControllers.values.collect(\{\cf4 |item|\cf2  item.getInputArray \}).flat.as(\cf4 InputArray\cf2 ), outputArray);\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf2 \{\cf4 BMAudioChainManagerGUI\cf2 (chainManager);\}.defer;\

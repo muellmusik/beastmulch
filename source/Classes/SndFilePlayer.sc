@@ -128,12 +128,12 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 	}
 	
 //	getInputArray {|name = "Player"|
-//		^InOutArray.fill(maxNumChannels, {|i| (name ++ (i + 1)).asSymbol -> (bus.index + i)});
+//		^BMInOutArray.fill(maxNumChannels, {|i| (name ++ (i + 1)).asSymbol -> (bus.index + i)});
 //			
 //	}
 	
-	asInOutArray {|name = "Player"|
-		^InOutArray.fill(maxNumChannels, {|i| (name ++ (i + 1)).asSymbol -> (bus.index + i)});
+	asBMInOutArray {|name = "Player"|
+		^BMInOutArray.fill(maxNumChannels, {|i| (name ++ (i + 1)).asSymbol -> (bus.index + i)});
 	}
 	
 	path { ^buffer.notNil.if({buffer.path}, {nil}) }

@@ -63,7 +63,7 @@ BMEtherSense : BMAbstractController {
 	
 	// for faders
 	getInputArray {
-		^this.faderNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, InOutArray);
+		^this.faderNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
 	}
 	
 	faderNames {^Array.fill(numFaders, {|i| name.asString ++ "-" ++ (i+1)})}

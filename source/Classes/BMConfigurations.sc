@@ -118,7 +118,7 @@ BMAudioChainManager {
 	// could check ServerOptions here to make sure they're correct
 	init {
 		this.initChain;
-		elements = sources.reject(_.isInOutArray) 
+		elements = sources.reject(_.isBMInOutArray) 
 			++ [sourceProcessing, audioMatrix, outputProcessing].flat;
 		CmdPeriod.add(this);
 		group.server.makeBundle(nil, {
@@ -132,7 +132,7 @@ BMAudioChainManager {
 	// auto construct the chain
 
 	initChain {
-		sources.do({|source| sourceArray = sourceArray ++ source.asInOutArray});
+		sources.do({|source| sourceArray = sourceArray ++ source.asBMInOutArray});
 		sourceArray = sourceArray ++ privateBusArray;
 		sourceProcessing = sourceProcessing.collect({|item|
 			item.value.newFromChain(controllerArray, sourceArray, sourceArray, nil, group.server, 

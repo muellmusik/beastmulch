@@ -1,3 +1,3 @@
 + Object {
-	isInOutArray {^false}
+	isBMInOutArray {^false}
 }

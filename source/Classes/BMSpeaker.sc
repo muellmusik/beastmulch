@@ -102,8 +102,8 @@ BMSpeakerSpec {
 	}
 }
 
-// this is interchangeable with an InOutArray because of 'asUGenInput'
-BMSpeakerArray : InOutArray {
+// this is interchangeable with an BMInOutArray because of 'asUGenInput'
+BMSpeakerArray : BMInOutArray {
 	
 	add {|speaker|
 		super.add(speaker.name -> speaker);

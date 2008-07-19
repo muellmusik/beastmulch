@@ -72,7 +72,7 @@ controllersList.add(etherSense = \cf3 BMEtherSense\cf0 (\cf3 NetAddr\cf0 (\cf4 "
 \
 player		= \cf3 BMSoundFilePlayer\cf0 .new(8);\
 ~player		= player;\
-chainManager	= \cf3 BMAudioChainManager\cf0 ( [player, \cf3 InOutArray\cf0 .hardwareInputArray], \
+chainManager	= \cf3 BMAudioChainManager\cf0 ( [player, \cf3 BMInOutArray\cf0 .hardwareInputArray], \
 							   [\cf5 'Pre-Processing'\cf0 ->\cf3 BMTrimPluginsRack\cf0 , \cf5 'Input Levels'\cf0 ->\cf3 BMAmpControlMatrix\cf0 ], \
 							   [\cf5 'Output Levels'\cf0 ->\cf3 BMAmpControlMatrix\cf0 , \cf5 'Post-Processing'\cf0 ->\cf3 BMTrimPluginsRack\cf0 , \cf5 'Master Fader'\cf0  -> \cf3 BMMasterFader\cf0 ],\
 							   \cf3 BMAbstractController\cf0 .allControllers.values.collect(\{\cf3 |item|\cf0  item.getInputArray \}).flat.as(\cf3 InputArray\cf0 ), \
