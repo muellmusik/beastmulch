@@ -56,29 +56,29 @@ s.scope(4);\
 s.boot;\
 )\
 ~matrix = \cf2 BMAudioMatrix\cf0 ([\cf3 \\in1\cf0 , \cf3 \\in2\cf0 ], [\cf3 \\out1\cf0 , \cf3 \\out2\cf0 , \cf3 \\out3\cf0 ]);\
-~gui = \cf2 MatrixGUI\cf0 (~matrix, \cf3 \\foo\cf0 );\
+~gui = \cf2 BMMatrixGUI\cf0 (~matrix, \cf3 \\foo\cf0 );\
 \
 s.scope(4);\
 \
 ~matrix.free;\
 \
 ~matrix = \cf2 BMAudioMatrix\cf0 (\cf2 InputArray\cf0 [\cf3 \\in1\cf0  -> s.options.numOutputBusChannels], \cf2 OutputArray\cf0 [\cf3 \\out1\cf0  -> 0, \cf3 \\out2\cf0  -> 1, \cf3 \\out4\cf0  -> 3, \cf3 \\wideL\cf0  -> 2]);\
-~gui = \cf2 MatrixGUI\cf0 (~matrix);\
+~gui = \cf2 BMMatrixGUI\cf0 (~matrix);\
 \
 ~matrix = \cf2 BMAudioMatrix\cf0 ([\cf3 \\in1\cf0 , \cf3 \\in2\cf0 ], [\cf3 \\out1\cf0 , \cf3 \\out2\cf0 , \cf3 \\out3\cf0 , \cf3 \\out4\cf0 , \cf3 \\wideL\cf0 , \cf3 \\wideR\cf0 , \cf3 \\fooL\cf0 , \cf3 \\fooR\cf0 , \cf3 \\barL\cf0 , \cf3 \\barR\cf0 , \cf3 \\mishL\cf0 , \cf3 \\mishR\cf0 , \cf3 \\distL\cf0 , \cf3 \\distR\cf0 , \cf3 \\subsL\cf0 , \cf3 \\subsR\cf0 , \cf3 \\fishL\cf0 , \cf3 \\fishR\cf0 , \cf3 \\tacoL\cf0 , \cf3 \\tacoR\cf0 , \cf3 \\anaL\cf0 , \cf3 \\anaR\cf0 , \cf3 \\tweetL\cf0 , \cf3 \\tweetR\cf0 , \cf3 \\ScottL\cf0 , \cf3 \\ScottR\cf0 , \cf3 \\appL\cf0 , \cf3 \\appR\cf0 , \cf3 \\booL\cf0 , \cf3 \\booR\cf0 , \cf3 \\haggL\cf0 , \cf3 \\haggR\cf0 , \cf3 \\donkL\cf0 , \cf3 \\donkR\cf0 , \cf3 \\morL\cf0 , \cf3 \\morR\cf0 ]);\
-~gui = \cf2 MatrixGUI\cf0 (~matrix, \cf3 \\foo\cf0 );\
+~gui = \cf2 BMMatrixGUI\cf0 (~matrix, \cf3 \\foo\cf0 );\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf4 ////////////\cf0 \
 \
 ~matrix = \cf2 BMAmpControlMatrix\cf0 ([\cf3 \\in1\cf0 , \cf3 \\in2\cf0 , \cf3 \\in3\cf0 ], [\cf3 \\out1\cf0 , \cf3 \\out2\cf0 , \cf3 \\out3\cf0 , \cf3 \\out4\cf0 , \cf3 \\wideL\cf0 , \cf3 \\wideR\cf0 , \cf3 \\fooL\cf0 , \cf3 \\fooR\cf0 , \cf3 \\barL\cf0 , \cf3 \\barR\cf0 , \cf3 \\mishL\cf0 , \cf3 \\mishR\cf0 , \cf3 \\distL\cf0 , \cf3 \\distR\cf0 , \cf3 \\subsL\cf0 , \cf3 \\subsR\cf0 , \cf3 \\fishL\cf0 , \cf3 \\fishR\cf0 , \cf3 \\tacoL\cf0 , \cf3 \\tacoR\cf0 , \cf3 \\anaL\cf0 , \cf3 \\anaR\cf0 , \cf3 \\tweetL\cf0 , \cf3 \\tweetR\cf0 , \cf3 \\ScottL\cf0 , \cf3 \\ScottR\cf0 , \cf3 \\appL\cf0 , \cf3 \\appR\cf0 , \cf3 \\booL\cf0 , \cf3 \\booR\cf0 , \cf3 \\haggL\cf0 , \cf3 \\haggR\cf0 , \cf3 \\donkL\cf0 , \cf3 \\donkR\cf0 , \cf3 \\morL\cf0 , \cf3 \\morR\cf0 ]);\
-~gui = \cf2 MatrixGUI\cf0 (~matrix, \cf3 \\bar\cf0 );\
+~gui = \cf2 BMMatrixGUI\cf0 (~matrix, \cf3 \\bar\cf0 );\
 \
 \
 \cf4 ////////// dependancy\cf0 \
 \
 ~matrix = \cf2 BMAudioMatrix\cf0 (\cf2 InputArray\cf0 [\cf3 \\in1\cf0  -> s.options.numOutputBusChannels], \cf2 OutputArray\cf0 [\cf3 \\out1\cf0  -> 0, \cf3 \\out2\cf0  -> 1, \cf3 \\out4\cf0  -> 3, \cf3 \\wideL\cf0  -> 2]);\
-~gui = \cf2 MatrixGUI\cf0 (~matrix, \cf3 \\foo\cf0 );\
+~gui = \cf2 BMMatrixGUI\cf0 (~matrix, \cf3 \\foo\cf0 );\
 \
 ~matrix.connect(\cf3 \\in1\cf0 , \cf3 \\out4\cf0 );\
 \

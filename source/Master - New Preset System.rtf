@@ -16,7 +16,7 @@
 \
 s.waitForBoot(\{\
 \
-\cf3 var\cf0  audMatrix, audMatrixGUI, ctrlMatrix, ctrlMatrixGUI;\
+\cf3 var\cf0  audMatrix, audBMMatrixGUI, ctrlMatrix, ctrlBMMatrixGUI;\
 \cf3 var\cf0  player, playerGUI, mackie1, mackie2, mackieCU, mackie4, mackie5, mackieList;\
 \cf3 var\cf0  masterWindow, audGUIButton, ctlGUIButton;\
 \cf3 var\cf0  numMackies = 2;\
@@ -107,18 +107,18 @@ masterWindow.view.decorator = \cf3 FlowLayout\cf0 (masterWindow.view.bounds, \cf
 audGUIButton = \cf3 SCButton\cf0 (masterWindow, \cf3 Rect\cf0 (10, 10, 180, 20));\
 audGUIButton.states = [[\cf4 "Audio Matrix"\cf0 , \cf3 Color\cf0 .black,\cf3 Color\cf0 .clear]];\
 audGUIButton.action = \{ \
-	audMatrixGUI.isNil.if(\{\
-		audMatrixGUI = \cf3 BMMatrixMenuGUI\cf0 (audMatrix, \cf4 "Audio Routing"\cf0 , \cf3 Point\cf0 (420, 360));\
-		audMatrixGUI.onClose = \{audMatrixGUI = \cf3 nil\cf0 ;\};\
+	audBMMatrixGUI.isNil.if(\{\
+		audBMMatrixGUI = \cf3 BMMatrixMenuGUI\cf0 (audMatrix, \cf4 "Audio Routing"\cf0 , \cf3 Point\cf0 (420, 360));\
+		audBMMatrixGUI.onClose = \{audBMMatrixGUI = \cf3 nil\cf0 ;\};\
 	\});\
 \};\
 \
 ctlGUIButton = \cf3 SCButton\cf0 (masterWindow, \cf3 Rect\cf0 (10, 10, 180, 20));\
 ctlGUIButton.states = [[\cf4 "Controller Mappings"\cf0 , \cf3 Color\cf0 .black,\cf3 Color\cf0 .clear]];\
 ctlGUIButton.action = \{ \
-	ctrlMatrixGUI.isNil.if(\{\
-		ctrlMatrixGUI = \cf3 BMMatrixMenuGUI\cf0 (ctrlMatrix, \cf4 "Controller Routing"\cf0 , \cf3 Point\cf0 (420, 30));\
-		ctrlMatrixGUI.onClose = \{ctrlMatrixGUI = \cf3 nil\cf0 ;\};\
+	ctrlBMMatrixGUI.isNil.if(\{\
+		ctrlBMMatrixGUI = \cf3 BMMatrixMenuGUI\cf0 (ctrlMatrix, \cf4 "Controller Routing"\cf0 , \cf3 Point\cf0 (420, 30));\
+		ctrlBMMatrixGUI.onClose = \{ctrlBMMatrixGUI = \cf3 nil\cf0 ;\};\
 	\});\
 \};\
 \

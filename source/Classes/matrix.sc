@@ -348,7 +348,7 @@ BMMatrixMenuGUI : BMAbstractGUI {
 		SCStaticText.new(buttonSection, Rect(0,0,80,0)).string_(" ");// placeholder
 		
 		matrixButton = SCButton(buttonSection, Rect(0,0,110,20)).canReceiveDragHandler = false;		matrixButton.states = [["View Matrix", Color.black,Color.clear]];
-		matrixButton.action = { MatrixGUI(matrix, name)};
+		matrixButton.action = { BMMatrixGUI(matrix, name)};
 		
 		SCStaticText.new(buttonSection, Rect(0,0,80,110)).string_("Assign outputs to selected input. Cmd-drag or use button to assign, select and press delete to unassign.");
 		///.font_(Font("CoffeeCup", 40)).align_(\center);
@@ -364,7 +364,7 @@ BMMatrixMenuGUI : BMAbstractGUI {
 }
 
 // could calculate hoffset and voffset using String:bounds
-MatrixGUI : BMAbstractGUI {
+BMMatrixGUI : BMAbstractGUI {
 
 	var h = 700, v = 700, numIns = 10, numOuts = 10, dotSize = 10;
 	var hinterval, vinterval, tabletView;
