@@ -1,4 +1,4 @@
-ConcertConfig {
+BMConcertConfig {
 	var <list;
 
 	*new {
@@ -59,7 +59,7 @@ ConcertConfig {
 	
 }
 
-ConcertConfigGUI {
+BMConcertConfigGUI {
 
 	var concertConfig, presetManager, systemSetup, name, window;
 	var presetsSection, concertSection, presetView, concertView, listSection;

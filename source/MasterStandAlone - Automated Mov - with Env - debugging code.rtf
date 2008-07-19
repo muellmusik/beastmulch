@@ -105,7 +105,7 @@ chainManager = \cf3 BMAudioChainManager\cf0 ([player, \cf3 BMInOutArray\cf0 .har
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf0 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf0 concertConfig		= \cf3 ConcertConfig\cf0 .new;\
+\cf0 concertConfig		= \cf3 BMConcertConfig\cf0 .new;\
 presetManager		= \cf3 PresetManager\cf0 (\cf5 \\piece\cf0 );\
 \
 \cf2 // ----------\cf0 \
@@ -146,7 +146,7 @@ labelsButton.action = \{ \
 concertConfigButton		= \cf3 SCButton\cf0 (masterWindow, \cf3 Rect\cf0 (10, 10, 180, 20));\
 concertConfigButton.states	= [[ \cf4 "Concert Configuration"\cf0 , \cf3 Color\cf0 .black, \cf3 Color\cf0 .clear ]];\
 concertConfigButton.action	= \{ concertConfigGUI.isNil.if(\{\
-						       concertConfigGUI = \cf3 ConcertConfigGUI\cf0 (concertConfig, presetManager, arrays, \cf4 "Concert"\cf0 , \cf3 Point\cf0 (500, 290));\
+						       concertConfigGUI = \cf3 BMConcertConfigGUI\cf0 (concertConfig, presetManager, arrays, \cf4 "Concert"\cf0 , \cf3 Point\cf0 (500, 290));\
 						       concertConfigGUI.onClose = \{ concertConfigGUI = \cf3 nil\cf0  \}\
 						    \})\
 				  		   \};\
