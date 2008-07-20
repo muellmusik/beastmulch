@@ -115,6 +115,7 @@ BMAbstractMackie : BMAbstractController {
 	
 	faderNames {^Array.fill(numFaders, {|i| name.asString ++ "-" ++ (i+1)})}
 
+	acceptsAutomation { ^true }
 }
 
 MackieCU : BMAbstractMackie {

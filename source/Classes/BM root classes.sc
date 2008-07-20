@@ -107,6 +107,8 @@ BMAbstractController {
 		this.setAllLabels(mappings[\labels]);
 		this.setAllFaders(mappings[\faders]);
 	}
+	
+	acceptsAutomation { ^false }
 }
 
 BMAbstractGUI {

@@ -53,6 +53,8 @@ BMVirtualController : BMAbstractController {
 	}
 	
 	faderNames {^Array.fill(numFaders, {|i| name.asString ++ "-" ++ (i+1)})}
+
+	acceptsAutomation { ^true }
 }
 
 // simple onscreen slider GUI for a BMVirtualController
