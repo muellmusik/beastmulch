@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="949.33">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #000000}
+p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0000bf}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica; min-height: 17.0px}
+p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #8b2e18}
+p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
+span.s1 {color: #000000}
+span.s2 {color: #0000bf}
+span.s3 {color: #007300}
+span.s4 {text-decoration: underline ; color: #0522ef}
+span.s5 {color: #1228b3}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>Time References and Automation</b></p>
+<p class="p2"><br></p>
+<p class="p3">The BEASTmulch library makes use of the concept of Time References, which are objects which provide time updates for things like automation. Although in a typical use case there might be only one reference, e.g. a soundfile player, in principle one can have as many time references as desired (multiple players, external clock sources, etc.).</p>
+<p class="p2"><br></p>
+<p class="p4"><b>Making an object into a Time Reference</b></p>
+<p class="p2"><br></p>
+<p class="p3">Any object can be a Time Reference providing it fulfils two requirements:</p>
+<p class="p2"><br></p>
+<p class="p3">1. When its base time changes, it must call the following to notify its dependants:</p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s1"><span class="Apple-tab-span">	</span></span><span class="s2">this</span>.changed(<span class="s3">\time</span>, timeInSeconds, rateOfChange, referenceTime);</p>
+<p class="p7"><br></p>
+<p class="p3">Where timeInSeconds is the updated time, rateOfChange is the rate at which time is changing (this can be negative), and referenceTime is an optional time indicating when timeInSeconds was true. referenceTime should be in seconds since the application started so that it can be compared to Main.elapsedTime for purposes of correction. Note that if the original source is from another computer it will be necessary to synchronise the two machines using a network time source. Optionally one can pass nil for this argument.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p3">2. It must register itself with BMTimeSource as a reference.</p>
+<p class="p5"><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="s1"><span class="Apple-tab-span">	</span></span>BMTimeSource<span class="s1">.addReference(</span>this<span class="s1">);</span></p>
+<p class="p2"><br></p>
+<p class="p3">Generally speaking time references should update reasonably frequently (say 10 times a second or faster). Note that what is done with the updated data is up to the dependant object to determine.</p>
+<p class="p2"><br></p>
+<p class="p4"><b>BMTimeSource</b></p>
+<p class="p2"><span class="Apple-converted-space"> </span></p>
+<p class="p3">BMTimeSource provides a framework for accurate updating and interpolation of data from Time References. Most objects in the library which support automation take a BMTimeSource as their clock.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p4"><b>Notes on objects which use BMTimeSource and/or Time References</b></p>
+<p class="p2"><span class="Apple-converted-space"> </span></p>
+<p class="p3">In general objects should respond gracefully to any rate of change in time (faster or slower, backwards, or large leaps). Objects which make use of time sources should respond gracefully to current time values of nil, &lt; 0 or +/- inf.</p>
+<p class="p2"><br></p>
+<p class="p3"><b>See also: </b><a href="../ServerArchitecture/Buffer.html"><span class="s4">Buffer</span></a><b> </b>[other related help files]</p>
+<p class="p2"><br></p>
+<p class="p4"><b>More detailed examples</b></p>
+<p class="p9"><br></p>
+<p class="p10"><span class="s1">b = </span><span class="s5">SomeClass</span><span class="s1">.new(s, 100, 2); <span class="Apple-tab-span">	</span></span>// explanation of this line</p>
+<p class="p10"><span class="s1">b.doSomething;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// explanation of this line</p>
+<p class="p11">b.cleanUp</p>
+<p class="p7"><br></p>
+<p class="p11">...</p>
+</body>
+</html>
