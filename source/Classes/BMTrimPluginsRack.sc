@@ -70,10 +70,10 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 	compensateDistance { 
 		var rads, diff, farthest, plugin;
 		
-		rads = ins.select({|in| in.isBMSpeaker}).collect({|speaker| speaker.value.rad });
+		rads = ins.select({|in| in.value.isBMSpeaker}).collect({|speaker| speaker.value.rad });
 		farthest = rads.maxItem;
 		ins.do({|speaker| 
-			speaker.isBMSpeaker.if({
+			speaker.value.isBMSpeaker.if({
 				diff = farthest - speaker.value.rad;
 				if(diff > 0, { // farthest uncompensated
 					// speed of sound 344 m/s at 21 degrees C in dry air
@@ -89,7 +89,7 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 	autoPlugins { 
 		var plugin;
 		ins.do({|speaker|
-			speaker.isBMSpeaker.if({
+			speaker.value.isBMSpeaker.if({
 				speaker.value.spec.plugins.do({|plgin| 
 					// name, preset
 					plugin = BMPlugin(plgin[0]).preset_(plgin[1]);
@@ -103,11 +103,11 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 	autoTrim { 
 		var powered, min, diff;
 		
-		min = ins.select({|in| in.isBMSpeaker})
+		min = ins.select({|in| in.value.isBMSpeaker})
 			.collect({|speaker| speaker.value.autoTrim })
 			.minItem; 
 		ins.do({|speaker| 
-			speaker.isBMSpeaker.if({
+			speaker.value.isBMSpeaker.if({
 				diff = min - speaker.value.autoTrim;
 				if(diff < 0, { 
 					this[speaker.value.name].trim_(diff); 
@@ -324,24 +324,24 @@ BMTrimPluginsRackGUI : BMAbstractGUI {
 		
 		buttons = SCVLayoutView(window, Rect(0, 0, 20, 70));
 		TriggerView(buttons, Rect(0, 0, 20, 20))
-			.caption_(" ?")
+			.string_(" ?")
 			.font_(Font("Helvetica-Bold", 14))
-			.fillColor_(Color.white.alpha_(0.2))
+			.colorOn_(Color.white.alpha_(0.2))
 			.action_({descriptionHelpText.string = defaultHelpString;});
 		TriggerView(buttons, Rect(0, 0, 20, 20))
-			.caption_("APi")
+			.string_("APi")
 			.font_(Font("Helvetica-Bold", 8))
-			.fillColor_(Color.white.alpha_(0.2))
+			.colorOn_(Color.white.alpha_(0.2))
 			.action_({|v|v.value.if{trimPluginsRack.autoPlugins}});
 		TriggerView(buttons, Rect(0, 0, 20, 20))
-			.caption_("ATr")
+			.string_("ATr")
 			.font_(Font("Helvetica-Bold", 8))
-			.fillColor_(Color.white.alpha_(0.2))
-			.action_({|v|v.value.if{trimPluginsRack.autoTrim}});
+			.colorOn_(Color.white.alpha_(0.2))
+			.action_({|v| v.value.if{trimPluginsRack.autoTrim}});
 		TriggerView(buttons, Rect(0, 0, 20, 20))
-			.caption_("dT")
+			.string_("dT")
 			.font_(Font("Helvetica-Bold", 12))
-			.fillColor_(Color.white.alpha_(0.2))
+			.colorOn_(Color.white.alpha_(0.2))
 			.action_({|v|v.value.if{trimPluginsRack.compensateDistance}});
 
 		window.onClose = { 
