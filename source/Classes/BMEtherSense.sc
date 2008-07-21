@@ -88,6 +88,12 @@ BMEtherSense : BMAbstractController {
 	
 	initFromArchive { this.startListening }
 	
-	asTextArchive { this.stopListening; ^super.asTextArchive; }
+	asTextArchive { 
+		var arch;
+		this.stopListening; 
+		arch = super.asTextArchive;
+		this.startListening;
+		^arch	
+	}
 
 }
