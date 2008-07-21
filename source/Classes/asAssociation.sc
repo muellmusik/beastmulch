@@ -1,0 +1,4 @@
++ Association {
+
+	asAssociation {^this}
+}

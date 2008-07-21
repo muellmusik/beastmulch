@@ -234,6 +234,7 @@ BMInOutArray : List {
 	getSubArray {|name| ^subArrays[name].collectAs({|key| key->this[key]}, this.class); }
 	
 	add { |assoc| var index;
+		assoc = assoc.asAssociation;
 		index = keys.indexOf(assoc.key);
 		index.isNil.if({array = array.add(assoc); keys = keys.add(assoc.key);},
 			{array.put(index, assoc)});

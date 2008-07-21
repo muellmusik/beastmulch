@@ -44,6 +44,10 @@ BMSpeaker {
 	name_ {|newname| name = newname.asSymbol; } // setter necessary?
 	
 	asUGenInput { ^index }
+	
+	asAssociation {^(name->this) }
+	
+	isBMSpeaker { ^true }
 }
 
 // Wrapper class for managing specs for different speaker models
@@ -102,14 +106,14 @@ BMSpeakerSpec {
 	}
 }
 
-// this is interchangeable with an BMInOutArray because of 'asUGenInput'
+// keep this for now for backwards compatibility
 BMSpeakerArray : BMInOutArray {
 	
-	add {|speaker|
-		super.add(speaker.name -> speaker);
-	}
-	
-	getSubArray {|name| ^subArrays[name].collectAs({|key| this[key]}, this.class); }
-	
-	isSpeakerArray { ^true } 		
+//	add {|speaker|
+//		super.add(speaker.name -> speaker);
+//	}
+//	
+//	getSubArray {|name| ^subArrays[name].collectAs({|key| this[key]}, this.class); }
+//	
+//	isSpeakerArray { ^true } 		
 }

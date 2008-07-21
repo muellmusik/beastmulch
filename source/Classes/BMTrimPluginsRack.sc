@@ -69,10 +69,11 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 	// assumes distances are in meters
 	compensateDistance { 
 		var rads, diff, farthest, plugin;
-		ins.isSpeakerArray.if({ 
-			rads = ins.collect({|speaker| speaker.value.rad });
-			farthest = rads.maxItem;
-			ins.do({|speaker| 
+		
+		rads = ins.select({|in| in.isBMSpeaker}).collect({|speaker| speaker.value.rad });
+		farthest = rads.maxItem;
+		ins.do({|speaker| 
+			speaker.isBMSpeaker.if({
 				diff = farthest - speaker.value.rad;
 				if(diff > 0, { // farthest uncompensated
 					// speed of sound 344 m/s at 21 degrees C in dry air
@@ -80,37 +81,39 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 					this[speaker.value.name].addPlugin(plugin); 
 				});
 			});
-		}, {"Not a BMSpeakerArray, can't distance compensate".warn;}); 
+		});
 	}
 	
 	// auto add plugins by speaker spec
 	// requires a plugin spec name and a preset
 	autoPlugins { 
 		var plugin;
-		ins.isSpeakerArray.if({ 
-			ins.do({|speaker| 
+		ins.do({|speaker|
+			speaker.isBMSpeaker.if({
 				speaker.value.spec.plugins.do({|plgin| 
 					// name, preset
 					plugin = BMPlugin(plgin[0]).preset_(plgin[1]);
 					this[speaker.value.name].addPlugin(plugin); 
 				});
 			});
-		}, {"Not a BMSpeakerArray, can't auto add plugins".warn;}); 
+		});
 	}
 	
 	// balance speakers
 	autoTrim { 
 		var powered, min, diff;
 		
-		ins.isSpeakerArray.if({
-			min = ins.collect({|speaker| speaker.value.autoTrim }).minItem; 
-			ins.do({|speaker| 
+		min = ins.select({|in| in.isBMSpeaker})
+			.collect({|speaker| speaker.value.autoTrim })
+			.minItem; 
+		ins.do({|speaker| 
+			speaker.isBMSpeaker.if({
 				diff = min - speaker.value.autoTrim;
 				if(diff < 0, { 
 					this[speaker.value.name].trim_(diff); 
 				});
 			});
-		}, {"Not a BMSpeakerArray, can't auto trim".warn;}); 
+		});
 	}
 	
 	// balance powered speakers
