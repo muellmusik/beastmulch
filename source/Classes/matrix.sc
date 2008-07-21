@@ -212,6 +212,7 @@ BMInOutArray : List {
 
 	var <keys;
 	var subArrays; // a dictionary of subArrayName->[key1, key2...]
+	var busObjects;
 	
 	*new {|size|
 		^super.new(size).init;
@@ -227,11 +228,29 @@ BMInOutArray : List {
 		subArrays = IdentityDictionary.new;
 	}
 	
+	*privateBusBlock {|name, size, server|
+		^this.new(size).addPrivateBusBlock(name, size, server);
+	}
+	
+	addPrivateBusBlock {|name, size, server|
+		var bus, block;
+		bus = Bus.audio(server, size);
+		busObjects = busObjects.add(bus);
+		block = BMInOutArray.fill(size, {|i| (name ++ (i + 1)).asSymbol->(bus.index + i) });
+		this.addAll(block);
+		this.defineSubArray(name, block.keys);
+	}
+	
+	// only do this if you're sure
+	freeBusObjects { busObjects.do(_.free) }
+	
 	defineSubArray {|name, elementNames| subArrays[name] = elementNames }
 	
 	removeSubArray {|name| subArrays[name] = nil }
 	
 	getSubArray {|name| ^subArrays[name].collectAs({|key| key->this[key]}, this.class); }
+	
+	subArrays {^subArrays.keys }
 	
 	add { |assoc| var index;
 		assoc = assoc.asAssociation;
