@@ -19,7 +19,7 @@ BMConfigurations {
 	}
 	
 	addAllOff{
-		("this is dict"+ dict).postln;
+//		("this is dict"+ dict).postln;
 		   dict.add('all off' -> 
 					 IdentityDictionary[
 				
@@ -290,7 +290,7 @@ BMConfigurationsGUI : BMAbstractGUI {
 									 		  };
 									 		configurations.backupManager
 									 			          .makeSessionBackup(concertManager, configurations)
-									 			          .add(\configuration, name, configurations.dict[name].deepCopy)
+									 			          .add(\configuration, name, name -> configurations.dict[name].deepCopy)
 								 		  }
 								 		  { "The Configuration \"all off\" cannot be modified".error }
 					     	  });
