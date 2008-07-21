@@ -254,8 +254,6 @@ BMInOutArray : List {
 	
 	isBMInOutArray {^true}
 	
-	isSpeakerArray { ^false } 
-	
 	asBMInOutArray {^this}
 
 }
