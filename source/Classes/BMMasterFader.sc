@@ -6,7 +6,7 @@ BMMasterFader : BMAbstractAudioChainElement {
 	
 	*new {| group, server, name |
 		 
-		 ^super.new.init(group, server ? Server.default, name ? this.name);
+		 ^super.new.init(group, server ? Server.default, name);
 
 	}
 	
@@ -14,7 +14,7 @@ BMMasterFader : BMAbstractAudioChainElement {
 
 		  group	= arggroup;
 		  server	= argserver;
-		  name	= argname;
+		  name	= argname  ? this.makeName;
 		  if(group.isNil, {this.makeGroup});
 		  allChainElements[name] = this;
 		  bus = Bus.control(server, 1);

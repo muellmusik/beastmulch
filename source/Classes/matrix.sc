@@ -26,7 +26,7 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 	var <matrixArray, <mappings, defname; // defname is the def for a node
 	
 	*new { |ins, outs, group, server, name|
-		^super.new.init(ins, outs, group, server ? Server.default, name ? this.name);
+		^super.new.init(ins, outs, group, server ? Server.default, name);
 		// default name is class
 	}
 	
@@ -35,7 +35,7 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 		outs = argouts;
 		group = arggroup;
 		server = argserver;
-		name = argname;
+		name = argname  ? this.makeName;
 		// allow for arrays as well as Dictionaries
 		// if array, offset by input channels
 		if(ins.isBMInOutArray.not, 

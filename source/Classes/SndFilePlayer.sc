@@ -3,34 +3,30 @@
 
 // currently will respond to any trigger message. Clean up later
 BMSoundFilePlayer : BMAbstractAudioSource {
-	classvar <allplayers;
+	
 	var maxNumChannels, <latency, <>bus;
 	var <buffer, <synth, <>releaseTime = 0.1, watcher, <rate = 1;
 	var <sampleDur = 2.2675736961451e-05;
 	var blockPlay = false;
 	
-	*new {|maxNumChannels = 2, latency = 0.1, server, group|
-		^super.new.init(maxNumChannels, latency, server ? Server.default, group);
+	*new {|maxNumChannels = 2, latency = 0.1, group, server, name|
+		^super.new.init(maxNumChannels, latency, group, server ? Server.default, name);
 	}
 	
-	*initClass {
-		allplayers = List.new;
-	}
-	
-	init { |argMaxNumChannels, argLatency, argServer, argGroup|
+	init { |argMaxNumChannels, argLatency, argGroup, argServer, argName|
 		
 		maxNumChannels = argMaxNumChannels;
 		latency = argLatency;
 		server = argServer;
 		group = argGroup;
+		name = argName ? this.makeName;
 		bus = Bus.audio(server, maxNumChannels);
 		if(group.isNil, {this.makeGroup});
 		CmdPeriod.add(this);
 		OSCresponderNode(this.server.addr,'/tr',{ arg time,responder,msg;
 			this.changed(\time, msg.last * this.sampleDur);
 		}).add;
-		allplayers.add(this);
-		//allChainElements[name] = this;
+		allChainElements[name] = this;
 	}
 	
 	read {|path, action|
@@ -132,8 +128,8 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 //			
 //	}
 	
-	asBMInOutArray {|name = "Player"|
-		^BMInOutArray.fill(maxNumChannels, {|i| (name ++ (i + 1)).asSymbol -> (bus.index + i)});
+	asBMInOutArray {
+		^BMInOutArray.fill(maxNumChannels, {|i| (name.asString + (i + 1)).asSymbol -> (bus.index + i)});
 	}
 	
 	path { ^buffer.notNil.if({buffer.path}, {nil}) }
@@ -148,8 +144,6 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 	}
 	
 	cmdPeriod { blockPlay = false; this.makeGroup }
-	
-	name { ^name ? "Soundfile Player" }
 	
 	gui { ^BMSoundFilePlayerGUI(this, this.name) }
 	

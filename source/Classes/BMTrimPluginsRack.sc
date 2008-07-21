@@ -3,7 +3,7 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 	var strips;
 	
 	*new { |ins, group, server, name|
-		^super.new.init(ins, group, server ? Server.default, name ? this.name);
+		^super.new.init(ins, group, server ? Server.default, name);
 		// default name is class
 	}
 	
@@ -12,7 +12,7 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 		outs = argins;
 		group = arggroup;
 		server = argserver;
-		name = argname;
+		name = argname  ? this.makeName;
 		inNames = ins.keys;
 		outNames = outs.keys;
 		if(group.isNil, {this.makeGroup});

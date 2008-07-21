@@ -13,7 +13,7 @@ BMOptions {
 BMAbstractAudioChainElement {
 	classvar <allChainElements;
 	var <ins, <outs, <inNames, <outNames; // in the default case the getters return nil, as an element need not have both ins and outs
-	var <group, <>server, name, <callCmdPeriod = true;
+	var <group, <>server, <name, <callCmdPeriod = true;
 	
 	// for chain construction in BMAudioChainManager
 	// overriding methods in subclasses should have these args, but may ignore them
@@ -41,7 +41,7 @@ BMAbstractAudioChainElement {
 	
 	makeGroup { ^this.subclassResponsibility(thisMethod); }
 	
-	name { ^name ? (this.class.name ++ UniqueID.next)} 
+	makeName { ^(this.class.name ++ UniqueID.next)} 
 	
 	release { allChainElements[name] = nil}
 
@@ -56,8 +56,12 @@ BMAbstractAudioSource : BMAbstractAudioChainElement {
 	
 	asBMInOutArray { ^this.subclassResponsibility(thisMethod);}
 	
-	newPieceQuery {
+	mappings {
+		
+	}
 	
+	mappings_ {|mappings|
+		
 	}
 }
 
