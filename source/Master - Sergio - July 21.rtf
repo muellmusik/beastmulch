@@ -1,0 +1,572 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\fonttbl\f0\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
+\red0\green115\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs18 \cf0 (\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 /// option to clear faders before saving a preset\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 /// fix routing so error isn't thrown if one accidentally assigns with no selection\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 /// option to clear soundfile\cf0 \
+\cf2 /// why is evtype 1 posted?\cf0 \
+\cf2 /// is the playBlocked function necessary?\cf0 \
+\
+\cf2 //s.boot;\cf0 \
+\
+\cf2 //BMAbstractController.dumpAllValues\cf0 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf3 Routine\cf0 (\{\
+\
+\cf3 var\cf0  audMatrix, audMatrixGUI, ctrlMatrix, ctrlMatrixGUI;\
+\cf3 var\cf0  player, playerGUI, mackie1, mackie2, mackieCU, mackie4, mackie3, mackie5, controllersList, etherSense;\
+\cf3 var\cf0  masterWindow, audGUIButton, ctlGUIButton, concertConfigButton;\
+\cf3 var\cf0  numMackies = 6;\
+\cf3 var\cf0  presetMenu, presetWindow, addField, removeButton, exportButton, importButton;\
+\cf3 var\cf0  pieceUpdater,  changeFromPlayerGUI = \cf3 true\cf0 , newPresetGUIFunc, addButton, backupManager;\
+\cf3 var\cf0  historyBackButton, historyFwdButton, historyCurrent, historyPos, historyText, historyTextFunc, versionNotStored;\
+\cf3 var\cf0  storeButton, labelsButton, labelsWindow;\
+\cf3 var\cf0  arrays, inputArray, outputArray;\
+\cf3 var\cf0  hipassFunc, tweetFunc, vdistFunc;\
+\cf3 var\cf0  stopBlocked = \cf3 false\cf0 , playBlocked = \cf3 false\cf0 ;\
+\cf3 var\cf0  interpolFunc;\
+\cf3 var\cf0  concertManager, configManager;\
+\cf3 var\cf0  chainManager, cond;\
+\
+cond = \cf3 Condition\cf0 .new;\
+s.bootSync(cond);\
+\
+0.2.wait;\
+\
+\{\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 //MIDIClient.init(numMackies,numMackies);			// explicitly intialize the client\cf0 \
+\cf2 //numMackies.do(\{ arg i; \cf0 \
+\cf2 //	MIDIIn.connect(i, MIDIClient.sources.at(i));\cf0 \
+\cf2 //\});\cf0 \
+\
+arrays 		= \cf3 this\cf0 .executeFile(\cf3 Document\cf0 .current.dir ++ \cf4 "/january channel list.rtf"\cf0 );\
+\cf2 //arrays = this.executeFile(String.scDir ++ "/SCClassLibrary/source/MiniBEASTchannellist.rtf");\cf0 \
+inputArray 	= arrays[1];\
+outputArray	= arrays[0]; \
+outputArray.size.postln;\
+~outs 		= outputArray;\
+\
+\
+\cf2 ///////\cf0 \
+\
+controllersList 	= \cf3 List\cf0 [];\
+controllersList.add(etherSense = \cf3 BMEtherSense\cf0 (\cf3 NetAddr\cf0 (\cf4 "10.0.0.2"\cf0 , 57120), \cf5 \\Faders\cf0 ));\
+\
+\cf2 //mackieList.add(mackie1 = MackieXT.new(MIDIClient.sources[0].uid, \\mack1));\cf0 \
+\cf2 //mackieList.add(mackie2 = MackieXT.new(MIDIClient.sources[1].uid, \\mack2));\cf0 \
+\cf2 //mackieList.add(mackie3 = MackieXT.new(MIDIClient.sources[2].uid, \\mack3));\cf0 \
+\cf2 //mackieList.add(mackieCU = MackieCU.new(MIDIClient.sources[3].uid, \\mackCU));\cf0 \
+\cf2 //mackieList.add(mackie5 = MackieCUNoMaster.new(MIDIClient.sources[4].uid, \\mack5));\cf0 \
+\
+\
+\
+player		= \cf3 BMSoundFilePlayer\cf0 .new(8);\
+~player		= player;\
+chainManager	= \cf3 BMAudioChainManager\cf0 ( [player, \cf3 BMInOutArray\cf0 .hardwareInputArray], \
+							   [\cf5 'Pre-Processing'\cf0 ->\cf3 BMTrimPluginsRack\cf0 , \cf5 'Input Levels'\cf0 ->BM\cf3 AmpControlMatrix\cf0 ], \
+							   [\cf5 'Output Levels'\cf0 ->BM\cf3 AmpControlMatrix\cf0 , \cf5 'Post-Processing'\cf0 ->\cf3 BMTrimPluginsRack\cf0 , \cf5 'Master Fader'\cf0  -> \cf3 BMMasterFader\cf0 ],\
+							   \cf3 BMAbstractController\cf0 .allControllers.values.collect(\{\cf3 |item|\cf0  item.getInputArray \}).flat.as(\cf3 BMInOutArray\cf0 ), \
+							   outputArray\
+			);\
+			\
+backupManager	= \cf3 BMBackup\cf0 .new;\
+concertManager= \cf3 BMConcert\cf0 (arrays, \cf3 BMAbstractController\cf0 .allControllers, backupManager);\
+configManager	= \cf3 BMConfigurations\cf0 (backupManager);\
+\{ \cf3 BMConcertGUI\cf0 (concertManager, configManager, \cf4 "Concert Editor"\cf0 , 110 @ 600);\
+  \cf3 BMConfigurationsGUI\cf0 (chainManager, configManager, concertManager, \cf4 "Configuration Editor"\cf0 , 550 @ 550);\
+\}.defer;\
+\
+\
+\
+\cf2 // ----------\cf0 \
+\
+\cf2 //masterWindow = SCWindow("Master", Rect(10, 30, 200, 300), false).userCanClose = false;\cf0 \
+\cf2 //masterWindow.view.decorator = FlowLayout(masterWindow.view.bounds, Point(10, 10), Point(10, 10));\cf0 \
+\cf2 //SCStaticText.new(masterWindow, Rect(0,0,180,80)).string_("BEAST").font_(Font("Helvetica-Bold", 50)).align_(\\center).stringColor(Color.black.alpha_(0.3));\cf0 \
+\cf2 //SCStaticText.new(masterWindow, Rect(0,0,180,80)).string_("BEASTMulch System").font_(Font("Helvetica-Bold", 15)).align_(\\center).stringColor(Color.black.alpha_(0.3));\cf0 \
+\cf2 //masterWindow.front;\cf0 \
+\
+\
+\cf2 // ----------\cf0 \
+\
+\cf2 //pieceUpdater		= \{| configName |		// taken from presetMenu.action\cf0 \
+\cf2 //					var path, config;\cf0 \
+\cf2 //					\cf0 \
+\cf2 //					config = configurations[configName];\cf0 \
+\cf2 //					\cf0 \
+\cf2 //					BMAbstractAudioChainElement\cf0 \
+\cf2 //					 .allChainElements\cf0 \
+\cf2 //					 .keysValuesDo\{| key, value |\cf0 \
+\cf2 //					 			 BMAbstractAudioChainElement.allChainElements[key].mappings = config[key]\cf0 \
+\cf2 //					 			\};\cf0 \
+\cf2 //					 \cf0 \
+\cf2 //			  \cf0 \
+\cf2 ////					\{ \cf0 \
+\cf2 ////					\cf0 \
+\cf2 //////					  config[\\mackies].keysValuesDo(\{|name, dict|\cf0 \
+\cf2 //////											     var interface; \cf0 \
+\cf2 //////											     \cf0 \
+\cf2 //////											     interface = BMAbstractController.allControllers.at(name);\cf0 \
+\cf2 //////											     interface.notNil.if(\{ \cf0 \
+\cf2 ////////											          interface.setAllFaders(dict[\\faders]);\cf0 \
+\cf2 //////											          0.2.wait; \cf0 \
+\cf2 ////////											          interface.setAllLabels(dict[\\labels]);\cf0 \
+\cf2 //////											          0.8.wait   \cf0 \
+\cf2 //////											     \})\cf0 \
+\cf2 //////								                  \});\cf0 \
+\cf2 ////					\cf0 \
+\cf2 //////					  \{ historyTextFunc.value(historyPos);\cf0 \
+\cf2 //////					    presetWindow.front; \cf0 \
+\cf2 //////					    presetMenu.enabled = true; \cf0 \
+\cf2 //////					    presetMenu.focus \cf0 \
+\cf2 //////					  \}.defer\cf0 \
+\cf2 ////					 \}.fork\cf0 \
+\cf2 //				     \};\cf0 \
+\cf2 //				     \cf0 \
+\cf2 //Updater(player, \{| changed, change | \cf0 \
+\cf2 //			   var presetName, zeroPad = 4, filelessID;\cf0 \
+\cf2 //			   \cf0 \
+\cf2 //			   switch (change,\cf0 \
+\cf2 //			  	 	  \\loading,     \{ presetMenu.enabled = false \},\cf0 \
+\cf2 //			  	 	  \\bufferFreed, \{ presetMenu.enabled = false;\cf0 \
+\cf2 //			  	 	  			    if(changeFromPlayerGUI)\cf0 \
+\cf2 //			  	 	  			      \{ filelessID =  presetNames\cf0 \
+\cf2 //			  	 	  			    	   			     .select\{| presetName | presetName.beginsWith("Fileless Preset -") \}\cf0 \
+\cf2 //			  	 	  			    	   			     .collect\{| presetName | presetName[ presetName.size - zeroPad ..] \}\cf0 \
+\cf2 //			  	 	  			    	   			     .asInteger.maxItem\cf0 \
+\cf2 //			  	 	  			    	   			     ? 0\cf0 \
+\cf2 //			  	 	  			    	   			     + 1;\cf0 \
+\cf2 //			  	 	  			    	    presetName = "Fileless Preset -" + filelessID.asStringToBase(width: zeroPad);\cf0 \
+\cf2 //			  	 	  			    	    \{ newPresetGUIFunc.value(presetName) \}.defer\cf0 \
+\cf2 //			  	 	  			    	  \}\cf0 \
+\cf2 //			  	 	  			    	 \{ changeFromPlayerGUI = true \}\cf0 \
+\cf2 //			  	 	  			  \},\cf0 \
+\cf2 //			  	 	  			  \cf0 \
+\cf2 //			  	 	  \\loaded, 	  \{ if (changeFromPlayerGUI)\cf0 \
+\cf2 //			  	 	  			       \{ presetName = player.path.basename.splitext[0];\cf0 \
+\cf2 //			  	 	  				    \{ newPresetGUIFunc.value(presetName) \}.defer\cf0 \
+\cf2 //			  	 	  				  \}\cf0 \
+\cf2 //			  	 	  				  \{ changeFromPlayerGUI = true \}\cf0 \
+\cf2 //			   		  			  \}\cf0 \
+\cf2 //			   	      )\cf0 \
+\cf2 //			   \}\cf0 \
+\cf2 //	   );\cf0 \
+\cf2 //\cf0 \
+\cf2 //\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf3 Updater\cf0 (concertManager,  \{\cf3 | changed, change, pieceEvent |\cf0 \
+\
+					   switch (change,\
+					   		  \cf5 \\loadPiece\cf0 ,	 	\
+					   		   \{ if (pieceEvent.path.notNil)\
+					   		   	   \{ player.read(pieceEvent.path) \}\
+					   		   	   \{ player.free \};\
+					   		   	configManager.currentConfig_(pieceEvent.config, \cf5 \\concertEditor\cf0 );\
+					    		   \}\
+							  )\
+					 \}\
+);\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 //\cf0 \
+\cf2 //newPresetGUIFunc		= \{| tempPresetName | \cf0 \
+\cf2 //						var newPresetGUI, presetNewUpdater;\cf0 \
+\cf2 //						\cf0 \
+\cf2 //						newPresetGUI 		= NewPresetGUI(tempPresetName, presetNames)\cf0 \
+\cf2 //										  .onClose = \{ newPresetGUI = nil \};\cf0 \
+\cf2 //						presetNewUpdater	= Updater(newPresetGUI, \cf0 \
+\cf2 //										    \{| changed, change, presetName, copyDict | \cf0 \
+\cf2 //											if (change == \\OK) \cf0 \
+\cf2 //											   \{ \cf0 \
+\cf2 //											   	if (copyDict['Do you want to copy everything?'])\cf0 \
+\cf2 //											   	\{\cf0 \
+\cf2 //											   	  presetDict[presetName.asSymbol] =\cf0 \
+\cf2 //											        IdentityDictionary[\cf0 \
+\cf2 //\cf0 \
+\cf2 //											          \\path -> player.path,\cf0 \
+\cf2 //											          \\mackies -> BMAbstractController\cf0 \
+\cf2 //											                       .allControllers\cf0 \
+\cf2 //											                       .collect(\{| interface, name |\cf0 \
+\cf2 //											                                  \cf0 \
+\cf2 //											                                  IdentityDictionary[ \cf0 \
+\cf2 //											                                   \cf0 \
+\cf2 //											                                   \\labels -> interface.getAllLabels,\cf0 \
+\cf2 //											                                   \\faders -> presetDict['all off'][\\mackies][name][\\faders]\cf0 \
+\cf2 //											                                  \cf0 \
+\cf2 //											                                  ]\cf0 \
+\cf2 //											                                  \cf0 \
+\cf2 //											                                 \})\cf0 \
+\cf2 //											         ].deepCopy;\cf0 \
+\cf2 //											         \cf0 \
+\cf2 //											   	BMAbstractAudioChainElement\cf0 \
+\cf2 //											   	 .allChainElements\cf0 \
+\cf2 //											      .keysValuesDo\{| key, value |\cf0 \
+\cf2 //											                    presetDict[presetName.asSymbol].add(key -> value.mappings.deepCopy)\cf0 \
+\cf2 //											                   \}\cf0 \
+\cf2 //												 \}\cf0 \
+\cf2 //												 \{ presetDict[presetName.asSymbol] = presetDict['all off'].deepCopy \};\cf0 \
+\cf2 //												\cf0 \
+\cf2 //											       \cf0 \
+\cf2 ////											        presetDict[presetName.asSymbol] =\cf0 \
+\cf2 ////											        IdentityDictionary[\cf0 \
+\cf2 ////											          \cf0 \
+\cf2 ////											          \\audMatrix -> if(copyDict['Copy audio routing?'])\cf0 \
+\cf2 ////											                          \{ audMatrix.mappings \}\cf0 \
+\cf2 ////											                          \{ presetDict['all off'][\\audMatrix] \},\cf0 \
+\cf2 ////											          \\ctrlMatrix -> if(copyDict['Copy control routing?'])\cf0 \
+\cf2 ////											                           \{ ctrlMatrix.mappings \}\cf0 \
+\cf2 ////											                           \{ presetDict['all off'][\\ctrlMatrix] \},\cf0 \
+\cf2 ////											          \\path -> player.path,\cf0 \
+\cf2 ////											          \\mackies -> BMAbstractController\cf0 \
+\cf2 ////											                       .interfaces\cf0 \
+\cf2 ////											                       .collect(\{| interface, name |\cf0 \
+\cf2 ////											                                  \cf0 \
+\cf2 ////											                                  IdentityDictionary[ \cf0 \
+\cf2 ////											                                   \\labels -> \cf0 \
+\cf2 ////											                                   if (copyDict['Copy fader labels?'])\cf0 \
+\cf2 ////											                                      \{ interface.getAllLabels \}\cf0 \
+\cf2 ////											                                      \{ presetDict['all off'][\\mackies][name][\\labels] \},\cf0 \
+\cf2 ////											                                   \cf0 \
+\cf2 ////											                                   \\faders -> \cf0 \
+\cf2 ////											                                   if (copyDict['Copy initial fader state?'])\cf0 \
+\cf2 ////											                                      \{ interface.getAllFaders \}\cf0 \
+\cf2 ////											                                      \{ presetDict['all off'][\\mackies][name][\\faders] \}\cf0 \
+\cf2 ////											                                  ]\cf0 \
+\cf2 ////											                                 \})\cf0 \
+\cf2 ////	\cf0 \
+\cf2 ////											          ].deepCopy;\cf0 \
+\cf2 //\cf0 \
+\cf2 //												  \cf0 \
+\cf2 //											          \cf0 \
+\cf2 //											       presetNames      = presetNames.add(presetName);\cf0 \
+\cf2 //											       presetMenu.items = presetNames;\cf0 \
+\cf2 //											       presetMenu.value = presetNames.lastIndex;\cf0 \
+\cf2 //											       presetManager.presetName = presetName;\cf0 \
+\cf2 //											       historyPos       = presetManager.lastID + 1;\cf0 \
+\cf2 //											       pieceUpdater.value(presetDict[presetManager.presetName.asSymbol])\cf0 \
+\cf2 //											       \cf0 \
+\cf2 //											      \}\cf0 \
+\cf2 //											      \{ presetMenu.enabled = true \} \cf0 \
+\cf2 //											 \}\cf0 \
+\cf2 //										    );\cf0 \
+\cf2 //						presetNewUpdater.removeOnClose(newPresetGUI)\cf0 \
+\cf2 //					  \};\cf0 \
+\cf2 //\cf0 \
+\cf2 //\cf0 \
+\cf2 //			   		   \cf0 \
+\cf2 //// ----------	\cf0 \
+\cf2 //\cf0 \
+\cf2 //		\cf0 \
+\cf2 //presetMenu 			= SCPopUpMenu(presetWindow,Rect(10,10,180,20));\cf0 \
+\cf2 //presetMenu.items 		= presetNames;\cf0 \
+\cf2 //presetMenu.background 	= Gradient(Color.blue,Color.green,\\h, 256);\cf0 \
+\cf2 //\cf0 \
+\cf2 //\cf0 \
+\cf2 //// modified (SL)\cf0 \
+\cf2 //\cf0 \
+\cf2 //presetMenu.action		= \{ var path;\cf0 \
+\cf2 //\cf0 \
+\cf2 //					    changeFromPlayerGUI = false;\cf0 \
+\cf2 //					    presetManager.presetName = presetMenu.items[presetMenu.value];\cf0 \
+\cf2 //			  	 	    historyPos = presetManager.lastID + 1;\cf0 \
+\cf2 //			  	 	    \cf0 \
+\cf2 //					    (path = presetDict[presetManager.presetName.asSymbol][\\path]).notNil\cf0 \
+\cf2 //						.if(\{ player.read(path) \}, \{ player.free \}); // should free buffer \cf0 \
+\cf2 //						pieceUpdater.value(presetDict[presetManager.presetName.asSymbol])\cf0 \
+\cf2 //						\cf0 \
+\cf2 //					  \};\cf0 \
+\cf2 //\cf0 \
+\cf2 //// -------------\cf0 \
+\cf2 //\cf0 \
+\cf2 //\cf0 \
+\cf2 //CmdPeriod.add(\{presetMenu.value_(0)\}); // jump to all clear\cf0 \
+\cf2 //\cf0 \
+\cf2 //SCStaticText.new(presetWindow, Rect(10,10,180,20)).string = "Select Preset";\cf0 \
+\cf2 //presetWindow.view.decorator.nextLine;\cf0 \
+\cf2 //\cf0 \
+\cf2 //\cf0 \
+\cf2 //// added (SL)\cf0 \
+\cf2 //\cf0 \
+\cf2 //addButton 			= SCButton.new(presetWindow, Rect(10,10,180,20));\cf0 \
+\cf2 //addButton.states 		= [[ "Add New Preset", Color.black,Color.clear ]];\cf0 \
+\cf2 //addButton.action 		= \{ newPresetGUIFunc.value("Untitled") \};\cf0 \
+\cf2 //\cf0 \
+\cf2 //// -------------\cf0 \
+\cf2 //\cf0 \
+\cf2 //presetWindow.view.decorator.nextLine;\cf0 \
+\cf2 //removeButton 			= SCButton.new(presetWindow, Rect(10,10,180,20));\cf0 \
+\cf2 //removeButton.states 	= [[ "Remove Current Preset", Color.black,Color.clear]];\cf0 \
+\cf2 //removeButton.action 	= \{ var index;\cf0 \
+\cf2 //					    index = presetMenu.value;\cf0 \
+\cf2 //					    (index > 0).if(\{ // protect all off\cf0 \
+\cf2 //							presetNames.removeAt(index);\cf0 \
+\cf2 //							presetMenu.items = presetNames;\cf0 \
+\cf2 //							presetMenu.valueAction_(index -1)\cf0 \
+\cf2 //						\})\cf0 \
+\cf2 //					  \};\cf0 \
+\cf2 //\cf0 \
+\cf2 //\cf0 \
+\cf2 //storeButton 			= SCButton.new(presetWindow, Rect(10,10,180,20));\cf0 \
+\cf2 //storeButton.states 	= [[ "Store Current Preset", Color.black, Color.clear ]];\cf0 \
+\cf2 //\cf0 \
+\cf2 //// modified (SL)\cf0 \
+\cf2 //storeButton.action 	= \{ var index;\cf0 \
+\cf2 //						\cf0 \
+\cf2 //					    index 		= presetMenu.value;\cf0 \
+\cf2 //					    \cf0 \
+\cf2 //					    (index > 0).if(\{ // protect all off\cf0 \
+\cf2 //							presetDict[presetManager.presetName.asSymbol] = \cf0 \
+\cf2 //								IdentityDictionary[\cf0 \
+\cf2 //									\\path -> player.path,\cf0 \
+\cf2 //									\\mackies -> BMAbstractController.allControllers.collect(\{|interface, name|\cf0 \
+\cf2 //										IdentityDictionary[\\labels -> interface.getAllLabels,\cf0 \
+\cf2 //											\\faders -> interface.getAllFaders]\cf0 \
+\cf2 //									\})\cf0 \
+\cf2 //									].deepCopy;\cf0 \
+\cf2 //							\cf0 \
+\cf2 //							BMAbstractAudioChainElement.allChainElements\cf0 \
+\cf2 //							 .keysValuesDo\{| key, value |\cf0 \
+\cf2 //					 			 presetDict[presetManager.presetName.asSymbol].add(key -> value.mappings.deepCopy)\cf0 \
+\cf2 //					 		  \};\cf0 \
+\cf2 //					    						\cf0 \
+\cf2 //						presetManager.add(presetDict[presetManager.presetName.asSymbol]);\cf0 \
+\cf2 //						historyPos = presetManager.lastID + 1;\cf0 \
+\cf2 //						historyTextFunc.value(historyPos)					     \})\cf0 \
+\cf2 //					   \};\cf0 \
+\cf2 //// -------------\cf0 \
+\cf2 //\cf0 \
+\cf2 //\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 //\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 //// added (SL)\cf0 \
+\cf2 //					   \cf0 \
+\cf2 //presetWindow.view.decorator.shift(0, 10);\cf0 \
+\cf2 //\cf0 \
+\cf2 //\cf0 \
+\cf2 //historyBackButton 		= SCButton(presetWindow, 24 @ 24)\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 //					  .states_([[ "<", Color.black, Color.clear ]])\cf0 \
+\cf2 //					  .action_(\{ var index, presetName, newVersion;\cf0 \
+\cf2 //					  \cf0 \
+\cf2 //					  			index 		= presetMenu.value;\cf0 \
+\cf2 //					  			if ((historyPos > 1).and(index > 0))\cf0 \
+\cf2 //					  			   \{ presetName	= presetManager.presetName;\cf0 \
+\cf2 //					  			     newVersion	= presetManager.get(historyPos - 1).deepCopy; \cf0 \
+\cf2 //					  			    \cf0 \
+\cf2 //					  			     if (historyPos == (presetManager.lastID + 1)) \cf0 \
+\cf2 //					  			    	    \{ versionNotStored = \cf0 \
+\cf2 //					  			    	   		IdentityDictionary[\cf0 \
+\cf2 //												\\path -> player.path,\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 //												\\mackies -> BMAbstractController.allControllers.collect(\{|interface, name|\cf0 \
+\cf2 //												               IdentityDictionary[ \\labels -> interface.getAllLabels,\cf0 \
+\cf2 //												                                   \\faders -> interface.getAllFaders\cf0 \
+\cf2 //												               ]\cf0 \
+\cf2 //												            \})\cf0 \
+\cf2 //									         ].deepCopy;\cf0 \
+\cf2 //									      BMAbstractAudioChainElement.allChainElements\cf0 \
+\cf2 //									       .keysValuesDo\{| key, value |\cf0 \
+\cf2 //									       		         versionNotStored.add(key -> value.mappings.deepCopy)\cf0 \
+\cf2 //					 		  					      \};\cf0 \
+\cf2 //									    \};\cf0 \
+\cf2 //					  			    \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 //					  			     historyPos = historyPos - 1;\cf0 \
+\cf2 //					  			    \cf0 \
+\cf2 //					  			     if (player.path != newVersion[\\path])\cf0 \
+\cf2 //					  			    	   \{ changeFromPlayerGUI = false;\cf0 \
+\cf2 //					  			    	     if (newVersion[\\path].notNil) \{ player.read(newVersion[\\path]) \} \{ player.free \} \cf0 \
+\cf2 //					  			    	   \};\cf0 \
+\cf2 //					  			    	 pieceUpdater.value(newVersion)\cf0 \
+\cf2 //					  			   \}\cf0 \
+\cf2 //					  \});\cf0 \
+\cf2 //					\cf0 \
+\cf2 //historyText			= SCStaticText(presetWindow, 112 @ 20).align_(\\center);\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 //historyTextFunc		= \{| position | \cf0 \
+\cf2 //					   historyText.string = if (presetManager.presetName == "all off") \cf0 \
+\cf2 //									        \{ "Without History" \}\cf0 \
+\cf2 //									        \{ if (position == (presetManager.lastID + 1))\cf0 \
+\cf2 //											    \{ "Current Version" \}\cf0 \
+\cf2 //											    \{ "Version No." + position \}\cf0 \
+\cf2 //										    \}\cf0 \
+\cf2 //					  \};\cf0 \
+\cf2 //					  \cf0 \
+\cf2 //historyTextFunc.value(historyPos = presetManager.lastID);\cf0 \
+\cf2 //\cf0 \
+\cf2 //historyFwdButton 		= SCButton(presetWindow, 24 @ 24)\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 //					   .states_([[ ">", Color.black, Color.clear ]])\cf0 \
+\cf2 //					   .action_(\{ var index, presetName, newVersion;\cf0 \
+\cf2 //					   \cf0 \
+\cf2 //					   			index 		= presetMenu.value;\cf0 \
+\cf2 //					   			if ((historyPos < (presetManager.lastID + 1)).and(index > 0))\cf0 \
+\cf2 //					   			   \{ presetName	 = presetManager.presetName; 			     					  			     \cf0 \
+\cf2 //					  			     if (historyPos == presetManager.lastID)\cf0 \
+\cf2 //					  			  	    \{ newVersion = versionNotStored.deepCopy \}\cf0 \
+\cf2 //					  			  	    \{ newVersion = presetManager.get(historyPos + 1).deepCopy \};\cf0 \
+\cf2 //					\cf0 \
+\cf2 //					  			      historyPos = historyPos + 1;\cf0 \
+\cf2 //\cf0 \
+\cf2 //					  			      if (player.path != newVersion[\\path]) \cf0 \
+\cf2 //					  			    	    \{ changeFromPlayerGUI = false;\cf0 \
+\cf2 //					  			    	      if (newVersion[\\path].notNil) \{ player.read(newVersion[\\path]) \} \{ player.free \} \cf0 \
+\cf2 //					  			    	    \};\cf0 \
+\cf2 //					  			    	  pieceUpdater.value(newVersion)\cf0 \
+\cf2 //					   			    \}\cf0 \
+\cf2 //					   		   \});\cf0 \
+\cf2 //						\cf0 \
+\cf2 //\cf0 \
+\cf2 //\cf0 \
+\cf2 //SCStaticText.new(presetWindow, Rect(10,10,180,20)).string = "Preset Version History";\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 //\cf0 \
+\cf2 //presetWindow.view.decorator.shift(0, 10);\cf0 \
+\cf2 //\cf0 \
+\cf2 //\cf0 \
+\cf2 //// -------------\cf0 \
+\cf2 //\cf0 \
+\cf2 //\cf0 \
+\cf2 //SCStaticText.new(presetWindow, Rect(10,10,180,20)).string = "Import / Export";\cf0 \
+\cf2 //presetWindow.view.decorator.nextLine;\cf0 \
+\cf2 //\cf0 \
+\cf2 //exportButton 			= SCButton.new(presetWindow, Rect(10,10,180,20));\cf0 \
+\cf2 //exportButton.states 	= [[ "Export this Preset", Color.black, Color.new255(72, 61, 139).alpha_(0.6) ]];\cf0 \
+\cf2 //exportButton.background	= Color.clear;\cf0 \
+\cf2 //exportButton.action 	= \{ CocoaDialog.savePanel(\{|path| \cf0 \
+\cf2 //							presetDict[presetMenu.items[presetMenu.value].asSymbol].writeTextArchive(path);\cf0 \
+\cf2 //						\})\cf0 \
+\cf2 //					  \};\cf0 \
+\cf2 //\cf0 \
+\cf2 //importButton 			= SCButton.new(presetWindow, Rect(10,10,180,20));\cf0 \
+\cf2 //importButton.states 	= [[ "Import a Preset", Color.black, Color.clear ]];\cf0 \
+\cf2 //importButton.action 	= \{ CocoaDialog.getPaths(\{|paths| \cf0 \
+\cf2 //						 var recalled, name, indexOfEqual;\cf0 \
+\cf2 //						\cf0 \
+\cf2 //						 recalled 		= Object.readTextArchive(paths[0]);\cf0 \
+\cf2 //						 \cf0 \
+\cf2 //						 name			= paths[0].basename.splitext[0]; \cf0 \
+\cf2 //						 presetManager.presetName = name;\cf0 \
+\cf2 //						 presetManager.add(recalled);\cf0 \
+\cf2 //					 	 presetDict[name.asSymbol] = recalled;\cf0 \
+\cf2 //		 		   		 indexOfEqual		= presetNames.indexOfEqual(name);\cf0 \
+\cf2 //		 		   		 if (indexOfEqual.isNil)\cf0 \
+\cf2 // 		   			  	    \{ presetNames      		 = presetNames.add(presetManager.presetName);\cf0 \
+\cf2 // 		   			  	      presetMenu.items 		 = presetNames;\cf0 \
+\cf2 // 		   			  	      presetMenu.valueAction = presetNames.lastIndex\cf0 \
+\cf2 // 		   			  	    \}\cf0 \
+\cf2 // 		   			  	    \cf0 \
+\cf2 // 		   			  	    \{ presetMenu.valueAction = presetMenu.items.indexOfEqual(name) \}\cf0 \
+\cf2 //						 \cf0 \
+\cf2 //\cf0 \
+\cf2 //					    \}, maxSize:1)\cf0 \
+\cf2 //					   \};		\cf0 \
+\
+\cf2 // old preset window - until here\cf0 \
+\
+\cf2 // auto load presets\cf0 \
+\cf2 //\{\cf0 \
+\cf2 //	var recalled;\cf0 \
+\cf2 //	recalled = Object.readTextArchive("/Users/admin1/Desktop/BEAST\\ matrix/Vivid\\ Presets");\cf0 \
+\cf2 //	presetNames = recalled[\\presetNames];\cf0 \
+\cf2 //	presetMenu.items = presetNames;\cf0 \
+\cf2 //	presetDict = recalled[\\presetDict];\cf0 \
+\cf2 //	presetMenu.valueAction_(0);\cf0 \
+\cf2 //\}.value;\cf0 \
+\cf2 //\cf0 \
+\cf2 //	\cf0 \
+\cf2 //						\cf0 \
+\cf2 //						\cf0 \
+\cf2 //						\cf0 \
+\cf2 //		\cf0 \
+\cf2 //~curve 				= \\sine;\cf0 \
+\cf2 //\cf0 \
+\cf2 //~interpolFunc			= \{| dur = 3, name = "up" |\cf0 \
+\cf2 //						var from, to, envs, time = 0, wait = 0.01, fadersDict, toControllersDict;\cf0 \
+\cf2 //						\cf0 \
+\cf2 //						\cf0 \
+\cf2 //						\cf0 \
+\cf2 //						from 	   	= IdentityDictionary[]; // current state\cf0 \
+\cf2 //						to			= IdentityDictionary[]; // next state\cf0 \
+\cf2 //						envs			= IdentityDictionary[]; // interpolation\cf0 \
+\cf2 //						\cf0 \
+\cf2 //						\cf0 \
+\cf2 //						// get the initial state\cf0 \
+\cf2 //						\cf0 \
+\cf2 //						BMAbstractController\cf0 \
+\cf2 //						   .allControllers\cf0 \
+\cf2 //						   .keysValuesDo(\{| name,  aController|\cf0 \
+\cf2 //								         from.add(name -> aController.getAllFaders)\cf0 \
+\cf2 //						    \});\cf0 \
+\cf2 //									 	     \cf0 \
+\cf2 //						"from faders:".postln; \cf0 \
+\cf2 //						from.keysValuesDo\{| key, value | [ key, value ].postcs \};\cf0 \
+\cf2 //						\cf0 \
+\cf2 //						presetManager.presetName	= name;						toControllersDict			= presetManager.get(presetManager.lastID)[\\mackies]; // mackies == controllers\cf0 \
+\cf2 //						\cf0 \
+\cf2 //						\cf0 \
+\cf2 //						// get the next state\cf0 \
+\cf2 //						\cf0 \
+\cf2 //						toControllersDict\cf0 \
+\cf2 //							.keysValuesDo(\{| name,  aController | \cf0 \
+\cf2 //							      	      to.add(name -> aController[\\faders]).deepCopy \cf0 \
+\cf2 //							 \});\cf0 \
+\cf2 //						\cf0 \
+\cf2 //						"next faders:".postln; \cf0 \
+\cf2 //						to.keysValuesDo\{| key, value | [ key, value ].postcs \};\cf0 \
+\cf2 //						\cf0 \
+\cf2 //						presetManager.presetName	= presetNames[0]; // why?\cf0 \
+\cf2 //												\cf0 \
+\cf2 //						\cf0 \
+\cf2 //						from.keysValuesDo\{| key, value |\cf0 \
+\cf2 //							         envs.add(key -> \cf0 \
+\cf2 //							         		    value.collect\{| faderValue, j | \cf0 \
+\cf2 //							          			Env([ faderValue, to[key][j] ], [ dur ], ~curve) \cf0 \
+\cf2 //							                  \}\cf0 \
+\cf2 //							         ) \cf0 \
+\cf2 //							\};\cf0 \
+\cf2 //\cf0 \
+\cf2 //						"envs:".postln; \cf0 \
+\cf2 //						envs.keysValuesDo\{| key, value | [ key, value ].postcs \};\cf0 \
+\cf2 //\cf0 \
+\cf2 //						\\beforeFork.postln;\cf0 \
+\cf2 //												\cf0 \
+\cf2 //						fork\{\cf0 \
+\cf2 //							etherSense.stopListening;\cf0 \
+\cf2 //							((dur/wait) - 1)\cf0 \
+\cf2 //									.do\{| item, i |\cf0 \
+\cf2 //										\cf0 \
+\cf2 //										time 	= time + wait;\cf0 \
+\cf2 //										BMAbstractController\cf0 \
+\cf2 //											.allControllers.keysValuesDo(\{| name,  aController|\cf0 \
+\cf2 //												aController\cf0 \
+\cf2 //												 .setAllFaders(\cf0 \
+\cf2 //												  envs[name].collect\{| faderEnv, k | faderEnv[time] \}.postln\cf0 \
+\cf2 //												  )\cf0 \
+\cf2 //										      \});\cf0 \
+\cf2 //										\cf0 \
+\cf2 //										wait.wait\cf0 \
+\cf2 //	\cf0 \
+\cf2 //							\};\cf0 \
+\cf2 //							etherSense.startListening\cf0 \
+\cf2 //						\};\cf0 \
+\cf2 //\};\cf0 \
+\cf2 //~dur = 1;\cf0 \
+		\
+						\
+									\
+\}.defer(1);						\
+\}).play(\cf3 AppClock\cf0 );						\
+)\
+}
