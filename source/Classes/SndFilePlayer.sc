@@ -24,9 +24,10 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 		if(group.isNil, {this.makeGroup});
 		CmdPeriod.add(this);
 		OSCresponderNode(this.server.addr,'/tr',{ arg time,responder,msg;
-			this.changed(\time, msg.last * this.sampleDur);
+			this.changed(\time, msg.last * this.sampleDur, rate, time);
 		}).add;
 		allChainElements[name] = this;
+		BMTimeSource.addReference(this);
 	}
 	
 	read {|path, action|
@@ -109,7 +110,18 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 		
 	}
 	
-	stop { synth.isPlaying.if({blockPlay = true; synth.release; watcher.stop; synth = nil; rate = 1; this.changed(\stop); SystemClock.sched(1.0, {blockPlay = false;});}) }
+	stop { 
+		synth.isPlaying.if({
+			blockPlay = true;
+			synth.release; 
+			watcher.stop; 
+			synth = nil; 
+			rate = 1; 
+			this.changed(\stop); 
+			this.changed(\time, 0, 0, Main.elapsedTime); // not sure about this
+			SystemClock.sched(1.0, {blockPlay = false;});
+		}) 
+	}
 	
 	pause { this.rate = 0; } // maybe use run here
 	
