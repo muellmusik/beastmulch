@@ -7,7 +7,7 @@ BMAbstractMackie : BMAbstractController {
 	var <>sysexHdr, faderRoutine;
 	
 	*new { |uid, name, server|
-		^super.new.init(uid, name, server ? Server.default);
+		^super.new.init(uid, name, server ? Server.default).addControlsToIndex;
 	}
 	
 	startListening { 

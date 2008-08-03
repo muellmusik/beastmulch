@@ -11,7 +11,7 @@ BMEtherSense : BMAbstractController {
 	
 	// address should be with port 57120 (sclang)
 	*new { |addr, name, server|
-		^super.new.init(addr, name, server ? Server.default);
+		^super.new.init(addr, name, server ? Server.default).addControlsToIndex;
 	}
 	
 	init { |argaddr, argname, argserver|

@@ -5,7 +5,7 @@
 BMVirtualController : BMAbstractController {
 
 	*new { |name, server, numFaders = 8|
-		^super.new.init(name, server ? Server.default, numFaders);
+		^super.new.init(name, server ? Server.default, numFaders).addControlsToIndex;
 	}
 	
 	init { |argname, argserver, argnumFaders|
