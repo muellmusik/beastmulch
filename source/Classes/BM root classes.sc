@@ -138,6 +138,7 @@ BMAbstractController {
 	acceptsAutomation { ^false }
 }
 
+// don't make these yourself
 BMControl {
 	var <name, <controller, <ctrlNum, <>mapped = false;
 	
