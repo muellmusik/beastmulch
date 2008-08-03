@@ -109,11 +109,11 @@ BMAbstractMackie : BMAbstractController {
 	setAllLabels { |array| { array.do({|item, i| this.setLabel(i+1, item); 0.1.wait}); }.fork}
 	
 	// for faders
-	getInputArray {
-		^this.faderNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
-	}
+//	getInputArray {
+//		^this.faderNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
+//	}
 	
-	faderNames {^Array.fill(numFaders, {|i| name.asString ++ "-" ++ (i+1)})}
+	//faderNames {^Array.fill(numFaders, {|i| name.asString ++ "-" ++ (i+1)})}
 
 	acceptsAutomation { ^true }
 }
@@ -163,9 +163,9 @@ MackieCU : BMAbstractMackie {
 	
 	setNumFaders { numFaders = 9; }
 	
-	faderNames { ^Array.fill(numFaders - 1, {|i| name.asString ++ "-" ++ (i+1)})
-		//.add(name.asString ++ "-mstr")
-	}
+//	faderNames { ^Array.fill(numFaders - 1, {|i| name.asString ++ "-" ++ (i+1)})
+//		//.add(name.asString ++ "-mstr")
+//	}
 	
 	// later allow for precision
 	setTimeString {|timeString|

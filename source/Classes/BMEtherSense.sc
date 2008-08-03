@@ -62,11 +62,11 @@ BMEtherSense : BMAbstractController {
 	}
 	
 	// for faders
-	getInputArray {
-		^this.faderNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
-	}
+//	getInputArray {
+//		^this.faderNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
+//	}
 	
-	faderNames {^Array.fill(numFaders, {|i| name.asString ++ "-" ++ (i+1)})}
+//	faderNames {^Array.fill(numFaders, {|i| name.asString ++ "-" ++ (i+1)})}
 	
 	// perhaps this should be more generalised and named something else like 'preset'
 	mappings {

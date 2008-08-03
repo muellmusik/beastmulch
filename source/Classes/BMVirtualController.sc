@@ -48,11 +48,11 @@ BMVirtualController : BMAbstractController {
 	
 	setAllLabels {|array| array.do({|item, i| this.setLabel(i+1, item);}); }
 	
-	getInputArray {
-		^this.faderNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
-	}
+//	getInputArray {
+//		^this.faderNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
+//	}
 	
-	faderNames {^Array.fill(numFaders, {|i| name.asString ++ "-" ++ (i+1)})}
+//	faderNames {^Array.fill(numFaders, {|i| name.asString ++ "-" ++ (i+1)})}
 
 	acceptsAutomation { ^true }
 }

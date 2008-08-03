@@ -68,15 +68,34 @@ BMAbstractAudioSource : BMAbstractAudioChainElement {
 // valueArray holds the controller value in its native form
 // setFaderValue should convert to 0-1 and send to the bus 
 BMAbstractController {
-	classvar <allControllers;
+	classvar <allControllers, <allControls;
 	var <name, <bus, <busIndex, valueArray, labelArray, <server, <numFaders;
+	
+//	*new {
+//		^super.new.addValuesToIndex;
+//	}
 	
 	*initClass {
 		allControllers = IdentityDictionary.new;
+		allControls = IdentityDictionary.new;
 	}
 	
 	*dumpAllValues {
 		^allControllers.collect({|elem, key| key->(elem.getAllFaders)});
+	}
+	
+	*getValueByName{|ctrlName|
+		^allControls[ctrlName].value;
+	}
+	
+	*setValueByName{|ctrlName, val|
+		allControls[ctrlName].value_(val);
+	}
+	
+	addControlsToIndex {
+		this.faderNames.do({|ctrlName, i|
+			allControls[ctrlName] = BMControl(ctrlName, this, i + 1);
+		});
 	}
 	
 	getFaderVal { |faderNum| ^this.subclassResponsibility(thisMethod) }
@@ -87,19 +106,23 @@ BMAbstractController {
 	
 	setAllFaders {|array| this.subclassResponsibility(thisMethod)}
 	
+	setFaders {|array| this.subclassResponsibility(thisMethod)} 
+	
 	setLabel { |fader, name|
 		this.subclassResponsibility(thisMethod)
 	}
 	
-	getLabel { |fader| ^this.subclassResponsibility(thisMethod) }
+	// by default controllers have no labels
+	getLabel { |fader| ^nil }
 	
-	getAllLabels { ^this.subclassResponsibility(thisMethod) }
+	getAllLabels { ^nil}
 	
-	setAllLabels { |array| this.subclassResponsibility(thisMethod)}
+	setAllLabels { |array| }
 	
-	// for faders
+	faderNames {^Array.fill(numFaders, {|i| name.asString ++ "-" ++ (i+1)})}
+	
 	getInputArray {
-		^this.subclassResponsibility(thisMethod);
+		^this.faderNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
 	}
 	
 	// perhaps this should be more generalised and named something else like 'preset'
@@ -113,6 +136,18 @@ BMAbstractController {
 	}
 	
 	acceptsAutomation { ^false }
+}
+
+BMControl {
+	var <name, <controller, <ctrlNum, <>mapped = false;
+	
+	*new {|name, controller, ctrlNum|
+		^super.newCopyArgs(name, controller, ctrlNum);
+	}
+	
+	value {^controller.getFaderVal(ctrlNum) }
+	
+	value_ {|val| controller.setFaderVal(ctrlNum, val) }
 }
 
 BMAbstractGUI {
