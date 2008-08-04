@@ -181,9 +181,12 @@ BMConcertGUI  {
 				
 		loadButton.action 			= {| view |  
 								   if (selectable)
-								   	 { concertManager.loadAt(concertListView.value);
-								   	   view.states = loadButtonStates.pieceLoaded;
-								   	   pieceLoaded = true
+								   	 { if (pieceLoaded.not)
+								   	 	  { concertManager.loadAt(concertListView.value);
+								   	 	    view.states = loadButtonStates.pieceLoaded;
+								   	 	    pieceLoaded = true
+								   	 	  }
+								   	 	  { ("The Piece \"" ++ concertListView.item ++ "\" has already been loaded").inform }
 								   	 }
 								  };
 		
@@ -197,162 +200,162 @@ BMConcertGUI  {
 			
 		SCStaticText.new(buttonSection, 180 @ 20).string = "Import / Export:";
 		
-		importPopUpMenu		= SCPopUpMenu(buttonSection, 180 @ 20)
-							   .items_([ " ",
-							   		    "Import Concert", "Export Concert", "-",
-							   		    "Import Piece", "Export Piece", "-",
-							   		    "Import Configuration", "Export Configuration"   
-							   		  ])
-							   .background_(Color.white)
-							   .action_({| view |
-							   	  switch(view.value,
-							   	   	1,
-							   	   	{ CocoaDialog.getPaths({| path | 
-										var recalled;
-										
-										recalled = Object.readTextArchive(path[0]);
-										concertManager.concert.pieces = recalled.concert.pieces.deepCopy;
-										configManager.currentConfig_('all off', \concertEditor);
-										configManager.clear;
-										
-										if (recalled.configurations.names.indexOf('all off').notNil)
-											{ recalled.configurations.dict.removeAt('all off');
-											  recalled.configurations.names.removeAt(recalled.configurations.names.indexOf('all off'))
-											};
-										
-										recalled.configurations.names
-											.do{| name | 
-												configManager.dict.add(name -> recalled.configurations.dict[name])
-											   };
-										configManager.names = configManager.names ++ recalled.configurations.names;
-										if (selectable.not) { this.listViewSelection(selectable = true) };
-										concertListView.action.value(0);
-										concertManager.backupManager.makeSessionBackup(concertManager, configManager);
-										}, maxSize: 1);
+		importPopUpMenu = SCPopUpMenu(buttonSection, 180 @ 20)
+					   .items_([ " ",
+					   		    "Import Concert", "Export Concert", "-",
+					   		    "Import Piece", "Export Piece", "-",
+					   		    "Import Configuration", "Export Configuration"   
+					   		  ])
+					   .background_(Color.white)
+					   .action_({| view |
+					   	  switch(view.value,
+					   	   	1,
+					   	   	{ CocoaDialog.getPaths({| path | 
+								var recalled;
+								
+								recalled = Object.readTextArchive(path[0]);
+								concertManager.concert.pieces = recalled.concert.pieces.deepCopy;
+								configManager.currentConfig_('all off', \concertEditor);
+								configManager.clear;
+								
+								if (recalled.configurations.names.indexOf('all off').notNil)
+									{ recalled.configurations.dict.removeAt('all off');
+									  recalled.configurations.names.removeAt(recalled.configurations.names.indexOf('all off'))
+									};
+								
+								recalled.configurations.names
+									.do{| name | 
+										configManager.dict.add(name -> recalled.configurations.dict[name])
+									   };
+								configManager.names = configManager.names ++ recalled.configurations.names;
+								if (selectable.not) { this.listViewSelection(selectable = true) };
+								concertListView.action.value(0);
+								concertManager.backupManager.makeSessionBackup(concertManager, configManager);
+								}, maxSize: 1);
 
-									 },
-									 
-									 2,
-									 {  CocoaDialog.savePanel({| path | 
-									 	this.prepareForExport.writeTextArchive(path);
-									 	concertManager.backupManager.makeSessionBackup(concertManager, configManager) 
-									    })
-							  		 },
-							  		  
-							  		 4,
-							  		 { CocoaDialog.getPaths({| path | 
-										var piece, configuration, pieceAndConfig, completion;
-										
-										pieceAndConfig = Object.readTextArchive(path[0]);
-										piece = pieceAndConfig.piece;
-										configuration = pieceAndConfig.config;
-										completion = { concertManager.add(piece, concertListView.value);
-												      pieceAndConfig = (piece: piece, config: configuration);
-												      configManager.backupManager.makeSessionBackup(concertManager, configManager)
-							   	  				         .add(\piece, piece.name, pieceAndConfig);
-							   	  				      if (selectable.not) { this.listViewSelection(selectable = true) };
-							   	  				      concertListView.valueAction = concertListView.value + 1
-												    };
-												    
-										this.makeNewNameWindow(
-											piece.name, 
-											concertManager.concert.pieces.collect{| e | e.name },
-											{| newName | 
-							  				piece.name = newName;
-							  				if (configManager.names.any{| e | e == piece.config })
-							  				 { if (configuration.value != configManager.dict[piece.config])
-							  				   	    
-							  					{ BMAlert("The name of the Configuration used by this Piece is already in use by a different Configuration.", 
-					   			        			    [[ "Rename it", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ],
-					   			        			     [ "Use current", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ]
-					   			        			    ],
-					   			        			    [ { this.makeNewNameWindow(
-					   			        			          piece.config, 
-					   			        			          configManager.names, 
-					   			        			          {| newName | 
-					   			        			           piece.config = newName;
-					   			        			           configuration = newName -> configuration.value;
-					   			        			           configManager.add(configuration);
-					   			        			           completion.value;
-					   			        			           configManager.backupManager.add(\configuration, configuration.key, configuration)
-					   			        			           }
-												        )
-												      },
-												      { configuration.value = configManager.dict[piece.config];
-												        completion.value 
-												      }
-					   			        			    ],
-					   			        			    background: Color.white, color: Color.red, border:false
-					   			        			  );
-					   			        			  
-							  					}
-							  					{ completion.value };
-						   					}
-						   					{ configManager.add(configuration);
-						   					  completion.value
-						   					} 
-						   				}
-										)
-									 }, maxSize: 1)
-									 },
-							  		 
-							  		 5, 
-							  		 { if (selectable and: { concertListView.items.size > 0 }) 
-							  		 	  {  CocoaDialog.savePanel({| path | 
-							  		 	  		var piece, configuration, pieceAndConfig;
-							  		 	  		
-							  		 	  		piece = concertManager.concert.pieces[concertListView.value].deepCopy;
-							  		 	  		configuration = piece.config -> configManager.dict[piece.config].deepCopy;
-							  		 	  		pieceAndConfig = (piece: piece, config: configuration);
-							  		 	  		pieceAndConfig.writeTextArchive(path);
-							  		 	  		configManager.backupManager.makeSessionBackup(concertManager, configManager)
-												             .add(\piece, piece.name, pieceAndConfig)
-												             .add(\configuration, configuration.key, configuration)
-											})
-										  }
-							  		 	  { BMAlert( "Please select a Piece", 
-				   			        			 [[ "OK", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ]],
-				   			        			 background: Color.white, color: Color.red, border:false
-				   			        	 		) 
-				   			          	  }
-							  		 },
-									 
-									 7, 
-							  		 { CocoaDialog.getPaths({| path | 
-										var configuration;
-										
-										configuration = Object.readTextArchive(path[0]);
-										this.makeNewNameWindow(
-											configuration.key, 
-											configManager.names, 
-											{| newName | 
-											  configuration = newName -> configuration.value;
-											  configManager.add(configuration);
-											  configManager.backupManager.makeSessionBackup(concertManager, configManager)
-									 	       	          .add(\configuration, configuration.key, configuration)
-									 	     }
-										)
-									 }, maxSize: 1)
-									 },
-									 
-									 8,
-									 { this.makeSelectConfigurationWindow(
-									   	{| configName | 
-									   	 var configuration;
-									   	
-									   	 configuration = configName -> configManager.dict[configName].deepCopy;
-									   	 CocoaDialog.savePanel({| path | 
-									   	 	configuration.writeTextArchive(path);
-									   	 	configManager.backupManager.makeSessionBackup(concertManager, configManager)
-									 			.add(\configuration, configuration.key, configuration)
-									 	 })
-							  		     }
-							  		   )
-							  		 }
-							  	);
-							  	
-							  	view.value = 0
-							  });
+							 },
+							 
+							 2,
+							 {  CocoaDialog.savePanel({| path | 
+							 	this.prepareForExport.writeTextArchive(path);
+							 	concertManager.backupManager.makeSessionBackup(concertManager, configManager) 
+							    })
+					  		 },
+					  		  
+					  		 4,
+					  		 { CocoaDialog.getPaths({| path | 
+								var piece, configuration, pieceAndConfig, completion;
+								
+								pieceAndConfig = Object.readTextArchive(path[0]);
+								piece = pieceAndConfig.piece;
+								configuration = pieceAndConfig.config;
+								completion = { concertManager.add(piece, concertListView.value);
+										      pieceAndConfig = (piece: piece, config: configuration);
+										      configManager.backupManager.makeSessionBackup(concertManager, configManager)
+					   	  				         .add(\piece, piece.name, pieceAndConfig);
+					   	  				      if (selectable.not) { this.listViewSelection(selectable = true) };
+					   	  				      concertListView.valueAction = concertListView.value + 1
+										    };
+										    
+								this.makeNewNameWindow(
+									piece.name, 
+									concertManager.concert.pieces.collect{| e | e.name },
+									{| newName | 
+					  				piece.name = newName;
+					  				if (configManager.names.any{| e | e == piece.config })
+					  				 { if (configuration.value != configManager.dict[piece.config])
+					  				   	    
+					  					{ BMAlert("The name of the Configuration used by this Piece is already in use by a different Configuration.", 
+			   			        			    [[ "Rename it", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ],
+			   			        			     [ "Use current", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ]
+			   			        			    ],
+			   			        			    [ { this.makeNewNameWindow(
+			   			        			          piece.config, 
+			   			        			          configManager.names, 
+			   			        			          {| newName | 
+			   			        			           piece.config = newName;
+			   			        			           configuration = newName -> configuration.value;
+			   			        			           configManager.add(configuration);
+			   			        			           completion.value;
+			   			        			           configManager.backupManager.add(\configuration, configuration.key, configuration)
+			   			        			           }
+										        )
+										      },
+										      { configuration.value = configManager.dict[piece.config];
+										        completion.value 
+										      }
+			   			        			    ],
+			   			        			    background: Color.white, color: Color.red, border:false
+			   			        			  );
+			   			        			  
+					  					}
+					  					{ completion.value };
+				   					}
+				   					{ configManager.add(configuration);
+				   					  completion.value
+				   					} 
+				   				}
+								)
+							 }, maxSize: 1)
+							 },
+					  		 
+					  		 5, 
+					  		 { if (selectable and: { concertListView.items.size > 0 }) 
+					  		 	  {  CocoaDialog.savePanel({| path | 
+					  		 	  		var piece, configuration, pieceAndConfig;
+					  		 	  		
+					  		 	  		piece = concertManager.concert.pieces[concertListView.value].deepCopy;
+					  		 	  		configuration = piece.config -> configManager.dict[piece.config].deepCopy;
+					  		 	  		pieceAndConfig = (piece: piece, config: configuration);
+					  		 	  		pieceAndConfig.writeTextArchive(path);
+					  		 	  		configManager.backupManager.makeSessionBackup(concertManager, configManager)
+										             .add(\piece, piece.name, pieceAndConfig)
+										             .add(\configuration, configuration.key, configuration)
+									})
+								  }
+					  		 	  { BMAlert( "Please select a Piece", 
+		   			        			 [[ "OK", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ]],
+		   			        			 background: Color.white, color: Color.red, border:false
+		   			        	 		) 
+		   			          	  }
+					  		 },
+							 
+							 7, 
+					  		 { CocoaDialog.getPaths({| path | 
+								var configuration;
+								
+								configuration = Object.readTextArchive(path[0]);
+								this.makeNewNameWindow(
+									configuration.key, 
+									configManager.names, 
+									{| newName | 
+									  configuration = newName -> configuration.value;
+									  configManager.add(configuration);
+									  configManager.backupManager.makeSessionBackup(concertManager, configManager)
+							 	       	          .add(\configuration, configuration.key, configuration)
+							 	     }
+								)
+							 }, maxSize: 1)
+							 },
+							 
+							 8,
+							 { this.makeSelectConfigurationWindow(
+							   	{| configName | 
+							   	 var configuration;
+							   	
+							   	 configuration = configName -> configManager.dict[configName].deepCopy;
+							   	 CocoaDialog.savePanel({| path | 
+							   	 	configuration.writeTextArchive(path);
+							   	 	configManager.backupManager.makeSessionBackup(concertManager, configManager)
+							 			.add(\configuration, configuration.key, configuration)
+							 	 })
+					  		     }
+					  		   )
+					  		 }
+					  	);
+					  	
+					  	view.value = 0
+					  });
 
 	    this.update; 
 	    this.listViewSelection(selectable = false);
@@ -471,6 +474,7 @@ BMConcertGUI  {
 							{| newName | 
 							  event.add(\name -> newName);
 						   	  concertManager.add(event, concertListView.value);
+						   	  concertManager.backupManager.makeSessionBackup(concertManager, configManager);
 						   	  if (selectable.not) { this.listViewSelection(selectable = true) };
 						   	  concertListView.valueAction = concertListView.value + 1
 						   	}

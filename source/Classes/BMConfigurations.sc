@@ -14,6 +14,7 @@ BMConfigurations {
    	 	   { dict		= IdentityDictionary[];
    	 	     names	= List['all off'];
    	 	   };
+		
 		this.addAllOff;
 		CmdPeriod.add(this)  
 	}
@@ -74,6 +75,22 @@ BMConfigurations {
 		    names.removeAt(configurationIndex);
 		    this.changed(\removeAt)
 	}
+	
+	store {| name, concertManager |
+	
+	       if (name != 'all off')
+	       	 { dict[name] = IdentityDictionary[];
+		        BMAbstractAudioChainElement.allChainElements
+				 .keysValuesDo{| key, value |
+		 			 dict[name].add(key -> value.mappings.deepCopy)
+		 		  };
+		 	   this.backupManager
+				   .makeSessionBackup(concertManager, this)
+				   .add(\configuration, name, name -> dict[name].deepCopy)
+		 	 }
+ 		  	 { "The Configuration \"all off\" cannot be modified".error }
+	}
+	
 	
 	loadConfig {| configName |
 		   "loadConfig was called".postln;
@@ -279,22 +296,7 @@ BMConfigurationsGUI : BMAbstractGUI {
 		configView.decorator.shift(6, 0); 				
 		storeButton			= RoundButton(configView, 46 @ 20).extrude_(false).canFocus_(false)
 				 		 	 .font_(Font("Arial", 11)).states_([["Store", Color.black,  Color.white.alpha_(0.8) ]])
-				 		 	 .action_({ var name;
-				
-								        name = configListView.item;
-								        if (name != 'all off')
-								           {  configurations.dict[name] = IdentityDictionary[];
-											BMAbstractAudioChainElement.allChainElements
-											 .keysValuesDo{| key, value |
-									 			 configurations.dict[name].add(key -> value.mappings.deepCopy)
-									 		  };
-									 		configurations.backupManager
-									 			          .makeSessionBackup(concertManager, configurations)
-									 			          .add(\configuration, name, name -> configurations.dict[name].deepCopy)
-								 		  }
-								 		  { "The Configuration \"all off\" cannot be modified".error }
-					     	  });
-
+				 		 	 .action_({ configurations.store(configListView.item, concertManager) });
 
 		chainView				= SCScrollView(window, 465 @ 435).hasBorder_(false);
 		if(width <= 465, { chainView.hasHorizontalScroller = false });
@@ -411,16 +413,12 @@ BMConfigurationsGUI : BMAbstractGUI {
 				   				
 				   				 window.close;
 				   				  if (method == "New")
-				   				  	{ configurations.add(name -> configurations.dict['all off'].deepCopy, 
-				   				  				       configListView.value
-				   				  	  ) 
-				   				  	}
-				   				  	{ configurations.add(name -> configurations.dict[configListView.item].deepCopy,
-				   				  				       configListView.value
-				   				  	  ) 
-				   				  	};
-				   				   configListView.value = configListView.value + 1;
-				   				   configurations.currentConfig_(name, \configurationEditor);
+				   				  	{ configurations.add(name -> configurations.dict['all off'].deepCopy, configListView.value) }
+				   				  	{ configurations.add(name -> configurations.dict[configListView.item].deepCopy, configListView.value) };
+				   				  configurations.currentConfig_(name, \configurationEditor);
+				   				  configurations.store(name, concertManager);
+				   				  configListView.value = configListView.value + 1;
+				   				  
 				   				 }
 				   				 
 				   				 

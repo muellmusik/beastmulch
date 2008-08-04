@@ -110,6 +110,10 @@ BMBackup {
 	 			  if (preferences.notNil) { ^preferences[key] } { ^nil }
 	 }
 	 
+	 update {| changed, change |
+	 		
+	 		
+	 }
 	 			  
 	 
 //	storedPresets {

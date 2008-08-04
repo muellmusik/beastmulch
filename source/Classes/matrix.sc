@@ -257,6 +257,7 @@ BMInOutArray : List {
 		index = keys.indexOf(assoc.key);
 		index.isNil.if({array = array.add(assoc); keys = keys.add(assoc.key);},
 			{array.put(index, assoc)});
+		this.changed;
 	}
 	remove { ^this.shouldNotImplement(thisMethod) }
 	removeAt {|key| var index;

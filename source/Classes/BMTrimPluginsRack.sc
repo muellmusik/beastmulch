@@ -368,6 +368,7 @@ BMTrimPluginsStripGUI {
 	 }
 	 
 	 makeGUI{|parent, name, origin|
+	 	name.postln;
 	 	containerView = SCCompositeView(parent, Rect(origin.x, origin.y, 100, 500));
 	 	containerView.decorator = FlowLayout(containerView.bounds);
 	 	labelView = SCStaticText(containerView, Rect(0, 0, 100, 30))
