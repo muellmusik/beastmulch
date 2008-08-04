@@ -382,7 +382,15 @@ BMSnapShotSequenceSeg {
 				);
 			}, IdentityDictionary);
 		}, {
-		
+			// with a flat segment at start
+			envs = controls.collectAs({|ctrlname| 
+				ctrlname -> Env(
+					[startSS.values[ctrlname], startSS.values[ctrlname], endSS.values[ctrlname]], 
+					[startSS.snapTime - startSS.time, endSS.time - startSS.snapTime], 
+					curve
+				);
+			}, IdentityDictionary);
+			
 		});
 	}
 	
@@ -423,12 +431,22 @@ BMSnapShot : BMAbstractSnapShot {
 
 // for unknown start (and maybe end) states
 BMArbitraryStartSnapShot : BMAbstractSnapShot {
-	var activated = false;
+	//var activated = false;
+	var <snapTime;
+	
 	makeActive {|controls, argTime|  
-		this.tempsnap(controls, argTime); // **** need my own snap and
+		this.tempsnap(controls, argTime); 
 	}
 	
-	tempsnap {}
+	snap { } // don't pass go, no $200
+	
+	tempsnap {|controls, argTime|  
+		snapTime = argTime;
+		values = controls.collectAs({|ctrlname| 
+			ctrlname -> BMAbstractController.getValueByName(ctrlname);
+		}, IdentityDictionary);
+		//this.changed(\snap);
+	}
 	
 	//makeInActive { values = nil; activated = false;}
 	
