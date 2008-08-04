@@ -95,6 +95,8 @@ As above, but add an extra interpolation point making a flat line segment betwee
 
 NB Making a new env is very low cost.
 
+Solution 2 is current
+
 ----
 
 At the moment there can be only one automator assigned to each control.
@@ -102,15 +104,24 @@ It is possible to have multiple controller automators (for instance assigned to 
 A single automator can have overlapping sequences, but if they try to update the same controller in the same automation cycle all but the first will fail. 
 
 For more elaborate and fine tuned control, use the DAW like automator object, under a single fader. Or we could have a more elaborate ControllerAutomator which has envelopes for the entire duration.
+	- this would be easy to do. Just have separate sequences for each fader.
 ----
 Should this be a singleton?
 	- no, you might have automators separate time references automating controls
+
+----
+
+To do:
+
+Add initial fader state
+Decide if we need a separate class for the DAW version
 */
-BMControllerSnapshotAutomator : BMAbstractIndependentRateAutomator {
+BMControllerAutomator : BMAbstractIndependentRateAutomator {
 	// interpolates between controller snapshots
 	var controls; // an array of controlnames or a single one
 	var sequences; // an array of arrays of BMSnapShotSeq
 	var oldSeqs;
+	var sinSmooth = true;
 	
 	*new { |controls, timeref|
 		^super.new.init(controls, timeref);
@@ -134,7 +145,29 @@ BMControllerSnapshotAutomator : BMAbstractIndependentRateAutomator {
 		oldSeqs = IdentitySet.new;
 	}
 	
-	addSequence {}
+	addGlobalSequence {|startTime|
+		sequences.add(
+			BMSnapShotSeq(controls, startTime, sinSmooth.if({'sin'}, {'lin'})).addDependant(this)
+		);
+		this.changed(\sequencesChanged);
+	}
+	
+	addStartSnapshot { }
+	
+	addIndividualSequences {|startTime|
+		controls.do({|ctrlname| 
+			sequences.add(
+				BMSnapShotSeq(ctrlname, startTime, sinSmooth.if({'sin'}, {'lin'}))
+					.addDependant(this)
+			);
+		});
+		this.changed(\sequencesChanged);
+	}
+	
+	removeSequence { |seq|
+		seq.removeDependant(this);
+		this.changed(\sequencesChanged);
+	}
 	
 //	// how to deal with bundling?
 //	automate {
@@ -182,21 +215,84 @@ BMControllerSnapshotAutomator : BMAbstractIndependentRateAutomator {
 	reset { sequences.do(_.reset); oldSeqs.clear;}
 	
 	free { controls.do({|ctrl| ctrl.automator = nil});}
+	
+	update {arg changed, what ...args; 
+		//if(what == \n_end, {stopwatch.stop;});
+		switch(what,
+			\segsBuilt, {
+				this.changed(\sequenceChanged);
+			},
+			{super.update(changed, what, *args)}
+		)
+	}
 }
 
 // can't change controllers after starting!
 BMSnapShotSeq {
-	var controls, snapshots;
+	var controls, <curve, snapshots;
 	var started = false;
 	var start, duration;
 	//var lastAtTime = -inf; // in
 	var arbStart, arbStartEnd;
 	var arbEnd, arbEndEnd;
-	var segs;
+	var snapshots, firstSnap, segs;
 	var oldSeg;
+	var <minSegSize = 0.2;
 	
-	*new {|controls| // controllers is an array of keys indicating control names
-		^super.newCopyArgs(controls);
+	*new {|controls, firstSnapTime, curve = 'lin'| // controllers is an array of keys indicating control names
+		^super.newCopyArgs(controls, curve).init(firstSnapTime);
+	}
+	
+	init {|firstSnapTime|
+		
+		start = max(0, firstSnapTime - 1);
+		
+		firstSnap = BMArbitraryStartSnapShot(controls, start);
+		snapshots = [
+			firstSnap,							// arbitrary
+			BMSnapShot(controls, firstSnapTime)	  	// known
+		];
+		snapshots.do(_.addDependant(this));
+		this.buildSegs;
+	}
+	
+	minSegSize_ {|newSize| minSegSize = newSize; this.buildSegs }
+	
+	addSnapShot {|time|
+		var snap;
+		if(time < start, {
+			start = max(0, time - 1);
+			// avoid extra update
+			firstSnap.removeDependant(this);
+			firstSnap.time = start;
+			firstSnap.addDependant(this);
+		});
+		
+		snap = BMSnapShot(controls, time);
+		snapshots.add(snap);
+		snapshots.sort({|a, b| a.time < b.time });
+		this.buildSegs;
+	}
+	
+	removeSnapShot { |snapshot|
+		snapshot.removeDependant(this);
+		snapshots.remove(snapshot);
+		this.buildSegs;
+	}
+	
+	buildSegs {
+		segs = [];
+		snapshots.doAdjacentPairs({|a, b|
+			// check minimum length
+			if(b.time - a.time < minSegSize, {
+				b.removeDependant(this);
+				b.time = a.time + minSegSize;
+				b.addDependant(this);
+			});
+			segs = segs.add(BMSnapShotSequenceSeg(a, b, controls, curve));
+		});
+		this.changed(\segsBuilt);
+	
 	}
 	
 	atTime {|time| 
@@ -226,14 +322,27 @@ BMSnapShotSeq {
 		//segs.do(_.makeInactive); 
 		oldSeg = nil; 
 	}
+	
+	update {arg changed, what ...args; 
+		//if(what == \n_end, {stopwatch.stop;});
+		switch(what,
+			\snap, {
+				this.buildSegs;
+			},
+			\snapTime, {
+				this.buildSegs;
+			}
+		)
+	}
+
 }
 
 BMSnapShotSequenceSeg {
-	var startSS, endSS, controls, curve = 'sin';
+	var startSS, endSS, controls, curve;
 	var envs, known;
 	//var activated = false;
 	
-	*new {|startSS, endSS, controls, curve|
+	*new {|startSS, endSS, controls, curve = 'sin'|
 		^super.newCopyArgs(startSS, endSS, controls, curve).init;
 	}
 	
@@ -280,17 +389,27 @@ BMSnapShotSequenceSeg {
 }
 
 BMAbstractSnapShot {
-	var <>time, <values;
+	var <time, <values;
 	// these allow for customised behaviour upon entering a segment
+	
+	*new{|controls, time|
+		^super.new.snap(controls, time);
+	}
+	
+	time_ {|newTime| 
+		time = newTime;
+		this.changed(\snapTime);
+	}
 	
 	snap {|controls, argTime|  
 		time = argTime;
 		values = controls.collectAs({|ctrlname| 
 			ctrlname -> BMAbstractController.getValueByName(ctrlname);
 		}, IdentityDictionary);
+		this.changed(\snap);
 	}
 	makeActive { this.subclassResponsibility(thisMethod); }
-	makeInActive { this.subclassResponsibility(thisMethod); }
+	//makeInActive { this.subclassResponsibility(thisMethod); }
 	
 	isKnown {^true}
 }
@@ -299,7 +418,7 @@ BMAbstractSnapShot {
 BMSnapShot : BMAbstractSnapShot {
 	// no-ops
 	makeActive { } 
-	makeInActive { }
+	//makeInActive { }
 }
 
 // for unknown start (and maybe end) states
@@ -311,7 +430,7 @@ BMArbitraryStartSnapShot : BMAbstractSnapShot {
 	
 	tempsnap {}
 	
-	makeInActive { values = nil; activated = false;}
+	//makeInActive { values = nil; activated = false;}
 	
 	isKnown {^false}
 }
