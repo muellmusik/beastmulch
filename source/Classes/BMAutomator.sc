@@ -17,6 +17,10 @@ BMAbstractAutomator {
 	
 	// what this is depends on subclass
 	automate { this.subclassResponsibility(thisMethod);} 
+	
+	mappings { this.subclassResponsibility(thisMethod);}
+	
+	mappings_ { this.subclassResponsibility(thisMethod);} 
 }
 
 // rate of this and time ref are independent
@@ -93,49 +97,91 @@ NB Making a new env is very low cost.
 
 ----
 
-How should an individual control ensure that it isn't double mapped or double automated.
-One way is to have a control in a plugin etc. be contollable either by a control or an automater, but not both. That still leaves the case of multiple control automators though. 
+At the moment there can be only one automator assigned to each control.
+It is possible to have multiple controller automators (for instance assigned to different time references) providing they don't try to automate the same controls.
+A single automator can have overlapping sequences, but if they try to update the same controller in the same automation cycle all but the first will fail. 
 
-Do we need to have multiple sequences going automatically.
-
+For more elaborate and fine tuned control, use the DAW like automator object, under a single fader. Or we could have a more elaborate ControllerAutomator which has envelopes for the entire duration.
 ----
-Currently overlapping automator with different controls are impossible.
-Maybe just go through all the sequences, but flag each control within an automate cycle to make sure it isn't double automated.
-
+Should this be a singleton?
+	- no, you might have automators separate time references automating controls
 */
-BMControllerAutomator : BMAbstractIndependentRateAutomator {
+BMControllerSnapshotAutomator : BMAbstractIndependentRateAutomator {
 	// interpolates between controller snapshots
-	var controllers; // an array of controllers, or one controller
+	var controls; // an array of controlnames or a single one
 	var sequences; // an array of arrays of BMSnapShotSeq
-	var oldSeq;
+	var oldSeqs;
 	
-	*new { |controllers, timeref|
-		^super.new.init(controllers, timeref);
+	*new { |controls, timeref|
+		^super.new.init(controls, timeref);
 	}
 	
-	init {|argctrllrs, argref|
-		controllers = argctrllrs.asArray;
+	init {|argctrls, argref|
+		controls = argctrls.asArray;
+		controls.copy.do({|ctrlname| 
+			var ctrl;
+			ctrl = BMAbstractController.allControls[ctrlname];
+			ctrl.automator.isNil.if({
+				ctrl.automator = this;
+			}, {
+				("Controller automation assignment failed. Control" + ctrlname 
+					+ "already has an automator").warn;
+				controls.remove(ctrlname);
+			});
+		});
 		timeReference = argref;
 		this.addToRef;
+		oldSeqs = IdentitySet.new;
 	}
 	
 	addSequence {}
 	
+//	// how to deal with bundling?
+//	automate {
+//		var currentTime, values;
+//		currentTime = BMTimeSources.currentTime(time, rate, referenceTime);
+//		currentSeq = sequences.detect({|seq| // there can be only one
+//			seq.containsTime(currentTime);
+//		});
+//		if(oldSeq != currentSeq, {currentSeq.reset});
+//		values = currentSeq.atTime(currentTime);
+//		values.keysValuesDo(|ctrlname, value| 
+//			BMAbstractController.setValueByName(ctrlname, value);
+//		});
+//	}
+
 	// how to deal with bundling?
 	automate {
 		var currentTime, values;
 		currentTime = BMTimeSources.currentTime(time, rate, referenceTime);
-		currentSeq = sequences.detect({|seq| // there can be only one
-			seq.containsTime(currentTime);
-		});
-		if(oldSeq != currentSeq, {currentSeq.reset});
-		values = currentSeq.atTime(currentTime);
-		values.keysValuesDo(|ctrlname, value| 
-			BMAbstractController.setValueByName(ctrlname, value);
+
+		sequences.do({|seq|
+			seq.containsTime(currentTime).if({
+				oldSeqs.findMatch(seq).isNil.if({
+					seq.reset;
+					oldSeqs.add(seq);
+				});
+				values = seq.atTime(currentTime);
+				values.keysValuesDo({|ctrlname, value| 
+					// check another sequence hasn't touch this control
+					if(BMAbstractController.allControls[ctrlname].lastAutomated != currentTime, {
+						BMAbstractController.setValueByName(ctrlname, value);
+						BMAbstractController.allControls[ctrlname].lastAutomated = currentTime;
+					}, {
+						("Multiple snapshot sequences simultaneously attempting to automate" 
+							+ ctrlname).warn;
+					});
+				});
+				
+			}, {
+				oldSeqs.remove(seq);
+			});
 		});
 	}
 	
-	reset { sequences.do(_.reset); oldSeq = nil;}
+	reset { sequences.do(_.reset); oldSeqs.clear;}
+	
+	free { controls.do({|ctrl| ctrl.automator = nil});}
 }
 
 // can't change controllers after starting!

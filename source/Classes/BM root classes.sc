@@ -140,7 +140,7 @@ BMAbstractController {
 
 // don't make these yourself
 BMControl {
-	var <name, <controller, <ctrlNum, <>mapped = false;
+	var <name, <controller, <ctrlNum, <>mapped = false, <>automator, <>lastAutomated;
 	
 	*new {|name, controller, ctrlNum|
 		^super.newCopyArgs(name, controller, ctrlNum);
