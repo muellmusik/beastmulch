@@ -27,7 +27,7 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 			this.changed(\time, msg.last * this.sampleDur, rate, time);
 		}).add;
 		allChainElements[name] = this;
-		BMTimeSource.addReference(this);
+		BMTimeSources.addReference(this);
 	}
 	
 	read {|path, action|
@@ -219,7 +219,7 @@ BMSoundFilePlayerGUI : BMAbstractGUI {
 			oldString = info.string;
 			CocoaDialog.getPaths({ arg paths; 
 				player.read(paths[0]);
-			}, {{info.string = oldString}.defer});
+			}, {oldString.notNil.if({{info.string = oldString}.defer})});
 		};
 		clearButton = RoundButton.new(clust2, Rect(10,10,200,20)).extrude_(false).canFocus_(false);
 		clearButton.states = [[\x, Color.black,Color.clear]];
