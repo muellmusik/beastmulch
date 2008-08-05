@@ -6,6 +6,7 @@ BMOptions {
 	classvar <>crossfade = 0.1;
 	classvar <>numInputBusChannels = 12;
 	classvar <>numOutputBusChannels = 96;
+	classvar <>allowMultipleControlMappings = false;
 }
 
 // Defines the minimum interface for an AudioChainElement
@@ -94,6 +95,7 @@ BMAbstractController {
 	
 	addControlsToIndex {
 		this.faderNames.do({|ctrlName, i|
+			ctrlName = ctrlName.asSymbol;
 			allControls[ctrlName] = BMControl(ctrlName, this, i + 1);
 		});
 	}
@@ -140,11 +142,15 @@ BMAbstractController {
 
 // don't make these yourself
 BMControl {
-	var <name, <controller, <ctrlNum, <>mapped = false, <>automator, <>lastAutomated;
+	var <name, <controller, <ctrlNum, <mappedTo, <automator, <>lastAutomated;
 	
 	*new {|name, controller, ctrlNum|
 		^super.newCopyArgs(name, controller, ctrlNum);
 	}
+	
+	mappedTo_ {|to| mappedTo = to.postln; this.changed(\mappedTo) }
+	
+	automator_ {|atmtr| automator = atmtr; this.changed(\automator) }
 	
 	value {^controller.getFaderVal(ctrlNum) }
 	
