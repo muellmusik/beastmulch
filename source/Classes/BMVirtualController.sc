@@ -94,7 +94,7 @@ BMVirtualControllerSliders : BMAbstractGUI {
 			sliders[i].numberView.boxColor = Color.white.alpha_(0.4);
 		
 		});
-		window.onClose = { virtualCont.removeDependant(this); this.onClose };
+		window.onClose = { virtualCont.removeDependant(this); onClose.value };
 		window.front;
 	}
 	
