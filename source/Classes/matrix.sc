@@ -188,7 +188,13 @@ BMAmpControlMatrix : BMAbstractMatrix {
 		
 		outputs = outputs.flat;
 		
-		if(outputs.size == 0, {^this }); // this edge case arises. why?
+		if(outputs.size == 0, {^this }); // this edge case arises. why? preset updating?
+		
+		// outputs can inly be mapped to a single input (control)
+		outputs.do({|output| 
+			currentIn = outmappings[output];
+			currentIn.notNil.if({this.disconnect(currentIn, output); });
+		});
 		
 		// check if somebody else owns input
 		BMOptions.allowMultipleControlMappings.not.if({ 
@@ -201,10 +207,7 @@ BMAmpControlMatrix : BMAbstractMatrix {
 			});
 		});
 		
-		// outputs can inly be mapped to a single input (control)
 		outputs.do({|output| 
-			currentIn = outmappings[output];
-			currentIn.notNil.if({this.disconnect(currentIn, output); });
 			outmappings.add(output -> input);
 		});
 		
@@ -218,6 +221,7 @@ BMAmpControlMatrix : BMAbstractMatrix {
 		// if I'm not using this input (control) anymore release my claim
 		BMOptions.allowMultipleControlMappings.not.if({ 
 			var mappedTo;
+			
 			mappedTo = BMAbstractController.allControls[input].mappedTo;
 			if(mappings[input].size == 0 && (mappedTo === this), {
 				BMAbstractController.allControls[input].mappedTo = nil;
@@ -447,7 +451,14 @@ BMMatrixMenuGUI : BMAbstractGUI {
 	}
 	
 	update {
-		assignView.items = matrix.mappings[inputView.item].asArray;
+		(matrix.controlsForInputs && BMOptions.allowMultipleControlMappings.not).if({
+			var mappedTo;
+			mappedTo = BMAbstractController.allControls[inputView.item.asSymbol].mappedTo;
+			if(mappedTo.notNil && (mappedTo !== matrix), {
+				assignView.items = ["Mapped to" + matrix.name];
+				assignView.enabled_(false);
+			}, { assignView.enabled_(true).items = matrix.mappings[inputView.item].asArray; });
+		}, { assignView.enabled_(true).items = matrix.mappings[inputView.item].asArray;});
 		outputView.items = matrix.outNames.difference(assignView.items);
 	}
 }

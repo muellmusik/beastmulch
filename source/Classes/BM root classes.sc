@@ -148,7 +148,7 @@ BMControl {
 		^super.newCopyArgs(name, controller, ctrlNum);
 	}
 	
-	mappedTo_ {|to| mappedTo = to.postln; this.changed(\mappedTo) }
+	mappedTo_ {|to| mappedTo = to; this.changed(\mappedTo) }
 	
 	automator_ {|atmtr| automator = atmtr; this.changed(\automator) }
 	
