@@ -60,6 +60,9 @@ BMVirtualController : BMAbstractController {
 // simple onscreen slider GUI for a BMVirtualController
 BMVirtualControllerSliders : BMAbstractGUI {
 	var virtualCont, sliders, fromUpdate = false;
+	var needsRefresh = false;
+	var <>refreshInterval = 0.05;
+	var refreshLoopOn = false;
 	
 	*new {|virtualCont, name, origin|
 		^super.new.init(virtualCont, name ? virtualCont.name)
@@ -98,14 +101,30 @@ BMVirtualControllerSliders : BMAbstractGUI {
 		window.front;
 	}
 	
+	// could be some jitter, but safer
+	startRefreshLoop {
+		refreshLoopOn.not.if({
+			refreshLoopOn = true;
+			\loopStarted.postln;
+			AppClock.sched(refreshInterval, {
+				var resched;
+				needsRefresh.if({resched = refreshInterval}, {refreshLoopOn = false});
+				fromUpdate = true; // prevent a loop
+				virtualCont.getAllFaders.do({|val, i| 
+					sliders[i].value_(val.ampdb);
+				});
+				fromUpdate = false;
+				needsRefresh = false;
+				resched;
+			});
+		});
+	}
+	
 	update {|changed, what, index, val|
 		switch(what,
 			\faderVal, {
-				{
-				fromUpdate = true;
-				sliders[index].value_(val.ampdb);
-				fromUpdate = false;
-				}.defer;
+				needsRefresh = true;
+				this.startRefreshLoop;
 			},
 			\label, {sliders[index].labelView.string_(val.asString)}
 		)
