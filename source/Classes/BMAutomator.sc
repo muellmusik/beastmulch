@@ -28,15 +28,17 @@ BMAbstractIndependentRateAutomator : BMAbstractAutomator {
 	var <>interval; // nil interval means update with time ref
 	
 	startUpdateLoop {
-		running = true;
-		Routine({
-		while({running}, {
-			loop({
-				this.automate;
-				interval.wait;
+		interval.notNil.if({
+			running = true;
+			Routine({
+			while({running}, {
+				loop({
+					this.automate;
+					interval.wait;
+				});
 			});
+			}).play;
 		});
-		}).play;
 	}
 	
 	// this is the simple case, but you can override to have
@@ -45,22 +47,28 @@ BMAbstractIndependentRateAutomator : BMAbstractAutomator {
 		running = false;
 	}
 	
+	reset { }
+	
 	update {arg changed, what ...args; 
 		//if(what == \n_end, {stopwatch.stop;});
 		switch(what,
 			\n_end, {
 			
 			},
-//			\play, {stopwatch.start;},
+			//\play, { this.startUpdateLoop; },
 			\playFailed, {
 
 				},
 			\stop, {
 				time = 0; // needed?
+				this.stopUpdateLoop;
 				this.reset;
 				},
-			\time, { time = args[0]; rate = args[1]; referenceTime = args[1]; 
+			\time, { time = args[0]; rate = args[1]; referenceTime = args[2]; 
 				
+//				time.postln;
+//				("ref:" + referenceTime).postln;
+//				("main:" + Main.elapsedTime).postln;
 				// check if we've moved while paused and update if so
 				(rate == 0  || interval.isNil && (time != lastTime)).if({
 					this.automate;
@@ -68,9 +76,9 @@ BMAbstractIndependentRateAutomator : BMAbstractAutomator {
 				
 				// turn on the auto update loop if rate !=0, off if it does
 				(rate != 0).if({ 
-					this.startUpdateLoop; 
+					running.not.if({this.startUpdateLoop;}); 
 				}, {  
-					this.stopUpdateLoop;
+					running.if({this.stopUpdateLoop;});
 				});
 				
 				lastTime = time;
@@ -115,11 +123,13 @@ To do:
 
 Add initial fader state
 Decide if we need a separate class for the DAW version
+Should snap be in *new
+
 */
 BMControllerAutomator : BMAbstractIndependentRateAutomator {
 	// interpolates between controller snapshots
 	var controls; // an array of controlnames or a single one
-	var sequences; // an array of arrays of BMSnapShotSeq
+	var <sequences; // an array of BMSnapShotSeqs
 	var oldSeqs;
 	var sinSmooth = true;
 	
@@ -146,7 +156,7 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 	}
 	
 	addGlobalSequence {|startTime|
-		sequences.add(
+		sequences = sequences.add(
 			BMSnapShotSeq(controls, startTime, sinSmooth.if({'sin'}, {'lin'})).addDependant(this)
 		);
 		this.changed(\sequencesChanged);
@@ -156,7 +166,7 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 	
 	addIndividualSequences {|startTime|
 		controls.do({|ctrlname| 
-			sequences.add(
+			sequences = sequences.add(
 				BMSnapShotSeq(ctrlname, startTime, sinSmooth.if({'sin'}, {'lin'}))
 					.addDependant(this)
 			);
@@ -187,7 +197,7 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 	automate {
 		var currentTime, values;
 		currentTime = BMTimeSources.currentTime(time, rate, referenceTime);
-
+		//currentTime.postln;
 		sequences.do({|seq|
 			seq.containsTime(currentTime).if({
 				oldSeqs.findMatch(seq).isNil.if({
@@ -231,11 +241,11 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 BMSnapShotSeq {
 	var controls, <curve, snapshots;
 	var started = false;
-	var start, duration;
+	var start, end, duration;
 	//var lastAtTime = -inf; // in
 	var arbStart, arbStartEnd;
 	var arbEnd, arbEndEnd;
-	var snapshots, firstSnap, segs;
+	var <snapshots, firstSnap, segs;
 	var oldSeg;
 	var <minSegSize = 0.2;
 	
@@ -284,6 +294,8 @@ BMSnapShotSeq {
 		segs = [];
 		snapshots.doAdjacentPairs({|a, b|
 			// check minimum length
+			a.dump;
+			b.dump;
 			if(b.time - a.time < minSegSize, {
 				b.removeDependant(this);
 				b.time = a.time + minSegSize;
@@ -291,6 +303,9 @@ BMSnapShotSeq {
 			});
 			segs = segs.add(BMSnapShotSequenceSeg(a, b, controls, curve));
 		});
+		start = snapshots.first.time;
+		end = snapshots.last.time;
+		duration = end - start;
 		this.changed(\segsBuilt);
 	
 	}
@@ -298,7 +313,7 @@ BMSnapShotSeq {
 	atTime {|time| 
 		var values;
 		// return nil if not within this sequence's duration?
-		if(this.containsTime, {
+		if(this.containsTime(time), {
 			var seg;
 			// maybe better to cache this, and update when a snapshot is changed
 			// using dependancy
@@ -316,7 +331,7 @@ BMSnapShotSeq {
 		^values // exclusive values return nil
 	}
 	
-	containsTime {|time| ^time.inclusivelyBetween(start, start + duration);}
+	containsTime {|time| ^time.inclusivelyBetween(start, end);}
 	
 	reset { 
 		//segs.do(_.makeInactive); 
@@ -433,6 +448,12 @@ BMSnapShot : BMAbstractSnapShot {
 BMArbitraryStartSnapShot : BMAbstractSnapShot {
 	//var activated = false;
 	var <snapTime;
+	
+	*new{|controls, time|
+		^super.new.init(time);
+	}
+	
+	init {|argTime| time = argTime; }
 	
 	makeActive {|controls, argTime|  
 		this.tempsnap(controls, argTime); 

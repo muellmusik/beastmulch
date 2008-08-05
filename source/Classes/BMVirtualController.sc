@@ -101,10 +101,12 @@ BMVirtualControllerSliders : BMAbstractGUI {
 	update {|changed, what, index, val|
 		switch(what,
 			\faderVal, {
+				{
 				fromUpdate = true;
 				sliders[index].value_(val.ampdb);
 				fromUpdate = false;
-				},
+				}.defer;
+			},
 			\label, {sliders[index].labelView.string_(val.asString)}
 		)
 	}
