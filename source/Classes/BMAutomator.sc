@@ -319,6 +319,7 @@ BMSnapShotSeq {
 		});
 		
 		snap = BMSnapShot(controls, time);
+		snap.addDependant(this);
 		snapshots = snapshots.add(snap).sort({|a, b| a.time < b.time });
 		this.buildSegs;
 	}

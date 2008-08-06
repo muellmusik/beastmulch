@@ -39,13 +39,15 @@ a.addSnapShot('test1', 10);\
 \
 a.addSnapShot('test2', 6.5);\
 \
-a.sequences.inspect\
+a.sequences['test2'].snapshots.last.time = 15;\
 \
+a.sequences.inspect\
+a.inspect\
 \
 a.sequences['test1'].dump\
 a.dump\
 \
-a.sequences['test1'].inspect\
+a.sequences['test2'].inspect\
 x.play;\
 x.rate = 0.125;\
 x.rate = -1;\
