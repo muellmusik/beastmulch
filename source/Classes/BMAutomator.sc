@@ -122,6 +122,8 @@ Should snap be in *new?
 
 Should automators be named?
 
+How best to get representation from timeRef (i.e. sfview)
+
 */
 BMControllerAutomator : BMAbstractIndependentRateAutomator {
 	// interpolates between controller snapshots
@@ -517,8 +519,99 @@ BMArbitraryStartSnapShot : BMAbstractSnapShot {
 
 
 BMControllerAutomatorGUI : BMAbstractGUI {
-
-	makeWindow {
+	var ca;
 	
+	*new {|ca, name, origin|
+		//^super.new.init(ca, name ? ca.name ? "test").makeWindow(origin ? (40@200));
+		^super.new.init(ca, name ? "test").makeWindow(origin ? (40@200));
+	}
+	
+	init {|argCa, argName|
+		ca = argCa;
+		name = argName;
+	}
+	
+	makeWindow {
+		var path, sf, sfView, scrollView, envView, selectView;
+		
+		path = ca.timeReference.path; // How best to do this?
+		sf = SoundFile.new;
+		path.notNil.if({sf.openRead(path);});
+		//f.openRead("sounds/a11wlk01.wav");
+		//f.openRead("/Users/scottw/Music/SuperCollider\ Recordings/SC_080725_143355.aiff");
+		
+		window = SCWindow.new("Edit Snapshot Sequence", Rect(200, 200, 808, 400));
+		window.view.decorator = FlowLayout(window.view.bounds);
+		
+		scrollView = SCScrollView(window, Rect(0, 0, 800, 334));
+		scrollView.hasBorder = true;
+		scrollView.resize = 2;
+		
+		sfView = SCSoundFileView.new(scrollView, Rect(0,0, 798, 300));
+		sfView.background = HiliteGradient(Color.blue, Color.cyan, steps: 256);
+		//a.waveColors_([HiliteGradient(Color.blue, Color.cyan), HiliteGradient(Color.blue, Color.cyan)]);
+		sfView.waveColors_(Array.fill(sf.numChannels, {|i| Color.blue.blend(Color.cyan, 1 / (sf.numChannels - 1) * i)})); 
+		
+		
+		scrollView.canFocus_(false);
+		
+		envView = SCEnvelopeView(scrollView, Rect(0,300,  798, 20))
+			.thumbWidth_(60.0)
+			.thumbHeight_(19)
+			.drawLines_(true)
+			.drawRects_(true)
+			.selectionColor_(Color.grey)
+			.strokeColor_(Color.white)
+			.background_(Color.black)
+			.value_([[0.1, 0.3, 0.4, 0.5], [0.1, 0.2, 0.9, 0.7]]);
+		//b.setStatic(0,true);
+		4.do({arg i;
+			envView.setString(i, "");
+			envView.setFillColor(i,Color.black);
+		});
+		
+		
+		envView.canFocus_(false);
+		
+		//if(scrollView.bounds.width == 798, {zoomCount = 799 / sf.duration });
+		
+		envView.mouseMoveAction = {|view|
+			var time;
+			time = view.value[0][view.index];
+			time.notNil.if({
+				sfView.setEditableSelectionStart(view.index, true);
+				sfView.setEditableSelectionSize(view.index, true);
+				sfView.setSelection(view.index, [sf.numFrames * time, sf.numFrames / sfView.bounds.width]); 
+				sfView.setSelectionColor(view.index, Color.white);
+				envView.setString(view.index, (view.index + 1).asString ++ ":" + (time * sf.duration).asTimeString(0.01));
+				sfView.setEditableSelectionStart(view.index, false);
+				sfView.setEditableSelectionSize(view.index, false);
+			});
+		};
+		envView.mouseUpAction = envView.mouseMoveAction;
+		
+		sfView.soundfile = sf;
+		
+		sfView.elasticMode = 1;
+		window.onClose = {sf.close;};
+		
+		SCStaticText(window, Rect(0, 0, 5, 10)).string_("-").font_(Font("Helvetica-Bold", 12));
+		SmoothSlider(window, Rect(0, 0, 60, 10)).action_({|view| 
+			sfView.bounds = Rect(0,0, 798 + (sf.duration * 40 * view.value), 300);
+			envView.bounds = Rect(0,300,  798 + (sf.duration * 40 * view.value), 20);
+			sfView.selections.size.do({|i| sfView.setSelectionSize(i, sf.numFrames / sfView.bounds.width)});
+			scrollView.refresh;
+		}).knobSize_(1).canFocus_(false).hilightColor_(Color.blue);
+		SCStaticText(window, Rect(0, 0, 10, 10)).string_("+").font_(Font("Helvetica-Bold", 10));
+		
+		window.view.decorator.nextLine.nextLine;
+		SCStaticText(window, Rect(0, 0, 90, 15)).string_("Sequence to Edit").font_(Font("Helvetica-Bold", 10));
+		SCPopUpMenu(window, Rect(10,10,90,15)).items_(ca.sequences.keys.asArray.sort)
+			.font_(Font("Helvetica-Bold", 10));
+		
+		sfView.readWithTask;
+		//a.resize = 5;
+		window.front;
+
 	}
 }
