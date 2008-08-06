@@ -25,20 +25,17 @@ BMAbstractAutomator {
 
 // rate of this and time ref are independent
 BMAbstractIndependentRateAutomator : BMAbstractAutomator {
-	var <>interval; // nil interval means update with time ref
+	var <>interval = 0.05; // update interval
+	var lastCurrentTime;
 	
 	startUpdateLoop {
-		interval.notNil.if({
-			running = true;
-			Routine({
-			while({running}, {
-				loop({
-					this.automate;
-					interval.wait;
-				});
-			});
-			}).play;
+		running = true;
+		Routine({
+		while({running}, {
+			this.automate;
+			interval.wait;
 		});
+		}).play;
 	}
 	
 	// this is the simple case, but you can override to have
@@ -69,16 +66,14 @@ BMAbstractIndependentRateAutomator : BMAbstractAutomator {
 //				time.postln;
 //				("ref:" + referenceTime).postln;
 //				("main:" + Main.elapsedTime).postln;
-				// check if we've moved while paused and update if so
-				(rate == 0  || interval.isNil && (time != lastTime)).if({
-					this.automate;
-				});
 				
 				// turn on the auto update loop if rate !=0, off if it does
 				(rate != 0).if({ 
 					running.not.if({this.startUpdateLoop;}); 
 				}, {  
 					running.if({this.stopUpdateLoop;});
+					// check if we've moved while paused and update if so
+					(time != lastTime).if({this.automate;});
 				});
 				
 				lastTime = time;
@@ -123,7 +118,7 @@ To do:
 
 Add initial fader state
 Decide if we need a separate class for the DAW version
-Should snap be in *new
+Should snap be in *new?
 
 */
 BMControllerAutomator : BMAbstractIndependentRateAutomator {
@@ -195,7 +190,7 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 
 	// how to deal with bundling?
 	automate {
-		var currentTime, values;
+		var currentTime, values, control;
 		currentTime = BMTimeSources.currentTime(time, rate, referenceTime);
 		//currentTime.postln;
 		sequences.do({|seq|
@@ -206,10 +201,11 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 				});
 				values = seq.atTime(currentTime);
 				values.keysValuesDo({|ctrlname, value| 
+					control = BMAbstractController.allControls[ctrlname];
 					// check another sequence hasn't touch this control
-					if(BMAbstractController.allControls[ctrlname].lastAutomated != currentTime, {
+					if(control.lastAutomated != currentTime, {
 						BMAbstractController.setValueByName(ctrlname, value);
-						BMAbstractController.allControls[ctrlname].lastAutomated = currentTime;
+						control.lastAutomated = currentTime;
 					}, {
 						("Multiple snapshot sequences simultaneously attempting to automate" 
 							+ ctrlname).warn;
@@ -217,6 +213,26 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 				});
 				
 			}, {
+				// check if seq should have ended and set end values
+				// if we've leapt around don't worry about it
+				
+				seq.end.exclusivelyBetween(currentTime - interval, currentTime).if({
+					//\sequenceEnd.postln;
+//					("CT" + currentTime).postln;
+//					("CT-" + (currentTime - interval)).postln;
+					values = seq.atTime(seq.end);
+					values.keysValuesDo({|ctrlname, value| 
+						control = BMAbstractController.allControls[ctrlname];
+						// check another sequence hasn't touch this control
+						if(control.lastAutomated != currentTime, {
+							BMAbstractController.setValueByName(ctrlname, value);
+							control.lastAutomated = currentTime;
+						}, {
+							("Multiple snapshot sequences simultaneously attempting to automate" 
+								+ ctrlname).warn;
+						});
+					});
+				});
 				oldSeqs.remove(seq);
 			});
 		});
@@ -241,11 +257,11 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 BMSnapShotSeq {
 	var controls, <curve, snapshots;
 	var started = false;
-	var start, end, duration;
+	var <start, <end, <duration;
 	//var lastAtTime = -inf; // in
 	var arbStart, arbStartEnd;
 	var arbEnd, arbEndEnd;
-	var <snapshots, firstSnap, segs;
+	var <snapshots, firstSnap, snapTimes, segs;
 	var oldSeg;
 	var <minSegSize = 0.2;
 	
@@ -294,8 +310,6 @@ BMSnapShotSeq {
 		segs = [];
 		snapshots.doAdjacentPairs({|a, b|
 			// check minimum length
-			a.dump;
-			b.dump;
 			if(b.time - a.time < minSegSize, {
 				b.removeDependant(this);
 				b.time = a.time + minSegSize;
@@ -306,18 +320,19 @@ BMSnapShotSeq {
 		start = snapshots.first.time;
 		end = snapshots.last.time;
 		duration = end - start;
+		snapTimes = snapshots.collect(_.time);
 		this.changed(\segsBuilt);
 	
 	}
 	
 	atTime {|time| 
-		var values;
+		var values, seg, ind;
 		// return nil if not within this sequence's duration?
 		if(this.containsTime(time), {
-			var seg;
 			// maybe better to cache this, and update when a snapshot is changed
 			// using dependancy
-			seg = segs[snapshots.collect(_.time).indexInBetween(time).trunc.clip(0, segs.size)];
+			seg = segs[snapTimes.indexInBetween(time).trunc.clip(0, segs.size - 1)];
+			//seg = segs.detect({|sg| time.inclusivelyBetween(sg.startSS.time, sg.endSS.time)});
 			if(seg != oldSeg, {
 				//oldSeg.notNil.if({oldSeg.makeInactive}); // clean house
 				seg.makeActive(time);
@@ -353,7 +368,7 @@ BMSnapShotSeq {
 }
 
 BMSnapShotSequenceSeg {
-	var startSS, endSS, controls, curve;
+	var <startSS, <endSS, controls, curve;
 	var envs, known;
 	//var activated = false;
 	
@@ -376,6 +391,7 @@ BMSnapShotSequenceSeg {
 		//});
 	}
 	
+	// Could also delay envs to save a subtraction
 	atTime {|ctrlname, time|
 		^envs[ctrlname][time - startSS.time]
 	}
@@ -387,6 +403,7 @@ BMSnapShotSequenceSeg {
 //	}
 	// might optimise here to check if both ss are known and cache envs if true
 	// maybe not worth it
+	// Could also delay envs to save a subtraction
 	makeEnvs {
 		known.if({
 			envs = controls.collectAs({|ctrlname| 

@@ -105,7 +105,6 @@ BMVirtualControllerSliders : BMAbstractGUI {
 	startRefreshLoop {
 		refreshLoopOn.not.if({
 			refreshLoopOn = true;
-			\loopStarted.postln;
 			AppClock.sched(refreshInterval, {
 				var resched;
 				needsRefresh.if({resched = refreshInterval}, {refreshLoopOn = false});

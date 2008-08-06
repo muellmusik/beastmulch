@@ -20,16 +20,26 @@ y = \cf2 BMSoundFilePlayerGUI\cf0 (x);\
 \
 \
 \
+\
+\
+a = \cf2 BMControllerAutomator(c.getInputArray.keys, x);\
+\cf0 a.interval = 0.005;\cf2 \
+\
+a.\cf0 addGlobalSequence(5);\
+\
+a.sequences.inspect\
+\
+\
+a.sequences[0].dump\
+a.dump\
+\
+a.sequences[0].inspect\
 x.rate = 0.5;\
 x.rate = -1;\
 x.rate = 1;\
 x.rate = 2;\
 x.bus = Bus.new;\
 \
-a = \cf2 BMControllerAutomator(c.getInputArray.keys, x);\
+c.inspect\
 \
-a.\cf0 addGlobalSequence(10);\
-a.interval = 0.01;\
-a.sequences.inspect\
-\
-a.dump}
+a.sequences[0].atTime(a.sequences[0].end)}

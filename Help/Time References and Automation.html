@@ -14,14 +14,14 @@ p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
 p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0012b9}
+p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #041ab3}
 p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica; min-height: 17.0px}
-p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #7a341d}
-span.s1 {color: #0012b9}
-span.s2 {color: #356f15}
+p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #6c3821}
+span.s1 {color: #041ab3}
+span.s2 {color: #476c1e}
 span.s3 {color: #000000}
-span.s4 {text-decoration: underline ; color: #0d29e7}
-span.s5 {color: #182cad}
+span.s4 {text-decoration: underline ; color: #142fe0}
+span.s5 {color: #1d2fa8}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -44,7 +44,11 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p3">Note that if the original source is from another computer it will be necessary to synchronise the two machines using a network time source.<span class="Apple-converted-space"> </span></p>
 <p class="p2"><br></p>
-<p class="p3">2. It must register itself with BMTimeSources as a reference.</p>
+<p class="p3">2. If it can stop (for instance in the case of a sound file player), it must call the following to notify its dependants:</p>
+<p class="p2"><br></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s1">this</span>.changed(<span class="s2">\stop</span>);</p>
+<p class="p2"><br></p>
+<p class="p3">3. It must register itself with BMTimeSources as a reference.</p>
 <p class="p5"><span class="Apple-tab-span">	</span></p>
 <p class="p8"><span class="s3"><span class="Apple-tab-span">	</span></span>BMTimeSources<span class="s3">.addReference(</span>this<span class="s3">);</span></p>
 <p class="p2"><br></p>
