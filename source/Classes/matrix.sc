@@ -215,13 +215,11 @@ BMAmpControlMatrix : BMAbstractMatrix {
 	}
 	
 	disconnect { |input ... outputs| // Symbols
-	
+		var mappedTo;
 		super.disconnect(input, *outputs);
 		
 		// if I'm not using this input (control) anymore release my claim
 		BMOptions.allowMultipleControlMappings.not.if({ 
-			var mappedTo;
-			
 			mappedTo = BMAbstractController.allControls[input].mappedTo;
 			if(mappings[input].size == 0 && (mappedTo === this), {
 				BMAbstractController.allControls[input].mappedTo = nil;
@@ -451,8 +449,8 @@ BMMatrixMenuGUI : BMAbstractGUI {
 	}
 	
 	update {
+		var mappedTo;
 		(matrix.controlsForInputs && BMOptions.allowMultipleControlMappings.not).if({
-			var mappedTo;
 			mappedTo = BMAbstractController.allControls[inputView.item.asSymbol].mappedTo;
 			if(mappedTo.notNil && (mappedTo !== matrix), {
 				assignView.items = ["Mapped to" + matrix.name];
@@ -635,10 +633,9 @@ BMMatrixGUI : BMAbstractGUI {
 			});
 			
 			ins.do({|item, i|
-				var inColor;
+				var inColor, mappedTo;
 
 				(matrix.controlsForInputs && BMOptions.allowMultipleControlMappings.not).if({
-					var mappedTo;
 					mappedTo = BMAbstractController.allControls[item].mappedTo;
 					if(mappedTo.notNil && (mappedTo !== matrix), {
 						inColor = Color.grey;
