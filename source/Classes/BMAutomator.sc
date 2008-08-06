@@ -120,11 +120,13 @@ Add initial fader state
 Decide if we need a separate class for the DAW version
 Should snap be in *new?
 
+Should automators be named?
+
 */
 BMControllerAutomator : BMAbstractIndependentRateAutomator {
 	// interpolates between controller snapshots
 	var controls; // an array of controlnames or a single one
-	var <sequences; // an array of BMSnapShotSeqs
+	var <sequences; // an dict of BMSnapShotSeqs
 	var oldSeqs;
 	var sinSmooth = true;
 	
@@ -146,33 +148,55 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 			});
 		});
 		timeReference = argref;
+		sequences = IdentityDictionary.new;
 		this.addToRef;
 		oldSeqs = IdentitySet.new;
 	}
 	
-	addGlobalSequence {|startTime|
-		sequences = sequences.add(
-			BMSnapShotSeq(controls, startTime, sinSmooth.if({'sin'}, {'lin'})).addDependant(this)
-		);
+	// if ctrlNames is nil add a global one
+	addSequence {|seqName, startTime, ctrlNames|
+		seqName = seqName.asSymbol;
+		sequences.keys.includes(seqName).if({
+			"Sequence Name" + seqName + "already in Use!".error; 
+			^this;
+		});
+		sequences[seqName] = 
+			BMSnapShotSeq(seqName, ctrlNames ? controls, startTime, sinSmooth.if({'sin'}, {'lin'}))
+				.addDependant(this);
 		this.changed(\sequencesChanged);
 	}
 	
-	addStartSnapshot { }
 	
-	addIndividualSequences {|startTime|
+	
+	addStartSnapShot { }
+	
+	addSnapShot {|seqName, ssTime| 
+		ssTime = ssTime ?? {BMTimeSources.currentTime(time, rate, referenceTime)};
+		sequences[seqName].addSnapShot(ssTime);
+	}
+	
+	addIndividualSequences {|seqName, startTime|
+		
 		controls.do({|ctrlname| 
-			sequences = sequences.add(
-				BMSnapShotSeq(ctrlname, startTime, sinSmooth.if({'sin'}, {'lin'}))
-					.addDependant(this)
-			);
+			seqName = (seqName.asString ++ "-" ++ ctrlname).asSymbol;
+			sequences.keys.includes(seqName).if({"Sequence Name already in Use!".error; ^this;
+			},{
+				sequences[seqName] =
+					BMSnapShotSeq(seqName, startTime, sinSmooth.if({'sin'}, {'lin'}))
+						.addDependant(this);
+			});
 		});
 		this.changed(\sequencesChanged);
 	}
 	
 	removeSequence { |seq|
+		seq.isSymbol.if({seq = sequences[seq];});
+		sequences[seq.name] = nil;
 		seq.removeDependant(this);
 		this.changed(\sequencesChanged);
 	}
+	
+	sequence {|name| ^sequences[name.asSymbol] }
 	
 //	// how to deal with bundling?
 //	automate {
@@ -246,7 +270,7 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 		//if(what == \n_end, {stopwatch.stop;});
 		switch(what,
 			\segsBuilt, {
-				this.changed(\sequenceChanged);
+				this.changed(\sequencesChanged);
 			},
 			{super.update(changed, what, *args)}
 		)
@@ -255,7 +279,7 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 
 // can't change controllers after starting!
 BMSnapShotSeq {
-	var controls, <curve, snapshots;
+	var <name, controls, <curve;
 	var started = false;
 	var <start, <end, <duration;
 	//var lastAtTime = -inf; // in
@@ -265,8 +289,8 @@ BMSnapShotSeq {
 	var oldSeg;
 	var <minSegSize = 0.2;
 	
-	*new {|controls, firstSnapTime, curve = 'lin'| // controllers is an array of keys indicating control names
-		^super.newCopyArgs(controls, curve).init(firstSnapTime);
+	*new {|name, controls, firstSnapTime, curve = 'lin'| // controls is an array of keys indicating control names
+		^super.newCopyArgs(name, controls, curve).init(firstSnapTime);
 	}
 	
 	init {|firstSnapTime|
@@ -286,7 +310,7 @@ BMSnapShotSeq {
 	
 	addSnapShot {|time|
 		var snap;
-		if(time < start, {
+		if(time < start && firstSnap.isKnown.not, {
 			start = max(0, time - 1);
 			// avoid extra update
 			firstSnap.removeDependant(this);
@@ -295,8 +319,7 @@ BMSnapShotSeq {
 		});
 		
 		snap = BMSnapShot(controls, time);
-		snapshots.add(snap);
-		snapshots.sort({|a, b| a.time < b.time });
+		snapshots = snapshots.add(snap).sort({|a, b| a.time < b.time });
 		this.buildSegs;
 	}
 	

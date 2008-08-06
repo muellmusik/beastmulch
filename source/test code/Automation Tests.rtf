@@ -25,16 +25,29 @@ y = \cf2 BMSoundFilePlayerGUI\cf0 (x);\
 a = \cf2 BMControllerAutomator(c.getInputArray.keys, x);\
 \cf0 a.interval = 0.005;\cf2 \
 \
-a.\cf0 addGlobalSequence(5);\
+a.\cf0 addSequence('test1', 5);\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 a.\cf0 removeSequence('test1');\
+\
+\cf2 a.\cf0 addSequence('test1', 5, ['foo-1', 'foo-2']);\
+\
+\
+a.addSnapShot('test1', 10);\
+\
+\cf2 a.\cf0 addSequence('test2', 6, ['foo-5', 'foo-6']);\
+\
+a.addSnapShot('test2', 6.5);\
 \
 a.sequences.inspect\
 \
 \
-a.sequences[0].dump\
+a.sequences['test1'].dump\
 a.dump\
 \
-a.sequences[0].inspect\
-x.rate = 0.5;\
+a.sequences['test1'].inspect\
+x.play;\
+x.rate = 0.125;\
 x.rate = -1;\
 x.rate = 1;\
 x.rate = 2;\
