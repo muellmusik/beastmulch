@@ -395,13 +395,15 @@ BMSnapShotSeq {
 	}
 	
 	update {arg changed, what ...args; 
-		//if(what == \n_end, {stopwatch.stop;});
+		
 		switch(what,
 			\snap, {
 				this.buildSegs;
+				this.changed(\segsBuilt);
 			},
 			\snapTime, {
 				this.buildSegs;
+				this.changed(\segsBuilt);
 			}
 		)
 	}
@@ -537,6 +539,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	var ca, envViews;
 	var path, sf, sfView, scrollView, selectView, backView, menu;
 	var activeSequence;
+	var dependees;
 	
 	*new {|ca, name, origin|
 		//^super.new.init(ca, name ? ca.name ? "test").makeWindow(origin ? (40@200));
@@ -547,6 +550,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		ca = argCa;
 		name = argName;
 		envViews = [];
+		dependees = [ca.addDependant(this), ca.timeReference.addDependant(this)];
 	}
 	
 	makeWindow {
@@ -570,7 +574,8 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		sfView.background = HiliteGradient(Color.blue, Color.cyan, steps: 256);
 		//a.waveColors_([HiliteGradient(Color.blue, Color.cyan), HiliteGradient(Color.blue, Color.cyan)]);
 		sfView.waveColors_(Array.fill(sf.numChannels, {|i| Color.blue.blend(Color.cyan, 1 / (sf.numChannels - 1) * i)})); 
-		
+		sfView.timeCursorOn = true;
+		sfView.timeCursorColor = Color.red;
 		
 		scrollView.canFocus_(false);
 		
@@ -579,7 +584,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		sfView.soundfile = sf;
 		
 		sfView.elasticMode = 1;
-		window.onClose = {sf.close;};
+		window.onClose = {sf.close; dependees.do({|dee| dee.removeDependant(this)});};
 		
 		
 		SCStaticText(window, Rect(0, 0, 5, 10)).string_("-").font_(Font("Helvetica-Bold", 12));
@@ -662,6 +667,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 //				});
 			};
 			envView.mouseUpAction = envView.mouseMoveAction;
+			envView.mouseDownAction = envView.mouseMoveAction;
 			
 			envViews = envViews.add(envView);
 			
@@ -696,5 +702,22 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	
 	clearSelections {
 		64.do({|i| sfView.selectNone(i)});
+	}
+	
+	update { arg changed, what ...args;
+		switch(what,
+			
+			\time, {
+				{sfView.timeCursorPosition = BMTimeSources.currentTime(args[0], args[1], args[2])
+					* sf.sampleRate;}.defer;
+			},
+			\stop, {
+				{sfView.timeCursorPosition = 0;}.defer;
+			},
+			\segsBuilt, {
+				{this.makeEnvViews; this.drawSelections; }.defer;
+			}
+		)
+	
 	}
 }
