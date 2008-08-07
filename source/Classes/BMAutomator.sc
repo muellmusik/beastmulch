@@ -349,6 +349,8 @@ BMSnapShotSeq {
 	
 	buildSegs {
 		segs = [];
+		snapshots = snapshots.sort({|a, b| a.time < b.time });
+		snapshots.collect(_.name).postln;
 		snapshots.doAdjacentPairs({|a, b|
 			// check minimum length
 			if(b.time - a.time < minSegSize, {
@@ -549,7 +551,6 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	init {|argCa, argName|
 		ca = argCa;
 		name = argName;
-		envViews = [];
 		dependees = [ca.addDependant(this), ca.timeReference.addDependant(this)];
 	}
 	
@@ -625,9 +626,10 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	
 	makeEnvViews {
 		envViews.do({|ev| ev.remove});
+		envViews = [];
 		ca.sequences.do({|seq, i|
 			var envView;
-			envView = SCEnvelopeView(scrollView, Rect(0,300,  798, 20))
+			envView = SCEnvelopeView(scrollView, Rect(0, 300, sfView.bounds.width, 20))
 				.thumbWidth_(90.0)
 				.thumbHeight_(19)
 				.drawLines_(true)
@@ -649,24 +651,35 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			envView.canFocus_(false);
 		
 			envView.mouseMoveAction = {|view|
-			
-				this.drawSelections(view);
-				//var time, ss;
-//				time = view.value[0][view.index];
-//				
-//				time.notNil.if({
-//					ss = seq.snapshots[view.index];
-//					sfView.setEditableSelectionStart(view.index, true);
-//					sfView.setEditableSelectionSize(view.index, true);
-//					sfView.setSelection(view.index, [sf.numFrames * time, sf.numFrames / sfView.bounds.width]); 
-//					sfView.setSelectionColor(view.index, Color.white);
-//					ss.time = (time * sf.duration);
-//					envView.setString(view.index, ss.name.asString + ss.time.asTimeString(0.01));
-//					sfView.setEditableSelectionStart(view.index, false);
-//					sfView.setEditableSelectionSize(view.index, false);
-//				});
+				var time, ss;
+				time = view.value[0][view.index];
+				
+				time.notNil.if({
+					ss = seq.snapshots[view.index];
+					sfView.setEditableSelectionStart(view.index, true);
+					sfView.setEditableSelectionSize(view.index, true);
+					sfView.setSelection(view.index, [sf.numFrames * time, sf.numFrames / sfView.bounds.width]); 
+					sfView.setSelectionColor(view.index, Color.white);
+					//ss.time = (time * sf.duration);
+					envView.setString(view.index, ss.name.asString + ss.time.asTimeString(0.01));
+					sfView.setEditableSelectionStart(view.index, false);
+					sfView.setEditableSelectionSize(view.index, false);
+				});
 			};
-			envView.mouseUpAction = envView.mouseMoveAction;
+			//envView.mouseUpAction = envView.mouseMoveAction;
+			envView.mouseUpAction = {|view|
+				var ss;
+				
+				ss = seq.snapshots[view.index];
+				ss.time = view.value[0][view.index] * sf.duration;
+				envView.value_([
+					seq.snapshots.collect({|ss| ss.time }) / sf.duration, // times
+					0.1 ! seq.snapshots.size]); // values
+				seq.snapshots.do({arg ss, i;
+					envView.setString(i, ss.name.asString + ss.time.asTimeString(0.01));
+					//envView.setFillColor(i,Color.black);
+				});
+			};
 			envView.mouseDownAction = envView.mouseMoveAction;
 			
 			envViews = envViews.add(envView);
@@ -691,7 +704,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			sfView.setSelection(index, [sf.numFrames * time, 
 				sf.numFrames / sfView.bounds.width * 2]); 
 			sfView.setSelectionColor(index, Color.white);
-			ss.time = (time * sf.duration);
+			//ss.time = (time * sf.duration);
 			view.setString(index, ss.name.asString + ss.time.asTimeString(0.01));
 			sfView.setEditableSelectionStart(index, false);
 			sfView.setEditableSelectionSize(index, false);
