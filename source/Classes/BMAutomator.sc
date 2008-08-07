@@ -349,7 +349,16 @@ BMSnapShotSeq {
 	
 	buildSegs {
 		segs = [];
+		// arb snapshot first, sort order correctly
+//		snapshots = snapshots.sort({|a, b| a.time < b.time || (a === firstSnap)  });
+//		if(firstSnap.time > snapshots[1].time, {
+//			firstSnap.removeDependant(this);
+//			firstSnap.time = max(snapshots[1].time - minSegSize, 0);
+//			firstSnap.addDependant(this);
+//		});
+//		
 		snapshots = snapshots.sort({|a, b| a.time < b.time });
+
 		snapshots.collect(_.name).postln;
 		snapshots.doAdjacentPairs({|a, b|
 			// check minimum length
@@ -483,7 +492,7 @@ BMAbstractSnapShot {
 	
 	time_ {|newTime| 
 		time = newTime;
-		this.changed(\snapTime);
+		this.changed(\snapTime.postln);
 	}
 	
 	snap {|controls, argTime|  
@@ -661,23 +670,25 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 					sfView.setSelection(view.index, [sf.numFrames * time, sf.numFrames / sfView.bounds.width]); 
 					sfView.setSelectionColor(view.index, Color.white);
 					//ss.time = (time * sf.duration);
-					envView.setString(view.index, ss.name.asString + ss.time.asTimeString(0.01));
+					envView.setString(view.index, ss.name.asString + (time * sf.duration).asTimeString(0.01));
 					sfView.setEditableSelectionStart(view.index, false);
 					sfView.setEditableSelectionSize(view.index, false);
+					this.drawSelections(view);
 				});
 			};
 			//envView.mouseUpAction = envView.mouseMoveAction;
 			envView.mouseUpAction = {|view|
 				var ss;
-				
-				ss = seq.snapshots[view.index];
-				ss.time = view.value[0][view.index] * sf.duration;
-				envView.value_([
-					seq.snapshots.collect({|ss| ss.time }) / sf.duration, // times
-					0.1 ! seq.snapshots.size]); // values
-				seq.snapshots.do({arg ss, i;
-					envView.setString(i, ss.name.asString + ss.time.asTimeString(0.01));
-					//envView.setFillColor(i,Color.black);
+				view.index.notNil({
+					ss = seq.snapshots[view.index];
+					ss.time = view.value[0][view.index] * sf.duration;
+					envView.value_([
+						seq.snapshots.collect({|ss| ss.time }) / sf.duration, // times
+						0.1 ! seq.snapshots.size]); // values
+					seq.snapshots.do({arg ss, i;
+						envView.setString(i, ss.name.asString + ss.time.asTimeString(0.01));
+						//envView.setFillColor(i,Color.black);
+					});
 				});
 			};
 			envView.mouseDownAction = envView.mouseMoveAction;
@@ -705,7 +716,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 				sf.numFrames / sfView.bounds.width * 2]); 
 			sfView.setSelectionColor(index, Color.white);
 			//ss.time = (time * sf.duration);
-			view.setString(index, ss.name.asString + ss.time.asTimeString(0.01));
+			//view.setString(index, ss.name.asString + ss.time.asTimeString(0.01));
 			sfView.setEditableSelectionStart(index, false);
 			sfView.setEditableSelectionSize(index, false);
 		});
@@ -726,11 +737,86 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			},
 			\stop, {
 				{sfView.timeCursorPosition = 0;}.defer;
-			},
-			\segsBuilt, {
-				{this.makeEnvViews; this.drawSelections; }.defer;
-			}
+			}//,
+//			\segsBuilt, {
+//				{this.makeEnvViews; this.drawSelections; }.defer;
+//			}
 		)
 	
 	}
+}
+
+//Quick and dirty for now
+BMSnapShotSliders : BMAbstractGUI {
+	var virtualCont, sliders, fromUpdate = false;
+	var needsRefresh = false;
+	var <>refreshInterval = 0.05;
+	var refreshLoopOn = false;
+	
+	*new {|virtualCont, name, origin|
+		^super.new.init(virtualCont, name ? virtualCont.name)
+			.makeWindow(origin ? (40@200));
+	}
+	
+	init {|argvirtualCont, argname|
+		virtualCont = argvirtualCont;
+		virtualCont.addDependant(this);
+		name = argname;
+	}
+	
+	makeWindow {|origin|
+		var numSliders, presetMenu;
+		numSliders = virtualCont.numFaders;
+		window = SCWindow.new(name, 
+			Rect(300, 300, 652, (numSliders + 1) * 24), false); // 508
+		window.view.decorator = FlowLayout(window.view.bounds);
+		window.view.background = Color.rand.alpha_(0.3);
+		sliders = Array.newClear(numSliders);
+		virtualCont.getAllLabels.do({|label, i|
+			var initVal;
+			initVal = virtualCont.getFaderVal(i + 1).ampdb;
+			sliders[i] = EZSlider.new(window, 640@20, label.asString, \db,
+				{|ez| var setVal;
+					if(fromUpdate.not, {
+						setVal = ez.value.dbamp;
+						virtualCont.setFaderVal(i + 1, setVal);
+					})
+				}, initVal
+			);
+			sliders[i].numberView.boxColor = Color.white.alpha_(0.4);
+		
+		});
+		window.onClose = { virtualCont.removeDependant(this); onClose.value };
+		window.front;
+	}
+	
+	// could be some jitter, but safer
+	startRefreshLoop {
+		refreshLoopOn.not.if({
+			refreshLoopOn = true;
+			AppClock.sched(refreshInterval, {
+				var resched;
+				needsRefresh.if({resched = refreshInterval}, {refreshLoopOn = false});
+				fromUpdate = true; // prevent a loop
+				virtualCont.getAllFaders.do({|val, i| 
+					sliders[i].value_(val.ampdb);
+				});
+				fromUpdate = false;
+				needsRefresh = false;
+				resched;
+			});
+		});
+	}
+	
+	update {|changed, what, index, val|
+		switch(what,
+			\faderVal, {
+				needsRefresh = true;
+				this.startRefreshLoop;
+			},
+			\label, {sliders[index].labelView.string_(val.asString)}
+		)
+	}
+	
+
 }
