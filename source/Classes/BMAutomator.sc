@@ -350,13 +350,15 @@ BMSnapShotSeq {
 	buildSegs {
 		segs = [];
 		// arb snapshot first, sort order correctly
-//		snapshots = snapshots.sort({|a, b| a.time < b.time || (a === firstSnap)  });
-//		if(firstSnap.time > snapshots[1].time, {
-//			firstSnap.removeDependant(this);
-//			firstSnap.time = max(snapshots[1].time - minSegSize, 0);
-//			firstSnap.addDependant(this);
-//		});
-//		
+		snapshots = snapshots.sort({|a, b| a.time < b.time || (a === firstSnap)  });
+		snapshots.postln;
+		if(firstSnap.time.postln > snapshots[1].time.postln, {
+			\first.postln;
+			firstSnap.removeDependant(this);
+			firstSnap.time = max(snapshots[1].time - minSegSize, 0);
+			firstSnap.addDependant(this);
+		});
+		
 		snapshots = snapshots.sort({|a, b| a.time < b.time });
 
 		snapshots.collect(_.name).postln;
@@ -678,10 +680,13 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			};
 			//envView.mouseUpAction = envView.mouseMoveAction;
 			envView.mouseUpAction = {|view|
-				var ss;
-				view.index.notNil({
-					ss = seq.snapshots[view.index];
-					ss.time = view.value[0][view.index] * sf.duration;
+				var ss, index;
+				index = view.index;
+				\mousUp.postln;
+				index.notNil.if({
+					\mousUpNotNil.postln;
+					ss = seq.snapshots[index];
+					ss.time = view.value[0][index] * sf.duration;
 					envView.value_([
 						seq.snapshots.collect({|ss| ss.time }) / sf.duration, // times
 						0.1 ! seq.snapshots.size]); // values
