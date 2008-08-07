@@ -124,6 +124,8 @@ Should automators be named?
 
 How best to get representation from timeRef (i.e. sfview)
 
+Should name come last in seq
+
 */
 BMControllerAutomator : BMAbstractIndependentRateAutomator {
 	// interpolates between controller snapshots
@@ -172,9 +174,9 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 	
 	addStartSnapShot { }
 	
-	addSnapShot {|seqName, ssTime| 
+	addSnapShot {|seqName, ssTime, ssName| 
 		ssTime = ssTime ?? {BMTimeSources.currentTime(time, rate, referenceTime)};
-		sequences[seqName].addSnapShot(ssTime);
+		sequences[seqName].addSnapShot(ssTime, ssName);
 	}
 	
 	addIndividualSequences {|seqName, startTime|
@@ -288,6 +290,7 @@ BMSnapShotSeq {
 	var arbStart, arbStartEnd;
 	var arbEnd, arbEndEnd;
 	var <snapshots, firstSnap, snapTimes, segs;
+	var <snapshotsDict;
 	var oldSeg;
 	var <minSegSize = 0.2;
 	
@@ -299,19 +302,27 @@ BMSnapShotSeq {
 		
 		start = max(0, firstSnapTime - 1);
 		
-		firstSnap = BMArbitraryStartSnapShot(controls, start);
+		firstSnap = BMArbitraryStartSnapShot(controls, start, 'Start');
 		snapshots = [
 			firstSnap,							// arbitrary
-			BMSnapShot(controls, firstSnapTime)	  	// known
+			BMSnapShot(controls, firstSnapTime, (name ++ "-1").asSymbol)	  	// known
 		];
 		snapshots.do(_.addDependant(this));
+		snapshotsDict = IdentityDictionary.new; // by name rather than order
+		snapshotsDict['Start'] = firstSnap;
+		snapshotsDict[(name ++ "-1").asSymbol] = snapshots[1];
 		this.buildSegs;
 	}
 	
 	minSegSize_ {|newSize| minSegSize = newSize; this.buildSegs }
 	
-	addSnapShot {|time|
+	addSnapShot {|time, ssname|
 		var snap;
+		ssname = ssname.asSymbol;
+		snapshotsDict.keys.includes(ssname).if({
+			"Snapshot" + ssname + "already exists.".error;
+			^this;
+		});
 		if(time < start && firstSnap.isKnown.not, {
 			start = max(0, time - 1);
 			// avoid extra update
@@ -320,15 +331,19 @@ BMSnapShotSeq {
 			firstSnap.addDependant(this);
 		});
 		
-		snap = BMSnapShot(controls, time);
+		snap = BMSnapShot(controls, time, ssname);
 		snap.addDependant(this);
 		snapshots = snapshots.add(snap).sort({|a, b| a.time < b.time });
+		snapshotsDict[ssname] = snap;
 		this.buildSegs;
 	}
 	
-	removeSnapShot { |snapshot|
+	removeSnapShot { |ssname|
+		var snapshot;
+		snapshot = snapshotsDict[ssname];
 		snapshot.removeDependant(this);
 		snapshots.remove(snapshot);
+		snapshotsDict[ssname] = nil;
 		this.buildSegs;
 	}
 	
@@ -455,11 +470,11 @@ BMSnapShotSequenceSeg {
 }
 
 BMAbstractSnapShot {
-	var <time, <values;
+	var <name, <time, <values;
 	// these allow for customised behaviour upon entering a segment
 	
-	*new{|controls, time|
-		^super.new.snap(controls, time);
+	*new{|controls, time, name|
+		^super.newCopyArgs(name).snap(controls, time);
 	}
 	
 	time_ {|newTime| 
@@ -492,8 +507,8 @@ BMArbitraryStartSnapShot : BMAbstractSnapShot {
 	//var activated = false;
 	var <snapTime;
 	
-	*new{|controls, time|
-		^super.new.init(time);
+	*new{|controls, time, name|
+		^super.newCopyArgs(name).init(time);
 	}
 	
 	init {|argTime| time = argTime; }
@@ -519,7 +534,9 @@ BMArbitraryStartSnapShot : BMAbstractSnapShot {
 
 
 BMControllerAutomatorGUI : BMAbstractGUI {
-	var ca;
+	var ca, envViews;
+	var path, sf, sfView, scrollView, selectView, backView, menu;
+	var activeSequence;
 	
 	*new {|ca, name, origin|
 		//^super.new.init(ca, name ? ca.name ? "test").makeWindow(origin ? (40@200));
@@ -529,10 +546,11 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	init {|argCa, argName|
 		ca = argCa;
 		name = argName;
+		envViews = [];
 	}
 	
 	makeWindow {
-		var path, sf, sfView, scrollView, envView, selectView;
+		
 		
 		path = ca.timeReference.path; // How best to do this?
 		sf = SoundFile.new;
@@ -546,6 +564,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		scrollView = SCScrollView(window, Rect(0, 0, 800, 334));
 		scrollView.hasBorder = true;
 		scrollView.resize = 2;
+		//scrollView.background = Color.black;
 		
 		sfView = SCSoundFileView.new(scrollView, Rect(0,0, 798, 300));
 		sfView.background = HiliteGradient(Color.blue, Color.cyan, steps: 256);
@@ -555,63 +574,127 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		
 		scrollView.canFocus_(false);
 		
-		envView = SCEnvelopeView(scrollView, Rect(0,300,  798, 20))
-			.thumbWidth_(60.0)
-			.thumbHeight_(19)
-			.drawLines_(true)
-			.drawRects_(true)
-			.selectionColor_(Color.grey)
-			.strokeColor_(Color.white)
-			.background_(Color.black)
-			.value_([[0.1, 0.3, 0.4, 0.5], [0.1, 0.2, 0.9, 0.7]]);
-		//b.setStatic(0,true);
-		4.do({arg i;
-			envView.setString(i, "");
-			envView.setFillColor(i,Color.black);
-		});
-		
-		
-		envView.canFocus_(false);
-		
-		//if(scrollView.bounds.width == 798, {zoomCount = 799 / sf.duration });
-		
-		envView.mouseMoveAction = {|view|
-			var time;
-			time = view.value[0][view.index];
-			time.notNil.if({
-				sfView.setEditableSelectionStart(view.index, true);
-				sfView.setEditableSelectionSize(view.index, true);
-				sfView.setSelection(view.index, [sf.numFrames * time, sf.numFrames / sfView.bounds.width]); 
-				sfView.setSelectionColor(view.index, Color.white);
-				envView.setString(view.index, (view.index + 1).asString ++ ":" + (time * sf.duration).asTimeString(0.01));
-				sfView.setEditableSelectionStart(view.index, false);
-				sfView.setEditableSelectionSize(view.index, false);
-			});
-		};
-		envView.mouseUpAction = envView.mouseMoveAction;
-		
+		backView = SCCompositeView(scrollView, Rect(0,300,  798, 20)).background_(Color.black);
+				
 		sfView.soundfile = sf;
 		
 		sfView.elasticMode = 1;
 		window.onClose = {sf.close;};
 		
+		
 		SCStaticText(window, Rect(0, 0, 5, 10)).string_("-").font_(Font("Helvetica-Bold", 12));
 		SmoothSlider(window, Rect(0, 0, 60, 10)).action_({|view| 
-			sfView.bounds = Rect(0,0, 798 + (sf.duration * 40 * view.value), 300);
-			envView.bounds = Rect(0,300,  798 + (sf.duration * 40 * view.value), 20);
-			sfView.selections.size.do({|i| sfView.setSelectionSize(i, sf.numFrames / sfView.bounds.width)});
+			var width;
+			width = 798 + (sf.duration * 160 * view.value);
+			sfView.bounds = Rect(0,0, width, 300);
+			envViews.do({|ev| ev.bounds = Rect(0,300, width, 20); });
+			backView.bounds = Rect(0,300, width, 20); 
+			sfView.selections.size.do({|i| 
+				sfView.setSelectionSize(i, sf.numFrames / sfView.bounds.width)
+			});
 			scrollView.refresh;
 		}).knobSize_(1).canFocus_(false).hilightColor_(Color.blue);
 		SCStaticText(window, Rect(0, 0, 10, 10)).string_("+").font_(Font("Helvetica-Bold", 10));
 		
 		window.view.decorator.nextLine.nextLine;
 		SCStaticText(window, Rect(0, 0, 90, 15)).string_("Sequence to Edit").font_(Font("Helvetica-Bold", 10));
-		SCPopUpMenu(window, Rect(10,10,90,15)).items_(ca.sequences.keys.asArray.sort)
-			.font_(Font("Helvetica-Bold", 10));
+		menu = SCPopUpMenu(window, Rect(10,10,90,15))
+			.font_(Font("Helvetica-Bold", 10))
+			.action_({|view|
+				envViews.do({|ev| ev.visible_(false)});
+				envViews[view.value].visible_(true);
+				activeSequence = ca.sequences[view.item];
+				//this.clearSelections;
+				this.drawSelections(envViews[view.value]);
+				scrollView.refresh;
+				//sfView.selections.postln;
+			});
 		
-		sfView.readWithTask;
+		sfView.readWithTask(block: 128, doneAction: {
+			this.makeEnvViews;
+		});
 		//a.resize = 5;
 		window.front;
 
+	}
+	
+	makeEnvViews {
+		envViews.do({|ev| ev.remove});
+		ca.sequences.do({|seq, i|
+			var envView;
+			envView = SCEnvelopeView(scrollView, Rect(0,300,  798, 20))
+				.thumbWidth_(90.0)
+				.thumbHeight_(19)
+				.drawLines_(true)
+				.drawRects_(true)
+				.selectionColor_(Color.grey)
+				.strokeColor_(Color.white)
+				.background_(Color.clear)
+				.value_([
+					seq.snapshots.collect({|ss| ss.time }) / sf.duration, // times
+					0.1 ! seq.snapshots.size]) // values
+				.visible_(false);
+			//b.setStatic(0,true);
+			seq.snapshots.do({arg ss, i;
+				envView.setString(i, ss.name.asString + ss.time.asTimeString(0.01));
+				//envView.setFillColor(i,Color.black);
+			});
+			
+			
+			envView.canFocus_(false);
+		
+			envView.mouseMoveAction = {|view|
+			
+				this.drawSelections(view);
+				//var time, ss;
+//				time = view.value[0][view.index];
+//				
+//				time.notNil.if({
+//					ss = seq.snapshots[view.index];
+//					sfView.setEditableSelectionStart(view.index, true);
+//					sfView.setEditableSelectionSize(view.index, true);
+//					sfView.setSelection(view.index, [sf.numFrames * time, sf.numFrames / sfView.bounds.width]); 
+//					sfView.setSelectionColor(view.index, Color.white);
+//					ss.time = (time * sf.duration);
+//					envView.setString(view.index, ss.name.asString + ss.time.asTimeString(0.01));
+//					sfView.setEditableSelectionStart(view.index, false);
+//					sfView.setEditableSelectionSize(view.index, false);
+//				});
+			};
+			envView.mouseUpAction = envView.mouseMoveAction;
+			
+			envViews = envViews.add(envView);
+			
+			menu.items_(ca.sequences.keys.asArray.sort).doAction;
+		
+		});
+
+	}
+	
+	// we use SCSoundFileView Selections for the snapshot time cursors
+	drawSelections {|view|
+	
+		var time, ss;
+		
+		
+		this.clearSelections;
+		activeSequence.snapshots.do({|ss, index|
+			time = view.value[0][index];
+			sfView.setEditableSelectionStart(index, true);
+			sfView.setEditableSelectionSize(index, true);
+			sfView.setSelection(index, [sf.numFrames * time, 
+				sf.numFrames / sfView.bounds.width * 2]); 
+			sfView.setSelectionColor(index, Color.white);
+			ss.time = (time * sf.duration);
+			view.setString(index, ss.name.asString + ss.time.asTimeString(0.01));
+			sfView.setEditableSelectionStart(index, false);
+			sfView.setEditableSelectionSize(index, false);
+		});
+		sfView.refresh;
+	
+	}
+	
+	clearSelections {
+		64.do({|i| sfView.selectNone(i)});
 	}
 }
