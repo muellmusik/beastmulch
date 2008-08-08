@@ -602,7 +602,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		SCStaticText(window, Rect(0, 0, 5, 10)).string_("-").font_(Font("Helvetica-Bold", 12));
 		SmoothSlider(window, Rect(0, 0, 60, 10)).action_({|view| 
 			var width;
-			width = 798 + (sf.duration * 160 * view.value);
+			width = 798 + (sf.duration * 160 * [0.001, 1, \exp].asSpec.map(view.value));
 			sfView.bounds = Rect(0,0, width, 300);
 			envViews.do({|ev| ev.bounds = Rect(0,300, width, 20); });
 			backView.bounds = Rect(0,300, width, 20); 
