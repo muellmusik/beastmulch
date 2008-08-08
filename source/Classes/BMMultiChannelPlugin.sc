@@ -1,11 +1,8 @@
-// Classes for implementing 'Plugins' for processing audio
-// Plugins can be mono or output multichannel
-// Their outputs need not match their inputs
+// plugin, numInputs, numOutputs, inputs passed to function as prepend args
+// inputs is an array of In Ugens reading from buses derived from a BMInOutArray or subarray
+// inputs could be 0
 
 // synthdefFunc is a function suitable for use with SynthDef:wrap
-// which is passed args |plugin, numChannels, in| and returns a ugen for output
-// Multichannel output plugins should send the output to a private bus
-// and mute or passthrough the source as appropriate.
 
 // guiFunc creates a window to control a plugin synth.
 // guiFunc will be passed the plugin itself so that specs, and current vals can be derived
@@ -17,28 +14,30 @@
 
 // attributes allows for arbitrary user data for constructing the synthdef and gui
 
+// syncFunc is a setup function that must be completed before the plugin is made
+// it will be passed the plugin instance
+// it can store any objects for further reference in attributes for use by the plugin or graphFunc
+// it should return true if it worked, false if not (in which case the plugins init should return nil)
+
+// cleanupFunc allows for any heavy resources to be cleaned up after the plugin is removed.
+// e.g a Buffer, which would have been stored in attributes
+
 // description is human readable text (String)
 
-// For now at least plugins map to control busses
-// This should allow for an easy later extension to allow rt control with controllers
-
-//-----
-// To do:
-// control support
-// remove number of channels arg?
-// probably should add syncFunc and cleanupFunc from multi version
-
-BMPluginSpec {
+BMMultichannelPluginSpec {
 	classvar <specs, defaultGuiFunc;
 	var <name, <ugenGraphFunc, <specsDict, guiFunc, <>presets, <description, <defaultAttributes;
+	var <minInputs, <minOutputs, <maxInputs, <maxOutputs; //nil for max = unlimited
+	var syncFunc, cleanupFunc;
 	
-	*new {|name, ugenGraphFunc, specsDict, guiFunc, presets, description, defaultAttributes|
+	*new {|name, ugenGraphFunc, specsDict, guiFunc, presets, description, defaultAttributes, 
+		inRange, outRange, syncFunc, cleanupFunc| // ranges are [min, max]
 		^super.new.init(name, ugenGraphFunc, specsDict, guiFunc, presets, description, 
-			defaultAttributes);
+			defaultAttributes, inRange, outRange, syncFunc, cleanupFunc);
 	}
 	
 	init {|argname, argugenGraphFunc, argspecsDict, argguiFunc, argpresets, argdescription, 
-		argattributes|
+		argattributes, arginRange, argoutRange, argsyncfunc, argcleanupfunc|
 		name = argname.asSymbol;
 		ugenGraphFunc = argugenGraphFunc;
 		specsDict = argspecsDict ? ();
@@ -50,6 +49,14 @@ BMPluginSpec {
 		defaultAttributes[\usesLinearAmp].isNil.if({
 			defaultAttributes[\usesLinearAmp] = true;
 		});
+		arginRange = arginRange ?? { [1, inf] };
+		argoutRange = argoutRange ?? { [1, inf] };
+		minInputs = arginRange[0];
+		maxInputs = arginRange[1];
+		minOutputs = arginRange[0];
+		maxOutputs = arginRange[1];
+		syncFunc = argsyncfunc;
+		cleanupFunc = argcleanupfunc;
 		this.class.specs[name] = this;
 	}
 	
@@ -57,85 +64,39 @@ BMPluginSpec {
 		// define some plugin specs
 		StartUp.add({ 
 			specs = ();
-			BMPluginSpec('highpass', 				// name
-				{|plugin, numChannels, input, freq| 	// ugenGraphFunc
-					HPF.ar(input, freq);
+			BMMultichannelPluginSpec('3D VBAP Panner', 				// name
+				{|plugin, numInputs, numOutputs, inputs, azimuth, elevation, spread, azimuthLag| 	// ugenGraphFunc
+					VBAP.ar(numOutputs, inputs[0], plugin.attributes[\buffer], azimuth.circleRamp(azimuthLag), elevation, spread);
 				}, 								
-				(freq: \freq.asSpec),				// specsDict
+				(azimuth: [-180, 180, 'lin', 0.0,  0, " degrees"].asSpec, 
+				elevation: [-90, 90, 'lin', 0.0, 0, " degrees"].asSpec, 
+				spread: [0, 100, 'lin', 0.0, 2, " %"].asSpec,
+				azimuthLag: [0, 1, 'lin', 0.0, 0.1, " seconds"].asSpec
+				),				// specsDict
 				nil, 							// default GUI
 				(atcs: (freq: 80), tweeters: (freq: 10000)), // presets
-				"2nd Order Butterworth Highpass Filter -12db/Oct"
+				"Mono input 3D Vector Base Amplitude Panner",
+				nil, 							// defaultAttributes
+				nil,								// inRange
+				nil,								// outRange
+				{|plugin| 
+					var speakers;
+					speakers = plugin.outputs.collect({|out|
+						out.isBMSpeaker.not.if({
+							"VBAP output not a speaker".error;
+							^false;
+						});
+						[out.azi, out.ele];
+					});
+					speakers = VBAPSpeakerArray(3, speakers);
+					plugin.attributes[\buffer] = 
+						Buffer.loadCollection(plugin.server, speakers.getSetsAndMatrices);
+				},								// syncFunc
+				{|plugin|
+					plugin.attributes[\buffer].free;
+				}								// cleanupFunc
 			);
-			BMPluginSpec('lowpass', 				// name
-				{|plugin, numChannels, input, freq| 	// ugenGraphFunc
-					LPF.ar(input, freq);
-				}, 								
-				(freq: \freq.asSpec),				// specsDict
-				nil, 							// default GUI
-				('very distants': (freq: 4000)), // presets
-				"2nd Order Butterworth Lowpass Filter -12db/Oct"
-			);
-			BMPluginSpec('bandpass', 				// name
-				{|plugin, numChannels, input, freq, rq| 
-					BPF.ar(input, freq, rq);
-				}, 								
-				(freq: \freq.asSpec, rq: \rq.asSpec.units = " 1/Q"),	
-				nil, 						// default GUI
-				nil, // no presets
-				"2nd Order Butterworth Bandpass Filter"
-			);
-			BMPluginSpec('Kill DC', 				// name
-				{|plugin, numChannels, input| 	// ugenGraphFunc
-					LeakDC.ar(input);
-				}, 								
-				description: "Cuts through that greasy DC buildup..."
-			);
-			BMPluginSpec('Delay', 				// name
-				{|plugin, numChannels, input, delayTime| 
-					DelayC.ar(input, 2, delayTime);
-				},
-				(delayTime: ControlSpec(0.0001, 1, \linear, 0, 0.5, units: " secs")), 
-				description: "Simple Delay with Cubic Interpolation; 1 second maximum"
-			);
-			BMPluginSpec('Distance Compensate', 				// name
-				{|plugin, numChannels, input, delayTime| 
-					DelayC.ar(input, 2, delayTime);
-				},
-				(delayTime: ControlSpec(0.0001, 1, \linear, 0, 0.5, units: " secs")), 
-				description: "Automatically added Delay with Cubic Interpolation; 1 second maximum"
-			);
-			BMPluginSpec('FreeVerb', 				// name
-				{|plugin, numChannels, input, mix, roomSize, hfDamp| 
-					FreeVerb.ar(input, mix,  roomSize,  hfDamp);
-				},
-				(
-					mix: ControlSpec(0, 1, \linear, 0, 0.25, units: ""),
-					roomSize: ControlSpec(0, 1, \linear, 0, 0.5, units: ""),
-					hfDamp: ControlSpec(0, 1, \linear, 0, 0.5, units: "")
-				), 
-				description: "The classic open source Schroeder/Moorer reverb"
-			);
-			BMPluginSpec('3 Band EQ',
-				{|plugin, numChannels, input, lowFreq, lowGain, midFreq, midrq, midGain
-					hiFreq, hiGain| 
-					var eqchain;
-					eqchain = BLowShelf.ar(input, lowFreq, 1, lowGain);
-					eqchain = BPeakEQ.ar(eqchain, midFreq, midrq, midGain);
-					BHiShelf.ar(eqchain, hiFreq, 1, hiGain);
-				}, 								
-				(
-					lowFreq: ControlSpec(20, 20000, 'exp', 0, 100, " Hz"),
-					lowGain: \boostcut.asSpec,
-					midFreq: ControlSpec(20, 20000, 'exp', 0, 1000, " Hz"),
-					midGain: \boostcut.asSpec,
-					midrq: \rq.asSpec.units = " 1/Q",
-					hiFreq: ControlSpec(20, 20000, 'exp', 0, 6000, " Hz"),
-					hiGain: \boostcut.asSpec
-				),	
-				nil, 						// default GUI
-				nil, // no presets
-				"3 Band EQ based on the BEQSuite. A low shelf, mid parametric, and high shelf implemented with cascading Second Order Section (Biquad) filters."
-			);
+		
 		// read application directory for source code files of user plugins specs
 		// or maybe in app
 		});
@@ -192,11 +153,19 @@ BMPluginSpec {
 	
 }
 
+
+// To do:
+// Fix new
+// Fix init with sync func
+// At the moment, this does sync func before making the def. Is that right?
+// Otherwise we'd need to store info about heavy resources rather than hard coding it
+
 // Class which manages resources for a plugin instance
-BMPlugin {
-	var <spec, <numChannels = 1, <server, <attributes, <defName, <def;
-	var <synth, <values, defaultValues, <bus, numControls, controlNames, mappings;
-	var <preset;
+BMMultichannelPlugin : BMPlugin {
+//	var <spec, <numChannels = 1, <server, <attributes, <defName, <def;
+//	var <synth, <values, defaultValues, <bus, numControls, controlNames, mappings;
+//	var <preset;
+	var <numInputs, <numOutputs, <inputs, <outputs;
 	
 	*new {|pluginSpecName, numChannels = 1, server, attributes|
 		^super.new.init(pluginSpecName, numChannels = 1, server ? Server.default, attributes);
@@ -250,7 +219,7 @@ BMPlugin {
 	}
 	
 	makeDef {
-		defName = spec.name ++ numChannels; 
+		defName = spec.name ++ UniqueID.next; 
 		if(attributes.notNil, { defName = defName ++ "-" ++ UniqueID.next});
 		def = SynthDef(defName, {arg i_in, cfgate = 1;
 			var input, out;
