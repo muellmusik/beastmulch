@@ -27,13 +27,15 @@
 // ---------
 
 // To do:
-// Does default gui work?
+// Does default gui work? Yes
+// Copy specsDict in plugin so that they can be adjusted according to inputs, etc.?
+// 	- eg in VBAP clip elevation based on available speakers
 
 BMMultichannelPluginSpec {
 	classvar <specs, defaultGuiFunc;
 	var <name, <ugenGraphFunc, <specsDict, guiFunc, <>presets, <description, <defaultAttributes;
 	var <minInputs, <minOutputs, <maxInputs, <maxOutputs; //nil for max = unlimited
-	var setupFunc, cleanupFunc;
+	var <setupFunc, <cleanupFunc;
 	
 	*new {|name, ugenGraphFunc, specsDict, guiFunc, presets, description, defaultAttributes, 
 		inRange, outRange, setupFunc, cleanupFunc| // ranges are [min, max]
@@ -71,15 +73,15 @@ BMMultichannelPluginSpec {
 			specs = ();
 			BMMultichannelPluginSpec('3D VBAP Panner', 				// name
 				{|plugin, numInputs, numOutputs, inputs, azimuth, elevation, spread, azimuthLag| 	// ugenGraphFunc
-					VBAP.ar(numOutputs, inputs[0], plugin.attributes[\buffer], azimuth.circleRamp(azimuthLag), elevation, spread);
+					VBAP.ar(numOutputs, inputs, plugin.attributes[\buffer], azimuth.circleRamp(azimuthLag), elevation, spread);
 				}, 								
-				(azimuth: [-180, 180, 'lin', 0.0,  0, " degrees"].asSpec, 
-				elevation: [-90, 90, 'lin', 0.0, 0, " degrees"].asSpec, 
+				(azimuth: [-180, 180, 'lin', 0.0,  0, " deg"].asSpec, 
+				elevation: [-90, 90, 'lin', 0.0, 0, " deg"].asSpec, 
 				spread: [0, 100, 'lin', 0.0, 2, " %"].asSpec,
-				azimuthLag: [0, 1, 'lin', 0.0, 0.1, " seconds"].asSpec
+				azimuthLag: [0, 1, 'lin', 0.0, 0.1, " sec"].asSpec
 				),				// specsDict
 				nil, 							// default GUI
-				(atcs: (freq: 80), tweeters: (freq: 10000)), // presets
+				('dead ahead': (azimuth: 0, elevation:0)), // presets
 				"Mono input 3D Vector Base Amplitude Panner",
 				nil, 							// defaultAttributes
 				nil,								// inRange
@@ -87,11 +89,11 @@ BMMultichannelPluginSpec {
 				{|plugin| 
 					var speakers;
 					speakers = plugin.outputs.collect({|out|
-						out.isBMSpeaker.not.if({
+						out.value.isBMSpeaker.not.if({
 							"VBAP output not a speaker".error;
 							^false;
 						});
-						[out.azi, out.ele];
+						[out.value.azi, out.value.ele];
 					});
 					speakers = VBAPSpeakerArray(3, speakers);
 					plugin.attributes[\buffer] = 
@@ -101,7 +103,46 @@ BMMultichannelPluginSpec {
 					plugin.attributes[\buffer].free;
 				}								// cleanupFunc
 			);
-		
+			BMMultichannelPluginSpec('Stereo 3D VBAP Panner', 				// name
+				{|plugin, numInputs, numOutputs, inputs, azimuth, elevation, spread, azimuthLag, 
+					azimuthWidth, elevationWidth| 	// ugenGraphFunc
+					var azdev, eldev;
+					azdev = azimuthWidth * 0.5;
+					eldev = elevationWidth * 0.5;
+					Mix(VBAP.ar(numOutputs, inputs, plugin.attributes[\buffer], 
+						azimuth.circleRamp(azimuthLag) + [azdev.neg, azdev], 
+						elevation + [eldev.neg, eldev], spread));
+				}, 								
+				(azimuth: [-180, 180, 'lin', 0.0,  0, " deg"].asSpec, 
+				elevation: [-90, 90, 'lin', 0.0, 0, " deg"].asSpec, 
+				spread: [0, 100, 'lin', 0.0, 2, " %"].asSpec,
+				azimuthLag: [0, 1, 'lin', 0.0, 0.1, " sec"].asSpec,
+				azimuthWidth: [-180, 180, 'lin', 0.0,  60, " deg"].asSpec,
+				elevationWidth: [-180, 180, 'lin', 0.0,  0, " deg"].asSpec
+				),				// specsDict
+				nil, 							// default GUI
+				('dead ahead': (azimuth: 0, elevation:0)), // presets
+				"Stereo input 3D Vector Base Amplitude Panner",
+				nil, 							// defaultAttributes
+				nil,								// inRange
+				nil,								// outRange
+				{|plugin| 
+					var speakers;
+					speakers = plugin.outputs.collect({|out|
+						out.value.isBMSpeaker.not.if({
+							"VBAP output not a speaker".error;
+							^false;
+						});
+						[out.value.azi, out.value.ele];
+					});
+					speakers = VBAPSpeakerArray(3, speakers);
+					plugin.attributes[\buffer] = 
+						Buffer.loadCollection(plugin.server, speakers.getSetsAndMatrices);
+				},								// setupFunc
+				{|plugin|
+					plugin.attributes[\buffer].free;
+				}								// cleanupFunc
+			);
 		// read application directory for source code files of user plugins specs
 		// or maybe in app
 		});
@@ -178,7 +219,7 @@ BMMultichannelPlugin {
 	}
 	
 	init { |argpluginSpecName, argins, argouts, argserver, argattributes|
-		spec = BMPluginSpec.specs[argpluginSpecName.asSymbol];
+		spec = BMMultichannelPluginSpec.specs[argpluginSpecName.asSymbol];
 		inputs = argins;
 		outputs = argouts;
 		numInputs = inputs.size;
@@ -230,13 +271,13 @@ BMMultichannelPlugin {
 	
 	makeDef {
 		defName = spec.name ++ UniqueID.next; 
-		if(attributes.notNil, { defName = defName ++ "-" ++ UniqueID.next});
+		//if(attributes.notNil, { defName = defName ++ "-" ++ UniqueID.next});
 		def = SynthDef(defName, {arg cfgate = 1;
 			var input, out, env;
 			input = In.ar(inputs);
 			(input.size == 1).if({input = input[0];});
 			out = SynthDef.wrap(spec.ugenGraphFunc, nil, [this, numInputs, numOutputs, input]);
-			
+			//out.postln;
 			// fade in and out, release
 			env = EnvGen.kr(Env.asr(BMOptions.crossfade, 1, BMOptions.crossfade), cfgate, 
 				doneAction: 2);
@@ -244,7 +285,7 @@ BMMultichannelPlugin {
 				"Plugin output does not match size of output array.".warn;
 			});
 			// if sizes don't match take the first outputs
-			out.do({|chan, i| XOut.ar(outputs[i], env, chan);});
+			out.do({|chan, i| XOut.ar(outputs.atIndex(i), env, chan);});
 		});
 		
 	}
