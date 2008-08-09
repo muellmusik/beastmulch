@@ -331,3 +331,148 @@ BMMultichannelPlugin {
 	}
 
 }
+
+
+//BMAbstractAudioChainElement {
+//	classvar <allChainElements;
+//	var <ins, <outs, <inNames, <outNames; // in the default case the getters return nil, as an element need not have both ins and outs
+//	var <group, <>server, <name, <callCmdPeriod = true;
+
+//------- To do:
+// fix mappings
+
+BMMultichannelPluginsRack : BMAbstractAudioChainElement {
+	var <plugins;
+	
+//	*new {|target, input|
+//		^super.new.init(target, input);
+//	}
+
+	
+//	init {|argtarget, arginput|
+//		target = argtarget.asGroup;
+//		server = target.server;
+//		input = arginput;
+//		
+//		plugins = List.new;
+//		target.server.makeBundle(nil, {
+//			this.sendDef;
+//			server.sync;
+//			this.makeNodes; // first time only trim...
+//		});
+//	}
+	
+	*new { |ins, group, server, name|
+		^super.new.init(ins, group, server ? Server.default, name);
+		// default name is class
+	}
+	
+	init {|argins, arggroup, argserver, argname|
+		ins = argins;
+		outs = argins;
+		group = arggroup;
+		server = argserver;
+		name = argname  ? this.makeName;
+		inNames = ins.keys;
+		outNames = outs.keys;
+		if(group.isNil, {this.makeGroup});
+		plugins = List.new;
+		CmdPeriod.add(this);
+		allChainElements[name] = this;
+	}
+
+	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
+		^this.new(inAudioArray, group, server, name);
+	}
+	
+	makeGroup { group = Group.tail(server); }
+	
+	clear { 
+		plugins = List.new;
+		this.makeNodes;
+	}
+	
+	mappings { 
+		var dict;
+		dict = IdentityDictionary.new;
+		dict[\plugins] = plugins.collect({|plugin|
+			// could be a problem if pluginspec changes in the meantime
+			[plugin.spec.name, plugin.inputs, plugin.outputs, plugin.attributes, plugin.values];
+		}); // these are in order
+		^dict;
+	}
+	
+	mappings_ { |dict| 
+		this.plugins.do({|plugin| plugin.release;});
+		plugins = List.new;
+		dict[\plugins].do({|pluginArray|
+			var plugin;
+			plugin = BMMultichannelPlugin(pluginArray[0], pluginArray[1], pluginArray[2], server, 
+				pluginArray[3]);
+			this.addPlugin(plugin);
+			pluginArray[4].keysValuesDo({|k, v| plugin.set(k, v)});
+		});
+		this.changed;
+	}
+	
+//	target_{|argtarget|
+//		target = argtarget.asGroup; 
+//		(target.asTarget.server != server).if({
+//			Error("Target server does not match Plugins' server.").throw;
+//		});
+//	
+//	}
+	
+	makeNodes { 
+		server.makeBundle(nil, {
+			//group = Group.new(target);
+			plugins.do({|plgin|
+				plgin.makeSynth(group, \addToTail);
+			});
+		});
+		this.changed;
+	}
+	
+	addPlugin {|plugin|
+		plugins.add(plugin);
+		server.makeBundle(nil, {
+			server.sync; // wait for the plugin's def to arrive...
+			plugin.makeSynth(group, \addToTail);
+			// added at end, no need to reset order on server
+			this.changed;
+		});
+	}
+	
+	removePlugin {|index|
+		var toBeRemoved;
+		toBeRemoved = plugins.removeAt(index);
+		toBeRemoved.release; // free synth and resources
+		// just removed, no need to reset order on server
+		this.changed;
+	}
+	
+	movePluginUp {|index|
+		if(index > 0, {
+			plugins.swap(index, index - 1);
+			this.resetOrder;
+			this.changed(\moveUp);
+		});
+	}
+
+	movePluginDown {|index|
+		if(index < (plugins.size -1), {
+			plugins.swap(index, index + 1);
+			this.resetOrder;
+			this.changed(\moveDown);
+		});
+	}
+	
+	resetOrder {
+		server.makeBundle(nil, {
+			plugins.do({|plgin|
+				plgin.synth.moveToTail(group);
+			});
+		});
+	}
+	
+}
