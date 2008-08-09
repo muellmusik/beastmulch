@@ -14,30 +14,35 @@
 
 // attributes allows for arbitrary user data for constructing the synthdef and gui
 
-// syncFunc is a setup function that must be completed before the plugin is made
+// setupFunc is a setup function that must be completed before the plugin is made
 // it will be passed the plugin instance
 // it can store any objects for further reference in attributes for use by the plugin or graphFunc
-// it should return true if it worked, false if not (in which case the plugins init should return nil)
+// if needed you can wrap the plugin:new in a routine and sync before calling makeSynth
 
 // cleanupFunc allows for any heavy resources to be cleaned up after the plugin is removed.
 // e.g a Buffer, which would have been stored in attributes
 
 // description is human readable text (String)
 
+// ---------
+
+// To do:
+// Does default gui work?
+
 BMMultichannelPluginSpec {
 	classvar <specs, defaultGuiFunc;
 	var <name, <ugenGraphFunc, <specsDict, guiFunc, <>presets, <description, <defaultAttributes;
 	var <minInputs, <minOutputs, <maxInputs, <maxOutputs; //nil for max = unlimited
-	var syncFunc, cleanupFunc;
+	var setupFunc, cleanupFunc;
 	
 	*new {|name, ugenGraphFunc, specsDict, guiFunc, presets, description, defaultAttributes, 
-		inRange, outRange, syncFunc, cleanupFunc| // ranges are [min, max]
+		inRange, outRange, setupFunc, cleanupFunc| // ranges are [min, max]
 		^super.new.init(name, ugenGraphFunc, specsDict, guiFunc, presets, description, 
-			defaultAttributes, inRange, outRange, syncFunc, cleanupFunc);
+			defaultAttributes, inRange, outRange, setupFunc, cleanupFunc);
 	}
 	
 	init {|argname, argugenGraphFunc, argspecsDict, argguiFunc, argpresets, argdescription, 
-		argattributes, arginRange, argoutRange, argsyncfunc, argcleanupfunc|
+		argattributes, arginRange, argoutRange, argsetupFunc, argcleanupfunc|
 		name = argname.asSymbol;
 		ugenGraphFunc = argugenGraphFunc;
 		specsDict = argspecsDict ? ();
@@ -53,9 +58,9 @@ BMMultichannelPluginSpec {
 		argoutRange = argoutRange ?? { [1, inf] };
 		minInputs = arginRange[0];
 		maxInputs = arginRange[1];
-		minOutputs = arginRange[0];
-		maxOutputs = arginRange[1];
-		syncFunc = argsyncfunc;
+		minOutputs = argoutRange[0];
+		maxOutputs = argoutRange[1];
+		setupFunc = argsetupFunc;
 		cleanupFunc = argcleanupfunc;
 		this.class.specs[name] = this;
 	}
@@ -91,7 +96,7 @@ BMMultichannelPluginSpec {
 					speakers = VBAPSpeakerArray(3, speakers);
 					plugin.attributes[\buffer] = 
 						Buffer.loadCollection(plugin.server, speakers.getSetsAndMatrices);
-				},								// syncFunc
+				},								// setupFunc
 				{|plugin|
 					plugin.attributes[\buffer].free;
 				}								// cleanupFunc
@@ -159,32 +164,37 @@ BMMultichannelPluginSpec {
 // Fix init with sync func
 // At the moment, this does sync func before making the def. Is that right?
 // Otherwise we'd need to store info about heavy resources rather than hard coding it
+// I'm not sure if there's a case where we actually need a reply.
 
 // Class which manages resources for a plugin instance
-BMMultichannelPlugin : BMPlugin {
-//	var <spec, <numChannels = 1, <server, <attributes, <defName, <def;
-//	var <synth, <values, defaultValues, <bus, numControls, controlNames, mappings;
-//	var <preset;
+BMMultichannelPlugin {
+	var <spec, <server, <attributes, <defName, <def;
+	var <synth, <values, defaultValues, <bus, numControls, controlNames, mappings;
+	var <preset;
 	var <numInputs, <numOutputs, <inputs, <outputs;
 	
-	*new {|pluginSpecName, numChannels = 1, server, attributes|
-		^super.new.init(pluginSpecName, numChannels = 1, server ? Server.default, attributes);
+	*new {|pluginSpecName, inArray, outArray, server, attributes|
+		^super.new.init(pluginSpecName, inArray, outArray, server ? Server.default, attributes);
 	}
 	
-	copy {
-		var values, newplugin;
-		values = this.values;
-		newplugin = BMPlugin(this.spec.name, this.numChannels, this.server, this.attributes);
-		values.keysValuesDo({|key, val| newplugin.set(key, val)});
-		^newplugin;
-	}
-	
-	init { |argpluginSpecName, argnumChannels, argserver, argattributes|
+	init { |argpluginSpecName, argins, argouts, argserver, argattributes|
 		spec = BMPluginSpec.specs[argpluginSpecName.asSymbol];
-		numChannels = argnumChannels;
+		inputs = argins;
+		outputs = argouts;
+		numInputs = inputs.size;
+		numOutputs = outputs.size;
+		// check size and bail
+		if(numInputs.inclusivelyBetween(spec.minInputs, spec.maxInputs).not || 
+			numOutputs.inclusivelyBetween(spec.minOutputs, spec.maxOutputs).not, {
+			("Input or output array not within allowable size range for plugin" 
+				+ spec.name).error;
+			^nil;	
+		});
 		server = argserver;
 		attributes = spec.defaultAttributes.copy;
 		argattributes.notNil.if({attributes.putAll(argattributes)}); // local settings override
+		
+		spec.setupFunc.value(this);
 		this.makeDef;
 		def.send(server);
 		values = ();
@@ -221,15 +231,20 @@ BMMultichannelPlugin : BMPlugin {
 	makeDef {
 		defName = spec.name ++ UniqueID.next; 
 		if(attributes.notNil, { defName = defName ++ "-" ++ UniqueID.next});
-		def = SynthDef(defName, {arg i_in, cfgate = 1;
-			var input, out;
-			input = In.ar(i_in);
-			out = SynthDef.wrap(spec.ugenGraphFunc, nil, [this, numChannels, input]);
-			XOut.ar(i_in, 
-				EnvGen.kr(Env.asr(BMOptions.crossfade, 1, BMOptions.crossfade), cfgate, 
-					doneAction: 2),
-				out;
-			);
+		def = SynthDef(defName, {arg cfgate = 1;
+			var input, out, env;
+			input = In.ar(inputs);
+			(input.size == 1).if({input = input[0];});
+			out = SynthDef.wrap(spec.ugenGraphFunc, nil, [this, numInputs, numOutputs, input]);
+			
+			// fade in and out, release
+			env = EnvGen.kr(Env.asr(BMOptions.crossfade, 1, BMOptions.crossfade), cfgate, 
+				doneAction: 2);
+			if(out.size != numOutputs, {
+				"Plugin output does not match size of output array.".warn;
+			});
+			// if sizes don't match take the first outputs
+			out.do({|chan, i| XOut.ar(outputs[i], env, chan);});
 		});
 		
 	}
@@ -281,19 +296,19 @@ BMMultichannelPlugin : BMPlugin {
 		}, {("Plugin " ++ spec.name ++ " has no preset named " ++ presetname).warn });
 	}
 	
-	// args here is an IdentityDictionary or an Event
-	makeSynth {|in, target, addAction=\addToTail|
+	makeSynth {|target, addAction=\addToTail|
 		(target.asTarget.server != server).if({
 			Error("Target server does not match Plugin server.").throw;
 		});
 		synth.notNil.if({ synth.set(\cfgate, 0); });
-		synth = Synth(defName, [i_in: in] ++ mappings, target, addAction);
+		synth = Synth(defName, mappings, target, addAction);
 	}
 	
 	release { 
 		synth.set(\cfgate, 0); 
 		synth = nil; bus.free; 
 		bus = nil;
+		spec.cleanupFunc.value(this);
 		CmdPeriod.remove(this);
 	} // I'm a lame duck...
 	
@@ -305,6 +320,14 @@ BMMultichannelPlugin : BMPlugin {
 	
 	gui {
 		spec.guiFunc.value(this);
+	}
+	
+	copy {
+		var values, newplugin;
+		values = this.values;
+		newplugin = BMPlugin(this.spec.name, this.inputs, this.outputs, this.server, this.attributes);
+		values.keysValuesDo({|key, val| newplugin.set(key, val)});
+		^newplugin;
 	}
 
 }

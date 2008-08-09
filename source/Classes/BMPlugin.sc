@@ -27,6 +27,7 @@
 // control support
 // remove number of channels arg?
 // probably should add syncFunc and cleanupFunc from multi version
+// should multi version just replace this
 
 BMPluginSpec {
 	classvar <specs, defaultGuiFunc;
@@ -312,7 +313,6 @@ BMPlugin {
 		}, {("Plugin " ++ spec.name ++ " has no preset named " ++ presetname).warn });
 	}
 	
-	// args here is an IdentityDictionary or an Event
 	makeSynth {|in, target, addAction=\addToTail|
 		(target.asTarget.server != server).if({
 			Error("Target server does not match Plugin server.").throw;
