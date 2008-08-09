@@ -139,6 +139,8 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 	gui {
 		^BMMatrixMenuGUI(this);
 	}
+	
+	controlsForInputs {^false }
 
 }
 
@@ -165,7 +167,7 @@ BMAudioMatrix : BMAbstractMatrix {
 
 // maps amp scales to control busses
 // roll your own curves etc. elsewhere
-// this should in fact only allow an output to be connected to a single input 
+// this only allows an output to be connected to a single input 
 BMAmpControlMatrix : BMAbstractMatrix {
 	
 	var outmappings;
@@ -181,15 +183,70 @@ BMAmpControlMatrix : BMAbstractMatrix {
 		outmappings = IdentityDictionary.new;
 	}
 	
-	// a little hacky to call super here, but works
 	connect { |input ... outputs|
-		var currentIn;
+		var currentIn, mappedTo;
+		
+		outputs = outputs.flat;
+		
+		if(outputs.size == 0, {^this }); // this edge case arises. why? preset updating?
+		
+		// outputs can inly be mapped to a single input (control)
 		outputs.do({|output| 
 			currentIn = outmappings[output];
 			currentIn.notNil.if({this.disconnect(currentIn, output); });
+		});
+		
+		// check if somebody else owns input
+		BMOptions.allowMultipleControlMappings.not.if({ 
+			mappedTo = BMAbstractController.allControls[input].mappedTo;
+			if(mappedTo.notNil && (mappedTo !== this), {
+				("Control mapping failed. Control" + input + "already controlling" + mappedTo.name).warn;
+				^this;
+			}, {
+				BMAbstractController.allControls[input].mappedTo = this;
+			});
+		});
+		
+		outputs.do({|output| 
 			outmappings.add(output -> input);
 		});
+		
 		super.connect(input, *outputs);
+	}
+	
+	disconnect { |input ... outputs| // Symbols
+		var mappedTo;
+		super.disconnect(input, *outputs);
+		
+		// if I'm not using this input (control) anymore release my claim
+		BMOptions.allowMultipleControlMappings.not.if({ 
+			mappedTo = BMAbstractController.allControls[input].mappedTo;
+			if(mappings[input].size == 0 && (mappedTo === this), {
+				BMAbstractController.allControls[input].mappedTo = nil;
+			});
+		});
+	}
+	
+	clear {
+		this.clearControlMappings;
+		super.clear;
+	}
+	
+	clearControlMappings {
+		var control;
+		BMOptions.allowMultipleControlMappings.not.if({ 
+			inNames.do({|inName|
+				control = BMAbstractController.allControls[inName];
+				if(control.mappedTo === this, { 
+					control.mappedTo = nil 
+				});
+			})
+		});
+	}
+	
+	cmdPeriod {
+		this.clearControlMappings;
+		super.cmdPeriod;
 	}
 	
 	sendDef {
@@ -205,6 +262,8 @@ BMAmpControlMatrix : BMAbstractMatrix {
 	makeGroup {
 		group = Group.tail(server);
 	}
+	
+	controlsForInputs { ^true }
 }
 
 // An Ordered Dictionary of associations (\name->index);
@@ -346,6 +405,11 @@ BMMatrixMenuGUI : BMAbstractGUI {
 		matrix = argmatrix;
 		name = argname;
 		matrix.addDependant(this);
+		matrix.controlsForInputs.if({
+			matrix.inNames.do({|inName|
+				BMAbstractController.allControls[inName].addDependant(this);
+			});
+		});
 	}
 	
 	makeWindow { |origin|
@@ -410,12 +474,27 @@ BMMatrixMenuGUI : BMAbstractGUI {
 		SCStaticText.new(buttonSection, Rect(0,0,80,110)).string_("Assign outputs to selected input. Cmd-drag or use button to assign, select and press delete to unassign.");
 		///.font_(Font("CoffeeCup", 40)).align_(\center);
 		this.update;
-		window.onClose = { matrix.removeDependant(this); onClose.value(this)};
+		window.onClose = { 
+			matrix.removeDependant(this); 
+			matrix.controlsForInputs.if({
+				matrix.inNames.do({|inName|
+					BMAbstractController.allControls[inName].removeDependant(this);
+				});
+			});
+			onClose.value(this)
+		};
 		window.front;
 	}
 	
 	update {
-		assignView.items = matrix.mappings[inputView.item].asArray;
+		var mappedTo;
+		(matrix.controlsForInputs && BMOptions.allowMultipleControlMappings.not).if({
+			mappedTo = BMAbstractController.allControls[inputView.item.asSymbol].mappedTo;
+			if(mappedTo.notNil && (mappedTo !== matrix), {
+				assignView.items = ["Mapped to" + matrix.name];
+				assignView.enabled_(false);
+			}, { assignView.enabled_(true).items = matrix.mappings[inputView.item].asArray; });
+		}, { assignView.enabled_(true).items = matrix.mappings[inputView.item].asArray;});
 		outputView.items = matrix.outNames.difference(assignView.items);
 	}
 }
@@ -442,9 +521,15 @@ BMMatrixGUI : BMAbstractGUI {
 		matrix = argmatrix;
 		name = argname;
 		matrix.addDependant(this);
+		matrix.controlsForInputs.if({
+			matrix.inNames.do({|inName|
+				BMAbstractController.allControls[inName].addDependant(this);
+			});
+		});
 	}
 	
 	makeWindow {	
+		
 		ins = matrix.inNames;
 		
 		numIns = ins.size;
@@ -574,28 +659,37 @@ BMMatrixGUI : BMAbstractGUI {
 				
 			};
 			outs.do({|item, i|
-			var y, t;
-			//if(voffset > 20, { y = [10, 25].wrapAt(i) }, { y = 10 });
-//			t = SCStaticText(window,
-//				Rect.aboutPoint((hoffset + hinterval + (hinterval * i))@y, 40, 10)
-//			);
-//			t = SCStaticText(window,
-//				Rect.aboutPoint((hoffset + hinterval + (hinterval * i))@(voffset / 2), 40, 10)
-//			);
-//			t.string = item.asString;
-//			t.stringColor = Color.black;
-//			t.font = Font("Andale Mono", 12);
-//			t.align = \center;
-			
-			Pen.use({
-				Pen.translate((hoffset + hinterval + (hinterval * i)), (voffset / 2));
-				Pen.rotate(0.5pi);
-				item.asString.drawCenteredIn(Rect.aboutPoint(0@0, 40, 10), 
-					Font("Andale Mono", 12),
-					Color.black
-				);
+				
+				Pen.use({
+					Pen.translate((hoffset + hinterval + (hinterval * i)), (voffset / 2));
+					Pen.rotate(0.5pi);
+					item.asString.drawCenteredIn(Rect.aboutPoint(0@0, 40, 10), 
+						Font("Andale Mono", 12),
+						Color.black
+					);
+				});
 			});
-		});
+			
+			ins.do({|item, i|
+				var inColor, mappedTo;
+
+				(matrix.controlsForInputs && BMOptions.allowMultipleControlMappings.not).if({
+					mappedTo = BMAbstractController.allControls[item].mappedTo;
+					if(mappedTo.notNil && (mappedTo !== matrix), {
+						inColor = Color.grey;
+					}, { inColor = Color.black;});
+				}, { inColor = Color.black;});
+
+			
+				Pen.use({
+					Pen.translate((hoffset / 2), (voffset + vinterval + (vinterval * i)));
+					//Pen.rotate(0.5pi);
+					item.asString.drawCenteredIn(Rect.aboutPoint(0@0, 40, 10), 
+						Font("Andale Mono", 12),
+						inColor
+					);
+				});
+			});
 
 		};
 		
@@ -623,25 +717,41 @@ BMMatrixGUI : BMAbstractGUI {
 //				);
 //			});
 //		});
-		ins.do({|item, i| 
-			var t;
-			t = SCStaticText(window,
-				Rect.aboutPoint((hoffset / 2)@(voffset + vinterval + (vinterval * i)), 40, 10)
-			);
-			t.string = item.asString;
-			t.stringColor = Color.black;
-			t.font = Font("Andale Mono", 12);
-			t.align = \center;
-		});
+
+		// should change this to use Pen
+		//ins.do({|item, i| 
+//			var t, inColor;
+//			t = SCStaticText(window,
+//				Rect.aboutPoint((hoffset / 2)@(voffset + vinterval + (vinterval * i)), 40, 10)
+//			);
+//			t.string = item.asString;
+//			(matrix.controlsForInputs && BMOptions.allowMultipleControlMappings.not).if({
+//				var mappedTo;
+//				mappedTo = BMAbstractController.allControls[item].mappedTo;
+//				if(mappedTo.notNil && (mappedTo !== matrix), {
+//					inColor = Color.grey;
+//				}, { inColor = Color.black;});
+//			}, { inColor = Color.black;});
+//			t.stringColor = inColor;
+//			t.font = Font("Andale Mono", 12);
+//			t.align = \center;
+//		});
 		
 		CmdPeriod.add(this);
 		window.onClose = { 
-			CmdPeriod.remove(this); matrix.removeDependant(this); onClose.value(this)
+			CmdPeriod.remove(this); 
+			matrix.removeDependant(this); 
+			matrix.controlsForInputs.if({
+				matrix.inNames.do({|inName|
+					BMAbstractController.allControls[inName].removeDependant(this);
+				});
+			});
+			onClose.value(this)
 		};
 		window.refresh;
 	}
 	
 	cmdPeriod { window.refresh }
 	
-	update {window.refresh }
+	update { |changed, what| window.refresh; }
 }
