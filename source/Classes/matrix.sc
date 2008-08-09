@@ -267,6 +267,9 @@ BMAmpControlMatrix : BMAbstractMatrix {
 }
 
 // An Ordered Dictionary of associations (\name->index);
+// Should this really be a subclass of list?
+// We really need to protect against some methods
+// Maybe better as a subclass of Dictionary
 BMInOutArray : List {
 
 	var <keys;
@@ -362,6 +365,9 @@ BMInOutArray : List {
 		index.notNil.if({^array.at(index).value}, {^nil});
 	}
 	
+	atIndex { |index| ^array.at(index) }
+	
+	values { ^array }
 	
 	++ {|aCollection| ^this.addAll(aCollection)}
 	
