@@ -1,22 +1,15 @@
 BMConfigurations {
-	var <backupManager;
+	var <configurations, <backupManager;
 	var <dict, <names, <currentConfig;
 
-	*new {| backupManager |
-		  ^super.newCopyArgs(backupManager).init;
+	*new {| configurations, backupManager |
+		  ^super.newCopyArgs(configurations, backupManager).init;
 	}
 
 	init {
-   	 	if (backupManager.lastStoredSession.notNil)
-   	 	   { dict 	= backupManager.lastStoredSession.configurations.dict ?? { IdentityDictionary[] };
-   	 	     names	= backupManager.lastStoredSession.configurations.names ?? { List['all off'] }
-   	 	   }
-   	 	   { dict		= IdentityDictionary[];
-   	 	     names	= List['all off'];
-   	 	   };
-		
+		dict = configurations.dict;
+		names = configurations.names;
 		this.addAllOff;
-		CmdPeriod.add(this)  
 	}
 	
 	addAllOff{
@@ -36,7 +29,6 @@ BMConfigurations {
 		   
 		   BMAbstractAudioChainElement
 		    .allChainElements.keysValuesDo{| key, value | dict['all off'].add(key -> value.mappings.deepCopy) };
-
 	}	
 	  
 	clear { 
@@ -97,7 +89,7 @@ BMConfigurations {
    		   BMAbstractAudioChainElement
 			 .allChainElements
 			 .keysValuesDo{| key, value |
-			 			 BMAbstractAudioChainElement.allChainElements[key].mappings = this.dict[configName][key]
+			 			 BMAbstractAudioChainElement.allChainElements[key].mappings = dict[configName][key]
 			 };
 		   (configName.asString ++ " was loaded").postln
 	}

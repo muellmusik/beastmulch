@@ -1,22 +1,16 @@
 
 BMConcert {	
-	var speakers, controllers, <backupManager;
+	var <pieces, arrays, controllers, <backupManager;
 	var <concert;
 	var savedConcert;
 	
 
-	*new {| speakers, controllers, backupManager | 
-		  ^super.newCopyArgs(speakers, controllers, backupManager).init
+	*new {| pieces, arrays, controllers, backupManager | 
+		^super.newCopyArgs(pieces, arrays, controllers, backupManager).init
 	}
 
 	init { 
-		var pieces;
-		
-		if (backupManager.lastStoredSession.notNil) 
-		   { pieces	= backupManager.lastStoredSession.concert.pieces ?? { List[] }}
-		   { pieces	= List[] };
-		concert	   	= (system: (speakers: speakers.deepCopy, controllers: controllers.deepCopy), pieces: pieces);
-		CmdPeriod.add(this) 
+		concert	   	= (system: (speakers: arrays[0], controllers: controllers), pieces: pieces);
 	}
 	
 	add {| pieceEvent, indexInList |	 
@@ -34,20 +28,24 @@ BMConcert {
 	loadAt  {| pieceEventIndex |
 		this.changed(\loadPiece, concert.pieces[pieceEventIndex])
 	}
+	
+	storeSession {| configManager |
+		this.changed(\storeSession, this, configManager)
+	}
 }
 
 
 BMConcertGUI  {
 
-	var concertManager, configManager, name, window, windowView;
+	var concertManager, configManager, outputArray, name, window, windowView;
 	var concertView, concertListView, listSection;
 	var addButton, deleteButton, buttonSection, upButton, downButton, storeButton;
 	var loadButton, configButton, systemSetup, configText;
 	var >onClose;
 	var selectable, pieceLoaded = false, loadButtonStates, importPopUpMenu;
 	
-	*new {| concertManager, configManager, name, origin |
-		  ^super.newCopyArgs(concertManager, configManager, name).init.makeWindow(origin ? (40@200));
+	*new {| concertManager, configManager, outputArray, name, origin |
+		  ^super.newCopyArgs(concertManager, configManager, outputArray,  name).init.makeWindow(origin ? (40@200));
 	}
 	
 	init {
@@ -71,7 +69,9 @@ BMConcertGUI  {
 
 		// Pieces List ---------------------
 	
-		concertListView				= SCListView(concertView, 180 @ 373);
+		concertListView				= SCListView(concertView, 180 @ 373)
+									   .items_(concertManager.concert.pieces.collect{| x | x.name }.asArray);
+									   
 		concertListView.keyDownAction 	= { arg view,char,modifiers,unicode,keycode;
 								    
 									    if(unicode == 127, { deleteButton.action.value(0) });
@@ -160,7 +160,7 @@ BMConcertGUI  {
 		concertView.decorator.shift(4, 0); 				
 		storeButton				= RoundButton(concertView, 46 @ 20).extrude_(false).canFocus_(false)
 					 			  .font_(Font("Arial", 11)).states_([["Store", Color.black,  Color.white.alpha_(0.8) ]])
-					 			  .action_{| view | concertManager.backupManager.makeSessionBackup(concertManager, configManager) };
+					 			  .action_{| view | concertManager.storeSession(configManager) };
 
 								  
 		// Second Column -------------
@@ -215,6 +215,9 @@ BMConcertGUI  {
 								
 								recalled = Object.readTextArchive(path[0]);
 								concertManager.concert.pieces = recalled.concert.pieces.deepCopy;
+								
+								outputArray.keys.do{| x | outputArray.removeAt(x) };
+								outputArray.addAll(recalled.concert.system.speakers.array.collect{| x | x.value });
 								configManager.currentConfig_('all off', \concertEditor);
 								configManager.clear;
 								
@@ -228,8 +231,9 @@ BMConcertGUI  {
 										configManager.dict.add(name -> recalled.configurations.dict[name])
 									   };
 								configManager.names = configManager.names ++ recalled.configurations.names;
+								
 								if (selectable.not) { this.listViewSelection(selectable = true) };
-								concertListView.action.value(0);
+								concertListView.value_(0).doAction;
 								concertManager.backupManager.makeSessionBackup(concertManager, configManager);
 								}, maxSize: 1);
 
@@ -357,7 +361,6 @@ BMConcertGUI  {
 					  	view.value = 0
 					  });
 
-	    this.update; 
 	    this.listViewSelection(selectable = false);
 	    
 		window.onClose 			= { concertManager.removeDependant(this); 
@@ -370,8 +373,10 @@ BMConcertGUI  {
 		    "concert window' update function called".postln;
 		    if ((change == \currentConfig) and: { from == \configurationEditor }) 
 		    	  { 	if (selectable) { this.listViewSelection(selectable = false) } }
-			  {  postf("Pieces in concert: %\n", concertManager.concert.pieces);
-			  	concertListView.items 	= concertManager.concert.pieces.collect{| x | x.name }.asArray
+			  {  if (change != \storeSession) 
+			  		{ postf("Pieces in concert: %\n", concertManager.concert.pieces);
+			  	 	  concertListView.items 	= concertManager.concert.pieces.collect{| x | x.name }.asArray
+			  	 	}
 			  }
 		
 	}
@@ -550,3 +555,5 @@ BMConcertGUI  {
 					   }
 	}
 }
+
+

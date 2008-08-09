@@ -28,6 +28,14 @@ BMBackup {
 		if (lastStoredSessionPath.notNil) {lastStoredSession =  Object.readTextArchive(lastStoredSessionPath) };
 	}
 	
+	rememberWorkspace {| levels, newObjectFunc |
+		if (lastStoredSession.notNil) 
+   			{ ^(levels.asArray.inject(lastStoredSession, {| prev, next | prev[next]})  ?? newObjectFunc) }
+   			{ ^newObjectFunc.value }
+	}
+
+	watch{| object | object.addDependant(this) }
+
 //	presetName_ {| x |
 //		presetName 	= x;
 //		pieceDir 		= presetsDirs[presetType]  ++ presetName ++ "/";
@@ -71,7 +79,9 @@ BMBackup {
 
 					dict		= configManager.dict.deepCopy;
 					dict.removeAt('all off');
-					^(concert: concertManager.concert.deepCopy, configurations: (dict: dict, names: configManager.names))
+					^(concert: concertManager.concert.deepCopy, 
+					  configurations: (dict: dict, names: configManager.names)
+					 )
 	}
 	
 	add {| backupType, backupName, backup |
@@ -110,7 +120,12 @@ BMBackup {
 	 			  if (preferences.notNil) { ^preferences[key] } { ^nil }
 	 }
 	 
-	 update {| changed, change |
+	 update {| changed, change ... args |
+	 
+	 switch(change,
+	 	\storeSession, { this.makeSessionBackup(*args) },
+	 	\store, { this.add(*args) }
+	 )
 	 		
 	 		
 	 }

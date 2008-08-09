@@ -32,7 +32,7 @@
 \cf4 var\cf2  hipassFunc, tweetFunc, vdistFunc;\
 \cf4 var\cf2  stopBlocked = \cf4 false\cf2 , playBlocked = \cf4 false\cf2 ;\
 \cf4 var\cf2  interpolFunc;\
-\cf4 var\cf2  concertManager, configManager;\
+\cf4 var\cf2  concertManager, configManager, pieces, configurations;\
 \cf4 var\cf2  chainManager, cond;\
 \
 cond = \cf4 Condition\cf2 .new;\
@@ -50,7 +50,7 @@ s.bootSync(cond);\
 arrays 		= \cf4 this\cf2 .executeFile(\cf4 Document\cf2 .current.dir ++ \cf5 "/january channel list.rtf"\cf2 );\
 \cf3 //arrays = this.executeFile(String.scDir ++ "/SCClassLibrary/source/MiniBEASTchannellist.rtf");\cf2 \
 inputArray 	= arrays[1];\
-\cf3 //outputArray	= arrays[0]; \cf2 \
+~outPutArrayFromTheChannelListFile	= arrays[0]; \
 \cf3 //outputArray.size.postln;\cf2 \
 \cf3 //~outs 		= outputArray;\cf2 \
 \
@@ -68,12 +68,13 @@ controllersList.add(etherSense = \cf4 BMEtherSense\cf2 (\cf4 NetAddr\cf2 (\cf5 "
 \
 \
 backupManager	= \cf4 BMBackup\cf2 .new;\
-outputArray	= backupManager.rememberWorkspace([ \cf6 \\system\cf2 , \cf6 \\speakers\cf2  ],  \{ \cf4 BMSpeakerArray\cf2 .new \});\
+\cf3 //outputArray	= backupManager.rememberWorkspace([ \\concert, \\system, \\speakers ],  \{ BMInOutArray.new \});\cf2 \
+\cf0 outputArray	= ~outPutArrayFromTheChannelListFile;\cf2 \
 \
-\
+pieces		= backupManager.rememberWorkspace([ \cf6 \\concert\cf2 , \cf6 \\pieces\cf2  ],  \{ \cf4 List\cf2 .new \});\
+configurations= backupManager.rememberWorkspace(\cf6 \\configurations\cf2 ,  \{ (dict:  \cf4 IdentityDictionary\cf2 [], names: \cf4 List\cf2 [\cf6 'all off'\cf2 ]) \});\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf2 \
-   		\
    \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf2 player		= \cf4 BMSoundFilePlayer\cf2 .new(8);\
@@ -87,18 +88,13 @@ chainManager	= \cf4 BMAudioChainManager\cf2 ( \
 			);\
 			\
 \
-concertManager= \cf4 BMConcert\cf2 ([ outputArray, arrays[1]], \cf4 BMAbstractController\cf2 .allControllers, backupManager);\
-configManager	= \cf4 BMConfigurations\cf2 (backupManager);\
+concertManager= \cf4 BMConcert\cf2 (pieces, [ outputArray, inputArray ], \cf4 BMAbstractController\cf2 .allControllers, backupManager);\
+configManager	= \cf4 BMConfigurations\cf2 (configurations, backupManager);\
 [ outputArray, concertManager, configManager ].do\{\cf4 | x |\cf2  backupManager.watch(x) \};\
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf2 \
-\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf2 \
 \{ \cf4 BMSpeakerArrayGUI\cf2 (outputArray, \cf5 "Speaker Array Definition"\cf2 , 129 @ 34);\
   \cf4 BMConcertGUI\cf2 (concertManager, configManager, outputArray, \cf5 "Concert Editor"\cf2 , 110 @ 600);\
-  \cf4 BMConfigurationsGUI\cf2 (chainManager, configManager, concertManager, outputArray, \cf5 "Configuration Editor"\cf2 , 550 @ 550);\
+  \cf4 BMConfigurationsGUI\cf2 (chainManager, configManager, concertManager, \cf5 "Configuration Editor"\cf2 , 550 @ 550);\
 \}.defer;\
 \
 \
