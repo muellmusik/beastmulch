@@ -378,6 +378,10 @@ BMInOutArray : List {
 	update{| changed, change ... args |
 		   if (change == \rename) { this.rename(*args) }
 	}
+	
+	asUGenInput { ^this.values.asUGenInput }
+	
+	asControlInput { ^this.values.asControlInput }
 
 }
 

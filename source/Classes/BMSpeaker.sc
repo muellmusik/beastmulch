@@ -50,7 +50,9 @@ BMSpeaker {
 	x_ {| new | x = new; this.init }
 	y_ {| new | y = new; this.init }
 	z_ {| new | z = new; this.init }
+	
 	asUGenInput { ^index }
+	asControlInput { ^index }
 	
 	asAssociation {^(name->this) }
 	
