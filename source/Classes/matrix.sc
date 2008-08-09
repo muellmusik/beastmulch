@@ -365,9 +365,9 @@ BMInOutArray : List {
 		index.notNil.if({^array.at(index).value}, {^nil});
 	}
 	
-	atIndex { |index| ^array.at(index) }
+	atIndex { |index| ^array.at(index).value }
 	
-	values { ^array }
+	values { ^array.collect({|item| item.value }); }
 	
 	++ {|aCollection| ^this.addAll(aCollection)}
 	
