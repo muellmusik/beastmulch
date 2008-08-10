@@ -558,8 +558,7 @@ BMMultichannelPluginsRackGUI : BMAbstractGUI {
 				.background_(Color.grey.alpha_(0.2))
 				.font_(Font("Helvetica-Bold", 12))
 				.beginDragAction_({
-					BMMultichannelPlugin(piName, trimPluginsRack.ins, trimPluginsRack.outs, 
-						trimPluginsRack.server)
+					piName.asSymbol;
 				}) 
 				.mouseDownAction_({
 					descriptionHelpText.string = piName ++ ": " ++ 
@@ -669,8 +668,19 @@ BMMultichannelPluginsStripGUI {
 				listView.enterKeyAction.value;
 			});
 		};
-		listView.canReceiveDragHandler = { SCView.currentDrag.isKindOf(BMMultichannelPlugin) };
-		listView.receiveDragHandler = { trimPluginsStrip.addPlugin(SCView.currentDrag)};
+		listView.canReceiveDragHandler = { SCView.currentDrag.isSymbol; };
+		listView.receiveDragHandler = {
+			var piName;
+			piName = SCView.currentDrag;
+			BMSelectInsOutsGUI(trimPluginsStrip.ins, trimPluginsStrip.outs, {|ins, outs|
+				var plugin;
+				ins.postln;
+				outs.postln;
+				plugin = BMMultichannelPlugin(piName, ins, outs, 
+					trimPluginsStrip.server);
+				trimPluginsStrip.addPlugin(plugin);
+			});
+		};
 		listView.beginDragAction = { trimPluginsStrip.plugins[listView.value].copy };
 	 }
 	 
@@ -761,7 +771,7 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 					break.value;
 				});
 				if(unicode == 127, {
-						view.item.notNil.if({
+					view.item.notNil.if({
 						newItems = view.items;
 						newItems.removeAt(view.value);
 						view.items = newItems;
@@ -831,7 +841,7 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 					break.value;
 				});
 				if(unicode == 127, {
-						view.item.notNil.if({
+					view.item.notNil.if({
 						newItems = view.items;
 						newItems.removeAt(view.value);
 						view.items = newItems;
@@ -851,7 +861,13 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 				menu.value = 0;
 			});
 
-		
+		window.onClose = { 
+			okFunc.value(
+				inResult.items.collectAs({|key| key->ins[key]}, BMInOutArray),
+				outResult.items.collectAs({|key| key->outs[key]}, BMInOutArray)
+			);
+			onClose.value(this);
+		};
 		window.front;
 		
 	}
