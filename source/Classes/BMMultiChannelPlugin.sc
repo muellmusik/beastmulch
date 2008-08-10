@@ -206,6 +206,7 @@ BMMultichannelPluginSpec {
 // At the moment, this does sync func before making the def. Is that right?
 // Otherwise we'd need to store info about heavy resources rather than hard coding it
 // I'm not sure if there's a case where we actually need a reply.
+// Should this allow changing ins and outs
 
 // Class which manages resources for a plugin instance
 BMMultichannelPlugin {
@@ -696,16 +697,163 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 		ins = argins;
 		outs = argouts;
 		okFunc = argokfunc;
-		name = "Select Ins and Outs";
+		name = "Define Ins and Outs";
 	}
 	
 	makeWindow {|origin|
-		var x, y, buttons;
+		var x, y, buttons, insSources, insLV, outsSources, insSubArrays, outsSubArrays;
+		var inResult, outResult, outsLV, dragSource;
 		x = origin.x;
 		y = origin.y;
 		window = SCWindow(name, Rect.new(x, y, 500, 600), false);
 		window.alwaysOnTop = true; //pseudo modal
 		window.view.decorator = FlowLayout(window.view.bounds);
+		
+		// ins
+		SCStaticText(window, Rect(0, 0, 100, 30))
+			.string_("Inputs")
+			.font_(Font("Helvetica-Bold", 14));
+		window.view.decorator.nextLine;
+		insSources = SCScrollView(window, Rect(0, 0, 160, 254))
+			.hasHorizontalScroller_(false)
+			.hasBorder_(true);
+		insLV = SCVLayoutView(insSources, Rect(4,4,150, ins.size * 24 + 4));
+		ins.keys.do({|inKey| 
+			SCDragSource(insLV, Rect(0, 0, 150, 20)).string_("   " ++ inKey.asString)
+				.background_(Color.grey.alpha_(0.2))
+				.font_(Font("Helvetica-Bold", 12))
+				.beginDragAction_({
+					dragSource = \ins;
+					inKey
+				}); 
+//				.mouseDownAction_({
+//					descriptionHelpText.string = piName ++ ": " ++ 
+//						BMMultichannelPluginSpec.specs[piName].description;
+//				});
+		});
+		
+		
+		inResult = SCListView(window, Rect(0, 0, 160, 254)).font_(Font("Helvetica-Bold", 12));
+		inResult.canReceiveDragHandler = { 
+			dragSource == \ins;
+		};
+		inResult.receiveDragHandler = { 
+			dragSource = nil;
+			inResult.items = inResult.items.add(SCView.currentDrag)
+		};
+		inResult.keyDownAction = { arg view,char,modifiers,unicode,keycode;
+			var newItems;
+			//\foo.postln;
+	 		block { |break|
+				if((modifiers == 11534600) && (unicode == 63233), {
+					if(view.value < (view.items.size -1), {
+						view.items = view.items.postln.swap(view.value, view.value + 1).postln;
+						view.refresh;
+						view.value = view.value + 1;
+					});
+					break.value;
+				});
+				if((modifiers == 11534600) && (unicode == 63232), {
+					if(view.value > 0, {
+						view.items = view.items.swap(view.value, view.value - 1);
+						//view.value = view.value - 1;
+					});
+					break.value;
+				});
+				if(unicode == 127, {
+						view.item.notNil.if({
+						newItems = view.items;
+						newItems.removeAt(view.value);
+						view.items = newItems;
+					});
+					break.value;
+				});
+				view.defaultKeyDownAction(char,modifiers,unicode);
+			}
+		};
+		insSubArrays = SCPopUpMenu(window, Rect(0, 0, 160, 20))
+			.font_(Font("Helvetica-Bold", 12))
+			.items_(["Add subarray", "-"] ++ ins.subArrays)
+			.action_({|menu|
+				var subArray;
+				subArray = ins.getSubArray(menu.item.asSymbol);
+				subArray.notNil.if({inResult.items = inResult.items ++ subArray.keys});
+				menu.value = 0;
+			});
+		
+		// outs
+		SCStaticText(window, Rect(0, 0, 100, 30))
+			.string_("Outputs")
+			.font_(Font("Helvetica-Bold", 14));
+		window.view.decorator.nextLine;
+		outsSources = SCScrollView(window, Rect(0, 0, 160, 254))
+			.hasHorizontalScroller_(false)
+			.hasBorder_(true);
+		outsLV = SCVLayoutView(outsSources, Rect(4,4,150, outs.size * 24 + 4));
+		outs.keys.do({|outKey| 
+			SCDragSource(outsLV, Rect(0, 0, 150, 20)).string_("   " ++ outKey.asString)
+				.background_(Color.grey.alpha_(0.2))
+				.font_(Font("Helvetica-Bold", 12))
+				.beginDragAction_({
+					dragSource = \outs;
+					outKey
+				}); 
+//				.mouseDownAction_({
+//					descriptionHelpText.string = piName ++ ": " ++ 
+//						BMMultichannelPluginSpec.specs[piName].description;
+//				});
+		});
+		outResult = SCListView(window, Rect(0, 0, 160, 254)).font_(Font("Helvetica-Bold", 12));
+		outResult.canReceiveDragHandler = { 
+			dragSource == \outs;
+		};
+		outResult.receiveDragHandler = { 
+			dragSource = nil;
+			outResult.items = outResult.items.add(SCView.currentDrag)
+		};
+		outResult.keyDownAction = { arg view,char,modifiers,unicode,keycode;
+			var newItems;
+			//\foo.postln;
+	 		block { |break|
+				if((modifiers == 11534600) && (unicode == 63233), {
+					if(view.value < (view.items.size -1), {
+						view.items = view.items.postln.swap(view.value, view.value + 1).postln;
+						view.refresh;
+						view.value = view.value + 1;
+					});
+					break.value;
+				});
+				if((modifiers == 11534600) && (unicode == 63232), {
+					if(view.value > 0, {
+						view.items = view.items.swap(view.value, view.value - 1);
+						//view.value = view.value - 1;
+					});
+					break.value;
+				});
+				if(unicode == 127, {
+						view.item.notNil.if({
+						newItems = view.items;
+						newItems.removeAt(view.value);
+						view.items = newItems;
+					});
+					break.value;
+				});
+				view.defaultKeyDownAction(char,modifiers,unicode);
+			}
+		};
+		outsSubArrays = SCPopUpMenu(window, Rect(0, 0, 160, 20))
+			.font_(Font("Helvetica-Bold", 12))
+			.items_(["Add subarray", "-"] ++ ins.subArrays)
+			.action_({|menu|
+				var subArray;
+				subArray = outs.getSubArray(menu.item.asSymbol);
+				subArray.notNil.if({outResult.items = outResult.items ++ subArray.keys});
+				menu.value = 0;
+			});
+
+		
+		window.front;
+		
 	}
 	
 }
