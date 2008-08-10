@@ -37,11 +37,13 @@ BMEtherSense : BMAbstractController {
 			values = msg.copyToEnd(1);
 			server.sendMsg("/c_setn", busIndex, 16, *(values.collect({|val| spec.at(val)})));
 			valueArray[0] = values;
+			this.changed(\faderVal);
 		}).add;
 		responders[1] = OSCresponderNode(addr, '/Ethersense01/Card02', { arg time, resp, msg; 			var values;
 			values = msg.copyToEnd(1);
 			server.sendMsg("/c_setn", busBoard2Index, 16, *(values.collect({|val| spec.at(val)})));
 			valueArray[1] = values;
+			this.changed(\faderVal);
 		}).add;
 	}
 	
