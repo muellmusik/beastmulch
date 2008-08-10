@@ -264,7 +264,6 @@ BMTrimPluginsStrip {
 	}
 }
 
-// should disable autoPlugins and compensateDistance buttons if in not a SpeakerArray
 BMTrimPluginsRackGUI : BMAbstractGUI {
 	var trimPluginsRack, trimPluginsStripGUIs, defaultHelpString, descriptionHelpText;
 	

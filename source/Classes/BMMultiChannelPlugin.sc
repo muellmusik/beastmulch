@@ -516,4 +516,166 @@ BMMultichannelPluginsRack : BMAbstractAudioChainElement {
 		});
 	}
 	
+	// this should return an instance of our default GUI class
+	// which builds the window itself
+	gui { ^BMMultichannelPluginsRackGUI(this) } 
+}
+
+/// GUIs
+// Quickly hacked from BMTrimPluginRackGUI and stripGUI
+
+BMMultichannelPluginsRackGUI : BMAbstractGUI {
+	var trimPluginsRack, trimPluginsStripGUIs, defaultHelpString, descriptionHelpText;
+	
+	*new {|trimPluginsRack, name, origin|
+		^super.new.init(trimPluginsRack, name ? trimPluginsRack.name)
+			.makeWindow(origin ? (40@200));
+	}
+	
+	init {|argtrimPluginsRack, argname|
+		trimPluginsRack = argtrimPluginsRack;
+		name = argname;
+		trimPluginsStripGUIs = List.new;
+	}
+	
+	makeWindow {|origin|
+		var x, y, width, pluglist, numTypes, numStrips, stripGUIs, buttons;
+		x = origin.x;
+		y = origin.y;
+		width = 4 + 170 + 4 + min(104 * trimPluginsRack.ins.size, 1078); // max 7 visible
+		window = SCWindow(name, Rect.new(x, y, width, 618), false);
+		window.view.decorator = FlowLayout(window.view.bounds);
+		pluglist = SCScrollView(window, Rect(0, 0, 160, 508))
+			.hasHorizontalScroller_(false)
+			.hasBorder_(true);
+		numTypes = BMMultichannelPluginSpec.specs.size;
+		numStrips = 1;
+		pluglist = SCVLayoutView(pluglist, Rect(4,4,150, numTypes * 24 + 4));
+		BMMultichannelPluginSpec.specs.keysDo({|piName| 
+			SCDragSource(pluglist, Rect(0, 0, 150, 20)).string_("   " ++ piName.asString)
+				.background_(Color.grey.alpha_(0.2))
+				.font_(Font("Helvetica-Bold", 12))
+				.beginDragAction_({BMPlugin(piName, 1)}) // one channel for now
+				.mouseDownAction_({
+					descriptionHelpText.string = piName ++ ": " ++ 
+						BMMultichannelPluginSpec.specs[piName].description;
+				});
+		});
+		stripGUIs = SCScrollView(window, Rect(0, 0, width - 174, 508))
+			.hasVerticalScroller_(false)
+			.hasBorder_(true);
+		stripGUIs.action = {window.refresh};
+		//stripGUIs = SCHLayoutView(stripGUIs, Rect(4, 4, 104 * numStrips + 4, 500));
+		stripGUIs = SCCompositeView(stripGUIs, Rect(4, 4, 104 * numStrips + 4, 500));
+		stripGUIs.decorator = FlowLayout(stripGUIs.bounds, 0@0);
+		//trimPluginsRack.inNames.do({|chanName|
+			trimPluginsStripGUIs.add(
+				BMMultichannelPluginsStripGUI(trimPluginsRack, stripGUIs, trimPluginsRack.name)
+			);
+		//});
+		defaultHelpString = "Click names at left for description.\nDrag from left to add plugins.\nDouble-click or select and press enter to edit plugin settings.\nCmd down and up arrows to change order.\nCmd drag to copy trim or a plugin and its settings to another channel.";
+		window.view.decorator.nextLine;
+		window.view.decorator.shift(20, 0);
+		
+		descriptionHelpText = SCStaticText(window, Rect(0, 0, width - 58, 100))
+			.string_(defaultHelpString)
+			.font_(Font("Helvetica-Bold", 12));
+		
+		buttons = SCVLayoutView(window, Rect(0, 0, 20, 70));
+		TriggerView(buttons, Rect(0, 0, 20, 20))
+			.string_(" ?")
+			.font_(Font("Helvetica-Bold", 14))
+			.colorOn_(Color.white.alpha_(0.2))
+			.action_({descriptionHelpText.string = defaultHelpString;});
+		TriggerView(buttons, Rect(0, 0, 20, 20))
+			.string_("APi")
+			.font_(Font("Helvetica-Bold", 8))
+			.colorOn_(Color.white.alpha_(0.2))
+			.action_({|v|v.value.if{trimPluginsRack.autoPlugins}});
+		TriggerView(buttons, Rect(0, 0, 20, 20))
+			.string_("ATr")
+			.font_(Font("Helvetica-Bold", 8))
+			.colorOn_(Color.white.alpha_(0.2))
+			.action_({|v| v.value.if{trimPluginsRack.autoTrim}});
+		TriggerView(buttons, Rect(0, 0, 20, 20))
+			.string_("dT")
+			.font_(Font("Helvetica-Bold", 12))
+			.colorOn_(Color.white.alpha_(0.2))
+			.action_({|v|v.value.if{trimPluginsRack.compensateDistance}});
+
+		window.onClose = { 
+			trimPluginsStripGUIs.do({|tpisg|
+				tpisg.trimPluginsStrip.removeDependant(tpisg);
+			});	
+			onClose.value(this);
+		};
+		window.front;
+	}
+}
+
+// only in a larger GUI
+BMMultichannelPluginsStripGUI {
+	var <trimPluginsStrip, containerView, ezKnob, labelView, listView;
+	
+	*new { |trimPluginsStrip, parent, name, origin|
+		^super.new.init(trimPluginsStrip, parent).makeGUI(parent, name, origin ? 0@0);
+	 }
+	 
+	 init {|argtrimPluginsStrip|
+	 	trimPluginsStrip = argtrimPluginsStrip;
+	 	trimPluginsStrip.addDependant(this);
+	 }
+	 
+	 makeGUI{|parent, name, origin|
+	 	name.postln;
+	 	containerView = SCCompositeView(parent, Rect(origin.x, origin.y, 100, 500));
+	 	containerView.decorator = FlowLayout(containerView.bounds);
+	 	labelView = SCStaticText(containerView, Rect(0, 0, 100, 30))
+	 		.font_(Font("Helvetica-Bold", 13))
+	 		.background_(Color.grey.alpha_(0.3))
+	 		.string_(" " ++ name);
+//	 	ezKnob = EZKnob(containerView, 50@20, " Trim (dBFS)", \db.asSpec, 
+//	 		{|ez| trimPluginsStrip.trim_(ez.value);}, trimPluginsStrip.trim, false, 96, 70);
+//	 	ezKnob.labelView.align_(\left).font_(Font("Helvetica-Bold", 12));
+//	 	ezKnob.numberView.boxColor_(Color.white.alpha_(0.3));
+	 	listView = SCListView(containerView, Rect(0, 0, 100, 334))
+	 		.items_(trimPluginsStrip.plugins.collect({|plugin| plugin.spec.name}));
+	 	listView.enterKeyAction = {
+	 		var plgin;
+	 		plgin = trimPluginsStrip.plugins[listView.value];
+	 		plgin.notNil.if({plgin.gui}); 
+	 	}; // can duplicate
+	 	listView.keyDownAction = { arg view,char,modifiers,unicode,keycode;
+	 		block { |break|
+				if((modifiers == 11534600) && (unicode == 63233), {
+					trimPluginsStrip.movePluginDown(listView.value);
+					break.value;
+				});
+				if((modifiers == 11534600) && (unicode == 63232), {
+					trimPluginsStrip.movePluginUp(listView.value);
+					break.value;
+				});
+				if(unicode == 127, {trimPluginsStrip.removePlugin(listView.value)});
+				listView.defaultKeyDownAction(char,modifiers,unicode);
+			}
+		};
+		listView.mouseDownAction = {|view, x, y, modifiers, buttonNumber, clickCount|
+			if(clickCount == 2, {
+				listView.enterKeyAction.value;
+			});
+		};
+		listView.canReceiveDragHandler = { SCView.currentDrag.isKindOf(BMPlugin) };
+		listView.receiveDragHandler = { trimPluginsStrip.addPlugin(SCView.currentDrag) };
+		listView.beginDragAction = { trimPluginsStrip.plugins[listView.value].copy };
+	 }
+	 
+	 update {|tpv, what|
+	 	//if(what == \trim, {ezKnob.value = trimPluginsStrip.trim;});
+	 	listView.items_(trimPluginsStrip.plugins.collect({|plugin| plugin.spec.name}));
+	 	switch(what,
+	 		\moveDown, {listView.value = listView.value + 1},
+	 		\moveUp, {listView.value = listView.value - 1}
+	 	)
+	 }
+
 }
