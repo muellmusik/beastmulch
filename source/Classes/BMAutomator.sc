@@ -21,6 +21,8 @@ BMAbstractAutomator {
 	mappings { this.subclassResponsibility(thisMethod);}
 	
 	mappings_ { this.subclassResponsibility(thisMethod);} 
+	
+	timeInitialised { ^(time.notNil && rate.notNil && referenceTime.notNil) }
 }
 
 // rate of this and time ref are independent
@@ -129,7 +131,7 @@ Should name come last in seq
 */
 BMControllerAutomator : BMAbstractIndependentRateAutomator {
 	// interpolates between controller snapshots
-	var controls; // an array of controlnames or a single one
+	var <controls; // an array of controlnames or a single one
 	var <sequences; // an dict of BMSnapShotSeqs
 	var oldSeqs;
 	var sinSmooth = true;
@@ -175,7 +177,11 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 	addStartSnapShot { }
 	
 	addSnapShot {|seqName, ssTime, ssName| 
-		ssTime = ssTime ?? {BMTimeSources.currentTime(time, rate, referenceTime)};
+		ssTime = ssTime ?? {
+			if(this.timeInitialised, {
+				BMTimeSources.currentTime(time, rate, referenceTime);
+			}, {0});
+		};
 		sequences[seqName].addSnapShot(ssTime, ssName);
 	}
 	
@@ -630,6 +636,23 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		sfView.readWithTask(block: 128, doneAction: {
 			this.makeEnvViews;
 		});
+		
+//		RoundButton(window, 80@20).extrude_(false)
+//			.canFocus_(false)
+//			.font_(Font("Helvetica-Bold", 10))
+//			.states_([["Add Sequence"]])
+//			.action_({ca.addSequence(UniqueID.next.asSymbol, 0)}); // global sequence
+		
+		RoundButton(window, 80@20)
+			.extrude_(false)
+			.canFocus_(false)
+			.font_(Font("Helvetica-Bold", 10))
+			.states_([["Add Snapshot"]])
+			.action_({
+				ca.addSnapShot(activeSequence.name, nil, UniqueID.next.asSymbol);
+				this.makeEnvViews;
+				menu.doAction;
+			});
 		//a.resize = 5;
 		window.front;
 
@@ -709,8 +732,8 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	// we use SCSoundFileView Selections for the snapshot time cursors
 	drawSelections {|view|
 	
-		var time, ss;
-		
+		var time;
+		view.value.postln;
 		
 		this.clearSelections;
 		activeSequence.snapshots.do({|ss, index|
@@ -743,8 +766,8 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			\stop, {
 				{sfView.timeCursorPosition = 0;}.defer;
 			}//,
-//			\segsBuilt, {
-//				{this.makeEnvViews; this.drawSelections; }.defer;
+//			\sequencesChanged, {
+//				{this.makeEnvViews; this.drawSelections(envViews[menu.value]);}.defer;
 //			}
 		)
 	
