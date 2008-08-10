@@ -380,7 +380,8 @@ BMMultichannelPlugin {
 //	var <group, <>server, <name, <callCmdPeriod = true;
 
 //------- To do:
-// fix mappings
+// should addPlugin just take a symbol and populate the new method as appropriate
+// - not sure we actually need ins and outs for this class, also maybe for mono version
 
 BMMultichannelPluginsRack : BMAbstractAudioChainElement {
 	var <plugins;
@@ -555,7 +556,10 @@ BMMultichannelPluginsRackGUI : BMAbstractGUI {
 			SCDragSource(pluglist, Rect(0, 0, 150, 20)).string_("   " ++ piName.asString)
 				.background_(Color.grey.alpha_(0.2))
 				.font_(Font("Helvetica-Bold", 12))
-				.beginDragAction_({BMPlugin(piName, 1)}) // one channel for now
+				.beginDragAction_({
+					BMMultichannelPlugin(piName, trimPluginsRack.ins, trimPluginsRack.outs, 
+						trimPluginsRack.server)
+				}) 
 				.mouseDownAction_({
 					descriptionHelpText.string = piName ++ ": " ++ 
 						BMMultichannelPluginSpec.specs[piName].description;
@@ -664,8 +668,8 @@ BMMultichannelPluginsStripGUI {
 				listView.enterKeyAction.value;
 			});
 		};
-		listView.canReceiveDragHandler = { SCView.currentDrag.isKindOf(BMPlugin) };
-		listView.receiveDragHandler = { trimPluginsStrip.addPlugin(SCView.currentDrag) };
+		listView.canReceiveDragHandler = { SCView.currentDrag.isKindOf(BMMultichannelPlugin) };
+		listView.receiveDragHandler = { trimPluginsStrip.addPlugin(SCView.currentDrag)};
 		listView.beginDragAction = { trimPluginsStrip.plugins[listView.value].copy };
 	 }
 	 
@@ -678,4 +682,30 @@ BMMultichannelPluginsStripGUI {
 	 	)
 	 }
 
+}
+
+BMSelectInsOutsGUI : BMAbstractGUI {
+	var ins, outs, okFunc;
+	
+	*new {|ins, outs, okFunc, origin|
+		^super.new.init(ins, outs, okFunc)
+			.makeWindow(origin ? (40@400));
+	}
+	
+	init {|argins, argouts, argokfunc|
+		ins = argins;
+		outs = argouts;
+		okFunc = argokfunc;
+		name = "Select Ins and Outs";
+	}
+	
+	makeWindow {|origin|
+		var x, y, buttons;
+		x = origin.x;
+		y = origin.y;
+		window = SCWindow(name, Rect.new(x, y, 500, 600), false);
+		window.alwaysOnTop = true; //pseudo modal
+		window.view.decorator = FlowLayout(window.view.bounds);
+	}
+	
 }
