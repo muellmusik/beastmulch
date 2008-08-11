@@ -143,7 +143,7 @@ BMMultichannelPluginSpec {
 					plugin.attributes[\buffer].free;
 				}								// cleanupFunc
 			);
-			BMMultichannelPluginSpec('3D B-Format Decoder', 				// name
+			BMMultichannelPluginSpec('B-Format Decoder', 				// name
 				{|plugin, numInputs, numOutputs, inputs| // ugenGraphFunc
 					// w, x, y, z
 					
@@ -173,7 +173,7 @@ BMMultichannelPluginSpec {
 				nil								// cleanupFunc
 			);
 			
-			BMMultichannelPluginSpec('Compensated 3D B-Format Decoder', 				// name
+			BMMultichannelPluginSpec('B-Format Decoder Comp', 				// name
 				{|plugin, numInputs, numOutputs, inputs| // ugenGraphFunc
 					// w, x, y, z
 					
@@ -206,7 +206,7 @@ BMMultichannelPluginSpec {
 				nil								// cleanupFunc
 			);
 			
-			BMMultichannelPluginSpec('1st Order 3D Ambisonic Panner', // name
+			BMMultichannelPluginSpec('3D Ambi Panner', // name
 				{|plugin, numInputs, numOutputs, inputs, azimuth, elevation, rho| // ugenGraphFunc
 					var w, x, y, z;
 					var atorad = (2 * pi / 360);
@@ -241,7 +241,7 @@ BMMultichannelPluginSpec {
 				nil								// cleanupFunc
 			);
 			
-			BMMultichannelPluginSpec('Stereo 3D Ambisonic Panner', // name
+			BMMultichannelPluginSpec('Stereo 3D Ambi Panner', // name
 				{|plugin, numInputs, numOutputs, inputs, azimuth, width, elevation, rho| // ugenGraphFunc
 					var w, x, y, z;
 					var atorad = (2 * pi / 360);
