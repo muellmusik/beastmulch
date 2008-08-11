@@ -277,6 +277,43 @@ BMMultichannelPluginSpec {
 				},								// setupFunc
 				nil								// cleanupFunc
 			);
+			
+			BMMultichannelPluginSpec('FMH Ambi Panner', // name
+				{|plugin, numInputs, numOutputs, inputs, azimuth, elevation, rho| // ugenGraphFunc
+					var w, x, y, z, r, s, t, u, v;
+					var atorad = (2 * pi / 360);
+					#w, x, y, z, r, s, t, u, v = FMHEncode1.ar(inputs, azimuth.neg * atorad, 
+						elevation * atorad, rho);
+					FMHDecode1.ar(w, x, y, z, r, s, t, u, v, 
+						plugin.attributes[\speakersCoords][0], 
+						plugin.attributes[\speakersCoords][1]
+					);
+				}, 								
+				(azimuth: [-180, 180, 'lin', 0.0,  0, " deg"].asSpec, 
+				elevation: [-90, 90, 'lin', 0.0, 0, " deg"].asSpec,
+				rho: [0, 4, 'lin', 0.0, 1].asSpec
+				),				// specsDict
+				nil, 							// default GUI
+				('dead ahead': (azimuth: 0, elevation:0)), // presets
+				"2nd Order Mono input 3D Ambisonic Panner",
+				nil, 							// defaultAttributes
+				[1, 1],							// inRange
+				[2, inf],							// outRange
+				{|plugin| 
+					var speakers;
+					var atorad = (2 * pi / 360);
+					speakers = plugin.outputs.collect({|out|
+						out.value.isBMSpeaker.not.if({
+							"Ambisonics output not a speaker".error;
+							^false;
+						});
+						[out.value.azi * atorad, out.value.ele * atorad];
+					}).flop;
+					plugin.attributes[\speakersCoords] = speakers;
+				},								// setupFunc
+				nil								// cleanupFunc
+			);
+
 
 		// read application directory for source code files of user plugins specs
 		// or maybe in app
