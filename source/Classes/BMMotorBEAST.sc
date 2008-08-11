@@ -45,7 +45,10 @@ BMMotorBEAST : BMAbstractController {
 	getFaderVal { |faderNum| ^spec.unmap(valueArray[faderNum -1]) }
 	
 	// we set the local value on loopback, so we're always in sync
-	setFaderVal { |faderNum, val| addr.sendMsg("/MF/" ++ (faderNum - 1), spec.map(val).asInteger.postln) }
+	setFaderVal { |faderNum, val| 
+		//addr.sendMsg("/MF/" ++ (faderNum - 1), spec.map(val).asInteger.postln) 
+		addr.sendMsg("/MF", *(valueArray.copy[faderNum - 1] = spec.map(val).asInteger))
+	}
 	
 	getAllFaders { ^valueArray.collect({|val| spec.unmap(val)}) }
 	
