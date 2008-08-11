@@ -143,6 +143,141 @@ BMMultichannelPluginSpec {
 					plugin.attributes[\buffer].free;
 				}								// cleanupFunc
 			);
+			BMMultichannelPluginSpec('3D B-Format Decoder', 				// name
+				{|plugin, numInputs, numOutputs, inputs| // ugenGraphFunc
+					// w, x, y, z
+					
+					BFDecode1.ar(inputs[0], inputs[1], inputs[2], inputs[3], 						plugin.attributes[\speakersCoords][0], 
+						plugin.attributes[\speakersCoords][1]
+					);
+				}, 								
+				nil,				// specsDict
+				nil, 							// default GUI
+				nil, // presets
+				"3D B-Format Ambisonic Decoder; input order w, x, y, z",
+				nil, 							// defaultAttributes
+				[4, 4],							// inRange
+				[2, inf],							// outRange
+				{|plugin| 
+					var speakers;
+					var atorad = (2 * pi / 360);
+					speakers = plugin.outputs.collect({|out|
+						out.value.isBMSpeaker.not.if({
+							"Ambisonics output not a speaker".error;
+							^false;
+						});
+						[out.value.azi * atorad, out.value.ele * atorad];
+					}).flop;
+					plugin.attributes[\speakersCoords] = speakers;
+				},								// setupFunc
+				nil								// cleanupFunc
+			);
+			
+			BMMultichannelPluginSpec('Compensated 3D B-Format Decoder', 				// name
+				{|plugin, numInputs, numOutputs, inputs| // ugenGraphFunc
+					// w, x, y, z
+					
+					BFDecode1.ar1(inputs[0], inputs[1], inputs[2], inputs[3], 						plugin.attributes[\speakersCoords][0], 
+						plugin.attributes[\speakersCoords][1],
+						plugin.attributes[\maxDist],
+						plugin.attributes[\speakersCoords][2]
+					);
+				}, 								
+				nil,				// specsDict
+				nil, 							// default GUI
+				nil, // presets
+				"3D B-Format Ambisonic Decoder; delay compensated. Input order is w, x, y, z.",
+				nil, 							// defaultAttributes
+				[4, 4],							// inRange
+				[2, inf],							// outRange
+				{|plugin| 
+					var speakers;
+					var atorad = (2 * pi / 360);
+					speakers = plugin.outputs.collect({|out|
+						out.value.isBMSpeaker.not.if({
+							"Ambisonics output not a speaker".error;
+							^false;
+						});
+						[out.value.azi * atorad, out.value.ele * atorad, out.value.rad];
+					}).flop;
+					plugin.attributes[\speakersCoords] = speakers;
+					plugin.attributes[\maxDist] = speakers[2].maxItem;
+				},								// setupFunc
+				nil								// cleanupFunc
+			);
+			
+			BMMultichannelPluginSpec('1st Order 3D Ambisonic Panner', // name
+				{|plugin, numInputs, numOutputs, inputs, azimuth, elevation, rho| // ugenGraphFunc
+					var w, x, y, z;
+					var atorad = (2 * pi / 360);
+					#w, x, y, z = BFEncode1.ar(inputs, azimuth * atorad, 
+						elevation * atorad, rho);
+					BFDecode1.ar(w, x, y, z, plugin.attributes[\speakersCoords][0], 
+						plugin.attributes[\speakersCoords][1]
+					);
+				}, 								
+				(azimuth: [-180, 180, 'lin', 0.0,  0, " deg"].asSpec, 
+				elevation: [-90, 90, 'lin', 0.0, 0, " deg"].asSpec,
+				rho: [0, 4, 'lin', 0.0, 1].asSpec
+				),				// specsDict
+				nil, 							// default GUI
+				('dead ahead': (azimuth: 0, elevation:0)), // presets
+				"1st Order Mono input 3D Ambisonic Panner",
+				nil, 							// defaultAttributes
+				[1, 1],							// inRange
+				[2, inf],							// outRange
+				{|plugin| 
+					var speakers;
+					var atorad = (2 * pi / 360);
+					speakers = plugin.outputs.collect({|out|
+						out.value.isBMSpeaker.not.if({
+							"Ambisonics output not a speaker".error;
+							^false;
+						});
+						[out.value.azi * atorad, out.value.ele * atorad];
+					}).flop;
+					plugin.attributes[\speakersCoords] = speakers;
+				},								// setupFunc
+				nil								// cleanupFunc
+			);
+			
+			BMMultichannelPluginSpec('Stereo 3D Ambisonic Panner', // name
+				{|plugin, numInputs, numOutputs, inputs, azimuth, width, elevation, rho| // ugenGraphFunc
+					var w, x, y, z;
+					var atorad = (2 * pi / 360);
+					#w, x, y, z = BFEncode1.ar(inputs[0], inputs[1], azimuth * atorad, 
+						width * atorad,
+						elevation * atorad, rho);
+					BFDecode1.ar(w, x, y, z, plugin.attributes[\speakersCoords][0], 
+						plugin.attributes[\speakersCoords][1]
+					);
+				}, 								
+				(azimuth: [-180, 180, 'lin', 0.0,  0, " deg"].asSpec,
+				width: [-180, 180, 'lin', 0.0,  0, " deg"].asSpec, 
+				elevation: [-90, 90, 'lin', 0.0, 0, " deg"].asSpec,
+				rho: [0, 4, 'lin', 0.0, 1].asSpec
+				),				// specsDict
+				nil, 							// default GUI
+				('dead ahead': (azimuth: 0, elevation:0)), // presets
+				"1st Order Stereo input 3D Ambisonic Panner; inputs are L, R",
+				nil, 							// defaultAttributes
+				[2, 2],							// inRange
+				[2, inf],							// outRange
+				{|plugin| 
+					var speakers;
+					var atorad = (2 * pi / 360);
+					speakers = plugin.outputs.collect({|out|
+						out.value.isBMSpeaker.not.if({
+							"Ambisonics output not a speaker".error;
+							^false;
+						});
+						[out.value.azi * atorad, out.value.ele * atorad];
+					}).flop;
+					plugin.attributes[\speakersCoords] = speakers;
+				},								// setupFunc
+				nil								// cleanupFunc
+			);
+
 		// read application directory for source code files of user plugins specs
 		// or maybe in app
 		});
