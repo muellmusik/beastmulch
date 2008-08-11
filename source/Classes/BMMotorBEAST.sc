@@ -19,7 +19,9 @@ BMMotorBEAST : BMAbstractController {
 		valueArray = 0 ! 32;
 		bus = Bus.control(server, numFaders);
 		busIndex = bus.index;
-		spec = Env([0, 1], [65536], \sine);
+		//spec = Env([0, 1], [65536], \sine);
+		// clip bottom
+		spec = [16, 65535, 'cos', 0.0].asSpec;
 		this.startListening;
 		//this.updateAllFaders(valueArray);
 		allControllers[name] = this;
@@ -30,7 +32,7 @@ BMMotorBEAST : BMAbstractController {
 		responder = OSCresponderNode(addr, '/analogMF', { arg time, resp, msg; 
 			var values;
 			values = msg.copyToEnd(1);
-			server.sendMsg("/c_setn", busIndex, 16, *(values.collect({|val| spec.at(val)})));
+			server.sendMsg("/c_setn", busIndex, 32, *(values.collect({|val| spec.unmap(val)})));
 			valueArray= values;
 			this.changed(\faderVal);
 		}).add;
@@ -40,16 +42,16 @@ BMMotorBEAST : BMAbstractController {
 	
 	// assumes fader 1 = 1 not 0
 	// returns 16 bit value
-	getFaderVal { |faderNum| ^valueArray[faderNum -1] }
+	getFaderVal { |faderNum| ^spec.unmap(valueArray[faderNum -1]) }
 	
 	// we set the local value on loopback, so we're always in sync
-	setFaderVal { |faderNum, val| addr.sendMsg("/MF/" ++ faderNum, val) }
+	setFaderVal { |faderNum, val| addr.sendMsg("/MF/" ++ (faderNum - 1), spec.map(val).asInteger.postln) }
 	
-	getAllFaders { ^valueArray }
+	getAllFaders { ^valueArray.collect({|val| spec.unmap(val)}) }
 	
 	// 32 faders
 	setAllFaders {|array|
-		addr.sendMsg("/MF", *array)
+		addr.sendMsg("/MF", *(array.collect({|val| spec.map(val).asInteger})))
 	}
 	
 	// for faders

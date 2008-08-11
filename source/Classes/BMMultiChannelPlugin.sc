@@ -669,7 +669,7 @@ BMMultichannelPluginsStripGUI {
 				listView.enterKeyAction.value;
 			});
 		};
-		listView.canReceiveDragHandler = { SCView.currentDrag.isSymbol; };
+		listView.canReceiveDragHandler = { SCView.currentDrag.isKindOf(Symbol); };
 		listView.receiveDragHandler = {
 			var piName;
 			piName = SCView.currentDrag;

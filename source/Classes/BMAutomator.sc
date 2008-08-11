@@ -514,6 +514,8 @@ BMAbstractSnapShot {
 	//makeInActive { this.subclassResponsibility(thisMethod); }
 	
 	isKnown {^true}
+	
+	setValue {|ctrl, value| values[ctrl] = value; this.changed(\snap);}
 }
 
 // a known state
@@ -776,73 +778,78 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 
 //Quick and dirty for now
 BMSnapShotSliders : BMAbstractGUI {
-	var virtualCont, sliders, fromUpdate = false;
+	var snapshot, sliders, fromUpdate = false;
 	var needsRefresh = false;
 	var <>refreshInterval = 0.05;
 	var refreshLoopOn = false;
 	
-	*new {|virtualCont, name, origin|
-		^super.new.init(virtualCont, name ? virtualCont.name)
+	*new {|snapshot, origin|
+		^super.new.init(snapshot)
 			.makeWindow(origin ? (40@200));
 	}
 	
-	init {|argvirtualCont, argname|
-		virtualCont = argvirtualCont;
-		virtualCont.addDependant(this);
-		name = argname;
+	init {|argss|
+		snapshot = argss;
+		snapshot.addDependant(this);
 	}
 	
 	makeWindow {|origin|
 		var numSliders, presetMenu;
-		numSliders = virtualCont.numFaders;
-		window = SCWindow.new(name, 
+		numSliders = snapshot.values.size;
+		window = SCWindow.new(snapshot.name, 
 			Rect(300, 300, 652, (numSliders + 1) * 24), false); // 508
 		window.view.decorator = FlowLayout(window.view.bounds);
 		window.view.background = Color.rand.alpha_(0.3);
-		sliders = Array.newClear(numSliders);
-		virtualCont.getAllLabels.do({|label, i|
+		sliders = IdentityDictionary.new;
+		snapshot.values.keys.sort.do({|label, i|
 			var initVal;
-			initVal = virtualCont.getFaderVal(i + 1).ampdb;
-			sliders[i] = EZSlider.new(window, 640@20, label.asString, \db,
-				{|ez| var setVal;
+			initVal = snapshot.values[label];
+			sliders[label] = EZSlider.new(window, 640@20, label.asString, nil,
+				{|ez| 
 					if(fromUpdate.not, {
-						setVal = ez.value.dbamp;
-						virtualCont.setFaderVal(i + 1, setVal);
+						
+						snapshot.setValue(label, ez.value);
 					})
 				}, initVal
 			);
-			sliders[i].numberView.boxColor = Color.white.alpha_(0.4);
+			sliders[label].numberView.boxColor = Color.white.alpha_(0.4);
 		
 		});
-		window.onClose = { virtualCont.removeDependant(this); onClose.value };
+		window.onClose = { snapshot.removeDependant(this); onClose.value };
 		window.front;
 	}
 	
 	// could be some jitter, but safer
-	startRefreshLoop {
-		refreshLoopOn.not.if({
-			refreshLoopOn = true;
-			AppClock.sched(refreshInterval, {
-				var resched;
-				needsRefresh.if({resched = refreshInterval}, {refreshLoopOn = false});
-				fromUpdate = true; // prevent a loop
-				virtualCont.getAllFaders.do({|val, i| 
-					sliders[i].value_(val.ampdb);
-				});
-				fromUpdate = false;
-				needsRefresh = false;
-				resched;
-			});
-		});
-	}
+//	startRefreshLoop {
+//		refreshLoopOn.not.if({
+//			refreshLoopOn = true;
+//			AppClock.sched(refreshInterval, {
+//				var resched;
+//				needsRefresh.if({resched = refreshInterval}, {refreshLoopOn = false});
+//				fromUpdate = true; // prevent a loop
+//				snapshot.getAllFaders.do({|val, i| 
+//					sliders[i].value_(val.ampdb);
+//				});
+//				fromUpdate = false;
+//				needsRefresh = false;
+//				resched;
+//			});
+//		});
+//	}
 	
 	update {|changed, what, index, val|
 		switch(what,
-			\faderVal, {
-				needsRefresh = true;
-				this.startRefreshLoop;
-			},
-			\label, {sliders[index].labelView.string_(val.asString)}
+			\snap, {
+				//needsRefresh = true;
+//				this.startRefreshLoop;
+				{
+				fromUpdate = true; // prevent a loop
+				snapshot.values.keysValuesDo({|key, value| 
+					sliders[key].value = value; });
+				fromUpdate = false;
+				}.defer;
+				
+			}
 		)
 	}
 	
