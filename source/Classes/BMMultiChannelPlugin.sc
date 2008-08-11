@@ -286,7 +286,8 @@ BMMultichannelPlugin {
 				"Plugin output does not match size of output array.".warn;
 			});
 			// if sizes don't match take the first outputs
-			out.do({|chan, i| XOut.ar(outputs.atIndex(i), env, chan);});
+			// use Out not XOut for multichannel
+			out.do({|chan, i| Out.ar(outputs.atIndex(i), env * chan);});
 		});
 		
 	}
