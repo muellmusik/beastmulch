@@ -1,5 +1,5 @@
-{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf330
-{\fonttbl\f0\fnil\fcharset238 Monaco;}
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf420
+{\fonttbl\f0\fnil\fcharset77 Monaco;}
 {\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red0\green115\blue0;
 \red96\green96\blue96;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
@@ -11,22 +11,6 @@
 \cf2 // outputs\cf0 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf3 BMInOutArray\cf0 .new.addAll([\
-	\cf2 // subs\cf0 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf2 //	BMSpeaker(\\SubsFtL, 0, spec:'7070A'),\cf0 \
-\cf2 //	BMSpeaker(\\SubsFtR, 1, spec:'7070A'),\cf0 \
-\cf2 //	BMSpeaker(\\SubsRrL, 2, spec:'7070A'),\cf0 \
-\cf2 //	BMSpeaker(\\SubsRrR, 3, spec:'7070A'),\cf0 \
-\cf2 //	\cf0 \
-\cf2 //	// tweets\cf0 \
-\cf2 //	BMSpeaker(\\TweetsL, 4, spec:'Tweeters'),\cf0 \
-\cf2 //	BMSpeaker(\\TweetsR, 5, spec:'Tweeters'),\cf0 \
-	\
-\cf2 //	// geography\cf0 \
-\cf2 //	BMSpeaker(\\MountL, 6, spec:'Circle5'),\cf0 \
-\cf2 //	BMSpeaker(\\MountR, 60, spec:'Circle5'),\cf0 \
-\cf2 //	BMSpeaker(\\HillL, 7, spec:'Circle3'),\cf0 \
-\cf2 //	BMSpeaker(\\HillR, 61, spec:'Circle3'),\cf0 \
 	\
 		\cf2 // ATC ring\cf0 \
 	\cf3 BMSpeaker\cf0 (\cf4 \\MainL\cf0 , 0, spec:\cf4 'SCM50'\cf0 ),\
@@ -66,10 +50,19 @@
 	\cf3 BMSpeaker\cf0 (\cf4 \\OverSideL\cf0 , 28, spec:\cf4 '8030A'\cf0 ),\
 	\cf3 BMSpeaker\cf0 (\cf4 \\OverSideR\cf0 , 29, spec:\cf4 '8030A'\cf0 ),\
 	\cf3 BMSpeaker\cf0 (\cf4 \\OverRearL\cf0 , 30, spec:\cf4 '8030A'\cf0 ),\
-	\cf3 BMSpeaker\cf0 (\cf4 \\OverRearR\cf0 , 31, spec:\cf4 '8030A'\cf0 )\
+	\cf3 BMSpeaker\cf0 (\cf4 \\OverRearR\cf0 , 31, spec:\cf4 '8030A'\cf0 ),\
+	\
+	\cf2 // Tweet\cf0 \
+	\cf3 BMSpeaker\cf0 (\cf4 \\TweetFntL\cf0 , 32, spec:\cf4 'Tweeters'\cf0 ),\
+	\cf3 BMSpeaker\cf0 (\cf4 \\TweetFntR\cf0 , 33, spec:\cf4 'Tweeters'\cf0 ),\
+	\cf3 BMSpeaker\cf0 (\cf4 \\TweetWideL\cf0 , 34, spec:\cf4 'Tweeters'\cf0 ),\
+	\cf3 BMSpeaker\cf0 (\cf4 \\TweetWideR\cf0 , 35, spec:\cf4 'Tweeters'\cf0 ),\
+	\cf3 BMSpeaker\cf0 (\cf4 \\TweetSideL\cf0 , 36, spec:\cf4 'Tweeters'\cf0 ),\
+	\cf3 BMSpeaker\cf0 (\cf4 \\TweetSideR\cf0 , 37, spec:\cf4 'Tweeters'\cf0 ),\
+	\cf3 BMSpeaker\cf0 (\cf4 \\TweetRearL\cf0 , 38, spec:\cf4 'Tweeters'\cf0 ),\
+	\cf3 BMSpeaker\cf0 (\cf4 \\TweetRearR\cf0 , 39, spec:\cf4 'Tweeters'\cf0 )\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf0 ]),\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf2 // inputs\cf0 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf3 InputArray\cf0 .fill(10, \{\cf3 |i|\cf0  (\cf5 "in"\cf0  ++ (i+1)).asSymbol -> (\cf3 Server\cf0 .default.options.numOutputBusChannels + i)\})];}
