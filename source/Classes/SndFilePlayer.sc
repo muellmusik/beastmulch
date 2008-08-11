@@ -8,6 +8,7 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 	var <buffer, <synth, <>releaseTime = 0.1, watcher, <rate = 1;
 	var <sampleDur = 2.2675736961451e-05;
 	var blockPlay = false;
+	var resp;
 	
 	*new {|maxNumChannels = 2, latency = 0.1, group, server, name|
 		^super.new.init(maxNumChannels, latency, group, server ? Server.default, name);
@@ -23,11 +24,14 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 		bus = Bus.audio(server, maxNumChannels);
 		if(group.isNil, {this.makeGroup});
 		CmdPeriod.add(this);
-		OSCresponderNode(this.server.addr,'/tr',{ arg time,responder,msg;
-			this.changed(\time, msg.last * this.sampleDur, rate, time);
-		}).add;
 		allChainElements[name] = this;
 		BMTimeSources.addReference(this);
+	}
+	
+	startListening {
+		resp = OSCresponderNode(this.server.addr,'/tr',{ arg time,responder,msg;
+			this.changed(\time, msg.last * this.sampleDur, rate, time);
+		}).add;
 	}
 	
 	read {|path, action|
@@ -97,6 +101,7 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 	play { |startTime = 0, out|
 		this.rate_(1.0);
 		(synth.isPlaying.not && blockPlay.not && synth.isNil && buffer.notNil).if({
+			this.startListening;
 			blockPlay = true;
 //			server.makeBundle(latency, {
 				synth = Synth.head(group, this.hash.asString, 
@@ -112,6 +117,7 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 	
 	stop { 
 		synth.isPlaying.if({
+			resp.remove;
 			blockPlay = true;
 			synth.release; 
 			watcher.stop; 

@@ -1,7 +1,7 @@
 {\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf420
 {\fonttbl\f0\fnil\fcharset77 Monaco;}
 {\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
-\red191\green0\blue0;\red0\green115\blue0;}
+\red0\green115\blue0;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
 \f0\fs18 \cf0 (\
@@ -66,11 +66,14 @@ inputArray 	= arrays[1];\
 \
 controllersList 	= \cf3 List\cf0 [];\
 \cf2 //controllersList.add(etherSense = BMEtherSense(NetAddr("10.0.0.2", 57120), \\Faders));\
-\cf5 //controllersList.add(etherSense = BMMotorBEAST(NetAddr("192.168.5.77", 57120), \\Faders));\
-\cf0 controllersList.add(etherSense = \cf3 BMVirtualController\cf0 (\cf6 \\Faders, s, 32\cf0 ));\
+//controllersList.add(etherSense = BMMotorBEAST(NetAddr("192.168.5.77", 57120), \\Faders));\
+\cf0 controllersList.add(etherSense = \cf3 BMVirtualController\cf0 (\cf5 \\Faders, s, 32\cf0 ));\
 \
 ~motorBEAST = etherSense;\
-\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf3 BMVirtualControllerSliders(\cf0 etherSense\cf3 );\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 \
 \cf2 //mackieList.add(mackie1 = MackieXT.new(MIDIClient.sources[0].uid, \\mack1));\cf0 \
 \cf2 //mackieList.add(mackie2 = MackieXT.new(MIDIClient.sources[1].uid, \\mack2));\cf0 \
 \cf2 //mackieList.add(mackie3 = MackieXT.new(MIDIClient.sources[2].uid, \\mack3));\cf0 \
@@ -82,8 +85,8 @@ backupManager	= \cf3 BMBackup\cf0 .new;\
 \cf2 //outputArray	= backupManager.rememberWorkspace([ \\concert, \\system, \\speakers ],  \{ BMInOutArray.new \});\cf0 \
 outputArray	= ~outPutArrayFromTheChannelListFile;\
 \
-pieces		= backupManager.rememberWorkspace([ \cf6 \\concert\cf0 , \cf6 \\pieces\cf0  ],  \{ \cf3 List\cf0 .new \});\
-configurations= backupManager.rememberWorkspace(\cf6 \\configurations\cf0 ,  \{ (dict:  \cf3 IdentityDictionary\cf0 [], names: \cf3 List\cf0 [\cf6 'all off'\cf0 ]) \});\
+pieces		= backupManager.rememberWorkspace([ \cf5 \\concert\cf0 , \cf5 \\pieces\cf0  ],  \{ \cf3 List\cf0 .new \});\
+configurations= backupManager.rememberWorkspace(\cf5 \\configurations\cf0 ,  \{ (dict:  \cf3 IdentityDictionary\cf0 [], names: \cf3 List\cf0 [\cf5 'all off'\cf0 ]) \});\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf0 \
    \
@@ -92,8 +95,8 @@ configurations= backupManager.rememberWorkspace(\cf6 \\configurations\cf0 ,  \{ 
 ~player		= player;\
 chainManager	= \cf3 BMAudioChainManager\cf0 ( \
 				[player, \cf3 BMInOutArray\cf0 .hardwareInputArray], \
-				[\cf6 'Pre-Processing'\cf0 ->\cf3 BMTrimPluginsRack\cf0 , \cf6 'Input Levels'\cf0 ->\cf3 BMAmpControlMatrix\cf0 ], \
-				[\cf6 'Output Levels'\cf0 ->\cf3 BMAmpControlMatrix\cf0 , 'Multichannel Processing'->BMMultichannelPluginsRack, \cf6 'Post-Processing'\cf0 ->\cf3 BMTrimPluginsRack\cf0 , \cf6 'Master Fader'\cf0  -> \cf3 BMMasterFader\cf0 ],\
+				[\cf5 'Pre-Processing'\cf0 ->\cf3 BMTrimPluginsRack\cf0 , \cf5 'Input Levels'\cf0 ->\cf3 BMAmpControlMatrix\cf0 ], \
+				[\cf5 'Output Levels'\cf0 ->\cf3 BMAmpControlMatrix\cf0 , 'Multichannel Processing'->BMMultichannelPluginsRack, \cf5 'Post-Processing'\cf0 ->\cf3 BMTrimPluginsRack\cf0 , \cf5 'Master Fader'\cf0  -> \cf3 BMMasterFader\cf0 ],\
 				\cf3 BMAbstractController\cf0 .allControllers.values.collect(\{\cf3 |item|\cf0  item.getInputArray \}).flat.as(\cf3 BMInOutArray\cf0 ), \
 				outputArray\
 			);\
@@ -193,11 +196,11 @@ CocoaMenuItem.new(~menu, 0, "Automation Window", false, \{\cf3 BMControllerAutom
 \cf3 Updater\cf0 (concertManager,  \{\cf3 | changed, change, pieceEvent |\cf0 \
 \
 					   switch (change,\
-					   		  \cf6 \\loadPiece\cf0 ,	 	\
+					   		  \cf5 \\loadPiece\cf0 ,	 	\
 					   		   \{ if (pieceEvent.path.notNil)\
 					   		   	   \{ player.read(pieceEvent.path) \}\
 					   		   	   \{ player.free \};\
-					   		   	configManager.currentConfig_(pieceEvent.config, \cf6 \\concertEditor\cf0 );\
+					   		   	configManager.currentConfig_(pieceEvent.config, \cf5 \\concertEditor\cf0 );\
 					    		   \}\
 							  )\
 					 \}\
