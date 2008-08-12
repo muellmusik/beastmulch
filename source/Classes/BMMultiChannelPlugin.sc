@@ -207,10 +207,10 @@ BMMultichannelPluginSpec {
 			);
 			
 			BMMultichannelPluginSpec('3D Ambi Panner', // name
-				{|plugin, numInputs, numOutputs, inputs, azimuth, elevation, rho| // ugenGraphFunc
+				{|plugin, numInputs, numOutputs, inputs, azimuth, elevation, rho, azimuthLag| // ugenGraphFunc
 					var w, x, y, z;
 					var atorad = (2 * pi / 360);
-					#w, x, y, z = BFEncode1.ar(inputs, azimuth * atorad, 
+					#w, x, y, z = BFEncode1.ar(inputs, azimuth.circleRamp(azimuthLag) * atorad, 
 						elevation * atorad, rho);
 					BFDecode1.ar(w, x, y, z, plugin.attributes[\speakersCoords][0], 
 						plugin.attributes[\speakersCoords][1]
@@ -218,7 +218,8 @@ BMMultichannelPluginSpec {
 				}, 								
 				(azimuth: [-180, 180, 'lin', 0.0,  0, " deg"].asSpec, 
 				elevation: [-90, 90, 'lin', 0.0, 0, " deg"].asSpec,
-				rho: [0, 4, 'lin', 0.0, 1].asSpec
+				rho: [0, 4, 'lin', 0.0, 1].asSpec,
+				azimuthLag: [0, 1, 'lin', 0.0, 0.1, " sec"].asSpec
 				),				// specsDict
 				nil, 							// default GUI
 				('dead ahead': (azimuth: 0, elevation:0)), // presets
@@ -242,10 +243,10 @@ BMMultichannelPluginSpec {
 			);
 			
 			BMMultichannelPluginSpec('Stereo 3D Ambi Panner', // name
-				{|plugin, numInputs, numOutputs, inputs, azimuth, width, elevation, rho| // ugenGraphFunc
+				{|plugin, numInputs, numOutputs, inputs, azimuth, width, elevation, rho, azimuthLag| // ugenGraphFunc
 					var w, x, y, z;
 					var atorad = (2 * pi / 360);
-					#w, x, y, z = BFEncode1.ar(inputs[0], inputs[1], azimuth * atorad, 
+					#w, x, y, z = BFEncode1.ar(inputs[0], inputs[1], azimuth.circleRamp(azimuthLag) * atorad, 
 						width * atorad,
 						elevation * atorad, rho);
 					BFDecode1.ar(w, x, y, z, plugin.attributes[\speakersCoords][0], 
@@ -255,7 +256,8 @@ BMMultichannelPluginSpec {
 				(azimuth: [-180, 180, 'lin', 0.0,  0, " deg"].asSpec,
 				width: [-180, 180, 'lin', 0.0,  0, " deg"].asSpec, 
 				elevation: [-90, 90, 'lin', 0.0, 0, " deg"].asSpec,
-				rho: [0, 4, 'lin', 0.0, 1].asSpec
+				rho: [0, 4, 'lin', 0.0, 1].asSpec,
+				azimuthLag: [0, 1, 'lin', 0.0, 0.1, " sec"].asSpec
 				),				// specsDict
 				nil, 							// default GUI
 				('dead ahead': (azimuth: 0, elevation:0)), // presets
@@ -279,10 +281,10 @@ BMMultichannelPluginSpec {
 			);
 			
 			BMMultichannelPluginSpec('FMH Ambi Panner', // name
-				{|plugin, numInputs, numOutputs, inputs, azimuth, elevation, rho| // ugenGraphFunc
+				{|plugin, numInputs, numOutputs, inputs, azimuth, elevation, rho, azimuthLag| // ugenGraphFunc
 					var w, x, y, z, r, s, t, u, v;
 					var atorad = (2 * pi / 360);
-					#w, x, y, z, r, s, t, u, v = FMHEncode1.ar(inputs, azimuth.neg * atorad, 
+					#w, x, y, z, r, s, t, u, v = FMHEncode1.ar(inputs, azimuth.circleRamp(azimuthLag).neg * atorad, 
 						elevation * atorad, rho);
 					FMHDecode1.ar(w, x, y, z, r, s, t, u, v, 
 						plugin.attributes[\speakersCoords][0], 
@@ -291,7 +293,8 @@ BMMultichannelPluginSpec {
 				}, 								
 				(azimuth: [-180, 180, 'lin', 0.0,  0, " deg"].asSpec, 
 				elevation: [-90, 90, 'lin', 0.0, 0, " deg"].asSpec,
-				rho: [0, 4, 'lin', 0.0, 1].asSpec
+				rho: [0, 4, 'lin', 0.0, 1].asSpec,
+				azimuthLag: [0, 1, 'lin', 0.0, 0.1, " sec"].asSpec
 				),				// specsDict
 				nil, 							// default GUI
 				('dead ahead': (azimuth: 0, elevation:0)), // presets
@@ -314,7 +317,117 @@ BMMultichannelPluginSpec {
 				nil								// cleanupFunc
 			);
 
-
+			BMMultichannelPluginSpec('3D VBAP Auto Panner', 				// name
+				{|plugin, numInputs, numOutputs, inputs, elevation, spread, speed| 	// ugenGraphFunc
+					var azimuth;
+					azimuth = LFSaw.kr(speed.reciprocal).range(-180, 180);
+					VBAP.ar(numOutputs, inputs, plugin.attributes[\buffer], azimuth, elevation, spread);
+				}, 								
+				(speed: [0.1, 20, 'lin', 0.0,  5, " sec"].asSpec, 
+				elevation: [-90, 90, 'lin', 0.0, 0, " deg"].asSpec, 
+				spread: [0, 100, 'lin', 0.0, 2, " %"].asSpec
+				),				// specsDict
+				nil, 							// default GUI
+				nil, // presets
+				"Mono input 3D Vector Base Amplitude Auto Panner",
+				nil, 							// defaultAttributes
+				nil,								// inRange
+				nil,								// outRange
+				{|plugin| 
+					var speakers;
+					speakers = plugin.outputs.collect({|out|
+						out.value.isBMSpeaker.not.if({
+							"VBAP output not a speaker".error;
+							^false;
+						});
+						[out.value.azi, out.value.ele];
+					});
+					speakers = VBAPSpeakerArray(3, speakers);
+					plugin.attributes[\buffer] = 
+						Buffer.loadCollection(plugin.server, speakers.getSetsAndMatrices);
+				},								// setupFunc
+				{|plugin|
+					plugin.attributes[\buffer].free;
+				}								// cleanupFunc
+			);
+			
+			BMMultichannelPluginSpec('3D Ambi Auto Panner', // name
+				{|plugin, numInputs, numOutputs, inputs, elevation, rho, speed| // ugenGraphFunc
+					var w, x, y, z;
+					var atorad = (2 * pi / 360);
+					var azimuth;
+					
+					azimuth = LFSaw.kr(speed.reciprocal).range(-180, 180);
+					#w, x, y, z = BFEncode1.ar(inputs, azimuth * atorad, 
+						elevation * atorad, rho);
+					BFDecode1.ar(w, x, y, z, plugin.attributes[\speakersCoords][0], 
+						plugin.attributes[\speakersCoords][1]
+					);
+				}, 								
+				(speed: [0.1, 20, 'lin', 0.0,  5, " sec"].asSpec,  
+				elevation: [-90, 90, 'lin', 0.0, 0, " deg"].asSpec,
+				rho: [0, 4, 'lin', 0.0, 1].asSpec
+				),				// specsDict
+				nil, 							// default GUI
+				nil, // presets
+				"1st Order Mono input 3D Ambisonic Auto Panner",
+				nil, 							// defaultAttributes
+				[1, 1],							// inRange
+				[2, inf],							// outRange
+				{|plugin| 
+					var speakers;
+					var atorad = (2 * pi / 360);
+					speakers = plugin.outputs.collect({|out|
+						out.value.isBMSpeaker.not.if({
+							"Ambisonics output not a speaker".error;
+							^false;
+						});
+						[out.value.azi * atorad, out.value.ele * atorad];
+					}).flop;
+					plugin.attributes[\speakersCoords] = speakers;
+				},								// setupFunc
+				nil								// cleanupFunc
+			);
+			
+			BMMultichannelPluginSpec('FMH Ambi Auto Panner', // name
+				{|plugin, numInputs, numOutputs, inputs, elevation, rho, speed| // ugenGraphFunc
+					var w, x, y, z, r, s, t, u, v;
+					var atorad = (2 * pi / 360);
+					var azimuth;
+					
+					azimuth = LFSaw.kr(speed.reciprocal).range(-180, 180);
+					
+					#w, x, y, z, r, s, t, u, v = FMHEncode1.ar(inputs, azimuth.neg * atorad, 
+						elevation * atorad, rho);
+					FMHDecode1.ar(w, x, y, z, r, s, t, u, v, 
+						plugin.attributes[\speakersCoords][0], 
+						plugin.attributes[\speakersCoords][1]
+					);
+				}, 								
+				(speed: [0.1, 20, 'lin', 0.0,  5, " sec"].asSpec, 
+				elevation: [-90, 90, 'lin', 0.0, 0, " deg"].asSpec,
+				rho: [0, 4, 'lin', 0.0, 1].asSpec
+				),				// specsDict
+				nil, 							// default GUI
+				('dead ahead': (azimuth: 0, elevation:0)), // presets
+				"2nd Order Mono input 3D Ambisonic Auto Panner",
+				nil, 							// defaultAttributes
+				[1, 1],							// inRange
+				[2, inf],							// outRange
+				{|plugin| 
+					var speakers;
+					var atorad = (2 * pi / 360);
+					speakers = plugin.outputs.collect({|out|
+						out.value.isBMSpeaker.not.if({
+							"Ambisonics output not a speaker".error;
+							^false;
+						});
+						[out.value.azi * atorad, out.value.ele * atorad];
+					}).flop;
+					plugin.attributes[\speakersCoords] = speakers;
+				},								// setupFunc
+				nil								// cleanupFunc
+			);
 		// read application directory for source code files of user plugins specs
 		// or maybe in app
 		});
