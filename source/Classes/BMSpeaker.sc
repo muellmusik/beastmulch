@@ -184,6 +184,14 @@ BMSpeakerArrayGUI{
 			 						 	if (key == \index) { value = value + 1  };
 			 						 	instanceVarsBoxes[key].value = value };
 			 					   }
+			 					   {  
+			 					     instanceVarsBoxes
+			 						 .keysValuesDo{| key | 
+			 						 	if (key == \name) 
+			 						 		{ instanceVarsBoxes[key].value = view.item }
+			 						 		{ instanceVarsBoxes[key].value = "" }
+			 						 };
+			 					   }
 			 				   }
 			 					 						       				   { instanceVarsBoxes
 			 						 .keysValuesDo{| key | 
