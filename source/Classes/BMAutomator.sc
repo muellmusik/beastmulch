@@ -298,7 +298,7 @@ BMSnapShotSeq {
 	var <snapshots, firstSnap, snapTimes, segs;
 	var <snapshotsDict;
 	var oldSeg;
-	var <minSegSize = 0.2;
+	var <minSegSize = 0.15;
 	
 	*new {|name, controls, firstSnapTime, curve = 'lin'| // controls is an array of keys indicating control names
 		^super.newCopyArgs(name, controls, curve).init(firstSnapTime);
@@ -508,6 +508,7 @@ BMAbstractSnapShot {
 		values = controls.collectAs({|ctrlname| 
 			ctrlname -> BMAbstractController.getValueByName(ctrlname);
 		}, IdentityDictionary);
+		values.postln;
 		this.changed(\snap);
 	}
 	makeActive { this.subclassResponsibility(thisMethod); }

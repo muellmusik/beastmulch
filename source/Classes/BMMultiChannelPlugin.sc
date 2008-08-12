@@ -117,7 +117,7 @@ BMMultichannelPluginSpec {
 				elevation: [-90, 90, 'lin', 0.0, 0, " deg"].asSpec, 
 				spread: [0, 100, 'lin', 0.0, 2, " %"].asSpec,
 				azimuthLag: [0, 1, 'lin', 0.0, 0.1, " sec"].asSpec,
-				azimuthWidth: [-180, 180, 'lin', 0.0,  60, " deg"].asSpec,
+				azimuthWidth: [0, 360, 'lin', 0.0,  60, " deg"].asSpec,
 				elevationWidth: [-180, 180, 'lin', 0.0,  0, " deg"].asSpec
 				),				// specsDict
 				nil, 							// default GUI
@@ -246,7 +246,7 @@ BMMultichannelPluginSpec {
 				{|plugin, numInputs, numOutputs, inputs, azimuth, width, elevation, rho, azimuthLag| // ugenGraphFunc
 					var w, x, y, z;
 					var atorad = (2 * pi / 360);
-					#w, x, y, z = BFEncode1.ar(inputs[0], inputs[1], azimuth.circleRamp(azimuthLag) * atorad, 
+					#w, x, y, z = BFEncodeSter.ar(inputs[0], inputs[1], azimuth.circleRamp(azimuthLag) * atorad, 
 						width * atorad,
 						elevation * atorad, rho);
 					BFDecode1.ar(w, x, y, z, plugin.attributes[\speakersCoords][0], 
@@ -254,7 +254,7 @@ BMMultichannelPluginSpec {
 					);
 				}, 								
 				(azimuth: [-180, 180, 'lin', 0.0,  0, " deg"].asSpec,
-				width: [-180, 180, 'lin', 0.0,  0, " deg"].asSpec, 
+				width: [0, 360, 'lin', 0.0,  0, " deg"].asSpec, 
 				elevation: [-90, 90, 'lin', 0.0, 0, " deg"].asSpec,
 				rho: [0, 4, 'lin', 0.0, 1].asSpec,
 				azimuthLag: [0, 1, 'lin', 0.0, 0.1, " sec"].asSpec
@@ -351,6 +351,48 @@ BMMultichannelPluginSpec {
 				}								// cleanupFunc
 			);
 			
+			BMMultichannelPluginSpec('Stereo Auto 3D VBAP Panner', 				// name
+				{|plugin, numInputs, numOutputs, inputs, elevation, spread, speed, 
+					azimuthWidth, elevationWidth| 	// ugenGraphFunc
+					var azdev, eldev;
+					var azimuth;
+					azimuth = LFSaw.kr(speed.reciprocal).range(-180, 180);
+					azdev = azimuthWidth * 0.5;
+					eldev = elevationWidth * 0.5;
+					Mix(VBAP.ar(numOutputs, inputs, plugin.attributes[\buffer], 
+						azimuth + [azdev.neg, azdev], 
+						elevation + [eldev.neg, eldev], spread));
+				}, 								
+				(speed: [0.1, 20, 'lin', 0.0,  5, " sec"].asSpec,
+				elevation: [-90, 90, 'lin', 0.0, 0, " deg"].asSpec, 
+				spread: [0, 100, 'lin', 0.0, 2, " %"].asSpec,
+				azimuthWidth: [0, 360, 'lin', 0.0,  60, " deg"].asSpec,
+				elevationWidth: [-180, 180, 'lin', 0.0,  0, " deg"].asSpec
+				),				// specsDict
+				nil, 							// default GUI
+				nil,
+				"Stereo input Auto 3D Vector Base Amplitude Panner",
+				nil, 							// defaultAttributes
+				nil,								// inRange
+				nil,								// outRange
+				{|plugin| 
+					var speakers;
+					speakers = plugin.outputs.collect({|out|
+						out.value.isBMSpeaker.not.if({
+							"VBAP output not a speaker".error;
+							^false;
+						});
+						[out.value.azi, out.value.ele];
+					});
+					speakers = VBAPSpeakerArray(3, speakers);
+					plugin.attributes[\buffer] = 
+						Buffer.loadCollection(plugin.server, speakers.getSetsAndMatrices);
+				},								// setupFunc
+				{|plugin|
+					plugin.attributes[\buffer].free;
+				}								// cleanupFunc
+			);
+			
 			BMMultichannelPluginSpec('3D Ambi Auto Panner', // name
 				{|plugin, numInputs, numOutputs, inputs, elevation, rho, speed| // ugenGraphFunc
 					var w, x, y, z;
@@ -373,6 +415,46 @@ BMMultichannelPluginSpec {
 				"1st Order Mono input 3D Ambisonic Auto Panner",
 				nil, 							// defaultAttributes
 				[1, 1],							// inRange
+				[2, inf],							// outRange
+				{|plugin| 
+					var speakers;
+					var atorad = (2 * pi / 360);
+					speakers = plugin.outputs.collect({|out|
+						out.value.isBMSpeaker.not.if({
+							"Ambisonics output not a speaker".error;
+							^false;
+						});
+						[out.value.azi * atorad, out.value.ele * atorad];
+					}).flop;
+					plugin.attributes[\speakersCoords] = speakers;
+				},								// setupFunc
+				nil								// cleanupFunc
+			);
+			
+			BMMultichannelPluginSpec('Stereo Auto 3D Ambi Panner', // name
+				{|plugin, numInputs, numOutputs, inputs, width, elevation, rho, speed| // ugenGraphFunc
+					var w, x, y, z;
+					var atorad = (2 * pi / 360);
+					var azimuth;
+					
+					azimuth = LFSaw.kr(speed.reciprocal).range(-180, 180);
+					#w, x, y, z = BFEncodeSter.ar(inputs[0], inputs[1], azimuth * atorad, 
+						width * atorad,
+						elevation * atorad, rho);
+					BFDecode1.ar(w, x, y, z, plugin.attributes[\speakersCoords][0], 
+						plugin.attributes[\speakersCoords][1]
+					);
+				}, 								
+				(speed: [0.1, 20, 'lin', 0.0,  5, " sec"].asSpec,
+				width: [0, 360, 'lin', 0.0,  0, " deg"].asSpec, 
+				elevation: [-90, 90, 'lin', 0.0, 0, " deg"].asSpec,
+				rho: [0, 4, 'lin', 0.0, 1].asSpec
+				),				// specsDict
+				nil, 							// default GUI
+				nil, // presets
+				"1st Order Stereo input Auto 3D Ambisonic Panner; inputs are L, R",
+				nil, 							// defaultAttributes
+				[2, 2],							// inRange
 				[2, inf],							// outRange
 				{|plugin| 
 					var speakers;
