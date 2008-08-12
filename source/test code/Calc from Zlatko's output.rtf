@@ -1,0 +1,17 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf420
+{\fonttbl\f0\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue191;}
+\deftab560
+\pard\pardeftab560\ql\qnatural
+
+\f0\fs18 \cf0 ~outs = \cf2 this\cf0 .executeFile(\cf2 "/Users/beast/Library/Application\\ Support/SuperCollider/Extensions/test\\ days\\ svn/source/august\\ 08\\ channel\\ list.rtf"\cf0 )[0];\
+\
+z.do(\{|item, i| ~outs.atIndex(item).x_(b[i][0]).y_(b[i][1]).z_(b[i][2])\});\
+\
+~outs.atIndex(60).dump\
+\
+b[50]\
+\
+~outs.writeArchive(\cf2 "/Users/beast/Library/Application\\ Support/SuperCollider/Extensions/test\\ days\\ svn/source/august\\ 08\\ channel\\ list calc.rtf"\cf0 );\
+\
+Object.readArchive(\cf2 "/Users/beast/Library/Application\\ Support/SuperCollider/Extensions/test\\ days\\ svn/source/august\\ 08\\ channel\\ list calc.rtf"\cf0 ) == ~outs}
