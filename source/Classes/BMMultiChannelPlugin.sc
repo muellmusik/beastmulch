@@ -167,7 +167,7 @@ BMMultichannelPluginSpec {
 							^false;
 						});
 						[out.value.azi * atorad, out.value.ele * atorad];
-					}).flop;
+					}).flop.postln;
 					plugin.attributes[\speakersCoords] = speakers;
 				},								// setupFunc
 				nil								// cleanupFunc
