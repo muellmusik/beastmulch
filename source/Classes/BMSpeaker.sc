@@ -20,11 +20,11 @@ BMSpeaker {
 	// so it should only be used for comparison purposes unless normalised across an array
 	var <>autoTrim = 0;
 	
-	*new {|name, index, x = 1, y = 1, z = 1, spec|
+	*new {|name, index, x = 1, y = 1, z = 1, spec = 'Generic'|
 		^super.newCopyArgs(name, index, x, y, z, BMSpeakerSpec.specs[spec.asSymbol]).init;
 	}
 	
-	*newFromSpherical {|name, index, azi = 0, ele = 0, rad = 1, spec|
+	*newFromSpherical {|name, index, azi = 0, ele = 0, rad = 1, spec = 'Generic'|
 		^super.new.initFromSpherical(name, index, azi, ele, rad, BMSpeakerSpec.specs[spec.asSymbol]);
 	}
 	
@@ -116,6 +116,7 @@ BMSpeakerSpec {
 			 
 			 // spl is continuous at 1m
 			 // plugins is [[specname, presetname], ...]
+			 BMSpeakerSpec('Generic', (brand: 'Unknown', minFreq: 20, maxFreq: 20000, spl: nil, powered: false));
 			 BMSpeakerSpec('SCM50', (brand: 'ATC', minFreq: 38, maxFreq: 20000, spl: 112, powered: false, plugins: [[\highpass, \atcs]]));
 			 BMSpeakerSpec('8030A', (brand: 'Genelec', minFreq: 58, maxFreq: 20000, spl: 97, powered: true));
 			 BMSpeakerSpec('8040A', (brand: 'Genelec', minFreq: 48, maxFreq: 20000, spl: 99, powered: true));
