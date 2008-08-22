@@ -1,8 +1,8 @@
 BMSpeaker {
-	classvar rad2deg;
+	classvar rad2deg, deg2rad;
 	var <name; // matches speaker taxonomy we've hashed out
 	
-	var <index; // SC output
+	var <>index; // SC output
 	
 	// cartesian
 	var <x, <y, <z; // in meters; for 2D arrays z = 0;
@@ -12,9 +12,9 @@ BMSpeaker {
 	var <>directivity; // symbol, either 'direct' or 'reflected'
 	
 	// VBAP style spherical coords, angles (probably in degrees) from a central point
-	var <>azi; // from median plane +/- 180 deg 
-	var <>ele; // above azimuthal plane
-	var <>rad; // in meters from (0, 0, 0), which should be audience centre
+	var <azi; // from median plane +/- 180 deg 
+	var <ele; // above azimuthal plane
+	var <rad; // in meters from (0, 0, 0), which should be from head height at audience centre
 	
 	// dBFS cut populated by auto balncing function. This may be arbitrarily low, 
 	// so it should only be used for comparison purposes unless normalised across an array
@@ -24,7 +24,33 @@ BMSpeaker {
 		^super.newCopyArgs(name, index, x, y, z, BMSpeakerSpec.specs[spec.asSymbol]).init;
 	}
 	
-	*initClass { rad2deg = 360.0 / ( 2 * pi );}
+	*newFromSpherical {|name, index, azi = 0, ele = 0, rad = 1, spec|
+		^super.new.initFromSpherical(name, index, azi, ele, rad, BMSpeakerSpec.specs[spec.asSymbol]);
+	}
+	
+	initFromSpherical{|argName, argInd, azimuth, elevation, radius, argSpec|
+		name = argName;
+		index = argInd;
+		azi = azimuth;
+		ele = elevation;
+		rad = radius;
+		spec = argSpec;
+		this.calcCartesian;
+	}
+	
+	calcCartesian {
+		var azrad, elrad;
+		azrad = azi * deg2rad;
+		elrad = ele * deg2rad;
+		x = rad * cos(elrad) * sin(azrad);
+		y = rad * cos(elrad) * cos(azrad);
+		z = rad * sin(elrad);
+	}
+	
+	*initClass { 
+		rad2deg = 360.0 / ( 2 * pi );
+		deg2rad = (2 * pi / 360);	
+	}
 	
 	init {
 		azi = atan2(x, y) * rad2deg;
@@ -46,10 +72,14 @@ BMSpeaker {
 		   name = newName.asSymbol; 
 		   this.changed(\rename, oldName, name) 
 		   }
-	index_ {| new | index = new }
+	//index_ {| new | index = new }
 	x_ {| new | x = new; this.init }
 	y_ {| new | y = new; this.init }
 	z_ {| new | z = new; this.init }
+	
+	azi_{| new | azi = new; this.calcCartesian }
+	ele_{| new | ele = new; this.calcCartesian }
+	rad_{| new | rad = new; this.calcCartesian }
 	
 	asUGenInput { ^index }
 	asControlInput { ^index }
