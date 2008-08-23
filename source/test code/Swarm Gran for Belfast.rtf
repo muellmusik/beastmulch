@@ -1,0 +1,198 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf330
+{\fonttbl\f0\fnil\fcharset0 Monaco;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red191\green0\blue0;\red0\green0\blue191;
+\red0\green115\blue0;\red96\green96\blue96;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs18 \cf2 //b = BMSpeaker.newFromSpherical(ele: 10);\cf0 \
+\cf2 //\cf0 \
+\cf2 //cos(10 * (2 * 3.1415927 / 360)) * b.rad\cf0 \
+\cf2 //\cf0 \
+\cf2 //0.98480775256448 // straight out\cf0 \
+\cf2 //\cf0 \
+\cf2 //0.98480775256448 / cos(35 * (2 * 3.1415927 / 360))\cf0 \
+\cf2 //\cf0 \
+\cf2 //1.2022282867427\cf0 \
+\pard\pardeftab560\ql\qnatural
+\cf2 // what is up with the speaker positions?\cf0 \
+\
+s.options.numOutputBusChannels = 32;s.boot;\
+(\
+~numGrains = 30;\
+\cf2 //~outs = this.executeFile(Document.current.dir.dirname ++ "/january channel list.rtf".standardizePath)[0];\cf0 \
+\cf2 //~outs = Object.readArchive(Document.current.dir.dirname ++ "/january channel listLev.rtf".standardizePath);\cf0 \
+\cf2 //~outs = Object.readArchive(Document.current.dir.dirname ++"/august\\ 08\\ channel\\ list calc.rtf");\cf0 \
+~indices = (2..10);\
+\cf3 //~outs = [[-22.5, -35, 1.2022282867427], [22.5, 10, 1], [-67.5, 10, 1], [67.5, -35, 1.2022282867427], [-112.5, -35, 1.2022282867427], [112.5, 10, 1], [-157.5, 10, 1], [157.5, -35, 1.2022282867427]].collectAs(\{|coords, i| i->BMSpeaker.newFromSpherical(i.asString, ~indices[i], coords[0], coords[1], coords[2], '8030A')\}, BMInOutArray);\cf0 \
+~radius = 12;\
+~lowerel = 0;\
+~outs = \cf2 [ -22.5, 22.5, -67.5, 67.5, -112.5, 112.5, -157.5, 157.5 ]\cf0 .collectAs(\{\cf4 |azi, i|\cf0  i->\cf4 BMSpeaker\cf0 .newFromSpherical(i.asString, ~indices[i], azi, ~lowerel, ~radius, \cf5 'SCM50'\cf0 )\}, \cf4 BMInOutArray\cf0 );\
+\
+// el of 5m for upper assuming lower is 1m\
+~outs.copy.do(\{|assoc, i| ~outs.add((i+8)->assoc.value.deepCopy.index_(i+8).z_(5));\});\
+\
+\
+~maxX = ~outs.collect(\{\cf4 |assoc|\cf0  assoc.value.x.abs \}).maxItem;\
+~yvals = ~outs.collect(\{\cf4 |assoc|\cf0  assoc.value.y \});\
+~hiY = ~yvals.maxItem / ~maxX;\
+~lowY = ~yvals.minItem / ~maxX;\
+~ySIze = ~hiY - ~lowY;\
+w = \cf4 SCWindow\cf0 (\cf6 "Swarm Granulate"\cf0 , ~rect = \cf4 Rect\cf0 (100,200, 1000 / ([~hiY, ~lowY].abs.maxItem) * 0.8, 1020)).front;\
+\
+~hiZ = ~outs.collect(\{\cf4 |assoc|\cf0  assoc.value.z \}).maxItem / ~maxX;\
+~lowZ = ~outs.collect(\{\cf4 |assoc|\cf0  assoc.value.z \}).minItem / ~maxX;\
+\cf2 //SCButton(w, Rect(0, 0, 150, 20))\cf0 \
+\cf2 //	.states_([["pick another QC file"]])\cf0 \
+\cf2 //	.action_(\{ File.openDialog("", \{ |path| m.path_(path) \}) \});\cf0 \
+z = \cf4 SCSlider\cf0 (w, \cf4 Rect\cf0 (0,0,~rect.width, 20));\
+m = \cf4 SCQuartzComposerView\cf0 (w, ~rect.moveTo(0,20));\
+m.resize_(5);\
+z.action = \{m.zoom = z.value * 2 - 1;\};\
+\
+m.path = \cf4 Document\cf0 .current.path.dirname ++ \cf6 "/SwarmLayout4.qtz"\cf0 ;\
+z.doAction;\
+m.sphereScale = 0.02;\
+\
+~colours = \cf4 Pseq\cf0 ([\cf4 Color\cf0 .green.alpha_(0.6), \cf4 Color\cf0 .red.alpha_(0.6), \cf4 Color\cf0 .blue.alpha_(0.6), \cf4 Color\cf0 .yellow.alpha_(0.6), \cf4 Color\cf0 .white.alpha_(0.6)], \cf4 inf\cf0 ).asStream;\
+m.startY = ~hiY;\
+m.endY = ~lowY;\
+~floorZ = ~outs.collect(\{\cf4 |assoc|\cf0  assoc.value.z \}).minItem / ~maxX;\
+m.floorZ = ~floorZ;\
+\
+r = ~outs.collect(\{\cf4 |assoc|\cf0  \
+	\cf4 var\cf0  x, y, z, nameStart, colour;\
+	x = assoc.value.x / ~maxX;\
+	y = assoc.value.y / ~maxX;\
+	z = assoc.value.z / ~maxX;\
+	nameStart = assoc.value.name.asString.copyFromStart(3);\
+	if(nameStart == ~oldNameStart, \{ colour = ~oldColour\}, \{colour = ~colours.next\});\
+	~oldNameStart = nameStart; ~oldColour = colour;\
+	[x, y, z, colour, \cf4 Point\cf0 (x, y).theta * 57.295779513082, assoc.key.asString] \
+	\
+\});\
+\
+k = \cf4 KDTree\cf0 (~outs.collect(\{\cf4 |assoc|\cf0  \
+	\cf4 var\cf0  x, y, z;\
+	x = assoc.value.x / ~maxX;\
+	y = assoc.value.y / ~maxX;\
+	z = assoc.value.z / ~maxX;\
+	\
+	[x, y, z, assoc.value.index] \
+	\
+\}), lastIsLabel: \cf4 true\cf0 );\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf0 \
+\pard\pardeftab560\ql\qnatural
+\cf0 \
+\cf2 //k.nearest([0, 0, 0])[0].label\cf0 \
+\
+\cf2 //\cf0 \
+\cf2 //\cf0 \
+\cf2 //p = Polar(0.5, 0);\cf0 \
+\cf2 //r = \{ p = p.rotate(0.25pi); [p.asPoint.x, p.asPoint.y, 0.1, Color.new255(139, 123, 139).alpha_(0.6), p.theta * 57.295779513082, "8030"]\} ! 8;\cf0 \
+\cf2 //\cf0 \
+\cf2 //p = p.rotate(0.125pi);\cf0 \
+\cf2 //\cf0 \
+\cf2 //p = p.scale(0.8);\cf0 \
+\cf2 //r = r ++ (\{ p = p.rotate(0.25pi); [p.asPoint.x, p.asPoint.y, 0.2, Color.green.alpha_(0.6), p.theta * 57.295779513082, "8040"]\} ! 8);\cf0 \
+\cf2 //\cf0 \
+\cf2 //p = p.scale(2);\cf0 \
+\cf2 //\cf0 \
+\cf2 //r = r ++ (\{ p = p.rotate(0.25pi); [p.asPoint.x, p.asPoint.y, 0.15, Color.red.alpha_(0.6), p.theta * 57.295779513082, "ATC"]\} ! 8);\cf0 \
+\
+\cf2 //m.showSpeakers = false;\cf0 \
+m.speakers = r;\
+m.start;\
+\cf2 // dim = 3, numBoids, centre, limits, velMax, velScale, minDist\cf0 \
+b = \cf4 BMGrainBoidSpace\cf0 (3, ~numGrains, \cf4 nil\cf0 , [[-0.9, ~lowY * 0.9, ~lowZ * 0.9], [0.9, ~hiY * 0.9, ~hiZ * 0.9]], 0.2, 1, 0.07);\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf0 ~treeRout = \cf4 Routine\cf0 (\{\
+	loop(\{\
+		k.nearest(b.moveNext.pos)[0].label.postln.yield\
+	\})\
+\});\
+\pard\pardeftab560\ql\qnatural
+\cf0 \
+\cf4 AppClock\cf0 .sched(0, \{\
+\cf2 //b.numBoids.do(\{b.moveNext\});\cf0 \
+m.positions = b.boids.collect(\cf4 _\cf0 .pos);\
+0.05\
+\});\
+)\
+\
+m.showSpeakers = \cf4 true\cf0 \
+m.showSpeakers = \cf4 false\cf0 \
+\
+b.centre = [0.5, 0.5, 0]\
+\
+b.centre = [0.5, 0.5, -2]\
+\
+b.centre = [0, 0, 0.2]\
+\
+b.centre = [1, -2, 1]\
+\
+b.centre = [ 0.7224999666214, 0.34999990463257, -0.5 ] \cf2 // **\cf0 \
+\
+b.centre = \cf4 nil\cf0 ;\
+\
+b.boids.collect(\cf4 _\cf0 .pos);\
+\
+b.minDist = 0.05\
+  \
+b.velMax = 0.5\
+\
+b.avoidD = \cf4 true\cf0 ;\
+\
+b.velScale = 0.1\
+\
+b.velScale = 3\
+\
+b.velScale = 1\
+\
+(\
+~mouseCentre = \cf4 Routine\cf0 (\{\
+	loop(\{\
+		if(m.mouseRight, \{\
+			b.centre = [m.mouseX, m.mouseY, ~hiZ -~lowZ].postln;\
+		\});\
+		0.2.wait;\
+	\})\
+\});\
+~mouseCentre.play(\cf4 AppClock\cf0 )\
+)\
+\
+~mouseCentre.stop;\
+\
+\cf2 ///////////////\cf0 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf0 (\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf4 var\cf0  path, soundFile, sRate;\
+\cf4 CocoaDialog\cf0 .getPaths(\{\cf4 arg\cf0  paths;\
+	\
+	path = paths[0];\
+	soundFile = \cf4 SoundFile\cf0 .new;\
+	soundFile.openRead(path);\
+	sRate = soundFile.sampleRate;\
+	~buf = \cf4 Buffer\cf0 .read(s,path);\
+	~myGran = \cf4 BMSwarmGranulator\cf0 .new(~buf.bufnum, 64, sRate); \cf2 //numChan for env only\cf0 \
+\
+\}, \cf4 nil\cf0 , 1);\
+)\
+\
+~myGran.play(numGrains: ~numGrains, outFunc: ~treeRout, mul: 1);\
+\
+~myGran.stretch = 0.33\
+~myGran.dur = 0.02\
+~myGran.durRand = 3\
+~myGran.delRand = 0\
+\
+~myGran.offset = 0.125\
+~myGran.pitch = \cf4 Prand\cf0 ([1, 0.5, 0.25], \cf4 inf\cf0 ).asStream\
+~myGran.pitch = 1\
+~myGran.offset = 1\
+\
+~myGran.release;}
