@@ -1,63 +1,63 @@
 {\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf330
 {\fonttbl\f0\fnil\fcharset0 Monaco;}
-{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red191\green0\blue0;\red0\green0\blue191;
-\red96\green96\blue96;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
+}
 \deftab560
 \pard\pardeftab560\ql\qnatural
 
-\f0\fs18 \cf2 (\
-~numGrains = 30;\
-\cf3 //~outs = this.executeFile(Document.current.dir.dirname ++ "/january channel list.rtf".standardizePath)[0];\cf2 \
-\cf3 //~outs = Object.readArchive(Document.current.dir.dirname ++ "/january channel listLev.rtf".standardizePath);\cf2 \
-~outs = \cf4 Object\cf2 .readArchive(\cf4 Document\cf2 .current.dir.dirname ++\cf5 "/august\\ 08\\ channel\\ list calcfliplev.rtf"\cf2 );\
+\f0\fs18 \cf0 (\
+\
+\cf2 //~outs = this.executeFile(Document.current.dir.dirname ++ "/january channel list.rtf".standardizePath)[0];\cf0 \
+\cf2 //~outs = Object.readArchive(Document.current.dir.dirname ++ "/january channel listLev.rtf".standardizePath);\cf0 \
+~outs = \cf3 Object\cf0 .readArchive(\cf3 Document\cf0 .current.dir.dirname ++\cf4 "/august\\ 08\\ channel\\ list calcfliplev.rtf"\cf0 );\
 \
 \
-\cf3 //~indices = (2..10);\cf2 \
-\cf3 ////~outs = [[-22.5, -35, 1.2022282867427], [22.5, 10, 1], [-67.5, 10, 1], [67.5, -35, 1.2022282867427], [-112.5, -35, 1.2022282867427], [112.5, 10, 1], [-157.5, 10, 1], [157.5, -35, 1.2022282867427]].collectAs(\{|coords, i| i->BMSpeaker.newFromSpherical(i.asString, ~indices[i], coords[0], coords[1], coords[2], '8030A')\}, BMInOutArray);\cf2 \
-\cf3 //~radius = 12;\cf2 \
-\cf3 //~lowerel = 0;\cf2 \
-\cf3 //~outs = [ -22.5, 22.5, -67.5, 67.5, -112.5, 112.5, -157.5, 157.5 ].collectAs(\{|azi, i| i->BMSpeaker.newFromSpherical(i.asString, ~indices[i], azi, ~lowerel, ~radius, 'SCM50')\}, BMInOutArray);\cf2 \
+\cf2 //~indices = (2..10);\cf0 \
+\cf2 ////~outs = [[-22.5, -35, 1.2022282867427], [22.5, 10, 1], [-67.5, 10, 1], [67.5, -35, 1.2022282867427], [-112.5, -35, 1.2022282867427], [112.5, 10, 1], [-157.5, 10, 1], [157.5, -35, 1.2022282867427]].collectAs(\{|coords, i| i->BMSpeaker.newFromSpherical(i.asString, ~indices[i], coords[0], coords[1], coords[2], '8030A')\}, BMInOutArray);\cf0 \
+\cf2 //~radius = 12;\cf0 \
+\cf2 //~lowerel = 0;\cf0 \
+\cf2 //~outs = [ -22.5, 22.5, -67.5, 67.5, -112.5, 112.5, -157.5, 157.5 ].collectAs(\{|azi, i| i->BMSpeaker.newFromSpherical(i.asString, ~indices[i], azi, ~lowerel, ~radius, 'SCM50')\}, BMInOutArray);\cf0 \
 \
-\cf3 //// el of 5m for upper assuming lower is 1m\cf2 \
-\cf3 //~outs.copy.do(\{|assoc, i| ~outs.add((i+8)->assoc.value.deepCopy.index_(i+8).z_(5));\});\cf2 \
-\cf3 //\cf2 \
+\cf2 //// el of 5m for upper assuming lower is 1m\cf0 \
+\cf2 //~outs.copy.do(\{|assoc, i| ~outs.add((i+8)->assoc.value.deepCopy.index_(i+8).z_(5));\});\cf0 \
+\cf2 //\cf0 \
 \
-~maxX = ~outs.collect(\{\cf4 |assoc|\cf2  assoc.value.x.abs \}).maxItem;\
-~yvals = ~outs.collect(\{\cf4 |assoc|\cf2  assoc.value.y \});\
+~maxX = ~outs.collect(\{\cf3 |assoc|\cf0  assoc.value.x.abs \}).maxItem;\
+~yvals = ~outs.collect(\{\cf3 |assoc|\cf0  assoc.value.y \});\
 ~hiY = ~yvals.maxItem / ~maxX;\
 ~lowY = ~yvals.minItem / ~maxX;\
 ~ySIze = ~hiY - ~lowY;\
-w = \cf4 SCWindow\cf2 (\cf5 "August"\cf2 , ~rect = \cf4 Rect\cf2 (100,200, 1000 / ([~hiY, ~lowY].abs.maxItem) * 0.8, 1020)).front;\
+w = \cf3 SCWindow\cf0 (\cf4 "August"\cf0 , ~rect = \cf3 Rect\cf0 (100,200, 1000 / ([~hiY, ~lowY].abs.maxItem) * 0.8, 1020)).front;\
 \
-~hiZ = ~outs.collect(\{\cf4 |assoc|\cf2  assoc.value.z \}).maxItem / ~maxX;\
-~lowZ = ~outs.collect(\{\cf4 |assoc|\cf2  assoc.value.z \}).minItem / ~maxX;\
-\cf3 //SCButton(w, Rect(0, 0, 150, 20))\cf2 \
-\cf3 //	.states_([["pick another QC file"]])\cf2 \
-\cf3 //	.action_(\{ File.openDialog("", \{ |path| m.path_(path) \}) \});\cf2 \
-z = \cf4 SCSlider\cf2 (w, \cf4 Rect\cf2 (0,0,~rect.width, 20));\
-m = \cf4 SCQuartzComposerView\cf2 (w, ~rect.moveTo(0,20));\
+~hiZ = ~outs.collect(\{\cf3 |assoc|\cf0  assoc.value.z \}).maxItem / ~maxX;\
+~lowZ = ~outs.collect(\{\cf3 |assoc|\cf0  assoc.value.z \}).minItem / ~maxX;\
+\cf2 //SCButton(w, Rect(0, 0, 150, 20))\cf0 \
+\cf2 //	.states_([["pick another QC file"]])\cf0 \
+\cf2 //	.action_(\{ File.openDialog("", \{ |path| m.path_(path) \}) \});\cf0 \
+z = \cf3 SCSlider\cf0 (w, \cf3 Rect\cf0 (0,0,~rect.width, 20));\
+m = \cf3 SCQuartzComposerView\cf0 (w, ~rect.moveTo(0,20));\
 m.resize_(5);\
 z.action = \{m.zoom = z.value * 2 - 1;\};\
 \
-m.path = \cf4 Document\cf2 .current.path.dirname ++ \cf5 "/SwarmLayout4.qtz"\cf2 ;\
+m.path = \cf3 Document\cf0 .current.path.dirname ++ \cf4 "/SwarmLayout4.qtz"\cf0 ;\
 z.doAction;\
 m.sphereScale = 0.02;\
 \
-~colours = \cf4 Pseq\cf2 ([\cf4 Color\cf2 .green.alpha_(0.6), \cf4 Color\cf2 .red.alpha_(0.6), \cf4 Color\cf2 .blue.alpha_(0.6), \cf4 Color\cf2 .yellow.alpha_(0.6), \cf4 Color\cf2 .white.alpha_(0.6)], \cf4 inf\cf2 ).asStream;\
+~colours = \cf3 Pseq\cf0 ([\cf3 Color\cf0 .green.alpha_(0.6), \cf3 Color\cf0 .red.alpha_(0.6), \cf3 Color\cf0 .blue.alpha_(0.6), \cf3 Color\cf0 .yellow.alpha_(0.6), \cf3 Color\cf0 .white.alpha_(0.6)], \cf3 inf\cf0 ).asStream;\
 m.startY = ~hiY;\
 m.endY = ~lowY;\
-~floorZ = ~outs.collect(\{\cf4 |assoc|\cf2  assoc.value.z \}).minItem / ~maxX;\
+~floorZ = ~outs.collect(\{\cf3 |assoc|\cf0  assoc.value.z \}).minItem / ~maxX;\
 m.floorZ = ~floorZ;\
 \
-r = ~outs.collect(\{\cf4 |assoc|\cf2  \
-	\cf4 var\cf2  x, y, z, nameStart, colour;\
+r = ~outs.collect(\{\cf3 |assoc|\cf0  \
+	\cf3 var\cf0  x, y, z, nameStart, colour;\
 	x = assoc.value.x / ~maxX;\
 	y = assoc.value.y / ~maxX;\
 	z = assoc.value.z / ~maxX;\
 	nameStart = assoc.value.name.asString.copyFromStart(3);\
 	if(nameStart == ~oldNameStart, \{ colour = ~oldColour\}, \{colour = ~colours.next\});\
 	~oldNameStart = nameStart; ~oldColour = colour;\
-	[x, y, z, colour, \cf4 Point\cf2 (x, y).theta * 57.295779513082, assoc.key.asString] \
+	[x, y, z, colour, \cf3 Point\cf0 (x, y).theta * 57.295779513082, assoc.key.asString] \
 	\
 \});\
 \
@@ -67,60 +67,60 @@ m.speakers = r;\
 m.start;\
 )\
 \
-\cf3 ///// january\cf2 \
+\cf2 ///// january\cf0 \
 (\
-~numGrains = 30;\
-\cf3 //~outs = this.executeFile(Document.current.dir.dirname ++ "/january channel list.rtf".standardizePath)[0];\cf2 \
-\cf3 ~outs = Object.readArchive(Document.current.dir.dirname ++ "/january channel listLev.rtf".standardizePath);\cf2 \
-//~outs = \cf4 Object\cf2 .readArchive(\cf4 Document\cf2 .current.dir.dirname ++\cf5 "/august\\ 08\\ channel\\ list calcfliplev.rtf"\cf2 );\
+\
+\cf2 //~outs = this.executeFile(Document.current.dir.dirname ++ "/january channel list.rtf".standardizePath)[0];\cf0 \
+\cf2 ~outs = Object.readArchive(Document.current.dir.dirname ++ "/january channel listLev.rtf".standardizePath);\cf0 \
+//~outs = \cf3 Object\cf0 .readArchive(\cf3 Document\cf0 .current.dir.dirname ++\cf4 "/august\\ 08\\ channel\\ list calcfliplev.rtf"\cf0 );\
 \
 \
-\cf3 //~indices = (2..10);\cf2 \
-\cf3 ////~outs = [[-22.5, -35, 1.2022282867427], [22.5, 10, 1], [-67.5, 10, 1], [67.5, -35, 1.2022282867427], [-112.5, -35, 1.2022282867427], [112.5, 10, 1], [-157.5, 10, 1], [157.5, -35, 1.2022282867427]].collectAs(\{|coords, i| i->BMSpeaker.newFromSpherical(i.asString, ~indices[i], coords[0], coords[1], coords[2], '8030A')\}, BMInOutArray);\cf2 \
-\cf3 //~radius = 12;\cf2 \
-\cf3 //~lowerel = 0;\cf2 \
-\cf3 //~outs = [ -22.5, 22.5, -67.5, 67.5, -112.5, 112.5, -157.5, 157.5 ].collectAs(\{|azi, i| i->BMSpeaker.newFromSpherical(i.asString, ~indices[i], azi, ~lowerel, ~radius, 'SCM50')\}, BMInOutArray);\cf2 \
+\cf2 //~indices = (2..10);\cf0 \
+\cf2 ////~outs = [[-22.5, -35, 1.2022282867427], [22.5, 10, 1], [-67.5, 10, 1], [67.5, -35, 1.2022282867427], [-112.5, -35, 1.2022282867427], [112.5, 10, 1], [-157.5, 10, 1], [157.5, -35, 1.2022282867427]].collectAs(\{|coords, i| i->BMSpeaker.newFromSpherical(i.asString, ~indices[i], coords[0], coords[1], coords[2], '8030A')\}, BMInOutArray);\cf0 \
+\cf2 //~radius = 12;\cf0 \
+\cf2 //~lowerel = 0;\cf0 \
+\cf2 //~outs = [ -22.5, 22.5, -67.5, 67.5, -112.5, 112.5, -157.5, 157.5 ].collectAs(\{|azi, i| i->BMSpeaker.newFromSpherical(i.asString, ~indices[i], azi, ~lowerel, ~radius, 'SCM50')\}, BMInOutArray);\cf0 \
 \
-\cf3 //// el of 5m for upper assuming lower is 1m\cf2 \
-\cf3 //~outs.copy.do(\{|assoc, i| ~outs.add((i+8)->assoc.value.deepCopy.index_(i+8).z_(5));\});\cf2 \
-\cf3 //\cf2 \
+\cf2 //// el of 5m for upper assuming lower is 1m\cf0 \
+\cf2 //~outs.copy.do(\{|assoc, i| ~outs.add((i+8)->assoc.value.deepCopy.index_(i+8).z_(5));\});\cf0 \
+\cf2 //\cf0 \
 \
-~maxX = ~outs.collect(\{\cf4 |assoc|\cf2  assoc.value.x.abs \}).maxItem;\
-~yvals = ~outs.collect(\{\cf4 |assoc|\cf2  assoc.value.y \});\
+~maxX = ~outs.collect(\{\cf3 |assoc|\cf0  assoc.value.x.abs \}).maxItem;\
+~yvals = ~outs.collect(\{\cf3 |assoc|\cf0  assoc.value.y \});\
 ~hiY = ~yvals.maxItem / ~maxX;\
 ~lowY = ~yvals.minItem / ~maxX;\
 ~ySIze = ~hiY - ~lowY;\
-w = \cf4 SCWindow\cf2 (\cf5 "January"\cf2 , ~rect = \cf4 Rect\cf2 (100,200, 1000 / ([~hiY, ~lowY].abs.maxItem) * 0.8, 1020)).front;\
+w = \cf3 SCWindow\cf0 (\cf4 "January"\cf0 , ~rect = \cf3 Rect\cf0 (100,200, 1000 / ([~hiY, ~lowY].abs.maxItem) * 0.8, 1020)).front;\
 \
-~hiZ = ~outs.collect(\{\cf4 |assoc|\cf2  assoc.value.z \}).maxItem / ~maxX;\
-~lowZ = ~outs.collect(\{\cf4 |assoc|\cf2  assoc.value.z \}).minItem / ~maxX;\
-\cf3 //SCButton(w, Rect(0, 0, 150, 20))\cf2 \
-\cf3 //	.states_([["pick another QC file"]])\cf2 \
-\cf3 //	.action_(\{ File.openDialog("", \{ |path| m.path_(path) \}) \});\cf2 \
-z = \cf4 SCSlider\cf2 (w, \cf4 Rect\cf2 (0,0,~rect.width, 20));\
-m = \cf4 SCQuartzComposerView\cf2 (w, ~rect.moveTo(0,20));\
+~hiZ = ~outs.collect(\{\cf3 |assoc|\cf0  assoc.value.z \}).maxItem / ~maxX;\
+~lowZ = ~outs.collect(\{\cf3 |assoc|\cf0  assoc.value.z \}).minItem / ~maxX;\
+\cf2 //SCButton(w, Rect(0, 0, 150, 20))\cf0 \
+\cf2 //	.states_([["pick another QC file"]])\cf0 \
+\cf2 //	.action_(\{ File.openDialog("", \{ |path| m.path_(path) \}) \});\cf0 \
+z = \cf3 SCSlider\cf0 (w, \cf3 Rect\cf0 (0,0,~rect.width, 20));\
+m = \cf3 SCQuartzComposerView\cf0 (w, ~rect.moveTo(0,20));\
 m.resize_(5);\
 z.action = \{m.zoom = z.value * 2 - 1;\};\
 \
-m.path = \cf4 Document\cf2 .current.path.dirname ++ \cf5 "/SwarmLayout4.qtz"\cf2 ;\
+m.path = \cf3 Document\cf0 .current.path.dirname ++ \cf4 "/SwarmLayout4.qtz"\cf0 ;\
 z.doAction;\
 m.sphereScale = 0.02;\
 \
-~colours = \cf4 Pseq\cf2 ([\cf4 Color\cf2 .green.alpha_(0.6), \cf4 Color\cf2 .red.alpha_(0.6), \cf4 Color\cf2 .blue.alpha_(0.6), \cf4 Color\cf2 .yellow.alpha_(0.6), \cf4 Color\cf2 .white.alpha_(0.6)], \cf4 inf\cf2 ).asStream;\
+~colours = \cf3 Pseq\cf0 ([\cf3 Color\cf0 .green.alpha_(0.6), \cf3 Color\cf0 .red.alpha_(0.6), \cf3 Color\cf0 .blue.alpha_(0.6), \cf3 Color\cf0 .yellow.alpha_(0.6), \cf3 Color\cf0 .white.alpha_(0.6)], \cf3 inf\cf0 ).asStream;\
 m.startY = ~hiY;\
 m.endY = ~lowY;\
-~floorZ = ~outs.collect(\{\cf4 |assoc|\cf2  assoc.value.z \}).minItem / ~maxX;\
+~floorZ = ~outs.collect(\{\cf3 |assoc|\cf0  assoc.value.z \}).minItem / ~maxX;\
 m.floorZ = ~floorZ;\
 \
-r = ~outs.collect(\{\cf4 |assoc|\cf2  \
-	\cf4 var\cf2  x, y, z, nameStart, colour;\
+r = ~outs.collect(\{\cf3 |assoc|\cf0  \
+	\cf3 var\cf0  x, y, z, nameStart, colour;\
 	x = assoc.value.x / ~maxX;\
 	y = assoc.value.y / ~maxX;\
 	z = assoc.value.z / ~maxX;\
 	nameStart = assoc.value.name.asString.copyFromStart(3);\
 	if(nameStart == ~oldNameStart, \{ colour = ~oldColour\}, \{colour = ~colours.next\});\
 	~oldNameStart = nameStart; ~oldColour = colour;\
-	[x, y, z, colour, \cf4 Point\cf2 (x, y).theta * 57.295779513082, assoc.key.asString] \
+	[x, y, z, colour, \cf3 Point\cf0 (x, y).theta * 57.295779513082, assoc.key.asString] \
 	\
 \});\
 \

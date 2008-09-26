@@ -18,7 +18,7 @@
 \
 s.options.numOutputBusChannels = 32;s.boot;\
 (\
-~numGrains = 32;\
+~numGrains = 8;\
 \cf2 //~outs = this.executeFile(Document.current.dir.dirname ++ "/january channel list.rtf".standardizePath)[0];\cf0 \
 \cf2 //~outs = Object.readArchive(Document.current.dir.dirname ++ "/january channel listLev.rtf".standardizePath);\cf0 \
 \cf2 //~outs = Object.readArchive(Document.current.dir.dirname ++"/august\\ 08\\ channel\\ list calc.rtf");\cf0 \
@@ -34,7 +34,6 @@ s.options.numOutputBusChannels = 32;s.boot;\
 ~outs.copy.do(\{\cf3 |assoc, i|\cf0  ~outs.add((i+8)->assoc.value.deepCopy.index_(~indices[i]+8).z_(5));\});\
 \
 (8..13).do(\{|i| var speak; speak = ~outs.atIndex(i).value; speak.y = speak.y + 4 \});\
-\
 \
 ~maxX = ~outs.collect(\{\cf3 |assoc|\cf0  assoc.value.x.abs \}).maxItem;\
 ~yvals = ~outs.collect(\{\cf3 |assoc|\cf0  assoc.value.y \});\
@@ -109,12 +108,17 @@ k = \cf3 KDTree\cf0 (~outs.collect(\{\cf3 |assoc|\cf0  \
 m.speakers = r;\
 m.start;\
 \cf2 // dim = 3, numBoids, centre, limits, velMax, velScale, minDist\cf0 \
-b = \cf3 BMGrainBoidSpace\cf0 (3, ~numGrains, \cf3 nil\cf0 , [[-1.2, ~lowY * 1.2, ~lowZ * 1.5], [1.2, ~hiY * 1.2, ~hiZ * 1.5]], 0.2, 1, 0.1);\
+b = \cf3 BMGrainBoidSpace\cf0 (3, ~numGrains, \cf3 nil\cf0 , [[-1.2, ~lowY * 1.2, ~lowZ * 1.5], [1.2, ~hiY * 1.2, ~hiZ * 1.5]], 0.2, 1, 0.07);\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
 \cf0 ~treeRout = \cf3 Routine\cf0 (\{\
+	var nextPos, left, right, halfSpread = 0.5235987755983;\
 	loop(\{\
-		k.nearest(b.moveNext.pos)[0].label.yield\
+		nextPos = b.moveNext.pos;\
+		left = Point(nextPos[0], nextPos[1]).rotate(halfSpread.neg);\
+		right = Point(nextPos[0], nextPos[1]).rotate(halfSpread);\
+		[left: k.nearest([left.x, left.y, nextPos[2]])[0].label, \
+		right: k.nearest([right.x, right.y, nextPos[2]])[0].label].yield\
 	\})\
 \});\
 \pard\pardeftab560\ql\qnatural
@@ -146,11 +150,11 @@ b.minDist = 0.02 \cf2 // cluster\cf0 \
 \
 b.centre = [0, 0, 0] \cf2 // centre\cf0 \
 \
-b.minDist = 0.5 \cf2 // around the space\cf0 \
+b.minDist = 0.2 \cf2 // around the space\cf0 \
 \
 \
 \
-b.minDist = 0.1;\
+b.minDist = 0.07;\
 b.centre = \cf3 nil\cf0 ;\
 \
 b.boids.collect(\cf3 _\cf0 .pos);\
@@ -191,7 +195,7 @@ b.centre = \cf3 nil\cf0 ;\
 	\cf3 var\cf0  xy;\
 	xy = \cf3 Point\cf0 (1, 2);\
 	loop (\{\
-		b.centre = [xy.x, xy.y, rrand(-1.0, 1.0)];\
+		b.centre = [xy.x, xy.y, rrand(-1.0, 1.0)].postln;\
 		xy = xy.rotate(0.25pi * [1, -1].choose);\
 		1.wait;\
 	\});\
@@ -204,12 +208,27 @@ b.centre = \cf3 nil\cf0 ;\
 ~auto.stop; b.centre = \cf3 nil\cf0 ;\
 \
 \cf2 ///////////////\cf0 \
-// superball\
-// formant\
+//beautiful crackle\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
 \cf0 (\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
 \cf3 var\cf0  path, soundFile, sRate;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural\pardirnatural
+\cf3 SynthDef\cf0 (\cf5 "StereoPodSwarmGrain"\cf0 ,\{ \cf3 arg\cf0  left, right, i_sampbufnum, pitchScale = 1.0, dur = 0.05, \
+	pointer, offset = 0.0, level = 1.0, loop;\
+	\cf3 var\cf0  thisStart, thisDur, grain;\
+	thisStart = pointer + \cf3 IRand\cf0 (0, offset);\
+	grain = \cf3 EnvGen\cf0 .ar(\cf3 Env\cf0 .sine, 1.0, level, 0.0, dur, 2) \
+		* \cf3 PlayBuf\cf0 .ar(2,i_sampbufnum,pitchScale * \cf3 BufRateScale\cf0 .ir(i_sampbufnum),\
+			1, thisStart,loop);\
+	\cf3 OffsetOut\cf0 .ar(left,grain[0]);\
+	\cf3 OffsetOut\cf0 .ar(right,grain[1]);\
+\}).send(s);\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
 \cf3 CocoaDialog\cf0 .getPaths(\{\cf3 arg\cf0  paths;\
 	\
 	path = paths[0];\
@@ -218,15 +237,17 @@ b.centre = \cf3 nil\cf0 ;\
 	sRate = soundFile.sampleRate;\
 	~buf = \cf3 Buffer\cf0 .read(s,path);\
 	~myGran = \cf3 BMSwarmGranulator\cf0 .new(~buf.bufnum, 64, sRate); \cf2 //numChan for env only\cf0 \
-\
+	~myGran.targetDef = \cf5 "StereoPodSwarmGrain";\cf0 \
 \}, \cf3 nil\cf0 , 1);\
 )\
 \
-~myGran.play(numGrains: ~numGrains, outFunc: ~treeRout, mul: 5, pitch: 1);\
+\
+\
+~myGran.play(numGrains: ~numGrains, targetArgs: ~treeRout, mul: 3);\
 \
 ~myGran.stretch = 0.33\
 ~myGran.dur = 0.02\
-~myGran.durRand = 0.1\
+~myGran.durRand = 3\
 ~myGran.delRand = 0\
 \
 ~myGran.offset = 0.125\
