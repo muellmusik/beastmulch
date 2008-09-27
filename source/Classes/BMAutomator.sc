@@ -558,10 +558,11 @@ BMArbitraryStartSnapShot : BMAbstractSnapShot {
 
 
 BMControllerAutomatorGUI : BMAbstractGUI {
-	var ca, envViews;
+	var ca, <envView;
 	var path, sf, sfView, scrollView, selectView, backView, menu;
 	var activeSequence;
 	var dependees;
+	var seqs, snapshots, names, times, connections;
 	
 	*new {|ca, name, origin|
 		//^super.new.init(ca, name ? ca.name ? "test").makeWindow(origin ? (40@200));
@@ -613,7 +614,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			var width;
 			width = 798 + (sf.duration * 160 * [0.001, 1, \exp].asSpec.map(view.value));
 			sfView.bounds = Rect(0,0, width, 300);
-			envViews.do({|ev| ev.bounds = Rect(0,300, width, 20); });
+			envView.bounds = Rect(0,300, width, 20);
 			backView.bounds = Rect(0,300, width, 20); 
 			sfView.selections.size.do({|i| 
 				sfView.setSelectionSize(i, sf.numFrames / sfView.bounds.width)
@@ -624,20 +625,20 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		
 		window.view.decorator.nextLine.nextLine;
 		SCStaticText(window, Rect(0, 0, 90, 15)).string_("Sequence to Edit").font_(Font("Helvetica-Bold", 10));
-		menu = SCPopUpMenu(window, Rect(10,10,90,15))
-			.font_(Font("Helvetica-Bold", 10))
-			.action_({|view|
-				envViews.do({|ev| ev.visible_(false)});
-				envViews[view.value].visible_(true);
-				activeSequence = ca.sequences[view.item];
-				//this.clearSelections;
-				this.drawSelections(envViews[view.value]);
-				scrollView.refresh;
-				//sfView.selections.postln;
-			});
+//		menu = SCPopUpMenu(window, Rect(10,10,90,15))
+//			.font_(Font("Helvetica-Bold", 10))
+//			.action_({|view|
+//				envViews.do({|ev| ev.visible_(false)});
+//				envViews[view.value].visible_(true);
+//				activeSequence = ca.sequences[view.item];
+//				//this.clearSelections;
+//				this.drawSelections(envViews[view.value]);
+//				scrollView.refresh;
+//				//sfView.selections.postln;
+//			});
 		
 		sfView.readWithTask(block: 128, doneAction: {
-			this.makeEnvViews;
+			this.makeEnvView;
 		});
 		
 //		RoundButton(window, 80@20).extrude_(false)
@@ -653,7 +654,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			.states_([["Add Snapshot"]])
 			.action_({
 				ca.addSnapShot(activeSequence.name, nil, UniqueID.next.asSymbol);
-				this.makeEnvViews;
+				this.makeEnvView;
 				menu.doAction;
 			});
 		//a.resize = 5;
@@ -661,75 +662,96 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 
 	}
 	
-	makeEnvViews {
-		envViews.do({|ev| ev.remove});
-		envViews = [];
-		ca.sequences.do({|seq, i|
-			var envView;
-			envView = SCEnvelopeView(scrollView, Rect(0, 300, sfView.bounds.width, 20))
-				.thumbWidth_(90.0)
-				.thumbHeight_(19)
-				.drawLines_(true)
-				.drawRects_(true)
-				.selectionColor_(Color.grey)
-				.strokeColor_(Color.white)
-				.background_(Color.clear)
-				.value_([
-					seq.snapshots.collect({|ss| ss.time }) / sf.duration, // times
-					0.1 ! seq.snapshots.size]) // values
-				.visible_(false);
-			//b.setStatic(0,true);
-			seq.snapshots.do({arg ss, i;
-				envView.setString(i, ss.name.asString + ss.time.asTimeString(0.01));
-				//envView.setFillColor(i,Color.black);
+	makeEnvView {
+		envView.notNil.if({envView.remove});
+		
+		envView = SCEnvelopeView(scrollView, Rect(0, 300, sfView.bounds.width, 20))
+			.thumbWidth_(90.0)
+			.thumbHeight_(19)
+			.drawLines_(true)
+			.drawRects_(true)
+			.selectionColor_(Color.grey)
+			.strokeColor_(Color.white)
+			.background_(Color.clear);
+			
+		//b.setStatic(0,true);
+		this.resetPoints;
+		
+		envView.canFocus_(false);
+	
+		envView.mouseMoveAction = {|view|
+			var time, ss;
+			time = view.value[0][view.index];
+			
+			time.notNil.if({
+				ss = snapshots[view.index];
+				sfView.setEditableSelectionStart(view.index, true);
+				sfView.setEditableSelectionSize(view.index, true);
+				sfView.setSelection(view.index, [sf.numFrames * time, sf.numFrames / sfView.bounds.width]); 
+				sfView.setSelectionColor(view.index, Color.white);
+				//ss.time = (time * sf.duration);
+				envView.setString(view.index, ss.name.asString + (time * sf.duration).asTimeString(0.01));
+				sfView.setEditableSelectionStart(view.index, false);
+				sfView.setEditableSelectionSize(view.index, false);
+				this.drawSelections(view);
 			});
-			
-			
-			envView.canFocus_(false);
+		};
+		//envView.mouseUpAction = envView.mouseMoveAction;
+		envView.mouseUpAction = {|view|
+			var ss, seq, index;
+			index = view.index;
+			\mousUp.postln;
+			index.notNil.if({
+				snapshots[index].time = view.value[0][index] * sf.duration;
+				this.resetPoints;
+				//\mousUpNotNil.postln;
+//				ss = snapshots[index];
+//				seq = seqs[index];
+//				ss.time = view.value[0][index] * sf.duration;
+//				envView.value_([
+//					seq.snapshots.collect({|ss| ss.time }) / sf.duration, // times
+//					0.1 ! seq.snapshots.size]); // values
+//				// a little inefficient, but works
+//				snapshots.do({arg snsh, i;
+//					envView.setString(i, snsh.name.asString + snsh.time.asTimeString(0.01));
+//					//envView.setFillColor(i,Color.black);
+//				});
+			});
+		};
+		envView.mouseDownAction = envView.mouseMoveAction;
 		
-			envView.mouseMoveAction = {|view|
-				var time, ss;
-				time = view.value[0][view.index];
-				
-				time.notNil.if({
-					ss = seq.snapshots[view.index];
-					sfView.setEditableSelectionStart(view.index, true);
-					sfView.setEditableSelectionSize(view.index, true);
-					sfView.setSelection(view.index, [sf.numFrames * time, sf.numFrames / sfView.bounds.width]); 
-					sfView.setSelectionColor(view.index, Color.white);
-					//ss.time = (time * sf.duration);
-					envView.setString(view.index, ss.name.asString + (time * sf.duration).asTimeString(0.01));
-					sfView.setEditableSelectionStart(view.index, false);
-					sfView.setEditableSelectionSize(view.index, false);
-					this.drawSelections(view);
-				});
-			};
-			//envView.mouseUpAction = envView.mouseMoveAction;
-			envView.mouseUpAction = {|view|
-				var ss, index;
-				index = view.index;
-				\mousUp.postln;
-				index.notNil.if({
-					\mousUpNotNil.postln;
-					ss = seq.snapshots[index];
-					ss.time = view.value[0][index] * sf.duration;
-					envView.value_([
-						seq.snapshots.collect({|ss| ss.time }) / sf.duration, // times
-						0.1 ! seq.snapshots.size]); // values
-					seq.snapshots.do({arg ss, i;
-						envView.setString(i, ss.name.asString + ss.time.asTimeString(0.01));
-						//envView.setFillColor(i,Color.black);
-					});
-				});
-			};
-			envView.mouseDownAction = envView.mouseMoveAction;
-			
-			envViews = envViews.add(envView);
-			
-			menu.items_(ca.sequences.keys.asArray.sort).doAction;
-		
-		});
+		//menu.items_(ca.sequences.keys.asArray.sort).doAction;
+	
 
+	}
+	
+	resetPoints {
+		seqs = List.new;
+		snapshots = List.new;
+		names = List.new;
+		times = Array.new;
+		ca.sequences.do({|seq, i|
+			seq.snapshots.do({|ss|
+				var time;
+				time = ss.time;
+				times = times.add(time / sf.duration);
+				names.add(ss.name.asString + ss.time.asTimeString(0.01));
+				seqs.add(seq); // for ordered lookup
+				snapshots.add(ss);
+			});
+		});
+		
+		// values
+		envView.value_([times, 0.1 ! times.size]); 
+		
+		// connections
+		seqs.doAdjacentPairs({|a,b, i| if(a===b, {envView.connect(i, [i +1])})});
+		
+		// labels
+		names.do({arg name, i;
+			envView.setString(i, name);
+			//envView.setFillColor(i,Color.black);
+		});
 	}
 	
 	// we use SCSoundFileView Selections for the snapshot time cursors
@@ -739,7 +761,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		view.value.postln;
 		
 		this.clearSelections;
-		activeSequence.snapshots.do({|ss, index|
+		snapshots.do({|ss, index|
 			time = view.value[0][index];
 			sfView.setEditableSelectionStart(index, true);
 			sfView.setEditableSelectionSize(index, true);
