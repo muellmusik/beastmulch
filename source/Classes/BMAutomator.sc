@@ -569,12 +569,16 @@ BMArbitraryStartSnapShot : BMAbstractSnapShot {
 
 // snapshot opens a window with current controller states and toggles for inclusion
 
+// probably this should be made into a subclass with alternate makeWindows for timerefs
+// which are not soundfiles
+
 BMControllerAutomatorGUI : BMAbstractGUI {
 	var ca, <envView;
 	var path, sf, sfView, scrollView, selectView, backView, menu;
 	var activeSequence, activeSnapshot;
 	var dependees;
 	var seqs, snapshots, names, times, connections;
+	var showOnlySelected = false;
 	
 	*new {|ca, name, origin|
 		//^super.new.init(ca, name ? ca.name ? "test").makeWindow(origin ? (40@200));
@@ -629,14 +633,15 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			envView.bounds = Rect(0,300, width, 20);
 			backView.bounds = Rect(0,300, width, 20); 
 			sfView.selections.size.do({|i| 
-				sfView.setSelectionSize(i, sf.numFrames / sfView.bounds.width)
+				sfView.setSelectionSize(i, sf.numFrames / sfView.bounds.width);
+				this.drawSelections.drawConnections;
 			});
 			scrollView.refresh;
 		}).knobSize_(1).canFocus_(false).hilightColor_(Color.blue);
 		SCStaticText(window, Rect(0, 0, 10, 10)).string_("+").font_(Font("Helvetica-Bold", 10));
 		
 		window.view.decorator.nextLine.nextLine;
-		SCStaticText(window, Rect(0, 0, 90, 15)).string_("Sequence to Edit").font_(Font("Helvetica-Bold", 10));
+		//SCStaticText(window, Rect(0, 0, 90, 15)).string_("Sequence to Edit").font_(Font("Helvetica-Bold", 10));
 //		menu = SCPopUpMenu(window, Rect(10,10,90,15))
 //			.font_(Font("Helvetica-Bold", 10))
 //			.action_({|view|
@@ -658,7 +663,15 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 //			.font_(Font("Helvetica-Bold", 10))
 //			.states_([["Add Sequence"]])
 //			.action_({ca.addSequence(UniqueID.next.asSymbol, 0)}); // global sequence
-		
+
+		RoundButton(window, 120@20).extrude_(false)
+			.canFocus_(false)
+			.font_(Font("Helvetica-Bold", 10))
+			.states_([["Show Only Selected"], ["Show Only Selected", Color.black, Color.grey]])
+			.action_({|view|
+				showOnlySelected = view.value.booleanValue;
+				this.makeEnvView;
+			});		
 		RoundButton(window, 80@20)
 			.extrude_(false)
 			.canFocus_(false)
@@ -678,7 +691,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		envView.notNil.if({envView.remove});
 		
 		envView = SCEnvelopeView(scrollView, Rect(0, 300, sfView.bounds.width, 20))
-			.thumbWidth_(90.0)
+			.thumbWidth_(19)
 			.thumbHeight_(19)
 			.drawLines_(true)
 			.drawRects_(true)
@@ -692,6 +705,8 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		if(activeSequence.isNil, {activeSequence = seqs[0]});
 		if(activeSnapshot.isNil, {activeSnapshot = snapshots[0]});
 		this.setFillColors;
+		
+		this.drawSelections;
 		envView.canFocus_(false);
 	
 		envView.mouseMoveAction = {|view|
@@ -705,10 +720,10 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 				sfView.setSelection(view.index, [sf.numFrames * time, sf.numFrames / sfView.bounds.width]); 
 				sfView.setSelectionColor(view.index, Color.white);
 				//ss.time = (time * sf.duration);
-				envView.setString(view.index, ss.name.asString + (time * sf.duration).asTimeString(0.01));
+				//envView.setString(view.index, ss.name.asString + (time * sf.duration).asTimeString(0.01));
 				sfView.setEditableSelectionStart(view.index, false);
 				sfView.setEditableSelectionSize(view.index, false);
-				this.drawSelections(view);
+				this.drawSelections;
 			});
 		};
 		//envView.mouseUpAction = envView.mouseMoveAction;
@@ -734,9 +749,10 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		};
 		envView.mouseDownAction = {|view|
 			// deselects on click in midst
-			activeSequence = seqs[view.index.postln];
+			activeSequence = seqs[view.index];
 			activeSnapshot = snapshots[view.index];
 			this.setFillColors;
+			this.drawConnections;
 			envView.mouseMoveAction.value(envView);	
 		};
 		
@@ -760,14 +776,28 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		snapshots = List.new;
 		names = List.new;
 		times = Array.new;
-		ca.sequences.do({|seq, i|
-			seq.snapshots.do({|ss|
+		showOnlySelected.if({
+
+			activeSequence.snapshots.do({|ss|
 				var time;
 				time = ss.time;
 				times = times.add(time / sf.duration);
 				names.add(ss.name.asString + ss.time.asTimeString(0.01));
-				seqs.add(seq); // for ordered lookup
+				seqs.add(activeSequence); // for ordered lookup
 				snapshots.add(ss);
+			});
+
+		
+		}, {
+			ca.sequences.do({|seq, i|
+				seq.snapshots.do({|ss|
+					var time;
+					time = ss.time;
+					times = times.add(time / sf.duration);
+					names.add(ss.name.asString + ss.time.asTimeString(0.01));
+					seqs.add(seq); // for ordered lookup
+					snapshots.add(ss);
+				});
 			});
 		});
 		
@@ -775,33 +805,48 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		envView.value_([times, 0.1 ! times.size]); 
 		
 		// connections
-		seqs.doAdjacentPairs({|a,b, i| if(a===b, {envView.connect(i, [i +1])})});
+		//seqs.doAdjacentPairs({|a,b, i| if(a===b, {envView.connect(i, [i +1])})});
+//		seqs.doAdjacentPairs({|a,b, i| if(a === b && (a === activeSequence), {
+//			i.postln;
+//			envView.connect(i, [i +1])}, {envView.connect(i, [])})});
+		this.drawConnections;
 		
-		// labels
-		names.do({arg name, i;
-			envView.setString(i, name);
-			//envView.setFillColor(i,Color.black);
+		//// labels
+//		names.do({arg name, i;
+//			envView.setString(i, name);
+//			//envView.setFillColor(i,Color.black);
+//		});
+		snapshots.do({arg ss, i;
+			envView.setString(i, ss.isKnown.if({""}, {"?"}));
 		});
 	}
 	
+	drawConnections {
+		seqs.doAdjacentPairs({|a,b, i| if(a === b && (a === activeSequence), {
+			envView.connect(i, [i +1])
+		}, {envView.connect(i, [])})});
+	}
+	
 	// we use SCSoundFileView Selections for the snapshot time cursors
-	drawSelections {|view|
+	drawSelections {
 	
 		var time;
 		//view.value.postln;
 		
 		this.clearSelections;
 		snapshots.do({|ss, index|
-			time = view.value[0][index];
-			sfView.setEditableSelectionStart(index, true);
-			sfView.setEditableSelectionSize(index, true);
-			sfView.setSelection(index, [sf.numFrames * time, 
-				sf.numFrames / sfView.bounds.width * 2]); 
-			sfView.setSelectionColor(index, Color.white);
-			//ss.time = (time * sf.duration);
-			//view.setString(index, ss.name.asString + ss.time.asTimeString(0.01));
-			sfView.setEditableSelectionStart(index, false);
-			sfView.setEditableSelectionSize(index, false);
+			if(seqs[index] === activeSequence, {
+				time = envView.value[0][index];
+				sfView.setEditableSelectionStart(index, true);
+				sfView.setEditableSelectionSize(index, true);
+				sfView.setSelection(index, [sf.numFrames * time, 
+					sf.numFrames / sfView.bounds.width * 2]); 
+				sfView.setSelectionColor(index, Color.white);
+				//ss.time = (time * sf.duration);
+				//view.setString(index, ss.name.asString + ss.time.asTimeString(0.01));
+				sfView.setEditableSelectionStart(index, false);
+				sfView.setEditableSelectionSize(index, false);
+			});
 		});
 		sfView.refresh;
 	
