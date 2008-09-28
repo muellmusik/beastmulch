@@ -557,10 +557,22 @@ BMArbitraryStartSnapShot : BMAbstractSnapShot {
 }
 
 
+// When you select a seq it should become active
+// You can select a snapshot by clicking it
+// Have an option to hide the non-active seq
+
+// delete deletes a snapshot (not indeterminate ones)
+// add ss adds to active seq at insertion point
+// prompt if insertion point or active sequence off screen
+
+// maybe move clock out of points
+
+// snapshot opens a window with current controller states and toggles for inclusion
+
 BMControllerAutomatorGUI : BMAbstractGUI {
 	var ca, <envView;
 	var path, sf, sfView, scrollView, selectView, backView, menu;
-	var activeSequence;
+	var activeSequence, activeSnapshot;
 	var dependees;
 	var seqs, snapshots, names, times, connections;
 	
@@ -677,6 +689,9 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		//b.setStatic(0,true);
 		this.resetPoints;
 		
+		if(activeSequence.isNil, {activeSequence = seqs[0]});
+		if(activeSnapshot.isNil, {activeSnapshot = snapshots[0]});
+		this.setFillColors;
 		envView.canFocus_(false);
 	
 		envView.mouseMoveAction = {|view|
@@ -700,8 +715,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		envView.mouseUpAction = {|view|
 			var ss, seq, index;
 			index = view.index;
-			\mousUp.postln;
-			index.notNil.if({
+			(index >= 0).if({
 				snapshots[index].time = view.value[0][index] * sf.duration;
 				this.resetPoints;
 				//\mousUpNotNil.postln;
@@ -718,11 +732,27 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 //				});
 			});
 		};
-		envView.mouseDownAction = envView.mouseMoveAction;
+		envView.mouseDownAction = {|view|
+			// deselects on click in midst
+			activeSequence = seqs[view.index.postln];
+			activeSnapshot = snapshots[view.index];
+			this.setFillColors;
+			envView.mouseMoveAction.value(envView);	
+		};
 		
 		//menu.items_(ca.sequences.keys.asArray.sort).doAction;
 	
 
+	}
+	
+	setFillColors {
+		var color;
+		snapshots.do({|ss, i|
+			color =  if(ss === activeSnapshot, {Color.grey}, {
+				if(seqs[i] === activeSequence, {Color.blue}, {Color.black})
+			});
+			envView.setFillColor(i, color);
+		});
 	}
 	
 	resetPoints {
@@ -758,7 +788,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	drawSelections {|view|
 	
 		var time;
-		view.value.postln;
+		//view.value.postln;
 		
 		this.clearSelections;
 		snapshots.do({|ss, index|
