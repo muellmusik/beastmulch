@@ -702,10 +702,12 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			.background_(Color.clear);
 			
 		//b.setStatic(0,true);
-		this.resetPoints;
 		
-		if(activeSequence.isNil, {activeSequence = seqs[0]});
-		if(activeSnapshot.isNil, {activeSnapshot = snapshots[0]});
+		
+		if(activeSequence.isNil, {activeSequence = ca.sequences.values[0]});
+		if(activeSnapshot.isNil, {activeSnapshot = activeSequence.snapshots[0]});
+		
+		this.resetPoints;
 		this.setFillColors;
 		
 		this.drawSelections;
@@ -734,7 +736,8 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			index = view.index;
 			(index >= 0).if({
 				snapshots[index].time = view.value[0][index] * sf.duration;
-				this.resetPoints;
+				//this.resetPoints;
+				this.makeEnvView;
 				//\mousUpNotNil.postln;
 //				ss = snapshots[index];
 //				seq = seqs[index];
@@ -778,20 +781,8 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		snapshots = List.new;
 		names = List.new;
 		times = Array.new;
-		showOnlySelected.if({
-
-			activeSequence.snapshots.do({|ss|
-				var time;
-				time = ss.time;
-				times = times.add(time / sf.duration);
-				names.add(ss.name.asString + ss.time.asTimeString(0.01));
-				seqs.add(activeSequence); // for ordered lookup
-				snapshots.add(ss);
-			});
-
-		
-		}, {
-			ca.sequences.do({|seq, i|
+		showOnlySelected.not.if({
+			ca.sequences.reject({|seq| seq === activeSequence}).do({|seq|
 				seq.snapshots.do({|ss|
 					var time;
 					time = ss.time;
@@ -801,6 +792,15 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 					snapshots.add(ss);
 				});
 			});
+		});
+		
+		activeSequence.snapshots.do({|ss|
+			var time;
+			time = ss.time;
+			times = times.add(time / sf.duration);
+			names.add(ss.name.asString + ss.time.asTimeString(0.01));
+			seqs.add(activeSequence); // for ordered lookup
+			snapshots.add(ss);
 		});
 		
 		// values
