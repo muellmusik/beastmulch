@@ -626,7 +626,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		
 		
 		SCStaticText(window, Rect(0, 0, 5, 10)).string_("-").font_(Font("Helvetica-Bold", 12));
-		SmoothSlider(window, Rect(0, 0, 60, 10)).action_({|view| 
+		SmoothSlider(window, Rect(0, 0, 100, 10)).action_({|view| 
 			var width;
 			width = 798 + (sf.duration * 160 * [0.001, 1, \exp].asSpec.map(view.value));
 			sfView.bounds = Rect(0,0, width, 300);
@@ -634,8 +634,10 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			backView.bounds = Rect(0,300, width, 20); 
 			sfView.selections.size.do({|i| 
 				sfView.setSelectionSize(i, sf.numFrames / sfView.bounds.width);
-				this.drawSelections.drawConnections;
 			});
+			this.drawSelections;
+//			envView.refresh;
+			this.resetPoints;
 			scrollView.refresh;
 		}).knobSize_(1).canFocus_(false).hilightColor_(Color.blue);
 		SCStaticText(window, Rect(0, 0, 10, 10)).string_("+").font_(Font("Helvetica-Bold", 10));
