@@ -579,6 +579,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	var dependees;
 	var seqs, snapshots, names, times, connections;
 	var showOnlySelected = false;
+	var curSSTime;
 	
 	*new {|ca, name, origin|
 		//^super.new.init(ca, name ? ca.name ? "test").makeWindow(origin ? (40@200));
@@ -642,7 +643,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		}).knobSize_(1).canFocus_(false).hilightColor_(Color.blue);
 		SCStaticText(window, Rect(0, 0, 10, 10)).string_("+").font_(Font("Helvetica-Bold", 10));
 		
-		window.view.decorator.nextLine.nextLine;
+		
 		//SCStaticText(window, Rect(0, 0, 90, 15)).string_("Sequence to Edit").font_(Font("Helvetica-Bold", 10));
 //		menu = SCPopUpMenu(window, Rect(10,10,90,15))
 //			.font_(Font("Helvetica-Bold", 10))
@@ -684,6 +685,20 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 				this.makeEnvView;
 				menu.doAction;
 			});
+		RoundButton(window, 80@20)
+			.extrude_(false)
+			.canFocus_(false)
+			.font_(Font("Helvetica-Bold", 10))
+			.states_([["Add Sequence"]])
+			.action_({
+				//ca.addSequence(activeSequence.name, nil, UniqueID.next.asSymbol);
+				this.makeEnvView;
+				menu.doAction;
+			});
+		window.view.decorator.nextLine.nextLine;
+		curSSTime = SCStaticText(window, Rect(0, 0, 300, 20))
+			.string_("Current Snapshot Time:") // initialise
+			.font_(Font("Helvetica-Bold", 12));
 		//a.resize = 5;
 		window.front;
 
@@ -718,6 +733,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			time = view.value[0][view.index];
 			
 			time.notNil.if({
+				curSSTime.string_("Current Snapshot Time:" + (sf.duration * time).asTimeString); 
 				ss = snapshots[view.index];
 				sfView.setEditableSelectionStart(view.index, true);
 				sfView.setEditableSelectionSize(view.index, true);
@@ -737,7 +753,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			(index >= 0).if({
 				snapshots[index].time = view.value[0][index] * sf.duration;
 				//this.resetPoints;
-				this.makeEnvView;
+				//this.makeEnvView;
 				//\mousUpNotNil.postln;
 //				ss = snapshots[index];
 //				seq = seqs[index];
