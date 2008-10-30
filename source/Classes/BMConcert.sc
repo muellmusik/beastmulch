@@ -231,6 +231,8 @@ BMConcertGUI  {
 								
 								recalled = Object.readTextArchive(path[0]);
 								concertManager.concert.pieces = recalled.concert.pieces.deepCopy;
+								
+								configManager.currentConfig_('all off', \concertEditor);
 								chainManager.free;
 								outputArray.subArrays.copy.do{| key | outputArray.removeSubArray(key) };
 								outputArray.keys.copy.do{| key | outputArray.removeAt(key) };
@@ -238,7 +240,6 @@ BMConcertGUI  {
 									outputArray.defineSubArray(key, recalled.concert.system.speakers.getSubArrayKeys(key).deepCopy) 
 								};
    		     					outputArray.addAll(recalled.concert.system.speakers.array.collect{| x | x.value });
-								configManager.currentConfig_('all off', \concertEditor);
 								configManager.clear;
 								
 								if (recalled.configurations.names.indexOf('all off').notNil)

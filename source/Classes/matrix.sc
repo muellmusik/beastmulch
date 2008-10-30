@@ -377,7 +377,7 @@ BMInOutArray : List {
 	}
 	
 	storeSpeakerArray {
-		this.changed(\store, \system, \speakers, this);
+		this.changed(\store, \system, \Speakers, this);
 	}
 	
 	at {|key| var index;

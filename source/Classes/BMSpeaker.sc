@@ -204,7 +204,7 @@ BMSpeakerArrayGUI{
 	   speakerListCompView	= SCCompositeView(window, 160 @ 508)
 						   .background_(Color.grey.alpha_(0.3));
 	   speakerListCompView.decorator = FlowLayout(speakerListCompView.bounds);
-	   speakerList	= SCListView(speakerListCompView, 152 @ (508-35 ))
+	   speakerList	= SCListView(speakerListCompView, 152 @ (508-35))
 	 					.items_(tempOutputArray.keys.asArray)
 	 					.action_({| view | 
 	 						var speaker	= tempOutputArray[view.item];
@@ -292,9 +292,9 @@ BMSpeakerArrayGUI{
 						    \x -> "x", \y -> "y", \z -> "z", \azi -> "azimuth", \ele -> "elevation", \rad -> "radius" ]
 						  .collectAs({| instVar |
 						  	
-						  	SCStaticText(speakerVarsView, 52 @ 20).string_(instVar.value ++ ":").font_(Font("Helvetica", 12));
+						  	SCStaticText(speakerVarsView, 54 @ 20).string_(instVar.value ++ ":").font_(Font("Helvetica", 12));
 						  	if (instVar.key == \name)
-						  	   {	instVar.value = SCTextField(speakerVarsView, 84 @ 20);
+						  	   {	instVar.value = SCTextField(speakerVarsView, 82 @ 20);
 						  	   	instVar.value.action_{| view |
 							  	   			var speaker = tempOutputArray[speakerList.item], name = view.value;
 							  	   			if (tempOutputArray.keys.any{| nameInList | nameInList == name.asSymbol }
@@ -310,7 +310,7 @@ BMSpeakerArrayGUI{
 					   			        	 	    { speaker.perform(instVar.key.asSetter, name) }
 				   			           }
 						  	   }
-						  	   { instVar.value = SCNumberBox(speakerVarsView, 84 @ 20);
+						  	   { instVar.value = SCNumberBox(speakerVarsView, 82 @ 20);
 						  	     instVar.value.action_({| view | 
 						  				 		var speaker = tempOutputArray[speakerList.item], value = view.value;
 						  				 		if (instVar.key == \index) { value = value - 1 };
@@ -388,7 +388,8 @@ BMSpeakerArrayGUI{
 		okButton = RoundButton(window, 115 @ 20)
 				   .extrude_(false).canFocus_(false)
 				   .states_([[ "OK", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ]])
-				   .action_({ concertGUI.chainManager.free;
+				   .action_({ concertGUI.configManager.currentConfig_('all off', \concertEditor);
+				   			concertGUI.chainManager.free;
 				   			this.updateOutputArray(tempOutputArray);
 				   			this.rebuildChain;
 				   			window.close;

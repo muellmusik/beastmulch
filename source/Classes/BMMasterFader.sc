@@ -81,6 +81,7 @@ BMMasterFaderGUI : BMAbstractGUI {
 	init {| argMasterFader, argName |
 		 masterFader 	= argMasterFader;
 		 name 		= argName;
+		 masterFader.addDependant(this);
 		 spec = \db.asSpec;
 	}
 	
@@ -115,7 +116,9 @@ BMMasterFaderGUI : BMAbstractGUI {
 							 slider.value = spec.unmap(masterFader.level);
 					});
 		
-		window.onClose = { onClose.value(this) }
+		window.onClose = { masterFader.removeDependant(this);
+						onClose.value(this) 
+					    }
 		
 	}
 }
