@@ -886,6 +886,12 @@ BMMultichannelPluginsRack : BMAbstractAudioChainElement {
 		});
 	}
 	
+	free {
+		plugins.do{| plugin, i | this.removePlugin(i) };
+		SystemClock.sched(BMOptions.crossfade, { group.free; group = plugins = nil });
+		CmdPeriod.remove(this)
+	}
+	
 	// this should return an instance of our default GUI class
 	// which builds the window itself
 	gui { ^BMMultichannelPluginsRackGUI(this) } 

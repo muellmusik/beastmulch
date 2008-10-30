@@ -1,16 +1,15 @@
 
 BMConcert {	
-	var <pieces, arrays, controllers, <backupManager;
+	var <pieces, arrays, controllers;
 	var <concert;
-	var savedConcert;
 	
 
-	*new {| pieces, arrays, controllers, backupManager | 
-		^super.newCopyArgs(pieces, arrays, controllers, backupManager).init
+	*new {| pieces, arrays, controllers | 
+		^super.newCopyArgs(pieces, arrays, controllers).init
 	}
 
 	init { 
-		concert	   	= (system: (speakers: arrays[0], controllers: controllers), pieces: pieces);
+		concert = (system: (speakers: arrays[0], controllers: controllers), pieces: pieces)
 	}
 	
 	add {| pieceEvent, indexInList |	 
@@ -25,27 +24,32 @@ BMConcert {
 		this.changed
 	}
 	
-	loadAt  {| pieceEventIndex |
+	loadAt {| pieceEventIndex | "sergio".postln;
 		this.changed(\loadPiece, concert.pieces[pieceEventIndex])
 	}
 	
 	storeSession {| configManager |
 		this.changed(\storeSession, this, configManager)
 	}
+	
+	storePiece {| pieceName, pieceAndConfig |
+		this.changed(\store, \piece, pieceName, pieceAndConfig)
+	}
 }
 
 
 BMConcertGUI  {
 
-	var concertManager, configManager, outputArray, name, window, windowView;
-	var concertView, concertListView, listSection;
+	var <concertManager, <configManager, outputArray, <>chainManager, <chainManagerFunc, <configsGUIFunc, name;
+	var window, windowView, concertView, concertListView, listSection;
 	var addButton, deleteButton, buttonSection, upButton, downButton, storeButton;
 	var loadButton, configButton, systemSetup, configText;
 	var >onClose;
-	var selectable, pieceLoaded = false, loadButtonStates, importPopUpMenu;
+	var selectable, pieceLoaded = false, loadButtonStates, speakersWindow, importPopUpMenu;
 	
-	*new {| concertManager, configManager, outputArray, name, origin |
-		  ^super.newCopyArgs(concertManager, configManager, outputArray,  name).init.makeWindow(origin ? (40@200));
+	*new {| concertManager, configManager, outputArray, chainManager, chainManagerFunc,  configsGUIFunc, name, origin |
+		  ^super.newCopyArgs(concertManager, configManager, outputArray,  chainManager, chainManagerFunc, configsGUIFunc, name)
+		  	.init.makeWindow(origin ? (40@200));
 	}
 	
 	init {
@@ -82,8 +86,6 @@ BMConcertGUI  {
 									  };
 		
 		concertListView.action			= {| view | 
-									   postf("from the Concert Editor, listview action, the value of the view is %\n", view.value);
-									   
 									   pieceLoaded = false; 
 								   	   
 								   	   if ((concertManager.concert.pieces.size > 0))
@@ -94,9 +96,8 @@ BMConcertGUI  {
 							    	  	    	  }
 								  	  };
 								  						concertListView.mouseDownAction  = {| view |
-								  													   postf("from mouse action, the value of the view is %\n", view.value);
-								  	   if (selectable.not) 
-								  		  { this.listViewSelection(selectable = true);
+								  	    if (selectable.not) 
+								  		  { this.listViewSelection(true);
 								  		    if (concertManager.concert.pieces.size > 0)
 								  		    	  { configText.string = concertManager.concert.pieces[concertListView.value].config } 
 								  		    	  { configText.string = "" }
@@ -196,8 +197,22 @@ BMConcertGUI  {
 		configText	= SCStaticText.new(buttonSection, 180 @ 20).background_(Color.white)
 					  .align_(\center).stringColor_(Color.new255(51, 111, 203, 255 * 0.95))
 					  .font_(Font("Helvetica-Bold", 14));
-		buttonSection.decorator.shift(0, 247);	
-			
+		
+		
+		buttonSection.decorator.shift(0, 207);	
+		
+		RoundButton(buttonSection, 180 @ 20).extrude_(false).canFocus_(false)			   .extrude_(false).canFocus_(false) 
+			   .states_([[ "Speakers", Color.black, Color.white.alpha_(0.8) ]])
+			   .action_({ 
+			   	if (speakersWindow.isNil) 
+			   		{ speakersWindow = BMSpeakerArrayGUI(outputArray, this, 
+			   									    "Speaker Array Definition", 129 @ 34);
+			   		  speakersWindow.onClose_({ speakersWindow = nil })
+			   		}
+			   });
+			   
+			   
+		buttonSection.decorator.shift(0, 10);	
 		SCStaticText.new(buttonSection, 180 @ 20).string = "Import / Export:";
 		
 		importPopUpMenu = SCPopUpMenu(buttonSection, 180 @ 20)
@@ -209,15 +224,20 @@ BMConcertGUI  {
 					   .background_(Color.white)
 					   .action_({| view |
 					   	  switch(view.value,
+					   	   	// Import Concert
 					   	   	1,
 					   	   	{ CocoaDialog.getPaths({| path | 
 								var recalled;
 								
 								recalled = Object.readTextArchive(path[0]);
 								concertManager.concert.pieces = recalled.concert.pieces.deepCopy;
-								
-								outputArray.keys.do{| x | outputArray.removeAt(x) };
-								outputArray.addAll(recalled.concert.system.speakers.array.collect{| x | x.value });
+								chainManager.free;
+								outputArray.subArrays.copy.do{| key | outputArray.removeSubArray(key) };
+								outputArray.keys.copy.do{| key | outputArray.removeAt(key) };
+								recalled.concert.system.speakers.subArrays.do{| key | 
+									outputArray.defineSubArray(key, recalled.concert.system.speakers.getSubArrayKeys(key).deepCopy) 
+								};
+   		     					outputArray.addAll(recalled.concert.system.speakers.array.collect{| x | x.value });
 								configManager.currentConfig_('all off', \concertEditor);
 								configManager.clear;
 								
@@ -230,22 +250,26 @@ BMConcertGUI  {
 									.do{| name | 
 										configManager.dict.add(name -> recalled.configurations.dict[name])
 									   };
-								configManager.names = configManager.names ++ recalled.configurations.names;
+								configManager.names = configManager.names.addAll(recalled.configurations.names);
+								chainManager = chainManagerFunc.value;
+								configsGUIFunc.value(chainManager); 
 								
-								if (selectable.not) { this.listViewSelection(selectable = true) };
+								if (selectable.not) { this.listViewSelection(true) };
 								concertListView.value_(0).doAction;
-								concertManager.backupManager.makeSessionBackup(concertManager, configManager);
+								concertManager.storeSession(configManager);
 								}, maxSize: 1);
 
 							 },
 							 
+							 // Export Concert
 							 2,
 							 {  CocoaDialog.savePanel({| path | 
 							 	this.prepareForExport.writeTextArchive(path);
-							 	concertManager.backupManager.makeSessionBackup(concertManager, configManager) 
+							 	concertManager.storeSession(configManager);
 							    })
 					  		 },
-					  		  
+					  		 
+					  		 // Import Piece 
 					  		 4,
 					  		 { CocoaDialog.getPaths({| path | 
 								var piece, configuration, pieceAndConfig, completion;
@@ -255,9 +279,9 @@ BMConcertGUI  {
 								configuration = pieceAndConfig.config;
 								completion = { concertManager.add(piece, concertListView.value);
 										      pieceAndConfig = (piece: piece, config: configuration);
-										      configManager.backupManager.makeSessionBackup(concertManager, configManager)
-					   	  				         .add(\piece, piece.name, pieceAndConfig);
-					   	  				      if (selectable.not) { this.listViewSelection(selectable = true) };
+										      concertManager.storePiece(piece.name, pieceAndConfig);
+										      concertManager.storeSession(configManager);
+					   	  				      if (selectable.not) { this.listViewSelection(true) };
 					   	  				      concertListView.valueAction = concertListView.value + 1
 										    };
 										    
@@ -281,7 +305,7 @@ BMConcertGUI  {
 			   			        			           configuration = newName -> configuration.value;
 			   			        			           configManager.add(configuration);
 			   			        			           completion.value;
-			   			        			           configManager.backupManager.add(\configuration, configuration.key, configuration)
+			   			        			           configManager.storeConfiguration(configuration.key)
 			   			        			           }
 										        )
 										      },
@@ -303,6 +327,7 @@ BMConcertGUI  {
 							 }, maxSize: 1)
 							 },
 					  		 
+					  		 // Export Piece
 					  		 5, 
 					  		 { if (selectable and: { concertListView.items.size > 0 }) 
 					  		 	  {  CocoaDialog.savePanel({| path | 
@@ -312,9 +337,9 @@ BMConcertGUI  {
 					  		 	  		configuration = piece.config -> configManager.dict[piece.config].deepCopy;
 					  		 	  		pieceAndConfig = (piece: piece, config: configuration);
 					  		 	  		pieceAndConfig.writeTextArchive(path);
-					  		 	  		configManager.backupManager.makeSessionBackup(concertManager, configManager)
-										             .add(\piece, piece.name, pieceAndConfig)
-										             .add(\configuration, configuration.key, configuration)
+					  		 	  		concertManager.storePiece(piece.name, pieceAndConfig);
+					  		 	  		concertManager.storeSession(configManager);
+					  		 	  		configManager.storeConfiguration(configuration.key)
 									})
 								  }
 					  		 	  { BMAlert( "Please select a Piece", 
@@ -324,6 +349,7 @@ BMConcertGUI  {
 		   			          	  }
 					  		 },
 							 
+							 // Import Configuration
 							 7, 
 					  		 { CocoaDialog.getPaths({| path | 
 								var configuration;
@@ -335,13 +361,15 @@ BMConcertGUI  {
 									{| newName | 
 									  configuration = newName -> configuration.value;
 									  configManager.add(configuration);
-									  configManager.backupManager.makeSessionBackup(concertManager, configManager)
-							 	       	          .add(\configuration, configuration.key, configuration)
-							 	     }
+									  configManager.storeConfiguration(configuration.key);
+									  concertManager.storeSession(configManager);
+									  
+									}
 								)
 							 }, maxSize: 1)
 							 },
 							 
+							 // Export Configuration
 							 8,
 							 { this.makeSelectConfigurationWindow(
 							   	{| configName | 
@@ -350,8 +378,9 @@ BMConcertGUI  {
 							   	 configuration = configName -> configManager.dict[configName].deepCopy;
 							   	 CocoaDialog.savePanel({| path | 
 							   	 	configuration.writeTextArchive(path);
-							   	 	configManager.backupManager.makeSessionBackup(concertManager, configManager)
-							 			.add(\configuration, configuration.key, configuration)
+							   	 	configManager.storeConfiguration(configuration.key);
+							   	 	concertManager.storeSession(configManager);
+							   	 	
 							 	 })
 					  		     }
 					  		   )
@@ -361,7 +390,7 @@ BMConcertGUI  {
 					  	view.value = 0
 					  });
 
-	    this.listViewSelection(selectable = false);
+	    this.listViewSelection(false);
 	    
 		window.onClose 			= { concertManager.removeDependant(this); 
 								    onClose.value(this) 
@@ -370,31 +399,28 @@ BMConcertGUI  {
 	}
 			
 	update {| changed, change, config, from |
-		    "concert window' update function called".postln;
 		    if ((change == \currentConfig) and: { from == \configurationEditor }) 
-		    	  { 	if (selectable) { this.listViewSelection(selectable = false) } }
-			  {  if (change != \storeSession) 
-			  		{ postf("Pieces in concert: %\n", concertManager.concert.pieces);
-			  	 	  concertListView.items 	= concertManager.concert.pieces.collect{| x | x.name }.asArray
-			  	 	}
+		    	  { 	if (selectable) { this.listViewSelection(false) } }
+			  {  if ((change != \storeSession) and: { change != \store }) 
+			  		{ concertListView.items = concertManager.concert.pieces.collect{| x | x.name }.asArray }
 			  }
 		
 	}
 		
 	prepareForExport {	var names, dict;
 									
-					names	= List[];
-					dict		= ();
-					concertManager.concert.pieces
-						.do{| piece | 
-						    var configName = piece.config;
-						    
-						    if (names.indexOf(configName).isNil) 
-						    	  { dict.add(configName -> configManager.dict[configName]);
-						    	    names.add(configName)
-						    	  }
-						};
-					^(concert: concertManager.concert.deepCopy, configurations: (dict: dict.deepCopy, names: names))
+		names	= List[];
+		dict		= ();
+		concertManager.concert.pieces
+			.do{| piece | 
+			    var configName = piece.config;
+			    
+			    if (names.indexOf(configName).isNil) 
+			    	  { dict.add(configName -> configManager.dict[configName]);
+			    	    names.add(configName)
+			    	  }
+			};
+		^(concert: concertManager.concert.deepCopy, configurations: (dict: dict.deepCopy, names: names))
 	}
 	
 	
@@ -479,8 +505,8 @@ BMConcertGUI  {
 							{| newName | 
 							  event.add(\name -> newName);
 						   	  concertManager.add(event, concertListView.value);
-						   	  concertManager.backupManager.makeSessionBackup(concertManager, configManager);
-						   	  if (selectable.not) { this.listViewSelection(selectable = true) };
+						   	  concertManager.storeSession(configManager);
+						   	  if (selectable.not) { this.listViewSelection(true) };
 						   	  concertListView.valueAction = concertListView.value + 1
 						   	}
 		)							
@@ -539,7 +565,8 @@ BMConcertGUI  {
 
 	listViewSelection {| condition |
 					
-					if (condition)
+					selectable = condition;
+					if (selectable)
 					   { concertListView.selectedStringColor = Color.white;
 						concertListView.hiliteColor = Color.new255(51, 111, 203, 255 * 0.95);
 						loadButton.states 	= loadButtonStates.loadSelected;

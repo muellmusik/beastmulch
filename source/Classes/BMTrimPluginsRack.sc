@@ -63,6 +63,18 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 	
 	makeGroup { group = Group.tail(server); }
 	
+	free {
+		strips.do{| pluginsStrip | 
+			pluginsStrip.plugins.do{| plugin, i | 
+				pluginsStrip.removePlugin(i) 
+			} 
+		};
+		SystemClock.sched(BMOptions.crossfade, { group.free; group = strips = nil });
+		CmdPeriod.remove(this)
+		
+	}
+
+	
 	////// Automated Stuff
 	
 	// add delays to eliminate precedence effect

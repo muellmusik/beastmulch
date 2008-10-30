@@ -272,7 +272,7 @@ BMAmpControlMatrix : BMAbstractMatrix {
 // Maybe better as a subclass of Dictionary
 BMInOutArray : List {
 
-	var <keys;
+	var <keys, subArraysKeys;
 	var subArrays; // a dictionary of subArrayName->[key1, key2...]
 	var busObjects;
 	
@@ -288,6 +288,7 @@ BMInOutArray : List {
 	init {
 		keys = Array.new;
 		subArrays = IdentityDictionary.new;
+		subArraysKeys = Array.new;
 	}
 	
 	*privateBusBlock {|name, size, server|
@@ -306,20 +307,40 @@ BMInOutArray : List {
 	// only do this if you're sure
 	freeBusObjects { busObjects.do(_.free) }
 	
-	defineSubArray {|name, elementNames| subArrays[name] = elementNames }
-	
-	removeSubArray {|name| subArrays[name] = nil }
+	defineSubArray {|name, elementNames| var index;
+		subArrays[name] = elementNames; 
+		index = subArraysKeys.indexOf(name);
+		if (index.isNil) { subArraysKeys = subArraysKeys.add(name) };
+		this.changed 
+	}
 	
 	getSubArray {|name| ^subArrays[name].collectAs({|key| key->this[key]}, this.class); }
 	
-	subArrays {^subArrays.keys }
+	getSubArrayKeys {|name | ^subArrays[name] }
+	
+	removeSubArray {|name|
+		subArrays[name] = nil; 
+		subArraysKeys.remove(name);
+		this.changed 
+	}
+	
+	addToSubArray {| name, element |	
+		subArrays[name] = subArrays[name].add(element); 
+		this.changed
+	}
+	
+	removeFromSubArray {| name, element |	
+		subArrays[name].remove(element); 
+		this.changed 
+	}
+	
+	subArrays {^subArraysKeys }
 	
 	add { |assoc| var index;
 		assoc = assoc.asAssociation;
 		index = keys.indexOf(assoc.key);
 		index.isNil.if({array = array.add(assoc); keys = keys.add(assoc.key);},
 			{array.put(index, assoc)});
-		assoc.value.addDependant(this);
 		this.changed;
 	}
 	
@@ -327,7 +348,6 @@ BMInOutArray : List {
 
 	removeAt {|key| var index;
 		index = keys.indexOf(key);
-		array[index].value.removeDependant(this);
 		array.removeAt(index);
 		keys.removeAt(index);
 		this.changed
@@ -337,7 +357,7 @@ BMInOutArray : List {
 		index = keys.indexOf(oldName);
 		keys[index] = newName;
 		array[index].key = newName;
-		this.changed
+		this.changed(\rename)
 	}
 	
 	moveSpeakerUp {|index|
@@ -356,7 +376,7 @@ BMInOutArray : List {
 		});
 	}
 	
-	store {
+	storeSpeakerArray {
 		this.changed(\store, \system, \speakers, this);
 	}
 	
@@ -376,7 +396,11 @@ BMInOutArray : List {
 	asBMInOutArray {^this}
 	
 	update{| changed, change ... args |
-		   if (change == \rename) { this.rename(*args) }
+			"Speaker Array received an update".postln;
+		   switch(change,
+		   		\rename, { this.rename(*args) },
+		   		\newCoordinate, { this.changed(\newCoordinate) }
+		   )
 	}
 	
 	asUGenInput { ^this.values.asUGenInput }
@@ -406,6 +430,7 @@ BMMatrixMenuGUI : BMAbstractGUI {
 	var matrix;
 	var inputSection, assignSection, outputSection, inputView, assignView, outputView;
 	var assignButton, labelPlusButton, matrixButton, clearButton, buttonSection;
+	var <matrixGUI;
 	
 	*new {|matrix, name, origin|
 		^super.new.init(matrix, name ? matrix.name).makeWindow(origin ? (40@200));
@@ -479,7 +504,12 @@ BMMatrixMenuGUI : BMAbstractGUI {
 		SCStaticText.new(buttonSection, Rect(0,0,80,0)).string_(" ");// placeholder
 		
 		matrixButton = SCButton(buttonSection, Rect(0,0,110,20)).canReceiveDragHandler = false;		matrixButton.states = [["View Matrix", Color.black,Color.clear]];
-		matrixButton.action = { BMMatrixGUI(matrix, name)};
+		matrixButton.action = { if (matrixGUI.isNil) 
+			   					{ matrixGUI = BMMatrixGUI(matrix, name);
+			   		  			  matrixGUI.onClose_({ matrixGUI = nil })
+			   					}
+			   					{ matrixGUI.window.front }
+			   			    };
 		
 		SCStaticText.new(buttonSection, Rect(0,0,80,110)).string_("Assign outputs to selected input. Cmd-drag or use button to assign, select and press delete to unassign.");
 		///.font_(Font("CoffeeCup", 40)).align_(\center);

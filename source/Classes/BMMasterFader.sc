@@ -5,17 +5,14 @@ BMMasterFader : BMAbstractAudioChainElement {
 	var masterFaderSynth, <level = -12, <minLevel = -inf, <maxLevel = 0, bus, <busIndex;
 	
 	*new {| group, server, name |
-		 
 		 ^super.new.init(group, server ? Server.default, name);
-
 	}
 	
 	init {| arggroup, argserver, argname |
-
 		  group	= arggroup;
 		  server	= argserver;
 		  name	= argname  ? this.makeName;
-		  if(group.isNil, {this.makeGroup});
+		  if(group.isNil, {this.makeGroup });
 		  allChainElements[name] = this;
 		  bus = Bus.control(server, 1);
 		  busIndex = bus.index;
@@ -25,38 +22,27 @@ BMMasterFader : BMAbstractAudioChainElement {
 	}
 	
 	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
-		
 		^this.new(group, server, name)
-	
 	}
 
-	
 	level_ {| x |
-
 	 	level = x.clip(minLevel, maxLevel);
 	 	server.sendMsg("/c_set", busIndex, level.dbamp);
-	
 	}
 
-	
 	mappings { 
 		^IdentityDictionary[\level -> level]
 	}
 	
 	mappings_ { | dict |
-	 
 		level = dict[\level];
-	
 	}
 	
 	// a little hacky but has worked ;-)
 	addMasterFaderSynth {
-
 		masterFaderSynth = {
-			ReplaceOut.ar(0, In.ar(0, BMOptions.numOutputBusChannels) * In.kr(busIndex, 1)
-			);
+			ReplaceOut.ar(0, In.ar(0, BMOptions.numOutputBusChannels) * In.kr(busIndex, 1));
 		}.play(group, addAction: \addToTail);
-
 	}
 	
 	gui { ^BMMasterFaderGUI(this) } 
@@ -75,6 +61,12 @@ BMMasterFader : BMAbstractAudioChainElement {
 	
 	makeGroup { group = Group.tail(server) }
 	
+	free { 
+		group.release(BMOptions.crossfade);
+		SystemClock.sched(BMOptions.crossfade, { group.free; bus.free; group = bus = nil;  });
+		CmdPeriod.remove(this)
+	}
+	
 }
 
 
@@ -89,7 +81,7 @@ BMMasterFaderGUI : BMAbstractGUI {
 	init {| argMasterFader, argName |
 		 masterFader 	= argMasterFader;
 		 name 		= argName;
-		spec = \db.asSpec;
+		 spec = \db.asSpec;
 	}
 	
 	makeWindow {

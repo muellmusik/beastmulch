@@ -1,99 +1,93 @@
 BMConfigurations {
-	var <configurations, <backupManager;
+	var <configurations;
 	var <dict, <names, <currentConfig;
 
-	*new {| configurations, backupManager |
-		  ^super.newCopyArgs(configurations, backupManager).init;
+	*new {| configurations |
+		^super.newCopyArgs(configurations).init
 	}
 
 	init {
 		dict = configurations.dict;
 		names = configurations.names;
-		this.addAllOff;
+		this.addAllOff
 	}
 	
 	addAllOff{
-//		("this is dict"+ dict).postln;
-		   dict.add('all off' -> 
-					 IdentityDictionary[
-				
-						\mackies -> BMAbstractController
-									.allControllers
-									.collect({|interface, name|
-										      IdentityDictionary[
-										         \faders -> interface.getAllFaders
-										      ]
-								      })			      
-				   	 ].deepCopy
-			  	);
-		   
-		   BMAbstractAudioChainElement
-		    .allChainElements.keysValuesDo{| key, value | dict['all off'].add(key -> value.mappings.deepCopy) };
+		dict.add('all off' -> 
+			 IdentityDictionary[
+				\mackies -> BMAbstractController
+							.allControllers
+							.collect({|interface, name|
+								      IdentityDictionary[
+								         \faders -> interface.getAllFaders
+								      ]
+						      })			      
+			 ].deepCopy
+		);
+		BMAbstractAudioChainElement
+		 .allChainElements.keysValuesDo{| key, value | dict['all off'].add(key -> value.mappings.deepCopy) }
 	}	
 	  
 	clear { 
-		   dict 	= IdentityDictionary[ 'all off' -> dict['all off'] ];
-		   names	= List[ 'all off' ]
+		dict 	= IdentityDictionary[ 'all off' -> dict['all off'] ];
+		names	= List[ 'all off' ]
 	}
 	
 	dict_{| x |
-		 dict = x;
-		 this.changed(\dict);
+		dict = x;
+		this.changed(\dict)
 	}
 	
 	names_{| x |
-		 names = x;
-		 this.changed(\names) 
+		names = x;
+		this.changed(\names) 
 	}
 	
 	currentConfig_{| configName, from |
-		 "currentConfig was called".postln;
-		 currentConfig = configName;
-		 this.loadConfig(configName);
-		 this.changed(\currentConfig, configName, from)
+		currentConfig = configName;
+		this.loadConfig(configName);
+		this.changed(\currentConfig, configName, from)
 	}
 	 
 	add {| configuration, indexInNamesList |
 	     if (indexInNamesList.notNil)
 	   	   { names.insert(indexInNamesList + 1, configuration.key) }
-	   	   { names.add(configuration.key) };
-	   	 dict.add(configuration);
-	   	   	
+	   	   { names = names.add(configuration.key) };
+	   	dict.add(configuration);
 	   	this.changed(\add, configuration.key);	   
 	}
 	
 	removeAt {| configurationIndex |
-		    dict.removeAt(names[configurationIndex]);
-		    names.removeAt(configurationIndex);
-		    this.changed(\removeAt)
+		dict.removeAt(names[configurationIndex]);
+		names.removeAt(configurationIndex);
+		this.changed(\removeAt)
 	}
 	
-	store {| name, concertManager |
-	
+	store {| name |
+	// store the current mappings in the selected configuration
 	       if (name != 'all off')
 	       	 { dict[name] = IdentityDictionary[];
 		        BMAbstractAudioChainElement.allChainElements
 				 .keysValuesDo{| key, value |
 		 			 dict[name].add(key -> value.mappings.deepCopy)
 		 		  };
-		 	   this.backupManager
-				   .makeSessionBackup(concertManager, this)
-				   .add(\configuration, name, name -> dict[name].deepCopy)
+			   // and make a backup
+		 	   this.storeConfiguration(name, name -> dict[name]);
 		 	 }
  		  	 { "The Configuration \"all off\" cannot be modified".error }
 	}
 	
+	storeConfiguration {| configName |
+		this.changed(\store, \configuration, configName, configName -> dict[configName])
+	}
 	
 	loadConfig {| configName |
-		   "loadConfig was called".postln;
    		   BMAbstractAudioChainElement
 			 .allChainElements
 			 .keysValuesDo{| key, value |
 			 			 BMAbstractAudioChainElement.allChainElements[key].mappings = dict[configName][key]
-			 };
-		   (configName.asString ++ " was loaded").postln
+			 }
 	}
-	
 }
 
 
@@ -164,7 +158,14 @@ BMAudioChainManager {
 		CmdPeriod.remove(this);
 		reactivateCP.if({ elements.do({|element| element.callCmdPeriod_(true);}) })
 	}
-
+	
+	free { 
+		elements.do({|el|
+       		el.free; // clean me up
+       		el.release; // remove me from BMAbstractAudioChainElement's dict
+		});
+		this.changed(\freed)
+	}
 }
 
 
@@ -187,6 +188,7 @@ BMConfigurationsGUI : BMAbstractGUI {
 		name = argName;
 		guis = IdentityDictionary.new; // use Objects as keys
 		configurations.addDependant(this);
+		chainManager.addDependant(this);
 	}
 
 	makeWindow {|origin|
@@ -222,10 +224,7 @@ BMConfigurationsGUI : BMAbstractGUI {
 		configListView.background_(Color.white).hiliteColor_(Color.new255(51, 111, 203, 255 * 0.95));
 
 		configListView.action	= {| view |
-							   "configListView.action".postln;
-							   [ view.value, view.item ].postln;
-							   configurations.currentConfig_(view.item, \configurationEditor);
-								 
+							   configurations.currentConfig_(view.item, \configurationEditor); 
 							  };
 
 		configView.decorator.nextLine;
@@ -253,7 +252,7 @@ BMConfigurationsGUI : BMAbstractGUI {
 							    	   { configurations.removeAt(configurations.names.indexOf(name));
 							    	     if ((viewIndex == (configurations.names.size)) and: { configurations.names.size > 0 })
 							    	     	{ configListView.value = viewIndex - 1 }
-					    	  	    	   		{ if ((viewIndex > 0).postln) { configListView.value(viewIndex) }};
+					    	  	    	   		{ if (viewIndex > 0) { configListView.value(viewIndex) }};
 					    	  	    	     configurations.currentConfig_(configListView.item, \configurationEditor);
 					    	  	    	   }
 					    	  	    	   { "The Configuration \"all off\" cannot be deleted".error }
@@ -288,7 +287,10 @@ BMConfigurationsGUI : BMAbstractGUI {
 		configView.decorator.shift(6, 0); 				
 		storeButton			= RoundButton(configView, 46 @ 20).extrude_(false).canFocus_(false)
 				 		 	 .font_(Font("Arial", 11)).states_([["Store", Color.black,  Color.white.alpha_(0.8) ]])
-				 		 	 .action_({ configurations.store(configListView.item, concertManager) });
+				 		 	 .action_({ 
+				 		 	 	configurations.store(configListView.item);
+				 		 	 	concertManager.storeSession(configurations);
+				 		 	 });
 
 		chainView				= SCScrollView(window, 465 @ 435).hasBorder_(false);
 		if(width <= 465, { chainView.hasHorizontalScroller = false });
@@ -327,10 +329,8 @@ BMConfigurationsGUI : BMAbstractGUI {
 				element = objects[selectedIndex];
 				guis[element].notNil.if({ 
 					guis[element].window.front;
-				},{
-
-					guis[element] = element.gui;
-					guis[element].notNil.if({guis[element].onClose_({guis[element] = nil}); });
+				},{	guis[element] = element.gui;
+					guis[element].notNil.if({guis[element].onClose_({guis[element] = nil }); });
 				});
 				view.refresh;
 			});
@@ -342,26 +342,27 @@ BMConfigurationsGUI : BMAbstractGUI {
 			view.refresh;
 		};
 		
-		
-		
 		this.update;
 		configListView.value = configurations.names.indexOf('all off');
-		window.onClose = { onClose.value(this) };
+		window.onClose = { configurations.removeDependant(this);
+						chainManager.removeDependant(this);
+						guis.do{| element | 
+							if (element.isKindOf(BMMatrixMenuGUI) and: { element.matrixGUI.notNil }) 
+							   { element.matrixGUI.window.close };
+							element.window.close;
+						};
+						onClose.value(this);
+					   };
 		window.front;
 	}
 	
-	update {| changed, change, configName, from |
-			"configuration window' update function called".postln;
-			[ changed, change, configName ].postln;
-	 		
-	         ("configListView.value at the beginning of update" +configListView.value).postln;
-	         configListView.items 		= configurations.names.asArray.postln;
-	         
-	         if ((change == \currentConfig) and: { from == \concertEditor }) 
-	         	   { "if currentConfig and from concertEditor".postln; 
-	         	   	configListView.value = configurations.names.indexOf(configName) };
-	         ("configListView.value at the end of update" +configListView.value).postln;
-
+	update {| changed, change, argument, from |
+			if (change == \freed)
+			   { window.close }
+			   { configListView.items = configurations.names.asArray;
+			     if ((change == \currentConfig) and: { from == \concertEditor }) 
+	         	   	   { configListView.value = configurations.names.indexOf(argument) }
+	         	   }
 	}
 	
 	makeNewConfigWindow {| method, origin |
@@ -403,15 +404,16 @@ BMConfigurationsGUI : BMAbstractGUI {
 				   			          }
 				   			          { 
 				   				
-				   				 window.close;
-				   				  if (method == "New")
-				   				  	{ configurations.add(name -> configurations.dict['all off'].deepCopy, configListView.value) }
-				   				  	{ configurations.add(name -> configurations.dict[configListView.item].deepCopy, configListView.value) };
-				   				  configurations.currentConfig_(name, \configurationEditor);
-				   				  configurations.store(name, concertManager);
-				   				  configListView.value = configListView.value + 1;
+					   				  window.close;
+					   				  if (method == "New")
+					   				  	{ configurations.add(name -> configurations.dict['all off'].deepCopy, configListView.value) }
+					   				  	{ configurations.add(name -> configurations.dict[configListView.item].deepCopy, configListView.value) };
+					   				  configurations.currentConfig_(name, \configurationEditor);
+					   				  configurations.storeConfiguration(name);
+					   				  concertManager.storeSession(configurations);
+					   				  configListView.value = configListView.value + 1;
 				   				  
-				   				 }
+				   				 	 }
 				   				 
 				   				 
 				   				 }
