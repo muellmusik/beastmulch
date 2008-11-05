@@ -357,8 +357,8 @@ BMSnapShotSeq {
 		segs = [];
 		// arb snapshot first, sort order correctly
 		snapshots = snapshots.sort({|a, b| a.time < b.time || (a === firstSnap)  });
-		snapshots.postln;
-		if(firstSnap.time.postln > snapshots[1].time.postln, {
+		postf("snapshots(buildSegs): %\n", snapshots);
+		if(firstSnap.time > snapshots[1].time, {
 			\first.postln;
 			firstSnap.removeDependant(this);
 			firstSnap.time = max(snapshots[1].time - minSegSize, 0);
@@ -366,8 +366,8 @@ BMSnapShotSeq {
 		});
 		
 		snapshots = snapshots.sort({|a, b| a.time < b.time });
-
-		snapshots.collect(_.name).postln;
+		
+		postf("snapshots(buildSegs): %\n", snapshots.collect(_.name));
 		snapshots.doAdjacentPairs({|a, b|
 			// check minimum length
 			if(b.time - a.time < minSegSize, {
@@ -500,7 +500,7 @@ BMAbstractSnapShot {
 	
 	time_ {|newTime| 
 		time = newTime;
-		this.changed(\snapTime.postln);
+		this.changed(\snapTime);
 	}
 	
 	snap {|controls, argTime|  
@@ -508,7 +508,7 @@ BMAbstractSnapShot {
 		values = controls.collectAs({|ctrlname| 
 			ctrlname -> BMAbstractController.getValueByName(ctrlname);
 		}, IdentityDictionary);
-		values.postln;
+		postf("snap values: %\n", values);
 		this.changed(\snap);
 	}
 	makeActive { this.subclassResponsibility(thisMethod); }
@@ -625,11 +625,11 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		sfView.elasticMode = 1;
 		window.onClose = {sf.close; dependees.do({|dee| dee.removeDependant(this)});};
 		
-		
+		window.view.decorator.shift(0, 5);
 		SCStaticText(window, Rect(0, 0, 5, 10)).string_("-").font_(Font("Helvetica-Bold", 12));
-		SmoothSlider(window, Rect(0, 0, 100, 10)).action_({|view| 
+		SmoothSlider(window, Rect(0, 5, 100, 10)).action_({|view| 
 			var width;
-			width = 798 + (sf.duration * 160 * [0.001, 1, \exp].asSpec.map(view.value));
+			width = 798 + (sf.duration * 160 * ([0.001, 1.001, \exp].asSpec.map(view.value) - 0.001));
 			sfView.bounds = Rect(0,0, width, 300);
 			envView.bounds = Rect(0,300, width, 20);
 			backView.bounds = Rect(0,300, width, 20); 
@@ -642,7 +642,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			scrollView.refresh;
 		}).knobSize_(1).canFocus_(false).hilightColor_(Color.blue);
 		SCStaticText(window, Rect(0, 0, 10, 10)).string_("+").font_(Font("Helvetica-Bold", 10));
-		
+		window.view.decorator.shift(0, -5);
 		
 		//SCStaticText(window, Rect(0, 0, 90, 15)).string_("Sequence to Edit").font_(Font("Helvetica-Bold", 10));
 //		menu = SCPopUpMenu(window, Rect(10,10,90,15))
@@ -657,7 +657,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 //				//sfView.selections.postln;
 //			});
 		
-		sfView.readWithTask(block: 128, doneAction: {
+		sfView.readWithTask(block: 256, doneAction: {
 			this.makeEnvView;
 		});
 		
@@ -675,7 +675,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 				showOnlySelected = view.value.booleanValue;
 				this.makeEnvView;
 			});		
-		RoundButton(window, 80@20)
+		RoundButton(window, 120@20)
 			.extrude_(false)
 			.canFocus_(false)
 			.font_(Font("Helvetica-Bold", 10))
@@ -685,7 +685,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 				this.makeEnvView;
 				menu.doAction;
 			});
-		RoundButton(window, 80@20)
+		RoundButton(window, 120@20)
 			.extrude_(false)
 			.canFocus_(false)
 			.font_(Font("Helvetica-Bold", 10))
@@ -748,11 +748,32 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		};
 		//envView.mouseUpAction = envView.mouseMoveAction;
 		envView.mouseUpAction = {|view|
-			var ss, seq, index;
+			var ss, seq, index, next, prev, selected;
 			index = view.index;
+			postf("index: %\n", index);
 			(index >= 0).if({
+				postf("ss(mouseUp): %\n", snapshots);
+				selected = snapshots[index];
 				snapshots[index].time = view.value[0][index] * sf.duration;
-				//this.resetPoints;
+				
+				\foo.postln;
+				
+//				// correct for crossovers
+//				next = snapshots[index + 1];
+//				if(next.notNil && {snapshots[index].time > next.time}, {
+//					envView.selectIndex(index + 1);
+//					envView.refresh;
+//				});
+//				prev = snapshots[index - 1];
+//				if(prev.notNil && {snapshots[index].time < prev.time}, {
+//					envView.selectIndex(index - 1);
+//					envView.refresh;
+//				});
+
+				this.resetPoints;
+				this.drawSelections;
+				
+				this.setFillColors;
 				//this.makeEnvView;
 				//\mousUpNotNil.postln;
 //				ss = snapshots[index];
@@ -782,6 +803,13 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 
 	}
 	
+//	selectSnapShot {|selected|
+//		var index;
+//		index = snapshots.indexOf(selected);
+//		envView.selectIndex(index);
+//	
+//	}
+	
 	setFillColors {
 		var color;
 		snapshots.do({|ss, i|
@@ -798,7 +826,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		names = List.new;
 		times = Array.new;
 		showOnlySelected.not.if({
-			ca.sequences.reject({|seq| seq === activeSequence}).do({|seq|
+			ca.sequences.do({|seq|
 				seq.snapshots.do({|ss|
 					var time;
 					time = ss.time;
@@ -808,15 +836,16 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 					snapshots.add(ss);
 				});
 			});
-		});
+		}, {
 		
-		activeSequence.snapshots.do({|ss|
-			var time;
-			time = ss.time;
-			times = times.add(time / sf.duration);
-			names.add(ss.name.asString + ss.time.asTimeString(0.01));
-			seqs.add(activeSequence); // for ordered lookup
-			snapshots.add(ss);
+			activeSequence.snapshots.do({|ss|
+				var time;
+				time = ss.time;
+				times = times.add(time / sf.duration);
+				names.add(ss.name.asString + ss.time.asTimeString(0.01));
+				seqs.add(activeSequence); // for ordered lookup
+				snapshots.add(ss);
+			});
 		});
 		
 		// values
