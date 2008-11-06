@@ -795,7 +795,8 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			activeSnapshot = snapshots[view.index];
 			this.setFillColors;
 			this.drawConnections;
-			envView.mouseMoveAction.value(envView);	
+			this.drawSelections;
+			//envView.mouseMoveAction.value(envView);	
 		};
 		
 		//menu.items_(ca.sequences.keys.asArray.sort).doAction;
