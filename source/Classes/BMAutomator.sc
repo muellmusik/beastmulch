@@ -357,7 +357,7 @@ BMSnapShotSeq {
 		segs = [];
 		// arb snapshot first, sort order correctly
 		snapshots = snapshots.sort({|a, b| a.time < b.time || (a === firstSnap)  });
-		postf("snapshots(buildSegs): %\n", snapshots);
+		//postf("snapshots(buildSegs): %\n", snapshots);
 		if(firstSnap.time > snapshots[1].time, {
 			\first.postln;
 			firstSnap.removeDependant(this);
@@ -367,7 +367,7 @@ BMSnapShotSeq {
 		
 		snapshots = snapshots.sort({|a, b| a.time < b.time });
 		
-		postf("snapshots(buildSegs): %\n", snapshots.collect(_.name));
+		//postf("snapshots(buildSegs): %\n", snapshots.collect(_.name));
 		snapshots.doAdjacentPairs({|a, b|
 			// check minimum length
 			if(b.time - a.time < minSegSize, {
@@ -508,7 +508,7 @@ BMAbstractSnapShot {
 		values = controls.collectAs({|ctrlname| 
 			ctrlname -> BMAbstractController.getValueByName(ctrlname);
 		}, IdentityDictionary);
-		postf("snap values: %\n", values);
+		//postf("snap values: %\n", values);
 		this.changed(\snap);
 	}
 	makeActive { this.subclassResponsibility(thisMethod); }
@@ -579,7 +579,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	var dependees;
 	var seqs, snapshots, names, times, connections;
 	var showOnlySelected = false;
-	var curSSTime;
+	var curSSTime, refTime;
 	
 	*new {|ca, name, origin|
 		//^super.new.init(ca, name ? ca.name ? "test").makeWindow(origin ? (40@200));
@@ -695,11 +695,18 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 				this.makeEnvView;
 				menu.doAction;
 			});
+		
 		window.view.decorator.nextLine.nextLine;
 		curSSTime = SCStaticText(window, Rect(0, 0, 300, 20))
 			.string_("Current Snapshot Time:") // initialise
 			.font_(Font("Helvetica-Bold", 12));
 		//a.resize = 5;
+		
+		window.view.decorator.shift(0, -5);
+		refTime = SCStaticText(window, Rect(0, 0, 200, 25))
+			.string_("Source Time:") // initialise
+			.font_(Font("Helvetica-Bold", 16));
+			
 		window.front;
 
 	}
@@ -750,13 +757,11 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		envView.mouseUpAction = {|view|
 			var ss, seq, index, next, prev, selected;
 			index = view.index;
-			postf("index: %\n", index);
+			//postf("index: %\n", index);
 			(index >= 0).if({
-				postf("ss(mouseUp): %\n", snapshots);
+				//postf("ss(mouseUp): %\n", snapshots);
 				selected = snapshots[index];
 				snapshots[index].time = view.value[0][index] * sf.duration;
-				
-				\foo.postln;
 				
 //				// correct for crossovers
 //				next = snapshots[index + 1];
@@ -796,6 +801,10 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			this.setFillColors;
 			this.drawConnections;
 			this.drawSelections;
+			
+			if(activeSnapshot.notNil, {
+				curSSTime.string_("Current Snapshot Time:" + activeSnapshot.time.asTimeString);
+			});
 			//envView.mouseMoveAction.value(envView);	
 		};
 		
@@ -905,11 +914,15 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	}
 	
 	update { arg changed, what ...args;
+		var time;
 		switch(what,
 			
 			\time, {
-				{sfView.timeCursorPosition = BMTimeSources.currentTime(args[0], args[1], args[2])
-					* sf.sampleRate;}.defer;
+				{
+					time = BMTimeSources.currentTime(args[0], args[1], args[2]);
+					sfView.timeCursorPosition = time * sf.sampleRate;
+					refTime.string_("Source Time:" + time.asTimeString)
+				}.defer;
 			},
 			\stop, {
 				{sfView.timeCursorPosition = 0;}.defer;
