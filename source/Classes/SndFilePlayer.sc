@@ -125,7 +125,7 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 				synth.addDependant(this);
 			//});
 			this.changed(\play);
-			SystemClock.sched(1.0, {blockPlay = false;});
+			SystemClock.sched(0.1, {blockPlay = false;});
 		}, {buffer.isNil.if({this.changed(\playFailed)})});
 		
 	}
@@ -144,7 +144,7 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 		rate = 1; 
 		this.changed(\stop); 
 		this.changed(\time, 0, 0, Main.elapsedTime); // not sure about this
-		SystemClock.sched(1.0, {blockPlay = false;});
+		SystemClock.sched(0.1, {blockPlay = false;});
 	}
 	
 	pause { synth.isNil.not.if({ this.rate = 0; this.changed(\pause);}) } // this will continue to ping time vals

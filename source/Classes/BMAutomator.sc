@@ -626,6 +626,8 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			ca.timeReference.setTime(newTime);
 		};
 		
+		sfView.mouseMoveAction = sfView.mouseDownAction;
+		
 		scrollView.canFocus_(false);
 		
 		backView = SCCompositeView(scrollView, Rect(0,300,  798, 20)).background_(Color.black);
