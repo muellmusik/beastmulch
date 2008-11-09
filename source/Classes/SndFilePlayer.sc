@@ -124,14 +124,18 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 				watcher = NodeWatcher.register(synth);
 				synth.addDependant(this);
 			//});
-			this.changed(\play);
+			
 			SystemClock.sched(0.1, {blockPlay = false;});
-		}, {buffer.isNil.if({this.changed(\playFailed)})});
-		
+		}, {buffer.isNil.if({this.changed(\playFailed); ^this})});
+		this.changed(\play);
 	}
 	
 	stop { 
 		synth.isPlaying.if({ this.stopCleanUp }); 
+	}
+	
+	togglePlay {
+		synth.isPlaying.if({ if(rate != 0, {this.pause}, {this.play}) }, {this.play });
 	}
 	
 	stopCleanUp {
@@ -218,7 +222,10 @@ BMSoundFilePlayerGUI : BMAbstractGUI {
 		window.view.background_(Color.white.alpha_(0.2));
 		window.view.decorator = FlowLayout(window.view.bounds, Point(10, 10), Point(10, 10));
 		
-		//window.drawHook = {Pen.line(20@65, 620@65); Pen.stroke; };
+		window.view.keyDownAction = { arg view,char,modifiers,unicode,keycode;
+			if(unicode == 32, {player.togglePlay});
+		};
+		
 		clockView = SCStaticText.new(window, Rect(0,0,200,45));
 		clockView.string = "00:00:00.0";
 		//clockView.background = Color.black;

@@ -608,6 +608,10 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		window = SCWindow.new("Soundfile / Controller Snapshots", Rect(200, 200, 808, 400));
 		window.view.decorator = FlowLayout(window.view.bounds);
 		
+		window.view.keyDownAction = { arg view,char,modifiers,unicode,keycode;
+			if(unicode == 32, {ca.timeReference.togglePlay});
+		};
+		
 		scrollView = SCScrollView(window, Rect(0, 0, 800, 334));
 		scrollView.hasBorder = true;
 		scrollView.resize = 2;
