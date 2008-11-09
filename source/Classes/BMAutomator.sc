@@ -619,6 +619,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		sfView.waveColors_(Array.fill(sf.numChannels, {|i| Color.blue.blend(Color.cyan, 1 / (sf.numChannels - 1) * i)})); 
 		sfView.timeCursorOn = true;
 		sfView.timeCursorColor = Color.red;
+		sfView.canFocus_(false);
 		
 		sfView.mouseDownAction = {|view, x|
 			var newTime;
@@ -660,6 +661,9 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			Pen.stroke;
 			Pen.lineDash_(FloatArray[]);
 		};
+		
+		timesView.mouseDownAction = sfView.mouseDownAction;
+		timesView.mouseMoveAction = sfView.mouseDownAction;
 		
 		window.onClose = {sf.close; dependees.do({|dee| dee.removeDependant(this)});};
 		
@@ -779,7 +783,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			time = view.value[0][view.index];
 			
 			time.notNil.if({
-				curSSTime.string_("Current Snapshot Time:" + (sf.duration * time).asTimeString); 
+				curSSTime.string_("Selected Snapshot Time:" + (sf.duration * time).asTimeString); 
 				ss = snapshots[view.index];
 				sfView.setEditableSelectionStart(view.index, true);
 				sfView.setEditableSelectionSize(view.index, true);
@@ -842,7 +846,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			this.drawSelections;
 			
 			if(activeSnapshot.notNil, {
-				curSSTime.string_("Selected Snapshot Time:" + activeSnapshot.time.getTimeString);
+				curSSTime.string_("Selected Snapshot Time:" + activeSnapshot.time.asTimeString);
 			}, {
 				curSSTime.string_("Selected Snapshot Time:");
 			});

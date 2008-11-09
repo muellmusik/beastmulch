@@ -239,7 +239,9 @@ BMSoundFilePlayerGUI : BMAbstractGUI {
 		clust = SCVLayoutView(window,Rect(10,10,200,40));
 		clust2 = SCVLayoutView(window,Rect(10,10,200,40));
 	     info = SCStaticText.new(clust, Rect(10,10,150,20));
+	     info.font = Font("Helvetica-Bold", 12);
 		dur = SCStaticText.new(clust2, Rect(10,10,150,20));
+		dur.font = Font("Helvetica-Bold", 12);
 		player.path.notNil.if({{
 			info.string = player.path.basename; 
 			dur.string =  "Length:" + 
