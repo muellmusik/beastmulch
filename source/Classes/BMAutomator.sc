@@ -576,7 +576,7 @@ BMArbitraryStartSnapShot : BMAbstractSnapShot {
 // need to protect against path = nil
 BMControllerAutomatorGUI : BMAbstractGUI {
 	var ca, <envView;
-	var path, sf, sfView, scrollView, selectView, backView;
+	var path, sf, durInv, sfView, scrollView, selectView, backView;
 	var activeSequence, activeSnapshot;
 	var dependees;
 	var seqs, snapshots, names, times, connections;
@@ -600,6 +600,8 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		path = ca.timeReference.path; // How best to do this?
 		sf = SoundFile.new;
 		path.notNil.if({sf.openRead(path);});
+		
+		durInv = sf.duration.reciprocal;
 		//f.openRead("sounds/a11wlk01.wav");
 		//f.openRead("/Users/scottw/Music/SuperCollider\ Recordings/SC_080725_143355.aiff");
 		
@@ -942,14 +944,27 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	}
 	
 	update { arg changed, what ...args;
-		var time;
+		var time, cursorLoc;
 		switch(what,
 			
 			\time, {
 				{
 					time = BMTimeSources.currentTime(ca.timeReference);
 					sfView.timeCursorPosition = time * sf.sampleRate;
-					refTime.string_("Source Time:" + time.asTimeString)
+					refTime.string_("Source Time:" + time.asTimeString);
+					cursorLoc = time * durInv * sfView.bounds.width;
+					// scroll to see cursor
+					if(args[1] != 0, { // not paused or stopped
+						if(cursorLoc > (scrollView.visibleOrigin.x + 
+								scrollView.bounds.width - 2), {
+							scrollView.visibleOrigin = cursorLoc@0;
+						}, {
+							if(cursorLoc < scrollView.visibleOrigin.x, {
+								scrollView.visibleOrigin = 
+									(cursorLoc - scrollView.bounds.width - 2)@0;
+							});
+						});
+					});
 				}.defer;
 			},
 			\stop, {
