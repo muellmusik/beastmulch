@@ -2,6 +2,8 @@
 
 // start time only works when not already playing. Make sense?
 
+// update for rate FF FB?
+
 BMSoundFilePlayer : BMAbstractAudioSource {
 	
 	var maxNumChannels, <latency, <>bus;
@@ -93,11 +95,12 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 
 	sendDef { // only called after Buffer vars updated
 		SynthDef(this.hash.asString, { arg out, gate = 1, rate = 1, loop = 0, updateRate = 0.1, 
-				startPos = 0;
+				startPos = 0, t_trig = 1;
 			var player, freeEnv, pauseEnv;
 			
 			player = PlayBufSendIndex.ar(buffer.numChannels, buffer.bufnum,
-				BufRateScale.kr(buffer.bufnum) * rate,1.0, startPos, loop, updateRate.reciprocal, 
+				BufRateScale.kr(buffer.bufnum) * rate,t_trig, startPos, loop, 
+				updateRate.reciprocal, 
 				trigID);
 			FreeSelfWhenDone.kr(player);
 			freeEnv = Linen.kr(gate, 0, releaseTime: releaseTime, doneAction:2);
@@ -116,7 +119,8 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 			blockPlay = true;
 //			server.makeBundle(latency, {
 				synth = Synth.head(group, this.hash.asString, 
-					[\out, out ? bus.index, \rate, rate, \startPos, startTime * buffer.sampleRate]);
+					[\out, out ? bus, \rate, rate, 
+					\startPos, startTime * buffer.sampleRate]);
 				watcher = NodeWatcher.register(synth);
 				synth.addDependant(this);
 			//});
@@ -127,20 +131,23 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 	}
 	
 	stop { 
-		synth.isPlaying.if({
-			resp.remove;
-			blockPlay = true;
-			synth.release; 
-			watcher.stop; 
-			synth = nil; 
-			rate = 1; 
-			this.changed(\stop); 
-			this.changed(\time, 0, 0, Main.elapsedTime); // not sure about this
-			SystemClock.sched(1.0, {blockPlay = false;});
-		}) 
+		synth.isPlaying.if({ this.stopCleanUp }); 
 	}
 	
-	pause { this.rate = 0; } // this will continue to ping time vals
+	stopCleanUp {
+		resp.remove;
+		blockPlay = true;
+		watcher.stop;
+		watcher = nil;
+		synth.isPlaying.if({synth.release; }); 
+		synth = nil; 
+		rate = 1; 
+		this.changed(\stop); 
+		this.changed(\time, 0, 0, Main.elapsedTime); // not sure about this
+		SystemClock.sched(1.0, {blockPlay = false;});
+	}
+	
+	pause { synth.isNil.not.if({ this.rate = 0; this.changed(\pause);}) } // this will continue to ping time vals
 	
 	free { this.stop;  server.makeBundle(releaseTime, {buffer.free;}); buffer = nil;
 		this.changed(\bufferFreed);
@@ -148,8 +155,20 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 	
 	// maybe a controller better?
 	update {arg changed, what; 
-		if(what == \n_end, {watcher.stop; synth = nil;});
+		if(what == \n_end, {this.stopCleanUp});
 		this.changed(what);
+	}
+	
+	setTime {|time|
+		synth.isPlaying.if({
+			synth.set(\startPos, time * buffer.sampleRate, \t_trig, 1);
+		}, {
+			// start and pause
+			(buffer.notNil && (time != 0)).if({
+				this.play(time);
+				this.pause;
+			});
+		});
 	}
 	
 //	getInputArray {|name = "Player"|
@@ -295,35 +314,38 @@ BMSoundFilePlayerGUI : BMAbstractGUI {
 	}
     
     	updateTimeDisplay {| string |
-        
 		{ clockView.string = string; bigClock.notNil.if({bigText.string = string});}.defer;
-		
-	
 	}
 	
 	// always updated from player
 	update {arg changed, what ...args; 
-		//if(what == \n_end, {stopwatch.stop;});
+		
+		{
 		switch(what,
 			\n_end, {this.updateTimeDisplay(0.getTimeString);
 				{playButton.value = 0;}.defer;
 			},
-//			\play, {stopwatch.start;},
+			\play, {
+				playButton.value = 1;
+			},
+			\pause, {
+				playButton.value = 0;
+			},
 			\playFailed, {
 				//"Playing failed".postln; 
 				this.updateTimeDisplay(0.getTimeString);
 				playButton.value = 0;
 				},
 			\bufferFreed, {info.string = ""; dur.string = "";},
-			\stop, {
-				"in the name of love".postln; 
+			\stop, { 
 				this.updateTimeDisplay(0.getTimeString);
 				playButton.value = 0;
 				},
 			\loading, {info.string = "Loading...";},
-			\loaded, {{info.string = player.path.basename; dur.string =  "Length:" + (player.buffer.numFrames / player.buffer.sampleRate).asTimeString}.defer },
+			\loaded, {info.string = player.path.basename; dur.string =  "Length:" + (player.buffer.numFrames / player.buffer.sampleRate).asTimeString },
 			\time, { this.updateTimeDisplay(args.first.getTimeString) }
 		)
+		}.defer
 	}
 	
 	changed { arg what ... moreArgs;

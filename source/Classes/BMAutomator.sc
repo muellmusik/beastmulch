@@ -572,6 +572,8 @@ BMArbitraryStartSnapShot : BMAbstractSnapShot {
 // probably this should be made into a subclass with alternate makeWindows for timerefs
 // which are not soundfiles
 
+// needs to respond to loading, etc.
+// need to protect against path = nil
 BMControllerAutomatorGUI : BMAbstractGUI {
 	var ca, <envView;
 	var path, sf, sfView, scrollView, selectView, backView;
@@ -616,6 +618,12 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		sfView.timeCursorOn = true;
 		sfView.timeCursorColor = Color.red;
 		
+		sfView.mouseDownAction = {|view, x|
+			var newTime;
+			newTime = (x / view.bounds.width) * sf.duration;
+			ca.timeReference.setTime(newTime);
+		};
+		
 		scrollView.canFocus_(false);
 		
 		backView = SCCompositeView(scrollView, Rect(0,300,  798, 20)).background_(Color.black);
@@ -629,7 +637,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		SCStaticText(window, Rect(0, 0, 5, 10)).string_("-").font_(Font("Helvetica-Bold", 12));
 		SmoothSlider(window, Rect(0, 5, 100, 10)).action_({|view| 
 			var width;
-			width = 798 + (sf.duration * 160 * ([0.001, 1.001, \exp].asSpec.map(view.value) - 0.001));
+			width = scrollView.bounds.width - 2 + (sf.duration * 160 * ([0.001, 1.001, \exp].asSpec.map(view.value) - 0.001));
 			sfView.bounds = Rect(0,0, width, 300);
 			envView.bounds = Rect(0,300, width, 20);
 			backView.bounds = Rect(0,300, width, 20); 
