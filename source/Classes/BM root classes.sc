@@ -48,6 +48,8 @@ BMAbstractAudioChainElement {
 
 }
 
+// should all audio sources be timeReferences?
+// should they support a rudimentary clock here?
 BMAbstractAudioSource : BMAbstractAudioChainElement {
 
 	// sources are not instantiated by the chain manager
@@ -64,6 +66,17 @@ BMAbstractAudioSource : BMAbstractAudioChainElement {
 	mappings_ {|mappings|
 		
 	}
+	
+	// experimental time ref support
+	play { ^nil }
+	
+	pause { ^nil }
+	
+	stop { ^nil }
+	
+	togglePlay { ^nil }
+	
+	setTime { }
 }
 
 // valueArray holds the controller value in its native form
