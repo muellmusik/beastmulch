@@ -14,17 +14,18 @@ p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
 p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0022b2}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica; min-height: 17.0px}
-p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #663a24}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0022b2}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica; min-height: 17.0px}
+p.p12 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #663a24}
 span.s1 {color: #0022b2}
 span.s2 {color: #4f6a1e}
 span.s3 {font: 9.0px Monaco; color: #007300}
-span.s4 {font: 9.0px Monaco; color: #0000bf}
-span.s5 {font: 9.0px Monaco; color: #000000}
-span.s6 {color: #000000}
-span.s7 {font: 12.0px Helvetica}
+span.s4 {color: #0000bf}
+span.s5 {color: #007300}
+span.s6 {font: 12.0px Helvetica}
+span.s7 {color: #000000}
 span.s8 {text-decoration: underline ; color: #0036de}
 span.s9 {color: #1933a7}
 span.Apple-tab-span {white-space:pre}
@@ -55,11 +56,15 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="s1">this</span>.changed(<span class="s2">\stop</span>);</p>
 <p class="p2"><br></p>
-<p class="p3">Again it is up to dependants to interpret this, but stopping should normally be equivalent to <span class="s4">this</span><span class="s5">.changed(</span><span class="s3">\time</span><span class="s5">, 0, 0, </span><span class="s4">Main</span><span class="s5">.elapsedTime);</span><span class="s6">.</span></p>
+<p class="p3">Again it is up to dependants to interpret this, but stopping should normally be equivalent to<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p8"><span class="s4">this</span>.changed(<span class="s5">\time</span>, 0, 0, <span class="s4">Main</span>.elapsedTime);<span class="s6">.</span></p>
+<p class="p2"><br></p>
+<p class="p3">Stopped sources need not continue to regularly update their time.</p>
 <p class="p2"><br></p>
 <p class="p3">3. It must register itself with BMTimeSources as a reference.</p>
 <p class="p5"><span class="Apple-tab-span">	</span></p>
-<p class="p8"><span class="s6"><span class="Apple-tab-span">	</span></span>BMTimeSources<span class="s6">.addReference(</span>this<span class="s6">);</span></p>
+<p class="p9"><span class="s7"><span class="Apple-tab-span">	</span></span>BMTimeSources<span class="s7">.addReference(</span>this<span class="s7">);</span></p>
 <p class="p2"><br></p>
 <p class="p3">Generally speaking time references should update reasonably frequently (say 10 times a second or faster). Note that what is done with the updated data is up to the dependant object to determine.</p>
 <p class="p2"><br></p>
@@ -67,7 +72,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><span class="Apple-converted-space"> </span></p>
 <p class="p3">The class BMTimeSources provides a framework for accurate updating and interpolation of data from Time References. It serves as a centralised registry of time sources, and provides utility functions for updating time based on the current logical time. To obtain the current time for a reference, one can simple call</p>
 <p class="p2"><br></p>
-<p class="p9"><span class="s7"><span class="Apple-tab-span">	</span></span><span class="s1">BMTimeSources</span>.currentTime(<span class="s1">ref</span>);</p>
+<p class="p10"><span class="s6"><span class="Apple-tab-span">	</span></span><span class="s1">BMTimeSources</span>.currentTime(<span class="s1">ref</span>);</p>
 <p class="p2"><br></p>
 <p class="p3">for an updated time.</p>
 <p class="p2"><br></p>
@@ -78,9 +83,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><b>See also: </b><a href="../ServerArchitecture/Buffer.html"><span class="s8">Buffer</span></a><b> </b>[other related help files]</p>
 <p class="p2"><br></p>
 <p class="p4"><b>More detailed examples</b></p>
-<p class="p10"><br></p>
-<p class="p11"><span class="s6">b = </span><span class="s9">SomeClass</span><span class="s6">.new(s, 100, 2); <span class="Apple-tab-span">	</span></span>// explanation of this line</p>
-<p class="p11"><span class="s6">b.doSomething;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// explanation of this line</p>
+<p class="p11"><br></p>
+<p class="p12"><span class="s7">b = </span><span class="s9">SomeClass</span><span class="s7">.new(s, 100, 2); <span class="Apple-tab-span">	</span></span>// explanation of this line</p>
+<p class="p12"><span class="s7">b.doSomething;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// explanation of this line</p>
 <p class="p6">b.cleanUp</p>
 <p class="p7"><br></p>
 <p class="p6">...</p>
