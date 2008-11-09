@@ -632,7 +632,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		
 		scrollView.canFocus_(false);
 		
-		backView = SCCompositeView(scrollView, Rect(0,300,  798, 20)).background_(Color.black);
+		backView = SCCompositeView(scrollView, Rect(0,300,  798, 20)).background_(Color.black.alpha_(0.6));
 		backView.relativeOrigin = false;
 		
 		sfView.soundfile = sf;
