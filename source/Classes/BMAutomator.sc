@@ -179,7 +179,7 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 	addSnapShot {|seqName, ssTime, ssName| 
 		ssTime = ssTime ?? {
 			if(this.timeInitialised, {
-				BMTimeSources.currentTime(time, rate, referenceTime);
+				BMTimeSources.currentTime(timeReference);
 			}, {0});
 		};
 		sequences[seqName].addSnapShot(ssTime, ssName);
@@ -225,7 +225,7 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 	// how to deal with bundling?
 	automate {
 		var currentTime, values, control;
-		currentTime = BMTimeSources.currentTime(time, rate, referenceTime);
+		currentTime = BMTimeSources.currentTime(timeReference);
 		//currentTime.postln;
 		sequences.do({|seq|
 			seq.containsTime(currentTime).if({
@@ -574,7 +574,7 @@ BMArbitraryStartSnapShot : BMAbstractSnapShot {
 
 BMControllerAutomatorGUI : BMAbstractGUI {
 	var ca, <envView;
-	var path, sf, sfView, scrollView, selectView, backView, menu;
+	var path, sf, sfView, scrollView, selectView, backView;
 	var activeSequence, activeSnapshot;
 	var dependees;
 	var seqs, snapshots, names, times, connections;
@@ -593,7 +593,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	}
 	
 	makeWindow {
-		
+		var time;
 		
 		path = ca.timeReference.path; // How best to do this?
 		sf = SoundFile.new;
@@ -601,7 +601,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		//f.openRead("sounds/a11wlk01.wav");
 		//f.openRead("/Users/scottw/Music/SuperCollider\ Recordings/SC_080725_143355.aiff");
 		
-		window = SCWindow.new("Edit Snapshot Sequence", Rect(200, 200, 808, 400));
+		window = SCWindow.new("Soundfile / Controller Snapshots", Rect(200, 200, 808, 400));
 		window.view.decorator = FlowLayout(window.view.bounds);
 		
 		scrollView = SCScrollView(window, Rect(0, 0, 800, 334));
@@ -657,10 +657,13 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 //				//sfView.selections.postln;
 //			});
 		
-		sfView.readWithTask(block: 256, doneAction: {
-			this.makeEnvView;
-		});
+//		sfView.readWithTask(block: 256, doneAction: {
+//			this.makeEnvView;
+//		});
+		window.front;
 		
+		sfView.read(block: 256);
+		this.makeEnvView;
 //		RoundButton(window, 80@20).extrude_(false)
 //			.canFocus_(false)
 //			.font_(Font("Helvetica-Bold", 10))
@@ -674,16 +677,6 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			.action_({|view|
 				showOnlySelected = view.value.booleanValue;
 				this.makeEnvView;
-			});		
-		RoundButton(window, 120@20)
-			.extrude_(false)
-			.canFocus_(false)
-			.font_(Font("Helvetica-Bold", 10))
-			.states_([["Add Snapshot"]])
-			.action_({
-				ca.addSnapShot(activeSequence.name, nil, UniqueID.next.asSymbol);
-				this.makeEnvView;
-				menu.doAction;
 			});
 		RoundButton(window, 120@20)
 			.extrude_(false)
@@ -692,23 +685,48 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			.states_([["Add Sequence"]])
 			.action_({
 				//ca.addSequence(activeSequence.name, nil, UniqueID.next.asSymbol);
-				this.makeEnvView;
-				menu.doAction;
+				//this.makeEnvView;
+			});		
+		RoundButton(window, 120@20)
+			.extrude_(false)
+			.canFocus_(false)
+			.font_(Font("Helvetica-Bold", 10))
+			.states_([["Add Snapshot"]])
+			.action_({
+				ca.addSnapShot(activeSequence.name, nil, UniqueID.next.asSymbol);
+				//this.makeEnvView;
+			});
+		RoundButton(window, 120@20)
+			.extrude_(false)
+			.canFocus_(false)
+			.font_(Font("Helvetica-Bold", 10))
+			.states_([["Remove Snapshot"]])
+			.action_({
+				//ca.addSnapShot(activeSequence.name, nil, UniqueID.next.asSymbol);
+//				this.makeEnvView;
 			});
 		
 		window.view.decorator.nextLine.nextLine;
-		curSSTime = SCStaticText(window, Rect(0, 0, 300, 20))
-			.string_("Current Snapshot Time:") // initialise
-			.font_(Font("Helvetica-Bold", 12));
-		//a.resize = 5;
-		
-		window.view.decorator.shift(0, -5);
+		window.view.decorator.shift(10, 0);
 		refTime = SCStaticText(window, Rect(0, 0, 200, 25))
 			.string_("Source Time:") // initialise
 			.font_(Font("Helvetica-Bold", 16));
+		time = BMTimeSources.currentTime(ca.timeReference);
+					sfView.timeCursorPosition = time * sf.sampleRate;
+					refTime.string_("Source Time:" + time.asTimeString);
+					
+		window.view.decorator.shift(0, 5);
+		curSSTime = SCStaticText(window, Rect(0, 0, 300, 20))
+			.string_("Selected Snapshot Time:") // initialise
+			.font_(Font("Helvetica-Bold", 12));
+		//a.resize = 5;
+		
+		//window.view.decorator.shift(0, -5);
+//		refTime = SCStaticText(window, Rect(0, 0, 200, 25))
+//			.string_("Source Time:") // initialise
+//			.font_(Font("Helvetica-Bold", 16));
 			
-		window.front;
-
+		//window.front;
 	}
 	
 	makeEnvView {
@@ -803,7 +821,9 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			this.drawSelections;
 			
 			if(activeSnapshot.notNil, {
-				curSSTime.string_("Current Snapshot Time:" + activeSnapshot.time.asTimeString);
+				curSSTime.string_("Selected Snapshot Time:" + activeSnapshot.time.asTimeString);
+			}, {
+				curSSTime.string_("Selected Snapshot Time:");
 			});
 			//envView.mouseMoveAction.value(envView);	
 		};
@@ -919,7 +939,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			
 			\time, {
 				{
-					time = BMTimeSources.currentTime(args[0], args[1], args[2]);
+					time = BMTimeSources.currentTime(ca.timeReference);
 					sfView.timeCursorPosition = time * sf.sampleRate;
 					refTime.string_("Source Time:" + time.asTimeString)
 				}.defer;
