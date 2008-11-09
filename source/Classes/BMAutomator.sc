@@ -627,6 +627,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		};
 		
 		sfView.mouseMoveAction = sfView.mouseDownAction;
+		sfView.gridResolution = 10;
 		
 		scrollView.canFocus_(false);
 		
