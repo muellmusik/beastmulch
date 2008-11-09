@@ -656,7 +656,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			sixtySecs = timesView.bounds.width * durInv * 30;
 			(sf.duration / 30).floor.do({|i|
 				((i + 1) * 30).asTimeString.drawLeftJustIn(
-					Rect((i+1) * sixtySecs, 0, 50, 20),
+					Rect((i+1) * sixtySecs + 1, 0, 50, 20),
 					Font("Helvetica-Bold", 11), 
 					Color.black
 				); 
