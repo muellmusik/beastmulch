@@ -1,14 +1,14 @@
 // has a maximum number of channels in order to allow it to return an input array and set the Bus
-// start time currently broken
 
-// currently will respond to any trigger message. Clean up later
+// start time only works when not already playing. Make sense?
+
 BMSoundFilePlayer : BMAbstractAudioSource {
 	
 	var maxNumChannels, <latency, <>bus;
 	var <buffer, <synth, <>releaseTime = 0.1, watcher, <rate = 1;
 	var <sampleDur = 2.2675736961451e-05;
 	var blockPlay = false;
-	var resp;
+	var resp, trigID;
 	
 	*new {|maxNumChannels = 2, latency = 0.1, group, server, name|
 		^super.new.init(maxNumChannels, latency, group, server ? Server.default, name);
@@ -26,11 +26,16 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 		CmdPeriod.add(this);
 		allChainElements[name] = this;
 		BMTimeSources.addReference(this);
+		// we check by node ID but this should be good enough to avoid conflicts with others
+		// if they don't
+		trigID = this.hash & 65535; // need 16 bit
 	}
 	
 	startListening {
 		resp = OSCresponderNode(this.server.addr,'/tr',{ arg time,responder,msg;
-			this.changed(\time, msg.last * this.sampleDur, rate, time);
+			if(msg[1] == synth.nodeID, {
+				this.changed(\time, msg.last * this.sampleDur, rate, time);
+			});
 		}).add;
 	}
 	
@@ -87,17 +92,23 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 //	}
 
 	sendDef { // only called after Buffer vars updated
-		SynthDef(this.hash.asString, { arg out, gate = 1, rate = 1, loop = 0, updateRate = 0.1;
-			var player;
+		SynthDef(this.hash.asString, { arg out, gate = 1, rate = 1, loop = 0, updateRate = 0.1, 
+				startPos = 0;
+			var player, freeEnv, pauseEnv;
 			
 			player = PlayBufSendIndex.ar(buffer.numChannels, buffer.bufnum,
-				BufRateScale.kr(buffer.bufnum) * rate,1.0, 0.0, loop, updateRate.reciprocal, this.hash);
+				BufRateScale.kr(buffer.bufnum) * rate,1.0, startPos, loop, updateRate.reciprocal, 
+				trigID);
 			FreeSelfWhenDone.kr(player);
-			player = player * Linen.kr(gate, releaseTime: releaseTime, doneAction:2); 
+			freeEnv = Linen.kr(gate, 0, releaseTime: releaseTime, doneAction:2);
+			// avoid DC offset by fading in and out
+			pauseEnv = Linen.kr(rate, releaseTime: 0.01, doneAction:0);
+			player = player * freeEnv * pauseEnv; 
 			Out.ar(out, player); 
 		}).send(server);
 	}
 	
+	// startTime only works if we're not already playing
 	play { |startTime = 0, out|
 		this.rate_(1.0);
 		(synth.isPlaying.not && blockPlay.not && synth.isNil && buffer.notNil).if({
@@ -105,7 +116,7 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 			blockPlay = true;
 //			server.makeBundle(latency, {
 				synth = Synth.head(group, this.hash.asString, 
-					[\out, out ? bus.index, \rate, rate]);
+					[\out, out ? bus.index, \rate, rate, \startPos, startTime * buffer.sampleRate]);
 				watcher = NodeWatcher.register(synth);
 				synth.addDependant(this);
 			//});
@@ -129,7 +140,7 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 		}) 
 	}
 	
-	pause { this.rate = 0; } // maybe use run here
+	pause { this.rate = 0; } // this will continue to ping time vals
 	
 	free { this.stop;  server.makeBundle(releaseTime, {buffer.free;}); buffer = nil;
 		this.changed(\bufferFreed);
