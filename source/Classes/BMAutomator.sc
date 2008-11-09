@@ -576,7 +576,7 @@ BMArbitraryStartSnapShot : BMAbstractSnapShot {
 // need to protect against path = nil
 BMControllerAutomatorGUI : BMAbstractGUI {
 	var ca, <envView;
-	var path, sf, durInv, sfView, scrollView, selectView, backView;
+	var path, sf, durInv, sfView, scrollView, selectView, backView, timesView;
 	var activeSequence, activeSnapshot;
 	var dependees;
 	var seqs, snapshots, names, times, connections;
@@ -613,7 +613,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		scrollView.resize = 2;
 		//scrollView.background = Color.black;
 		
-		sfView = SCSoundFileView.new(scrollView, Rect(0,0, 798, 300));
+		sfView = SCSoundFileView.new(scrollView, Rect(0,0, 798, 320));
 		sfView.background = HiliteGradient(Color.blue, Color.cyan, steps: 256);
 		//a.waveColors_([HiliteGradient(Color.blue, Color.cyan), HiliteGradient(Color.blue, Color.cyan)]);
 		sfView.waveColors_(Array.fill(sf.numChannels, {|i| Color.blue.blend(Color.cyan, 1 / (sf.numChannels - 1) * i)})); 
@@ -632,10 +632,35 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		scrollView.canFocus_(false);
 		
 		backView = SCCompositeView(scrollView, Rect(0,300,  798, 20)).background_(Color.black);
-				
+		backView.relativeOrigin = false;
+		
 		sfView.soundfile = sf;
 		
 		sfView.elasticMode = 1;
+		
+		timesView = SCUserView(scrollView, Rect(0, 0, sfView.bounds.width, 20));
+		timesView.background = Color.clear;
+		
+		timesView.drawFunc = {
+			var sixtySecs, bounds;
+			bounds = timesView.bounds;
+			Pen.addRect(bounds);
+			Pen.fillRadialGradient(bounds.center, bounds.center, 0, bounds.width, 
+				Color.cyan.alpha_(0.6), Color.clear);
+			sixtySecs = timesView.bounds.width * durInv * 30;
+			(sf.duration / 30).floor.do({|i|
+				((i + 1) * 30).asTimeString.drawLeftJustIn(
+					Rect((i+1) * sixtySecs, 0, 50, 20),
+					Font("Helvetica-Bold", 11), 
+					Color.black
+				); 
+			});
+			Pen.lineDash_(FloatArray[3,3]);
+			Pen.line(0@20, timesView.bounds.width@20);
+			Pen.stroke;
+			Pen.lineDash_(FloatArray[]);
+		};
+		
 		window.onClose = {sf.close; dependees.do({|dee| dee.removeDependant(this)});};
 		
 		window.view.decorator.shift(0, 5);
@@ -643,9 +668,10 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		SmoothSlider(window, Rect(0, 5, 100, 10)).action_({|view| 
 			var width;
 			width = scrollView.bounds.width - 2 + (sf.duration * 160 * ([0.001, 1.001, \exp].asSpec.map(view.value) - 0.001));
-			sfView.bounds = Rect(0,0, width, 300);
+			sfView.bounds = Rect(0,0, width, 320);
 			envView.bounds = Rect(0,300, width, 20);
 			backView.bounds = Rect(0,300, width, 20); 
+			timesView.bounds = Rect(0, 0, width, 20);
 			sfView.selections.size.do({|i| 
 				sfView.setSelectionSize(i, sf.numFrames / sfView.bounds.width);
 			});
@@ -657,19 +683,6 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		SCStaticText(window, Rect(0, 0, 10, 10)).string_("+").font_(Font("Helvetica-Bold", 10));
 		window.view.decorator.shift(0, -5);
 		
-		//SCStaticText(window, Rect(0, 0, 90, 15)).string_("Sequence to Edit").font_(Font("Helvetica-Bold", 10));
-//		menu = SCPopUpMenu(window, Rect(10,10,90,15))
-//			.font_(Font("Helvetica-Bold", 10))
-//			.action_({|view|
-//				envViews.do({|ev| ev.visible_(false)});
-//				envViews[view.value].visible_(true);
-//				activeSequence = ca.sequences[view.item];
-//				//this.clearSelections;
-//				this.drawSelections(envViews[view.value]);
-//				scrollView.refresh;
-//				//sfView.selections.postln;
-//			});
-		
 //		sfView.readWithTask(block: 256, doneAction: {
 //			this.makeEnvView;
 //		});
@@ -677,11 +690,6 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		
 		sfView.read(block: 256);
 		this.makeEnvView;
-//		RoundButton(window, 80@20).extrude_(false)
-//			.canFocus_(false)
-//			.font_(Font("Helvetica-Bold", 10))
-//			.states_([["Add Sequence"]])
-//			.action_({ca.addSequence(UniqueID.next.asSymbol, 0)}); // global sequence
 
 		RoundButton(window, 120@20).extrude_(false)
 			.canFocus_(false)
@@ -726,7 +734,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			.font_(Font("Helvetica-Bold", 16));
 		time = BMTimeSources.currentTime(ca.timeReference);
 					sfView.timeCursorPosition = time * sf.sampleRate;
-					refTime.string_("Source Time:" + time.asTimeString);
+					refTime.string_("Source Time:" + time.getTimeString);
 					
 		window.view.decorator.shift(0, 5);
 		curSSTime = SCStaticText(window, Rect(0, 0, 300, 20))
@@ -745,7 +753,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	makeEnvView {
 		envView.notNil.if({envView.remove});
 		
-		envView = SCEnvelopeView(scrollView, Rect(0, 300, sfView.bounds.width, 20))
+		envView = SCEnvelopeView(backView, Rect(0, 300, sfView.bounds.width, 20))
 			.thumbWidth_(19)
 			.thumbHeight_(19)
 			.drawLines_(true)
@@ -834,7 +842,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			this.drawSelections;
 			
 			if(activeSnapshot.notNil, {
-				curSSTime.string_("Selected Snapshot Time:" + activeSnapshot.time.asTimeString);
+				curSSTime.string_("Selected Snapshot Time:" + activeSnapshot.time.getTimeString);
 			}, {
 				curSSTime.string_("Selected Snapshot Time:");
 			});
