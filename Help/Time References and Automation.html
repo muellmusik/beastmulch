@@ -69,6 +69,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p3">5. It must respond to the message setTime(time) by setting its time in seconds accordingly, and notifying its dependants of the change.</p>
 <p class="p2"><br></p>
+<p class="p3">6. It must at least understand the messages 'play', 'stop', 'pause', and 'togglePlay'. If the implementation of any or all of<span class="Apple-converted-space">  </span>these messages would be inappropriate, it can return nil to indicate this.</p>
+<p class="p2"><br></p>
 <p class="p3">Generally speaking time references should update reasonably frequently (say 10 times a second or faster). Note that what is done with the updated data is up to the dependant object to determine.</p>
 <p class="p2"><br></p>
 <p class="p4"><b>BMTimeSources</b></p>
