@@ -744,6 +744,10 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		curSSTime = SCStaticText(window, Rect(0, 0, 300, 20))
 			.string_("Selected Snapshot Time:") // initialise
 			.font_(Font("Helvetica-Bold", 12));
+		
+		if(activeSnapshot.notNil, {
+			curSSTime.string_("Selected Snapshot Time:" + activeSnapshot.time.asTimeString);
+		});
 		//a.resize = 5;
 		
 		//window.view.decorator.shift(0, -5);
