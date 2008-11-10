@@ -25,7 +25,7 @@ BMAbstractAutomator {
 	timeInitialised { ^(time.notNil && rate.notNil && referenceTime.notNil) }
 }
 
-// rate of this and time ref are independent
+// update rate of this and time ref are independent
 BMAbstractIndependentRateAutomator : BMAbstractAutomator {
 	var <>interval = 0.05; // update interval
 	var lastCurrentTime;
@@ -49,12 +49,12 @@ BMAbstractIndependentRateAutomator : BMAbstractAutomator {
 	reset { }
 	
 	update {arg changed, what ...args; 
-		//if(what == \n_end, {stopwatch.stop;});
+
 		switch(what,
 			\n_end, {
 			
 			},
-			//\play, { this.startUpdateLoop; },
+			\play, { },
 			\playFailed, {
 
 				},
@@ -111,14 +111,11 @@ A single automator can have overlapping sequences, but if they try to update the
 For more elaborate and fine tuned control, use the DAW like automator object, under a single fader. Or we could have a more elaborate ControllerAutomator which has envelopes for the entire duration.
 	- this would be easy to do. Just have separate sequences for each fader.
 ----
-Should this be a singleton?
-	- no, you might have automators separate time references automating controls
-
-----
 
 To do:
 
 Add initial fader state
+	- probably a special kind of snapshot, see addStartSnapShot
 Decide if we need a separate class for the DAW version
 Should snap be in *new?
 
@@ -128,13 +125,15 @@ How best to get representation from timeRef (i.e. sfview)
 
 Should name come last in seq
 
+sort out mappings
+
 */
 BMControllerAutomator : BMAbstractIndependentRateAutomator {
 	// interpolates between controller snapshots
 	var <controls; // an array of controlnames or a single one
 	var <sequences; // an dict of BMSnapShotSeqs
-	var oldSeqs;
-	var sinSmooth = true;
+	var oldSeqs; // the sequences that were active last time through the automate loop
+	var sinSmooth = true; // use sin curves for automation
 	
 	*new { |controls, timeref|
 		^super.new.init(controls, timeref);
@@ -185,8 +184,8 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 		sequences[seqName].addSnapShot(ssTime, ssName);
 	}
 	
+	// convenience method to add individual sequences for each controller
 	addIndividualSequences {|seqName, startTime|
-		
 		controls.do({|ctrlname| 
 			seqName = (seqName.asString ++ "-" ++ ctrlname).asSymbol;
 			sequences.keys.includes(seqName).if({"Sequence Name already in Use!".error; ^this;
@@ -207,20 +206,6 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 	}
 	
 	sequence {|name| ^sequences[name.asSymbol] }
-	
-//	// how to deal with bundling?
-//	automate {
-//		var currentTime, values;
-//		currentTime = BMTimeSources.currentTime(time, rate, referenceTime);
-//		currentSeq = sequences.detect({|seq| // there can be only one
-//			seq.containsTime(currentTime);
-//		});
-//		if(oldSeq != currentSeq, {currentSeq.reset});
-//		values = currentSeq.atTime(currentTime);
-//		values.keysValuesDo(|ctrlname, value| 
-//			BMAbstractController.setValueByName(ctrlname, value);
-//		});
-//	}
 
 	// how to deal with bundling?
 	automate {
@@ -236,7 +221,7 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 				values = seq.atTime(currentTime);
 				values.keysValuesDo({|ctrlname, value| 
 					control = BMAbstractController.allControls[ctrlname];
-					// check another sequence hasn't touch this control
+					// check another sequence hasn't touched this control
 					if(control.lastAutomated != currentTime, {
 						BMAbstractController.setValueByName(ctrlname, value);
 						control.lastAutomated = currentTime;
@@ -248,7 +233,7 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 				
 			}, {
 				// check if seq should have ended and set end values
-				// if we've leapt around don't worry about it
+				// if we've leapt around a lot don't worry about it
 				
 				seq.end.exclusivelyBetween(currentTime - interval, currentTime).if({
 					//\sequenceEnd.postln;
@@ -257,7 +242,7 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 					values = seq.atTime(seq.end);
 					values.keysValuesDo({|ctrlname, value| 
 						control = BMAbstractController.allControls[ctrlname];
-						// check another sequence hasn't touch this control
+						// check another sequence hasn't touched this control
 						if(control.lastAutomated != currentTime, {
 							BMAbstractController.setValueByName(ctrlname, value);
 							control.lastAutomated = currentTime;
@@ -272,7 +257,13 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 		});
 	}
 	
-	reset { sequences.do(_.reset); oldSeqs.clear;}
+	reset { sequences.do(_.reset); oldSeqs.clear; this.clearLastAutomated}
+	
+	clearLastAutomated {
+		controls.do({|ctrlname| 
+			BMAbstractController.allControls[ctrlname].lastAutomated = nil;
+		});
+	}
 	
 	free { controls.do({|ctrl| ctrl.automator = nil});}
 	
@@ -287,7 +278,7 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 	}
 }
 
-// can't change controllers after starting!
+// can't change the list of affected controllers after creation!
 BMSnapShotSeq {
 	var <name, controls, <curve;
 	var started = false;
@@ -295,10 +286,11 @@ BMSnapShotSeq {
 	//var lastAtTime = -inf; // in
 	var arbStart, arbStartEnd;
 	var arbEnd, arbEndEnd;
-	var <snapshots, firstSnap, snapTimes, segs;
-	var <snapshotsDict;
+	var <snapshots; // by order
+	var <snapshotsDict; // by name
+	var firstSnap, snapTimes, segs;
 	var oldSeg;
-	var <minSegSize = 0.15;
+	var <minSegSize = 0.15; // minimum size for a segment
 	
 	*new {|name, controls, firstSnapTime, curve = 'lin'| // controls is an array of keys indicating control names
 		^super.newCopyArgs(name, controls, curve).init(firstSnapTime);
@@ -321,6 +313,10 @@ BMSnapShotSeq {
 	}
 	
 	minSegSize_ {|newSize| minSegSize = newSize; this.buildSegs }
+	
+	nextNumber {
+		^snapshots.size; 
+	}
 	
 	addSnapShot {|time, ssname|
 		var snap;
@@ -364,7 +360,7 @@ BMSnapShotSeq {
 			firstSnap.time = max(snapshots[1].time - minSegSize, 0);
 			firstSnap.addDependant(this);
 		});
-		
+		// second sort?
 		snapshots = snapshots.sort({|a, b| a.time < b.time });
 		
 		//postf("snapshots(buildSegs): %\n", snapshots.collect(_.name));
@@ -385,6 +381,7 @@ BMSnapShotSeq {
 	
 	}
 	
+	// returns a dict of ctrlname -> val[time]
 	atTime {|time| 
 		var values, seg, ind;
 		// return nil if not within this sequence's duration?
@@ -463,6 +460,7 @@ BMSnapShotSequenceSeg {
 //		endSS.makeInActive; 
 //		activated = false;
 //	}
+
 	// might optimise here to check if both ss are known and cache envs if true
 	// maybe not worth it
 	// Could also delay envs to save a subtraction
@@ -476,7 +474,7 @@ BMSnapShotSequenceSeg {
 				);
 			}, IdentityDictionary);
 		}, {
-			// with a flat segment at start
+			// if arb with a flat segment at start
 			envs = controls.collectAs({|ctrlname| 
 				ctrlname -> Env(
 					[startSS.values[ctrlname], startSS.values[ctrlname], endSS.values[ctrlname]], 
@@ -557,15 +555,10 @@ BMArbitraryStartSnapShot : BMAbstractSnapShot {
 }
 
 
-// When you select a seq it should become active
-// You can select a snapshot by clicking it
-// Have an option to hide the non-active seq
 
 // delete deletes a snapshot (not indeterminate ones)
 // add ss adds to active seq at insertion point
 // prompt if insertion point or active sequence off screen
-
-// maybe move clock out of points
 
 // snapshot opens a window with current controller states and toggles for inclusion
 
@@ -580,6 +573,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	var activeSequence, activeSnapshot;
 	var dependees;
 	var seqs, snapshots, names, times, connections;
+	var addSS, remSS;
 	var showOnlySelected = false;
 	var curSSTime, refTime;
 	
@@ -688,7 +682,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 //			envView.refresh;
 			this.resetPoints;
 			scrollView.refresh;
-		}).knobSize_(1).canFocus_(false).hilightColor_(Color.blue);
+		}).knobSize_(1).canFocus_(false).hilightColor_(Color.blue).mode_( \move );
 		SCStaticText(window, Rect(0, 0, 10, 10)).string_("+").font_(Font("Helvetica-Bold", 10));
 		window.view.decorator.shift(0, -5);
 		
@@ -717,7 +711,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 				//ca.addSequence(activeSequence.name, nil, UniqueID.next.asSymbol);
 				//this.makeEnvView;
 			});		
-		RoundButton(window, 120@20)
+		addSS = RoundButton(window, 120@20)
 			.extrude_(false)
 			.canFocus_(false)
 			.font_(Font("Helvetica-Bold", 10))
@@ -726,7 +720,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 				ca.addSnapShot(activeSequence.name, nil, UniqueID.next.asSymbol);
 				//this.makeEnvView;
 			});
-		RoundButton(window, 120@20)
+		remSS =RoundButton(window, 120@20)
 			.extrude_(false)
 			.canFocus_(false)
 			.font_(Font("Helvetica-Bold", 10))
