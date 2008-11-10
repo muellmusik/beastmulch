@@ -740,7 +740,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 					sfView.timeCursorPosition = time * sf.sampleRate;
 					refTime.string_("Source Time:" + time.getTimeString);
 					
-		window.view.decorator.shift(0, 5);
+		window.view.decorator.shift(0, 4);
 		curSSTime = SCStaticText(window, Rect(0, 0, 300, 20))
 			.string_("Selected Snapshot Time:") // initialise
 			.font_(Font("Helvetica-Bold", 12));
