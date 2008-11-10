@@ -604,6 +604,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		
 		window.view.keyDownAction = { arg view,char,modifiers,unicode,keycode;
 			if(unicode == 32, {ca.timeReference.togglePlay});
+			if(unicode == 13, {ca.timeReference.stop});
 		};
 		
 		scrollView = SCScrollView(window, Rect(0, 0, 800, 334));
@@ -1017,7 +1018,7 @@ BMSnapShotSliders : BMAbstractGUI {
 		window.view.decorator = FlowLayout(window.view.bounds);
 		window.view.background = Color.rand.alpha_(0.3);
 		sliders = IdentityDictionary.new;
-		snapshot.values.keys.sort.do({|label, i|
+		snapshot.values.keys.asArray.sort.do({|label, i|
 			var initVal;
 			initVal = snapshot.values[label];
 			sliders[label] = EZSlider.new(window, 640@20, label.asString, nil,

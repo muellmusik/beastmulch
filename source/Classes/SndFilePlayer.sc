@@ -224,6 +224,7 @@ BMSoundFilePlayerGUI : BMAbstractGUI {
 		
 		window.view.keyDownAction = { arg view,char,modifiers,unicode,keycode;
 			if(unicode == 32, {player.togglePlay});
+			if(unicode == 13, {player.stop});
 		};
 		
 		clockView = SCStaticText.new(window, Rect(0,0,200,45));
