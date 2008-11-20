@@ -46,8 +46,8 @@ BMMotorBEAST : BMAbstractController {
 	
 	// we set the local value on loopback, so we're always in sync
 	setFaderVal { |faderNum, val| 
-		//addr.sendMsg("/MF/" ++ (faderNum - 1), spec.map(val).asInteger.postln) 
-		addr.sendMsg("/MF", *(valueArray.copy[faderNum - 1] = spec.map(val).asInteger))
+		addr.sendMsg("/MF/" ++ (faderNum - 1), spec.map(val).asInteger.postln) 
+		//addr.sendMsg("/MF", *(valueArray.copy[faderNum - 1] = spec.map(val).asInteger))
 	}
 	
 	getAllFaders { ^valueArray.collect({|val| spec.unmap(val)}) }
@@ -63,6 +63,14 @@ BMMotorBEAST : BMAbstractController {
 //	}
 	
 //	faderNames {^Array.fill(numFaders, {|i| name.asString ++ "-" ++ (i+1)})}
+
+	setLED {|faderNum, colour|
+		addr.sendMsg("/mfLED/" ++ (faderNum - 1), colour)
+	}
+	
+	setAllLED {|colour|
+		addr.sendMsg("/mfLED/0", *(colour ! 32))
+	}
 	
 	// perhaps this should be more generalised and named something else like 'preset'
 	mappings {
