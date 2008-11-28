@@ -613,7 +613,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		scrollView = SCScrollView(window, Rect(0, 0, 800, 334));
 		scrollView.hasBorder = true;
 		scrollView.resize = 2;
-		//scrollView.background = Color.black;
+		scrollView.background = Color.black;
 		
 		sfView = SCSoundFileView.new(scrollView, Rect(0,20, 798, 300));
 		sfView.background = HiliteGradient(Color.blue, Color.cyan, steps: 256);
@@ -632,7 +632,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		sfView.mouseMoveAction = sfView.mouseDownAction;
 		sfView.gridOn = false;
 		//sfView.gridResolution = 10;
-		//sfView.yZoom = 0.5;
+		sfView.yZoom = 0.8;
 		
 		scrollView.canFocus_(false);
 		
@@ -789,7 +789,6 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			
 		//b.setStatic(0,true);
 		
-		
 		if(activeSequence.isNil, {activeSequence = ca.sequences.values[0]});
 		if(activeSnapshot.isNil, {activeSnapshot = activeSequence.snapshots[0]});
 		
@@ -867,7 +866,9 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 //				});
 			});
 		};
-		envView.mouseDownAction = {|view|
+		envView.mouseDownAction = {|view, x, y, modifiers, buttonNumber, clickCount|
+			var newTime;
+			\foo.postln;
 			// deselects on click in midst
 			activeSequence = seqs[view.index];
 			activeSnapshot = snapshots[view.index];
@@ -879,6 +880,9 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 				curSSTime.string_("Selected Snapshot Time:" + activeSnapshot.time.asTimeString);
 			}, {
 				curSSTime.string_("Selected Snapshot Time:");
+				// update time cursor
+				newTime = (x / view.bounds.width) * sf.duration;
+				ca.timeReference.setTime(newTime);
 			});
 			//envView.mouseMoveAction.value(envView);	
 		};
@@ -898,8 +902,8 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	setFillColors {
 		var color;
 		snapshots.do({|ss, i|
-			color =  if(ss === activeSnapshot, {Color.grey}, {
-				if(seqs[i] === activeSequence, {Color.blue}, {Color.black.alpha_(0.6)})
+			color =  if(ss === activeSnapshot, {Color.grey.alpha_(0.9)}, {
+				if(seqs[i] === activeSequence, {Color.blue.alpha_(0.9)}, {Color.black.alpha_(0.6)})
 			});
 			envView.setFillColor(i, color);
 		});
