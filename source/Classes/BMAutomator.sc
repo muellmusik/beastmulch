@@ -613,9 +613,9 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		scrollView = SCScrollView(window, Rect(0, 0, 800, 334));
 		scrollView.hasBorder = true;
 		scrollView.resize = 2;
-		//scrollView.background = Color.black;
+		scrollView.background = Color.blue;
 		
-		sfView = SCSoundFileView.new(scrollView, Rect(0,0, 798, 320));
+		sfView = SCSoundFileView.new(scrollView, Rect(0,20, 798, 300));
 		sfView.background = HiliteGradient(Color.blue, Color.cyan, steps: 256);
 		//a.waveColors_([HiliteGradient(Color.blue, Color.cyan), HiliteGradient(Color.blue, Color.cyan)]);
 		sfView.waveColors_(Array.fill(sf.numChannels, {|i| Color.blue.blend(Color.cyan, 1 / (sf.numChannels - 1) * i)})); 
@@ -630,12 +630,13 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		};
 		
 		sfView.mouseMoveAction = sfView.mouseDownAction;
-		sfView.gridResolution = 10;
-		sfView.yZoom = 0.5;
+		sfView.gridOn = false;
+		//sfView.gridResolution = 10;
+		//sfView.yZoom = 0.5;
 		
 		scrollView.canFocus_(false);
 		
-		backView = SCCompositeView(scrollView, Rect(0, 0,  798, sfView.bounds.height)).background_(Color.clear);
+		backView = SCCompositeView(scrollView, Rect(0, 20,  798, sfView.bounds.height)).background_(Color.clear);
 		backView.relativeOrigin = false;
 		
 		sfView.soundfile = sf;
@@ -646,19 +647,28 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		timesView.background = Color.clear;
 		
 		timesView.drawFunc = {
-			var sixtySecs, bounds;
+			var tenSecs, thirtySecs, bounds;
 			bounds = timesView.bounds;
 			Pen.addRect(bounds);
 			Pen.fillRadialGradient(bounds.center, bounds.center, 0, bounds.width, 
-				Color.cyan.alpha_(0.6), Color.clear);
-			sixtySecs = timesView.bounds.width * durInv * 30;
+				Color.cyan, Color.clear);
+			tenSecs = timesView.bounds.width * durInv * 10;
+			Pen.strokeColor = Color.blue.alpha_(0.8);
+			(sf.duration / 10).floor.do({|i|
+				var x;
+				x = (i + 1) * tenSecs;
+				Pen.line(x@0, x@20);
+				Pen.stroke;
+			});
+			thirtySecs = timesView.bounds.width * durInv * 30;
 			(sf.duration / 30).floor.do({|i|
 				((i + 1) * 30).asTimeString.drawLeftJustIn(
-					Rect((i+1) * sixtySecs + 1, 0, 50, 20),
+					Rect((i+1) * thirtySecs + 1, 0, 50, 20),
 					Font("Helvetica-Bold", 11), 
 					Color.black
 				); 
 			});
+			Pen.strokeColor = Color.black;
 			Pen.lineDash_(FloatArray[3,3]);
 			Pen.line(0@20, timesView.bounds.width@20);
 			Pen.stroke;
@@ -675,9 +685,9 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		SmoothSlider(window, Rect(0, 5, 100, 10)).action_({|view| 
 			var width;
 			width = scrollView.bounds.width - 2 + (sf.duration * 160 * ([0.001, 1.001, \exp].asSpec.map(view.value) - 0.001));
-			sfView.bounds = Rect(0,0, width, 320);
-			envView.bounds = Rect(0,0, width, sfView.bounds.height);
-			backView.bounds = Rect(0, 0, width, sfView.bounds.height); 
+			sfView.bounds = Rect(0,20, width, 300);
+			envView.bounds = Rect(0,20, width, sfView.bounds.height);
+			backView.bounds = Rect(0, 20, width, sfView.bounds.height); 
 			timesView.bounds = Rect(0, 0, width, 20);
 			sfView.selections.size.do({|i| 
 				sfView.setSelectionSize(i, sf.numFrames / sfView.bounds.width);
@@ -764,7 +774,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	makeEnvView {
 		envView.notNil.if({envView.remove});
 		
-		envView = SCEnvelopeView(backView, Rect(0, 0, sfView.bounds.width, sfView.bounds.height))
+		envView = SCEnvelopeView(backView, Rect(0, 20, sfView.bounds.width, sfView.bounds.height))
 			.thumbWidth_(19)
 			.thumbHeight_(19)
 			.drawLines_(true)
