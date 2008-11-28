@@ -613,7 +613,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		scrollView = SCScrollView(window, Rect(0, 0, 800, 334));
 		scrollView.hasBorder = true;
 		scrollView.resize = 2;
-		scrollView.background = Color.blue;
+		//scrollView.background = Color.black;
 		
 		sfView = SCSoundFileView.new(scrollView, Rect(0,20, 798, 300));
 		sfView.background = HiliteGradient(Color.blue, Color.cyan, steps: 256);
@@ -643,21 +643,25 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		
 		sfView.elasticMode = 1;
 		
-		timesView = SCUserView(scrollView, Rect(0, 0, sfView.bounds.width, 20));
+		timesView = SCUserView(scrollView, Rect(0, 0, sfView.bounds.width, scrollView.bounds.height - 20));
 		timesView.background = Color.clear;
+		timesView.canFocus_(false);
 		
 		timesView.drawFunc = {
 			var tenSecs, thirtySecs, bounds;
 			bounds = timesView.bounds;
-			Pen.addRect(bounds);
-			Pen.fillRadialGradient(bounds.center, bounds.center, 0, bounds.width, 
-				Color.cyan, Color.clear);
+			Pen.addRect(Rect(0, 0, sfView.bounds.width, 20));
+			Pen.fillColor = Color.new255(0, 0, 238);
+			Pen.fill;
+//			Pen.fillRadialGradient(bounds.center, bounds.center, 0, bounds.width, 
+//				Color.cyan, Color.clear);
 			tenSecs = timesView.bounds.width * durInv * 10;
+			Pen.beginPath;
 			Pen.strokeColor = Color.blue.alpha_(0.8);
 			(sf.duration / 10).floor.do({|i|
 				var x;
 				x = (i + 1) * tenSecs;
-				Pen.line(x@0, x@20);
+				Pen.line(x@(scrollView.bounds.height -21), x@0);
 				Pen.stroke;
 			});
 			thirtySecs = timesView.bounds.width * durInv * 30;
