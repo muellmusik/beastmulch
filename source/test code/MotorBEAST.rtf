@@ -7,6 +7,7 @@
 \f0\fs18 \cf0 b = \cf2 BMMotorBEAST\cf0 (n = \cf2 NetAddr\cf0 (\cf3 "192.168.5.77"\cf0 , 57120), \cf4 \\foo\cf0 , s);\
 \
 (\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf5 // to debug messages\cf0 \
 b = \cf2 BMMotorBEAST\cf0 (n = \cf2 NetAddr\cf0 (\cf3 "127.0.0.1"\cf0 , 57120), \cf4 \\foo\cf0 , s);\
 \
@@ -29,7 +30,20 @@ b.setAllFaders(0 ! 32)\
 \
 ~automator.dump.inspect\
 \
-b.setLED(1, 0);\
+// args are fader num (starts from 1, so 0 in OSC), setting\
+b.setLED(1, 0);// nothing\
+b.setLED(1, 1);// nothing\
+b.setLED(1, 2);// fader 1 is green\
+b.setLED(1, 3);// fader 1 is still green\
+b.setLED(2, 1);// fader 1 turns yellow\
+b.setLED(2, 2);// both fader 1 and 2 turn green\
+b.setLED(2, 3);// fader 1 turns yellow fader 2 stays green\
+b.setLED(3, 3);// fader 2 turns yellow fader 3 turns green\
+\
+b.setAllLED(0); // all off\
+b.setAllLED(1); // all red\
+b.setAllLED(2); // all green\
+b.setAllLED(3); // all yellow\
 \
 \{ 32.do(\{\cf2 |i|\cf0  b.setFaderVal(i + 1, 0.8); 0.3.wait;\})\}.fork\
 \
