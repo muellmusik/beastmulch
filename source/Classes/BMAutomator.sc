@@ -571,6 +571,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	var ca, <envView;
 	var path, sf, durInv, sfView, scrollView, selectView, backView, timesView;
 	var activeSequence, activeSnapshot;
+	var sequenceLevels;
 	var dependees;
 	var seqs, snapshots, names, times, connections;
 	var addSS, remSS;
@@ -586,6 +587,8 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		ca = argCa;
 		name = argName;
 		dependees = [ca.addDependant(this), ca.timeReference.addDependant(this)];
+		sequenceLevels = IdentityDictionary.new;
+		ca.sequences.do({|sq| sequenceLevels[sq] = 0.1});
 	}
 	
 	makeWindow {
@@ -632,7 +635,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		
 		scrollView.canFocus_(false);
 		
-		backView = SCCompositeView(scrollView, Rect(0,300,  798, 20)).background_(Color.black.alpha_(0.6));
+		backView = SCCompositeView(scrollView, Rect(0, 0,  798, sfView.bounds.height)).background_(Color.clear);
 		backView.relativeOrigin = false;
 		
 		sfView.soundfile = sf;
@@ -673,8 +676,8 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			var width;
 			width = scrollView.bounds.width - 2 + (sf.duration * 160 * ([0.001, 1.001, \exp].asSpec.map(view.value) - 0.001));
 			sfView.bounds = Rect(0,0, width, 320);
-			envView.bounds = Rect(0,300, width, 20);
-			backView.bounds = Rect(0,300, width, 20); 
+			envView.bounds = Rect(0,0, width, sfView.bounds.height);
+			backView.bounds = Rect(0, 0, width, sfView.bounds.height); 
 			timesView.bounds = Rect(0, 0, width, 20);
 			sfView.selections.size.do({|i| 
 				sfView.setSelectionSize(i, sf.numFrames / sfView.bounds.width);
@@ -761,7 +764,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	makeEnvView {
 		envView.notNil.if({envView.remove});
 		
-		envView = SCEnvelopeView(backView, Rect(0, 300, sfView.bounds.width, 20))
+		envView = SCEnvelopeView(backView, Rect(0, 0, sfView.bounds.width, sfView.bounds.height))
 			.thumbWidth_(19)
 			.thumbHeight_(19)
 			.drawLines_(true)
@@ -783,20 +786,26 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		envView.canFocus_(false);
 	
 		envView.mouseMoveAction = {|view|
-			var time, ss;
-			time = view.value[0][view.index];
+			var time, ss, index;
+			index = view.index;
+			time = view.value[0][index];
 			
 			time.notNil.if({
 				curSSTime.string_("Selected Snapshot Time:" + (sf.duration * time).asTimeString); 
-				ss = snapshots[view.index];
+				ss = snapshots[index];
 				sfView.setEditableSelectionStart(view.index, true);
 				sfView.setEditableSelectionSize(view.index, true);
-				sfView.setSelection(view.index, [sf.numFrames * time, sf.numFrames / sfView.bounds.width]); 
-				sfView.setSelectionColor(view.index, Color.white);
+				sfView.setSelection(index, [sf.numFrames * time, sf.numFrames / sfView.bounds.width]); 
+				sfView.setSelectionColor(index, Color.white);
 				//ss.time = (time * sf.duration);
 				//envView.setString(view.index, ss.name.asString + (time * sf.duration).asTimeString(0.01));
-				sfView.setEditableSelectionStart(view.index, false);
-				sfView.setEditableSelectionSize(view.index, false);
+				sfView.setEditableSelectionStart(index, false);
+				sfView.setEditableSelectionSize(index, false);
+				
+				// match levels
+				sequenceLevels[seqs[index]] = envView.value[1][index];
+				envView.value_([view.value[0], seqs.collect({|seq| sequenceLevels[seq] })]); 
+				
 				this.drawSelections;
 			});
 		};
@@ -821,6 +830,9 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 //					envView.selectIndex(index - 1);
 //					envView.refresh;
 //				});
+				
+				// match levels
+				sequenceLevels[seqs[index]] = envView.value[1][index];
 
 				this.resetPoints;
 				this.drawSelections;
@@ -873,7 +885,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		var color;
 		snapshots.do({|ss, i|
 			color =  if(ss === activeSnapshot, {Color.grey}, {
-				if(seqs[i] === activeSequence, {Color.blue}, {Color.black})
+				if(seqs[i] === activeSequence, {Color.blue}, {Color.black.alpha_(0.6)})
 			});
 			envView.setFillColor(i, color);
 		});
@@ -908,7 +920,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		});
 		
 		// values
-		envView.value_([times, 0.1 ! times.size]); 
+		envView.value_([times, seqs.collect({|seq| sequenceLevels[seq] })]); 
 		
 		// connections
 		//seqs.doAdjacentPairs({|a,b, i| if(a===b, {envView.connect(i, [i +1])})});
@@ -928,7 +940,10 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	}
 	
 	drawConnections {
-		seqs.doAdjacentPairs({|a,b, i| if(a === b && (a === activeSequence), {
+		//seqs.doAdjacentPairs({|a,b, i| if(a === b && (a === activeSequence), {
+//			envView.connect(i, [i +1])
+//		}, {envView.connect(i, [])})});
+		seqs.doAdjacentPairs({|a,b, i| if(a === b, {
 			envView.connect(i, [i +1])
 		}, {envView.connect(i, [])})});
 	}
