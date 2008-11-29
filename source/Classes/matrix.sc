@@ -313,7 +313,7 @@ BMInOutArray : List {
 		subArrays[name] = elementNames.sect(keys); 
 		index = subArraysKeys.indexOf(name);
 		if (index.isNil) { subArraysKeys = subArraysKeys.add(name) };
-		this.changed 
+		//this.changed 
 	}
 	
 	getSubArray {|name| ^subArrays[name].collectAs({|key| key->this[key]}, this.class); }
@@ -323,65 +323,79 @@ BMInOutArray : List {
 	removeSubArray {|name|
 		subArrays[name] = nil; 
 		subArraysKeys.remove(name);
-		this.changed 
+		//this.changed 
 	}
 	
 	addToSubArray {| name, element |	
 		subArrays[name] = subArrays[name].add(element); 
-		this.changed
+		//this.changed
 	}
 	
 	removeFromSubArray {| name, element |	
 		subArrays[name].remove(element); 
-		this.changed 
+		//this.changed 
 	}
 	
 	subArrays {^subArraysKeys }
 	
-	add { |assoc| var index;
+	add { |assoc|
+		var index;
 		assoc = assoc.asAssociation;
 		index = keys.indexOf(assoc.key);
 		index.isNil.if({array = array.add(assoc); keys = keys.add(assoc.key);},
 			{array.put(index, assoc)});
-		this.changed;
+		//this.changed;
 	}
 	
+	insert { arg index, item; 
+		item = item.asAssociation;
+		keys.indexOf(item.key).isNil.if({
+			array = array.insert(index, item); 
+			keys = keys.insert(index, item.key)
+		}, {"Item with key % already exists.".format(item.key).error});	
+	}
+
 	remove { ^this.shouldNotImplement(thisMethod) }
 
-	removeAt {|key| var index;
+	removeAt {|key| var index, val;
 		index = keys.indexOf(key);
-		array.removeAt(index);
-		keys.removeAt(index);
+		index.notNil.if({
 		subArrays.do({|sa| sa.remove(key)});
-		this.changed
-	}
-	
-	rename {| oldName, newName | var index;
-		index = keys.indexOf(oldName);
-		keys[index] = newName;
-		array[index].key = newName;
-		this.changed(\rename)
-	}
-	
-	moveSpeakerUp {|index|
-		if(index > 0, {
-			keys = keys.swap(index - 1, index);
-			array = array.swap(index - 1, index);
-			this.changed(\moveUp);
+		keys.removeAt(index);
+		val = array.removeAt(index);
+		//this.changed
 		});
-	}
-
-	moveSpeakerDown {|index|
-		if(index < array.lastIndex, {
-			keys = keys.swap(index + 1, index);
-			array = array.swap(index + 1, index);
-			this.changed(\moveDown);
-		});
+		^val
 	}
 	
-	storeSpeakerArray {
-		this.changed(\store, \system, \Speakers, this);
-	}
+	swap { arg i,j; array.swap(i, j); keys.swap(i, j) }
+	
+//	rename {| oldName, newName | var index;
+//		index = keys.indexOf(oldName);
+//		keys[index] = newName;
+//		array[index].key = newName;
+//		this.changed(\rename)
+//	}
+//	
+//	moveSpeakerUp {|index|
+//		if(index > 0, {
+//			keys = keys.swap(index - 1, index);
+//			array = array.swap(index - 1, index);
+//			this.changed(\moveUp);
+//		});
+//	}
+//
+//	moveSpeakerDown {|index|
+//		if(index < array.lastIndex, {
+//			keys = keys.swap(index + 1, index);
+//			array = array.swap(index + 1, index);
+//			this.changed(\moveDown);
+//		});
+//	}
+//	
+//	storeSpeakerArray {
+//		this.changed(\store, \system, \Speakers, this);
+//	}
 	
 	at {|key| var index;
 		index = keys.indexOf(key);
