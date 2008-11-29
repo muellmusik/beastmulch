@@ -302,7 +302,7 @@ BMConfigurationsGUI : BMAbstractGUI {
 		pseudoTimes = pseudoTimes * chainView.bounds.width;
 		
 		points = Array.fill(objects.size, {|i|  Point(pseudoTimes[i], pseudoLevels[i])});
-		rects = points.collect({|point| Rect.aboutPoint(point, 60, 25)});
+		rects = points.collect({|point| Rect.aboutPoint(point, 70, 25)});
 
 		chainView.drawFunc_({
 			// draw lines
