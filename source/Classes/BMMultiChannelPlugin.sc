@@ -773,14 +773,14 @@ BMMultichannelPluginsRack : BMAbstractAudioChainElement {
 //		});
 //	}
 	
-	*new { |ins, group, server, name|
-		^super.new.init(ins, group, server ? Server.default, name);
+	*new { |ins, outs, group, server, name|
+		^super.new.init(ins, outs ? ins, group, server ? Server.default, name);
 		// default name is class
 	}
 	
-	init {|argins, arggroup, argserver, argname|
+	init {|argins, argouts, arggroup, argserver, argname|
 		ins = argins;
-		outs = argins;
+		outs = argouts;
 		group = arggroup;
 		server = argserver;
 		name = argname  ? this.makeName;
