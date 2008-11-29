@@ -35,7 +35,8 @@ BMMasterFader : BMAbstractAudioChainElement {
 	}
 	
 	mappings_ { | dict |
-		level = dict[\level];
+		dict = dict ? ();
+		level = dict[\level] ? -12;
 	}
 	
 	// a little hacky but has worked ;-)

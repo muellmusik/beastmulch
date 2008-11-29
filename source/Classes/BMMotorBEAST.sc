@@ -78,6 +78,7 @@ BMMotorBEAST : BMAbstractController {
 	}
 	
 	mappings_ {|mappings|
+		mappings = mappings ? ();
 		this.setAllFaders(mappings[\faders]);
 	}
 	

@@ -115,6 +115,7 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 	
 	mappings_ {|mappingsDict| // same format as instance var
 		this.clear;
+		mappingsDict = mappingsDict ? ();
 		mappingsDict.keysValuesDo({|input, outputs| this.connect(input, outputs.asArray)});
 	}
 	

@@ -816,6 +816,7 @@ BMMultichannelPluginsRack : BMAbstractAudioChainElement {
 	mappings_ { |dict| 
 		this.plugins.do({|plugin| plugin.release;});
 		plugins = List.new;
+		dict = dict ? ();
 		dict[\plugins].do({|pluginArray|
 			var plugin;
 			plugin = BMMultichannelPlugin(pluginArray[0], pluginArray[1], pluginArray[2], server, 

@@ -154,6 +154,7 @@ BMAbstractController {
 	}
 	
 	mappings_ {|mappings|
+		mappings = mappings ? ();
 		this.setAllLabels(mappings[\labels]);
 		this.setAllFaders(mappings[\faders]);
 	}

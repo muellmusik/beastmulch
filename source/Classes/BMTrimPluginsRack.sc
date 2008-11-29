@@ -30,10 +30,13 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 	
 	mappings { ^strips.collect({|strip, name| strip.mappings});}
 	
-	mappings_ { |dict| dict.keysValuesDo({|name, mappings| 
-		strips[name].notNil.if({
-			strips[name].mappings_(mappings)});
-		},{ error("Plugin Strip:" + name + "not defined.") });
+	mappings_ { |dict| 
+		dict = dict ? ();
+		dict.keysValuesDo({|name, mappings| 
+			strips[name].notNil.if({
+				strips[name].mappings_(mappings);
+			},{ error("Plugin Strip:" + name + "not defined.") });
+		});
 	}
 	
 	at { |channel| ^strips[channel] }
@@ -186,6 +189,7 @@ BMTrimPluginsStrip {
 	mappings_ { |dict| 
 		this.plugins.do({|plugin| plugin.release;});
 		plugins = List.new;
+		dict = dict ? ();
 		this.trim_(dict[\trim]);
 		dict[\plugins].do({|pluginArray|
 			var plugin;
