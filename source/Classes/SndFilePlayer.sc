@@ -191,9 +191,9 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 		synth.set(\rate, rate, \loop, 0);
 	}
 	
-	makeGroup {
-		group = Group.head(server);
-	}
+//	makeGroup {
+//		group = Group.head(server);
+//	}
 	
 	cmdPeriod { blockPlay = false; this.makeGroup }
 	

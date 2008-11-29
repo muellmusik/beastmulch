@@ -40,7 +40,8 @@ BMAbstractAudioChainElement {
 	
 	free {CmdPeriod.remove(this);} // overrride to do more complicated things
 	
-	makeGroup { ^this.subclassResponsibility(thisMethod); }
+	// this way if you make them in order
+	makeGroup { group = Group.tail(server); }
 	
 	makeName { ^(this.class.name ++ UniqueID.next)} 
 	
@@ -77,6 +78,9 @@ BMAbstractAudioSource : BMAbstractAudioChainElement {
 	togglePlay { ^nil }
 	
 	setTime { }
+	
+	// sources at the head
+	makeGroup { group = Group.head(server);}
 }
 
 // valueArray holds the controller value in its native form

@@ -160,9 +160,9 @@ BMAudioMatrix : BMAbstractMatrix {
 		}).send(server);	
 	}
 	
-	makeGroup {
-		group = Group.head(server);
-	}
+//	makeGroup {
+//		group = Group.head(server);
+//	}
 }
 
 // maps amp scales to control busses
@@ -259,9 +259,9 @@ BMAmpControlMatrix : BMAbstractMatrix {
 		}).send(server);
 	}
 	
-	makeGroup {
-		group = Group.tail(server);
-	}
+//	makeGroup {
+//		group = Group.tail(server);
+//	}
 	
 	controlsForInputs { ^true }
 }

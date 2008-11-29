@@ -59,7 +59,7 @@ BMMasterFader : BMAbstractAudioChainElement {
 	
 	} 
 	
-	makeGroup { group = Group.tail(server) }
+//	makeGroup { group = Group.tail(server) }
 	
 	free { 
 		group.release(BMOptions.crossfade);

@@ -61,7 +61,7 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 		callCmdPeriod = bool;
 	}
 	
-	makeGroup { group = Group.tail(server); }
+//	makeGroup { group = Group.tail(server); }
 	
 	free {
 		strips.do{| pluginsStrip | 

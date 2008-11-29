@@ -796,7 +796,7 @@ BMMultichannelPluginsRack : BMAbstractAudioChainElement {
 		^this.new(inAudioArray, group, server, name);
 	}
 	
-	makeGroup { group = Group.tail(server); }
+//	makeGroup { group = Group.tail(server); }
 	
 	clear { 
 		plugins = List.new;
