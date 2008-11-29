@@ -1,7 +1,7 @@
-{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf480
-{\fonttbl\f0\fnil\fcharset77 Monaco;}
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf350
+{\fonttbl\f0\fnil\fcharset0 Monaco;}
 {\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red191\green0\blue0;\red0\green0\blue191;
-\red96\green96\blue96;\red0\green115\blue0;}
+\red0\green0\blue191;\red96\green96\blue96;\red0\green115\blue0;\red0\green115\blue0;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
 \f0\fs18 \cf2 (\
@@ -28,12 +28,15 @@
 \cf4 var\cf2  pieceUpdater,  changeFromPlayerGUI = \cf4 true\cf2 , newPresetGUIFunc, addButton, backupManager;\
 \cf4 var\cf2  historyBackButton, historyFwdButton, historyCurrent, historyPos, historyText, historyTextFunc, versionNotStored;\
 \cf4 var\cf2  storeButton, labelsButton, labelsWindow;\
-\cf4 var\cf2  arrays, inputArray, outputArray;\
+\cf4 var\cf2  arrays, outputArray;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf5 var\cf0  controllers, inputs, inputArray;\cf2 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf4 var\cf2  hipassFunc, tweetFunc, vdistFunc;\
 \cf4 var\cf2  stopBlocked = \cf4 false\cf2 , playBlocked = \cf4 false\cf2 ;\
 \cf4 var\cf2  interpolFunc;\
 \cf4 var\cf2  concertManager, configManager, pieces, configurations;\
-\cf4 var\cf2  chainManagerFunc, chainManager, cond, configsGUI, configsGUIFunc;\
+\cf4 var\cf2  chainFunc, chain, cond, configsGUI, configsGUIFunc;\
 \
 cond = \cf4 Condition\cf2 .new;\
 s.bootSync(cond);\
@@ -41,32 +44,53 @@ s.bootSync(cond);\
 0.2.wait;\
 \
 \{\
-arrays		= \cf4 this\cf2 .executeFile(\cf4 Document\cf2 .current.dir ++ \cf5 "/january channel list.rtf"\cf2 );\
-inputArray 	= arrays[1];\
+arrays		= \cf4 this\cf2 .executeFile(\cf4 Document\cf2 .current.dir ++ \cf6 "/january channel list.rtf"\cf2 );\
+//inputArray 	= arrays[1];\
 ~outPutArrayFromTheChannelListFile = arrays[0]; \
 \
 controllersList = \cf4 List\cf2 [];\
-controllersList.add(etherSense = \cf4 BMEtherSense\cf2 (\cf4 NetAddr\cf2 (\cf5 "10.0.0.2"\cf2 , 57120), \cf6 \\Faders\cf2 ));\
+controllersList.add(etherSense = \cf4 BMEtherSense\cf2 (\cf4 NetAddr\cf2 (\cf6 "10.0.0.2"\cf2 , 57120), \cf7 \\Faders\cf2 ));\
 \
 backupManager	= \cf4 BMBackup\cf2 .new;\
 \cf3 //outputArray	= backupManager.rememberWorkspace([ \\concert, \\system, \\speakers ],  \{ BMInOutArray.new \});\cf2 \
 outputArray	= ~outPutArrayFromTheChannelListFile;\
-pieces		= backupManager.rememberWorkspace([ \cf6 \\concert\cf2 , \cf6 \\pieces\cf2  ],  \{ \cf4 List\cf2 [] \});\
-configurations= backupManager.rememberWorkspace(\cf6 \\configurations\cf2 ,  \{ (dict:  \cf4 IdentityDictionary\cf2 [], names: \cf4 List\cf2 [ \cf6 'all off'\cf2  ]) \});\
+pieces		= backupManager.rememberWorkspace([ \cf7 \\concert\cf2 , \cf7 \\pieces\cf2  ],  \{ \cf4 List\cf2 [] \});\
+configurations= backupManager.rememberWorkspace(\cf7 \\configurations\cf2 ,  \{ (dict:  \cf4 IdentityDictionary\cf2 [], names: \cf4 List\cf2 [ \cf7 'all off'\cf2  ]) \});\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf2    \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf2 player		= \cf4 BMSoundFilePlayer\cf2 .new(8);\
-chainManagerFunc = \{ \cf4 BMAudioChainManager\cf2 ( \
-					[player, \cf4 BMInOutArray\cf2 .hardwareInputArray], \
-					[\cf6 'Pre-Processing'\cf2 ->\cf4 BMTrimPluginsRack\cf2 , \cf6 'Input Levels'\cf2 ->\cf4 BMAmpControlMatrix\cf2 ], \
-					[\cf6 'Output Levels'\cf2 ->\cf4 BMAmpControlMatrix\cf2 , \cf6 'Post-Processing'\cf2 ->\cf4 BMTrimPluginsRack\cf2 , \cf6 'Master Fader'\cf2  -> \cf4 BMMasterFader\cf2 ],\
-					\cf4 BMAbstractController\cf2 .allControllers.values.collect(\{\cf4 |item|\cf2  item.getInputArray \}).flat.as(\cf4 BMInOutArray\cf2 ), \
-			 		outputArray\
-			       );\
-			       \};	\
-chainManager	= chainManagerFunc.value;\
-concertManager= \cf4 BMConcert\cf2 (pieces, [ outputArray, inputArray ], \cf4 BMAbstractController\cf2 .allControllers);\
+\cf2 player		= \cf4 BMSoundFilePlayer\cf2 .new(8, name: 'Player');\
+\cf3 //chainFunc = \{ BMAudiochain( \cf2 \
+\cf3 //					[player, BMInOutArray.hardwareInputArray], \cf2 \
+\cf3 //					['Pre-Processing'->BMTrimPluginsRack, 'Input Levels'->BMAmpControlMatrix], \cf2 \
+\cf3 //					['Output Levels'->BMAmpControlMatrix, 'Post-Processing'->BMTrimPluginsRack, 'Master Fader' -> BMMasterFader],\cf2 \
+\cf3 //					BMAbstractController.allControllers.values.collect(\{|item| item.getInputArray \}).flat.as(BMInOutArray), \cf2 \
+\cf3 //			 		outputArray\cf2 \
+\cf3 //			       );\cf2 \
+\cf3 //			       \};\cf2 	\
+\
+chainFunc = \{ \
+	controllers = \cf4 BMAbstractController\cf2 .masterInOutArray;\
+	inputs = [player, \cf4 BMInOutArray\cf2 .hardwareInputArray];\
+	//inputArray = \cf5 player\cf0 .asBMInOutArray ++ inputs[1].asBMInOutArray;\cf2 \
+	inputs.do(\{\cf4 |input| inputArray = inputArray ++ input\cf2 .asBMInOutArray \});\
+	inputArray.class.postln;\
+	[\
+		inputs,\
+		\cf4 BMTrimPluginsRack\cf2 (inputArray, name:\cf7 'Pre-Processing'\cf2 ), \
+		\cf4 BMAmpControlMatrix\cf2 (controllers, inputArray, name:\cf7 'Input Levels'\cf2 ),\
+		BMAudioMatrix(inputArray, outputArray, name: \cf8 'Audio Routing'\cf2 ), \
+		\cf4 BMAmpControlMatrix\cf2 (\cf0 controllers, outputArray, name:\cf7 'Output Levels'\cf2 ), \
+		\cf4 BMTrimPluginsRack\cf2 (\cf0 outputArray, \cf2 name: \cf7 'Post-Processing'\cf2 ), \
+		\cf4 BMMasterFader\cf2 (name: \cf7 'Master Fader'\cf2 )\
+	]\
+\
+\};	\
+			       \
+chain = chainFunc.value.postln;\
+\
+\
+concertManager= \cf4 BMConcert\cf2 (pieces, [ outputArray, \cf0 inputArray\cf2  ], \cf4 BMAbstractController\cf2 .allControllers);\
 configManager	= \cf4 BMConfigurations\cf2 (configurations);\
 \
 \cf3 // backupManager is added as dependant of outputArray, concertManager, configManager \cf2 \
@@ -76,19 +100,19 @@ configManager	= \cf4 BMConfigurations\cf2 (configurations);\
 \cf3 // [ outputArray, concertManager, configManager ].do\{| x | backupManager.stopWatching(x) \};\cf2 \
 \
 \{\
-configsGUIFunc =  \{\cf4 | chain |\cf2  \cf4 BMConfigurationsGUI\cf2 (chain, configManager, concertManager, \cf5 "Configuration Editor"\cf2 , 550 @ 550) \}; \
-configsGUI	 = configsGUIFunc.value(chainManager);\
-\cf4 BMConcertGUI\cf2 (concertManager, configManager, outputArray, chainManager, chainManagerFunc, configsGUIFunc, \cf5 "Concert Editor"\cf2 , 110 @ 600);\
+configsGUIFunc =  \{\cf4 | chain |\cf2  \cf4 BMConfigurationsGUI\cf2 (chain, configManager, concertManager, \cf6 "Configuration Editor"\cf2 , 550 @ 550) \}; \
+configsGUI	 = configsGUIFunc.value(chain);\
+\cf4 BMConcertGUI\cf2 (concertManager, configManager, outputArray, chain, chainFunc, configsGUIFunc, \cf6 "Concert Editor"\cf2 , 110 @ 600);\
 \}.defer;\
 \
 \cf4 Updater\cf2 (concertManager,  \
 	\{\cf4 | changed, change, pieceEvent |\cf2 \
 	 switch (change,\
-	 	\cf6 \\loadPiece\cf2 ,	 	\
+	 	\cf7 \\loadPiece\cf2 ,	 	\
 	   	\{ if (pieceEvent.path.notNil)\
 	   		\{ player.read(pieceEvent.path) \}\
 	   		\{ player.free \};\
-	   	  configManager.currentConfig_(pieceEvent.config, \cf6 \\concertEditor\cf2 );\
+	   	  configManager.currentConfig_(pieceEvent.config, \cf7 \\concertEditor\cf2 );\
 	    	\}\
 	 )\
 	\}\
