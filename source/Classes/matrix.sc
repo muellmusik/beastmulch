@@ -308,7 +308,8 @@ BMInOutArray : List {
 	// only do this if you're sure
 	freeBusObjects { busObjects.do(_.free) }
 	
-	defineSubArray {|name, elementNames| var index;
+	defineSubArray {|name, elementNames| 
+		var index;
 		subArrays[name] = elementNames; 
 		index = subArraysKeys.indexOf(name);
 		if (index.isNil) { subArraysKeys = subArraysKeys.add(name) };
@@ -351,6 +352,7 @@ BMInOutArray : List {
 		index = keys.indexOf(key);
 		array.removeAt(index);
 		keys.removeAt(index);
+		subArrays.do({|sa| sa.remove(key)});
 		this.changed
 	}
 	
@@ -388,9 +390,35 @@ BMInOutArray : List {
 	
 	atIndex { |index| ^array.at(index).value }
 	
+	put { arg key, value;
+		var atKey;
+		var index;
+		value ?? { this.removeAt(key); ^this };
+		this.add(key->value);
+	}
+	putAll { arg ... dictionaries; 
+		dictionaries.do {|dict| 
+			dict.keysValuesDo { arg key, value; 
+				this.put(key, value) 
+			}
+		}
+	}
+	
 	values { ^array.collect({|item| item.value }); }
 	
-	++ {|aCollection| ^this.addAll(aCollection)}
+	species {^this.class } // just in case
+	
+	++ {|aBMInOutArray| 
+		var newlist = this.species.new(this.size + aBMInOutArray.size);
+		newlist = newlist.addAll(this).addAll(aBMInOutArray);
+		this.subArrays.do({|key| 
+			newlist.defineSubArray(key, this.getSubArrayKeys(key));
+		});
+		aBMInOutArray.subArrays.do({|key| 
+			newlist.defineSubArray(key, aBMInOutArray.getSubArrayKeys(key));
+		});
+		^newlist
+	}
 	
 	isBMInOutArray {^true}
 	

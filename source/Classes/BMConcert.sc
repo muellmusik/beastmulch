@@ -40,15 +40,15 @@ BMConcert {
 
 BMConcertGUI  {
 
-	var <concertManager, <configManager, outputArray, <>chainManager, <chainManagerFunc, <configsGUIFunc, name;
+	var <concertManager, <configManager, outputArray, <>chain, <chainFunc, <configsGUIFunc, name;
 	var window, windowView, concertView, concertListView, listSection;
 	var addButton, deleteButton, buttonSection, upButton, downButton, storeButton;
 	var loadButton, configButton, systemSetup, configText;
 	var >onClose;
 	var selectable, pieceLoaded = false, loadButtonStates, speakersWindow, importPopUpMenu;
 	
-	*new {| concertManager, configManager, outputArray, chainManager, chainManagerFunc,  configsGUIFunc, name, origin |
-		  ^super.newCopyArgs(concertManager, configManager, outputArray,  chainManager, chainManagerFunc, configsGUIFunc, name)
+	*new {| concertManager, configManager, outputArray, chain, chainFunc,  configsGUIFunc, name, origin |
+		  ^super.newCopyArgs(concertManager, configManager, outputArray,  chain, chainFunc, configsGUIFunc, name)
 		  	.init.makeWindow(origin ? (40@200));
 	}
 	
@@ -233,7 +233,15 @@ BMConcertGUI  {
 								concertManager.concert.pieces = recalled.concert.pieces.deepCopy;
 								
 								configManager.currentConfig_('all off', \concertEditor);
-								chainManager.free;
+								//sources
+								chain[0].do({|el|
+       								el.free; // clean me up
+       								el.release; // remove me from BMAbstractAudioChainElement's dict
+								});
+								chain.copyToEnd(1).do({|el|
+       								el.free; // clean me up
+       								el.release; // remove me from BMAbstractAudioChainElement's dict
+								});
 								outputArray.subArrays.copy.do{| key | outputArray.removeSubArray(key) };
 								outputArray.keys.copy.do{| key | outputArray.removeAt(key) };
 								recalled.concert.system.speakers.subArrays.do{| key | 
@@ -252,8 +260,8 @@ BMConcertGUI  {
 										configManager.dict.add(name -> recalled.configurations.dict[name])
 									   };
 								configManager.names = configManager.names.addAll(recalled.configurations.names);
-								chainManager = chainManagerFunc.value;
-								configsGUIFunc.value(chainManager); 
+								chain = chainFunc.value;
+								configsGUIFunc.value(chain); 
 								
 								if (selectable.not) { this.listViewSelection(true) };
 								concertListView.value_(0).doAction;

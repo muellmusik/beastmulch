@@ -389,7 +389,14 @@ BMSpeakerArrayGUI{
 				   .extrude_(false).canFocus_(false)
 				   .states_([[ "OK", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ]])
 				   .action_({ concertGUI.configManager.currentConfig_('all off', \concertEditor);
-				   			concertGUI.chainManager.free;
+				   			concertGUI.chain[0].do({|el|
+       							el.free; // clean me up
+       							el.release; // remove from BMAbstractAudioChainElement's dict
+							});
+							concertGUI.chain.copyToEnd(1).do({|el|
+       							el.free; // clean me up
+       							el.release; // remove from BMAbstractAudioChainElement's dict
+							});
 				   			this.updateOutputArray(tempOutputArray);
 				   			this.rebuildChain;
 				   			window.close;
@@ -428,8 +435,8 @@ BMSpeakerArrayGUI{
 		}
 		
 		rebuildChain {
-			concertGUI.chainManager = concertGUI.chainManagerFunc.value;
-			concertGUI.configsGUIFunc.value(concertGUI.chainManager); 
+			concertGUI.chain = concertGUI.chainFunc.value;
+			concertGUI.configsGUIFunc.value(concertGUI.chain); 
 		}
 		
 		update {| changed, change |
