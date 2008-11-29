@@ -106,6 +106,10 @@ BMAbstractController {
 		allControls[ctrlName].value_(val);
 	}
 	
+	*masterInOutArray {
+		^allControllers.values.collect({|item| item.getInputArray }).flat.as(BMInOutArray);
+	}
+	
 	addControlsToIndex {
 		this.faderNames.do({|ctrlName, i|
 			ctrlName = ctrlName.asSymbol;
