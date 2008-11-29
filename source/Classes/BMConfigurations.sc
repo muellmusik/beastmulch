@@ -172,23 +172,23 @@ BMAudioChainManager {
 // display an element order and generates and tracks element GUIs
 // if an item in chain is an array it goes at the same level
 BMConfigurationsGUI : BMAbstractGUI {
-	var <chainManager, configurations, concertManager, name, guis, objects;
+	var <chain, configurations, concertManager, name, guis, objects;
 	var chainView;
 	var configView, configViewWidth, chainView, configListView;
 	var newButton, copyButton, deleteButton, storeButton, upButton, downButton;
 	
-	*new {|chainManager, configurations, concertManager, name, origin|
-		^super.new.init(chainManager, configurations, concertManager, name ? "Signal Chain").makeWindow(origin ? (250@550));
+	*new {|chain, configurations, concertManager, name, origin|
+		^super.new.init(chain, configurations, concertManager, name ? "Signal Chain").makeWindow(origin ? (250@550));
 	}
 	
-	init {|argChainManager, argConfigurations, argConcertManager, argName|
-		chainManager = argChainManager;
+	init {|argChain, argConfigurations, argConcertManager, argName|
+		chain = argChain;
 		configurations = argConfigurations;
 		concertManager = argConcertManager;
 		name = argName;
 		guis = IdentityDictionary.new; // use Objects as keys
 		configurations.addDependant(this);
-		chainManager.addDependant(this);
+		//chainManager.addDependant(this);
 	}
 
 	makeWindow {|origin|
@@ -197,11 +197,10 @@ BMConfigurationsGUI : BMAbstractGUI {
 
 		x 			= origin.x;
 		y			= origin.y;
-		objects 		= chainManager.sources 
-					  ++ [chainManager.sourceProcessing, chainManager.audioMatrix, chainManager.outputProcessing].flat;
+		objects 		= chain[0] ++ chain.copyToEnd(1);
 		selected 		= false ! objects.size;
-		rows 		= objects.size - chainManager.sources.size + 1;
-		columns		= chainManager.sources.size;
+		rows 		= chain.size;
+		columns		= chain[0].size;
 		width 		= max(450, columns * 150);
 		
 		pseudoLevels 	= (1..rows).normalize * 0.8 + 0.1;
@@ -345,7 +344,7 @@ BMConfigurationsGUI : BMAbstractGUI {
 		this.update;
 		configListView.value = configurations.names.indexOf('all off');
 		window.onClose = { configurations.removeDependant(this);
-						chainManager.removeDependant(this);
+						//chainManager.removeDependant(this);
 						guis.do{| element | 
 							if (element.isKindOf(BMMatrixMenuGUI) and: { element.matrixGUI.notNil }) 
 							   { element.matrixGUI.window.close };
