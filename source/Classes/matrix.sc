@@ -361,12 +361,13 @@ BMInOutArray : List {
 		^val
 	}
 	
-	at {|key| var index;
-		index = this.keys.indexOf(key);
+	at {|keyOrIndex| var index;
+		if(keyOrIndex.isNumber, { ^array.at(keyOrIndex); });
+		index = this.keys.indexOf(keyOrIndex);
 		index.notNil.if({^array.at(index)}, {^nil});
 	}
 	
-	atIndex { |index| ^array.at(index) }
+	//atIndex { |index| ^array.at(index) }
 	
 	// iffy?
 	put { arg key, value;
