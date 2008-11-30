@@ -582,6 +582,7 @@ BMMatrixGUI : BMAbstractGUI {
 	var matrix;
 	var xpos = 1, ypos = 1; // draw lines initially
 	var linex, liney, xdist, ydist;
+	var font;
 	
 	*new {|matrix, name|
 		^super.new.init(matrix, name ? matrix.name).makeWindow;
@@ -596,6 +597,7 @@ BMMatrixGUI : BMAbstractGUI {
 				BMAbstractController.allControls[inName].addDependant(this);
 			});
 		});
+		font = Font("Andale Mono", 12);
 	}
 	
 	makeWindow {	
@@ -606,6 +608,9 @@ BMMatrixGUI : BMAbstractGUI {
 		
 		outs = matrix.outNames;
 		numOuts = outs.size;
+		
+		hoffset = max(hoffset, ins.collect({|lbl| lbl.asString.bounds(font).width}).maxItem + 15);
+		voffset = max(voffset, outs.collect({|lbl| lbl.asString.bounds(font).width}).maxItem + 15);
 		
 		// scale size to available monitor size
 		screenBounds = SCWindow.screenBounds;
@@ -734,7 +739,7 @@ BMMatrixGUI : BMAbstractGUI {
 					Pen.translate((hoffset + hinterval + (hinterval * i)), (voffset / 2));
 					Pen.rotate(0.5pi);
 					item.asString.drawCenteredIn(Rect.aboutPoint(0@0, 40, 10), 
-						Font("Andale Mono", 12),
+						font,
 						Color.black
 					);
 				});
@@ -755,7 +760,7 @@ BMMatrixGUI : BMAbstractGUI {
 					Pen.translate((hoffset / 2), (voffset + vinterval + (vinterval * i)));
 					//Pen.rotate(0.5pi);
 					item.asString.drawCenteredIn(Rect.aboutPoint(0@0, 40, 10), 
-						Font("Andale Mono", 12),
+						font,
 						inColor
 					);
 				});
