@@ -205,6 +205,7 @@ BMSpeakerArrayGUI {
 								recalledstartArray = Object.readTextArchive(path[0]);
 								if (subarraysWindow.notNil) { subarraysWindow.window.close };
 								outputArray = recalledstartArray;
+								speakerList.items_(outputArray.keys.asArray);
 								speakerList.value_(0).doAction;
 								}, maxSize: 1);
 
@@ -213,8 +214,6 @@ BMSpeakerArrayGUI {
 					   		// export speaker array
 					   		2, { CocoaDialog.savePanel({| path | 
 							 	outputArray.writeTextArchive(path);
-//							 	outputArray.storeSpeakerArray;
-//							 	concertGUI.concertManager.storeSession(concertGUI.configManager);
 							    })
 					  		 }
 					      );
