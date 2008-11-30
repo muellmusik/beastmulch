@@ -285,9 +285,11 @@ BMInOutArray : List {
 		^super.new(size).init;
 	}
 	
-	*hardwareInputArray {|server|
+	*hardwareInputArray {|server, name = "Hardware In"|
 		server = server.asTarget.server; // account for nil
-		^BMHardwareInputsProxy.fill(server.options.numInputBusChannels, {|i| ("in" ++ (i+1)).asSymbol -> 			(server.options.numOutputBusChannels + i)});
+		^BMHardwareInputsProxy.fill(server.options.numInputBusChannels, {|i| 
+			(name.asString + (i+1)).asSymbol -> (server.options.numOutputBusChannels + i)
+		});
 	}
 	
 	init {
