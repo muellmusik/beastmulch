@@ -569,7 +569,6 @@ BMMatrixMenuGUI : BMAbstractGUI {
 	}
 }
 
-// could calculate hoffset and voffset using String:bounds
 BMMatrixGUI : BMAbstractGUI {
 
 	var h = 700, v = 700, numIns = 10, numOuts = 10, dotSize = 10;
