@@ -89,6 +89,9 @@ BMSpeaker {
 	asAssociation {^(name->this) }
 	
 	isBMSpeaker { ^true }
+	
+	// post pretty
+	printOn { arg stream; stream << this.class.name << "(" <<* [name, index] << ")" }
 }
 
 // Wrapper class for managing specs for different speaker models
