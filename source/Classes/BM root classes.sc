@@ -111,7 +111,7 @@ BMAbstractController {
 	}
 	
 	*masterInOutArray {
-		^allControllers.values.collect({|item| item.getInputArray }).flat.as(BMInOutArray);
+		^allControllers.values.collect({|item| item.asInOutArray }).flat.as(BMInOutArray);
 	}
 	
 	addControlsToIndex {
@@ -144,7 +144,11 @@ BMAbstractController {
 	
 	faderNames {^Array.fill(numFaders, {|i| name.asString ++ "-" ++ (i+1)})}
 	
-	getInputArray {
+//	getInputArray {
+//		^this.faderNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
+//	}
+
+	asInOutArray {
 		^this.faderNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
 	}
 	
