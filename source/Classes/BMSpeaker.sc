@@ -22,7 +22,7 @@ BMSpeaker {
 	var <>autoTrim = 0;
 	
 	*new {|name, index, x = 1, y = 1, z = 1, spec = 'Generic'|
-		^super.newCopyArgs(name, index, x, y, z, BMSpeakerSpec.specs[spec.asSymbol]).init;
+		^super.newCopyArgs(name.asSymbol, index, x, y, z, BMSpeakerSpec.specs[spec.asSymbol]).init;
 	}
 	
 	*newFromSpherical {|name, index, azi = 0, ele = 0, rad = 1, spec = 'Generic'|
@@ -69,10 +69,8 @@ BMSpeaker {
 //	}
 	
 	name_ {| newName | 
-		   var oldName = name; 
-		   name = newName.asSymbol; 
-		   this.changed(\rename, oldName, name) 
-		   }
+		name = newName.asSymbol;
+	}
 		   
 	//index_ {| new | index = new }
 	x_ {| new | x = new; this.init; this.changed(\newCoordinate) }
@@ -89,6 +87,8 @@ BMSpeaker {
 	asAssociation {^(name->this) }
 	
 	isBMSpeaker { ^true }
+	
+	key {^name }
 	
 	// post pretty
 	printOn { arg stream; stream << this.class.name << "(" <<* [name, index] << ")" }

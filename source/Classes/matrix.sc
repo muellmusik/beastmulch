@@ -271,9 +271,13 @@ BMAmpControlMatrix : BMAbstractMatrix {
 // Should this really be a subclass of list?
 // We really need to protect against some methods
 // Maybe better as a subclass of Dictionary
+
+// reworked to build keys on demand.
+// this is slow but much safer and simpler in terms of List compatibility
+// do we need subArraysKeys
 BMInOutArray : List {
 
-	var <keys, subArraysKeys;
+	var subArraysKeys;
 	var subArrays; // a dictionary of subArrayName->[key1, key2...]
 	var busObjects;
 	
@@ -287,10 +291,16 @@ BMInOutArray : List {
 	}
 	
 	init {
-		keys = Array.new;
 		subArrays = IdentityDictionary.new;
-		subArraysKeys = Array.new;
+		subArraysKeys = Array.new; // should this be a Set?
 	}
+	
+	// get these when we need them
+	keys {
+		^this.collectAs({|item| item.key }, Array);
+	}
+	
+	values { ^this.collectAs({|item| item.value }, Array); }
 	
 	*privateBusBlock {|name, size, server|
 		^this.new(size).addPrivateBusBlock(name, size, server);
@@ -308,108 +318,65 @@ BMInOutArray : List {
 	// only do this if you're sure
 	freeBusObjects { busObjects.do(_.free) }
 	
-	defineSubArray {|name, elementNames| 
-		var index;
-		subArrays[name] = elementNames.sect(keys); 
-		index = subArraysKeys.indexOf(name);
-		if (index.isNil) { subArraysKeys = subArraysKeys.add(name) };
-		//this.changed 
-	}
-	
-	getSubArray {|name| ^subArrays[name].collectAs({|key| key->this[key]}, this.class); }
-	
-	getSubArrayKeys {|name | ^subArrays[name] }
-	
-	removeSubArray {|name|
-		subArrays[name] = nil; 
-		subArraysKeys.remove(name);
-		//this.changed 
-	}
-	
-	addToSubArray {| name, element |	
-		subArrays[name] = subArrays[name].add(element); 
-		//this.changed
-	}
-	
-	removeFromSubArray {| name, element |	
-		subArrays[name].remove(element); 
-		//this.changed 
-	}
-	
-	subArrays {^subArraysKeys }
-	
 	add { |assoc|
 		var index;
-		assoc = assoc.asAssociation;
-		index = keys.indexOf(assoc.key);
-		index.isNil.if({array = array.add(assoc); keys = keys.add(assoc.key);},
-			{array.put(index, assoc)});
-		//this.changed;
+		if(assoc.isValidBMInOutArrayMember.not, { 
+			MethodError("Attempted to add invalid type to BMInOutArray", this).throw;
+		}, {
+			index = this.keys.indexOf(assoc.key);
+			index.isNil.if({array = array.add(assoc);}, {array.put(index, assoc)});
+		});
+	}
+	
+	addFirst { |assoc|
+		var index;
+		if(assoc.isValidBMInOutArrayMember.not, { 
+			MethodError("Attempted to add invalid type to BMInOutArray", this).throw;
+		}, {
+			index = this.keys.indexOf(assoc.key);
+			index.isNil.if({
+				array = array.addFirst(assoc);
+			}, {
+				MethodError("Item with key % already exists.".format(assoc.key), this);
+			});
+		});
 	}
 	
 	insert { arg index, item; 
-		item = item.asAssociation;
-		keys.indexOf(item.key).isNil.if({
-			array = array.insert(index, item); 
-			keys = keys.insert(index, item.key)
-		}, {"Item with key % already exists.".format(item.key).error});	
+		if(item.isValidBMInOutArrayMember.not, { 
+			MethodError("Attempted to add invalid type to BMInOutArray", this).throw;
+		}, {
+			this.keys.indexOf(item.key).isNil.if({
+				array = array.insert(index, item); 
+			}, {MethodError("Item with key % already exists.".format(item.key), this)});		});
 	}
 
-	remove { ^this.shouldNotImplement(thisMethod) }
-
-	removeAt {|key| var index, val;
-		index = keys.indexOf(key);
+	removeAt {|key| 
+		var index, val;
+		index = this.keys.indexOf(key);
 		index.notNil.if({
-		subArrays.do({|sa| sa.remove(key)});
-		keys.removeAt(index);
-		val = array.removeAt(index);
-		//this.changed
+			subArrays.do({|sa| sa.remove(key)});
+			val = array.removeAt(index);
 		});
 		^val
 	}
 	
-	swap { arg i,j; array.swap(i, j); keys.swap(i, j) }
-	
-//	rename {| oldName, newName | var index;
-//		index = keys.indexOf(oldName);
-//		keys[index] = newName;
-//		array[index].key = newName;
-//		this.changed(\rename)
-//	}
-//	
-//	moveSpeakerUp {|index|
-//		if(index > 0, {
-//			keys = keys.swap(index - 1, index);
-//			array = array.swap(index - 1, index);
-//			this.changed(\moveUp);
-//		});
-//	}
-//
-//	moveSpeakerDown {|index|
-//		if(index < array.lastIndex, {
-//			keys = keys.swap(index + 1, index);
-//			array = array.swap(index + 1, index);
-//			this.changed(\moveDown);
-//		});
-//	}
-//	
-//	storeSpeakerArray {
-//		this.changed(\store, \system, \Speakers, this);
-//	}
-	
 	at {|key| var index;
-		index = keys.indexOf(key);
-		index.notNil.if({^array.at(index).value}, {^nil});
+		index = this.keys.indexOf(key);
+		index.notNil.if({^array.at(index)}, {^nil});
 	}
 	
-	atIndex { |index| ^array.at(index).value }
+	atIndex { |index| ^array.at(index) }
 	
+	// iffy?
 	put { arg key, value;
 		var atKey;
 		var index;
 		value ?? { this.removeAt(key); ^this };
+		value = value.isBMSpeaker.if({value.name_(key)}, {key->value});
 		this.add(key->value);
 	}
+	
 	putAll { arg ... dictionaries; 
 		dictionaries.do {|dict| 
 			dict.keysValuesDo { arg key, value; 
@@ -417,8 +384,6 @@ BMInOutArray : List {
 			}
 		}
 	}
-	
-	values { ^array.collect({|item| item.value }); }
 	
 	species {^this.class } // just in case
 	
@@ -433,18 +398,37 @@ BMInOutArray : List {
 		});
 		^newlist
 	}
+
+	defineSubArray {|name, elementNames| 
+		var index;
+		subArrays[name] = elementNames.sect(this.keys); 
+		index = subArraysKeys.indexOf(name);
+		if (index.isNil) { subArraysKeys = subArraysKeys.add(name) };	}
+	
+	getSubArray {|name| 
+		^subArrays[name].collectAs({|key| this[key] }, this.class); 
+	}
+	
+	getSubArrayKeys {|name | ^subArrays[name] }
+	
+	removeSubArray {|name|
+		subArrays[name] = nil; 
+		subArraysKeys.remove(name);
+	}
+	
+	addToSubArray {| name, element |	
+		subArrays[name] = subArrays[name].add(element); 
+	}
+	
+	removeFromSubArray {| name, element |	
+		subArrays[name].remove(element); 
+	}
+	
+	subArrays {^subArraysKeys }
 	
 	isBMInOutArray {^true}
 	
 	asBMInOutArray {^this}
-	
-	update{| changed, change ... args |
-			"Speaker Array received an update".postln;
-		   switch(change,
-		   		\rename, { this.rename(*args) },
-		   		\newCoordinate, { this.changed(\newCoordinate) }
-		   )
-	}
 	
 	asUGenInput { ^this.values.asUGenInput }
 	
