@@ -148,7 +148,7 @@ BMAbstractController {
 //		^this.faderNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
 //	}
 
-	asInOutArray {
+	asBMInOutArray {
 		^this.faderNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
 	}
 	
