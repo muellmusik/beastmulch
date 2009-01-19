@@ -646,6 +646,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		timesView = SCUserView(scrollView, Rect(0, 0, sfView.bounds.width, scrollView.bounds.height - 20));
 		timesView.background = Color.clear;
 		timesView.canFocus_(false);
+		timesView.relativeOrigin_(false);
 		
 		timesView.drawFunc = {
 			var tenSecs, thirtySecs, bounds;
