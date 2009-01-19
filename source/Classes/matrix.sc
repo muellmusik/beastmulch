@@ -42,7 +42,7 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 			{ins = ins.collectAs({|item, i| item -> (i + server.options.numInputBusChannels)}, 
 				BMInOutArray);
 		});
-		ins.postln;
+		//ins.postln;
 		if(outs.isBMInOutArray.not, 
 			{outs = outs.collectAs({|item, i| item -> i}, BMInOutArray)});
 		// used for indices for matrix lookup
