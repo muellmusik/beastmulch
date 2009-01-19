@@ -170,7 +170,7 @@ BMSpeakerArrayGUI {
 			  				 		speakerList.doAction; // show any changed params
 			  					 })
 			  	   };
-			  	   instVar.value.boxColor_(Color.white.alpha_(0.3)).font_(Font("Helvetica", 12));
+			  	   instVar.value.background_(Color.white.alpha_(0.3)).font_(Font("Helvetica", 12));
 			  	 	
 			  	
 			  	speakerVarsView.decorator.shift(0, 10);

@@ -94,7 +94,7 @@ BMVirtualControllerSliders : BMAbstractGUI {
 					})
 				}, initVal
 			);
-			sliders[i].numberView.boxColor = Color.white.alpha_(0.4);
+			sliders[i].numberView.background = Color.white.alpha_(0.4);
 		
 		});
 		window.onClose = { virtualCont.removeDependant(this); onClose.value };

@@ -537,7 +537,7 @@ BMMultichannelPluginSpec {
 						plugin.set(key, setVal);
 					}, initVal
 				);
-				sliders[key].numberView.boxColor = Color.white.alpha_(0.4);
+				sliders[key].numberView.background = Color.white.alpha_(0.4);
 				SCStaticText(window, Rect(0,0,40,20)).string_(cspec.units);
 			
 			});
@@ -1016,7 +1016,7 @@ BMMultichannelPluginsStripGUI {
 //	 	ezKnob = EZKnob(containerView, 50@20, " Trim (dBFS)", \db.asSpec, 
 //	 		{|ez| trimPluginsStrip.trim_(ez.value);}, trimPluginsStrip.trim, false, 96, 70);
 //	 	ezKnob.labelView.align_(\left).font_(Font("Helvetica-Bold", 12));
-//	 	ezKnob.numberView.boxColor_(Color.white.alpha_(0.3));
+//	 	ezKnob.numberView.background_(Color.white.alpha_(0.3));
 	 	listView = SCListView(containerView, Rect(0, 0, 100, 334))
 	 		.items_(trimPluginsStrip.plugins.collect({|plugin| plugin.spec.name}));
 	 	listView.enterKeyAction = {

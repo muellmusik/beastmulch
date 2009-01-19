@@ -1067,7 +1067,7 @@ BMSnapShotSliders : BMAbstractGUI {
 					})
 				}, initVal
 			);
-			sliders[label].numberView.boxColor = Color.white.alpha_(0.4);
+			sliders[label].numberView.background = Color.white.alpha_(0.4);
 		
 		});
 		window.onClose = { snapshot.removeDependant(this); onClose.value };
