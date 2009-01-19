@@ -35,6 +35,13 @@ BMConcert {
 	storePiece {| pieceName, pieceAndConfig |
 		this.changed(\store, \piece, pieceName, pieceAndConfig)
 	}
+	
+	// maybe move this later
+	setSpeakers {|newSpeakers|
+		arrays[0] = newSpeakers;
+		concert.system.speakers = newSpeakers;
+		//this.changed(\store, \system, "speakers", newSpeakers);
+	}
 }
 
 
@@ -205,7 +212,7 @@ BMConcertGUI  {
 			   .states_([[ "Speakers", Color.black, Color.white.alpha_(0.8) ]])
 			   .action_({ 
 			   	if (speakersWindow.isNil) 
-			   		{ speakersWindow = BMSpeakerArrayGUI(outputArray, this, 
+			   		{ speakersWindow = BMSpeakerArrayGUI(outputArray, {|newSpeakers| outputArray = newSpeakers; concertManager.setSpeakers(newSpeakers); concertManager.storeSession(configManager); }, 
 			   									    "Speaker Array Definition", 129 @ 34);
 			   		  speakersWindow.onClose_({ speakersWindow = nil })
 			   		}

@@ -20,6 +20,7 @@ BMSpeakerArrayGUI {
 	   y = origin.y;
 		
 	   window		= SCWindow(name, Rect.new(x, y, 496, 554+31+10), false);
+	   window.alwaysOnTop_(true);
 	   window.view.decorator = FlowLayout(window.view.bounds);
 	   specsList	= SCScrollView(window, Rect(0, 0, 160, 508))
 				   .hasHorizontalScroller_(false)
@@ -309,33 +310,33 @@ BMSpeakerArrayGUI {
 	// popup window for a new speaker	 
 	makeNewSpeakerWindow {| newSpeaker, origin |
 
-		var window, name, speakerNameField, okButton, speakerIndexField;
+		var newWindow, name, speakerNameField, okButton, speakerIndexField;
 		 
 		origin		= origin ?? { 490 @ 500 };
-		window 		= SCWindow("New Speaker", Rect(origin.x, origin.y, 260, 110 + 30), false).userCanClose_(false);
-		window.view.decorator = FlowLayout(window.view.bounds, Point(10, 10), Point(10, 10));
+		newWindow 	= SCModalSheet(window, Rect(origin.x, origin.y, 260, 110 + 30), false);
+		newWindow.view.decorator = FlowLayout(newWindow.view.bounds, Point(10, 10), Point(10, 10));
 		
-		SCStaticText(window, 50 @ 20).string = "Name:";
+		SCStaticText(newWindow, 50 @ 20).string = "Name:";
 
-		speakerNameField	= SCTextView(window, 180 @ 20)
+		speakerNameField	= SCTextView(newWindow, 180 @ 20)
 							.hasVerticalScroller_(false)
 							.hasHorizontalScroller_(false)
 							.enterInterpretsSelection_(false);
 		
-		SCStaticText(window, 50 @ 20).string = "HW Out:";
-		speakerIndexField	= SCTextView(window, 180 @ 20)
+		SCStaticText(newWindow, 50 @ 20).string = "HW Out:";
+		speakerIndexField	= SCTextView(newWindow, 180 @ 20)
 							.hasVerticalScroller_(false)
 							.hasHorizontalScroller_(false)
 							.enterInterpretsSelection_(false);
 					
-		window.view.decorator.shift(0, 30);
+		newWindow.view.decorator.shift(0, 30);
 		
-		RoundButton(window, 115 @ 20)
+		RoundButton(newWindow, 115 @ 20)
 			   .extrude_(false).canFocus_(false) 
 			   .states_([[ "Cancel", Color.black, Color.white.alpha_(0.8) ]])
-			   .action_({	window.close });
+			   .action_({	newWindow.close });
 			   
-		okButton = RoundButton(window, 115 @ 20)
+		okButton = RoundButton(newWindow, 115 @ 20)
 				   .extrude_(false).canFocus_(false)
 				   .states_([[ "Create", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ]])
 				   .action_({ var name;
@@ -351,7 +352,7 @@ BMSpeakerArrayGUI {
 				   			        			 border: false
 				   			        	 ) 
 				   			          }
-				   			          {window.close;
+				   			          {newWindow.close;
 					   				  newSpeaker.name = name;
 					   				  newSpeaker.index = speakerIndexField.string.asInteger - 1;
 									  outputArray.add(newSpeaker);
@@ -361,7 +362,6 @@ BMSpeakerArrayGUI {
 				   				 }
 				   		   });
 		speakerNameField.focus;
-		window.front
 	}		 
 }
 
