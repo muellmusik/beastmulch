@@ -42,6 +42,7 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 			{ins = ins.collectAs({|item, i| item -> (i + server.options.numInputBusChannels)}, 
 				BMInOutArray);
 		});
+		ins.postln;
 		if(outs.isBMInOutArray.not, 
 			{outs = outs.collectAs({|item, i| item -> i}, BMInOutArray)});
 		// used for indices for matrix lookup
@@ -49,7 +50,9 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 		outNames = outs.keys;
 		if(group.isNil, {this.makeGroup});
 		this.newCollections;
-		defname = "Node" ++ this.hash;
+		defname = ("BMMatrix-" ++ name);
+//		postf("defname %\n", defname);
+//		defname.do(_.postln);
 		this.sendDef;
 		CmdPeriod.add(this);
 		allChainElements[name] = this;
@@ -360,13 +363,13 @@ BMInOutArray : List {
 			subArrays.do({|sa| sa.remove(key)});
 			val = array.removeAt(index);
 		});
-		^val
+		^val.value
 	}
 	
 	at {|keyOrIndex| var index;
-		if(keyOrIndex.isNumber, { ^array.at(keyOrIndex); });
+		if(keyOrIndex.isNumber, { ^array.at(keyOrIndex).value; });
 		index = this.keys.indexOf(keyOrIndex);
-		index.notNil.if({^array.at(index)}, {^nil});
+		index.notNil.if({^array.at(index).value}, {^nil});
 	}
 	
 	//atIndex { |index| ^array.at(index) }
@@ -573,7 +576,7 @@ BMMatrixGUI : BMAbstractGUI {
 
 	var h = 700, v = 700, numIns = 10, numOuts = 10, dotSize = 10;
 	var hinterval, vinterval, tabletView;
-	var cellsize = 70, screenBounds; // maximum cellsize
+	var cellsize = 40, screenBounds; // maximum cellsize
 	var hoffset = 80, voffset = 100;
 	var color, ringColor;
 	var lastx, lasty, on = false;
