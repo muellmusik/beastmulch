@@ -122,6 +122,7 @@ BMSpeakerSpec {
 			 // spl is continuous at 1m
 			 // plugins is [[specname, presetname], ...]
 			 BMSpeakerSpec('Generic', (brand: 'Unknown', minFreq: 20, maxFreq: 20000, spl: nil, powered: false));
+			 BMSpeakerSpec('Generic Sub', (brand: 'Unknown', minFreq: 20, maxFreq: 85, spl: nil, powered: false));
 			 BMSpeakerSpec('SCM50', (brand: 'ATC', minFreq: 38, maxFreq: 20000, spl: 112, powered: false, plugins: [[\highpass, \atcs]]));
 			 BMSpeakerSpec('8030A', (brand: 'Genelec', minFreq: 58, maxFreq: 20000, spl: 97, powered: true));
 			 BMSpeakerSpec('8040A', (brand: 'Genelec', minFreq: 48, maxFreq: 20000, spl: 99, powered: true));
@@ -138,6 +139,9 @@ BMSpeakerSpec {
 			 BMSpeakerSpec('MC24', (brand: 'APG', minFreq: 60, maxFreq: 20000, spl: 99, powered: false)); // spl @ 1W / 1 meter
 			 // KSN1005 nominal spl 95
 			 BMSpeakerSpec('Tweeters', (brand: 'Motorola', minFreq: 10000, maxFreq: 27000, spl: nil, powered: false, plugins: [[\highpass, \tweeters]]));
+			 BMSpeakerSpec('Tannoy', (brand: 'Tannoy', minFreq: 40, maxFreq: 20000, spl: 96, powered: false));
+			 BMSpeakerSpec('UREI-809', (brand: 'Urei', minFreq: 50, maxFreq: 17500, spl: 93, powered: false));
+			 BMSpeakerSpec('Kef-C20', (brand: 'Kef', minFreq: 72, maxFreq: 20000, spl: 90, powered: false));
 		 }	
 	 }
 	 
