@@ -494,8 +494,7 @@ BMMatrixMenuGUI : BMAbstractGUI {
 		inputView = SCListView(inputSection, Rect(0, 0, 200, 250)).canReceiveDragHandler = false;
 		inputView.items = matrix.inNames;
 		inputView.action = {this.update};
-		inputView.background = HiliteGradient(Color.blue.alpha_(0.3), 
-			Color.green.alpha_(0.3), steps: 256);
+		inputView.background = Color.white.alpha_(0.2);
 		
 		assignSection = SCVLayoutView(window, Rect(0, 0, 200, 300));
 		labelPlusButton = SCHLayoutView(assignSection, Rect(0, 0, 200, 20));
@@ -512,8 +511,7 @@ BMMatrixMenuGUI : BMAbstractGUI {
 				matrix.disconnect(inputView.item, view.item);
 			});
 		};
-		assignView.background = HiliteGradient(Color.blue.alpha_(0.5), 
-			Color.green.alpha_(0.3), steps: 256);
+		assignView.background = Color.white.alpha_(0.2);
 		
 		outputSection = SCVLayoutView(window, Rect(0, 0, 200, 300));
 		labelPlusButton = SCHLayoutView(outputSection, Rect(0, 0, 200, 20));
@@ -523,8 +521,7 @@ BMMatrixMenuGUI : BMAbstractGUI {
 		assignButton.action = { matrix.connect(inputView.item, outputView.item);};
 		outputView = SCListView(outputSection, Rect(0, 0, 200, 250)).canReceiveDragHandler = false;
 		outputView.beginDragAction = {|view| view.item };
-		outputView.background = HiliteGradient(Color.blue.alpha_(0.7), 
-			Color.green.alpha_(0.3), steps: 256);
+		outputView.background = Color.white.alpha_(0.2);
 		
 		
 		buttonSection = SCVLayoutView(window, Rect(0, 0, 150, 300));
