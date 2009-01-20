@@ -212,7 +212,9 @@ BMConcertGUI  {
 			   .states_([[ "Speakers", Color.black, Color.white.alpha_(0.8) ]])
 			   .action_({ 
 			   	if (speakersWindow.isNil) 
-			   		{ speakersWindow = BMSpeakerArrayGUI(outputArray, {|newSpeakers| outputArray = newSpeakers; concertManager.setSpeakers(newSpeakers); concertManager.storeSession(configManager); }, 
+			   		{ speakersWindow = BMSpeakerArrayGUI(outputArray, {|newSpeakers| outputArray = newSpeakers; concertManager.setSpeakers(newSpeakers); concertManager.storeSession(configManager); 
+			   			thisProcess.recompile;
+			   		}, 
 			   									    "Speaker Array Definition", 129 @ 34);
 			   		  speakersWindow.onClose_({ speakersWindow = nil })
 			   		}
