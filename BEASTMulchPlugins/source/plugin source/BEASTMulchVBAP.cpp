@@ -73,6 +73,8 @@ struct VBAP : Unit
 	float x_spread;                         /* speading amount of virtual source (0-100) */
 	float x_spread_base[3];                /* used to create uniform spreading */
 	float *final_gs;
+	
+	float m_chanamp[MAX_LS_AMOUNT]; // for smoothing amp changes max channels 55 at the moment
 };
 
 // for circular smoothing
@@ -530,13 +532,25 @@ void VBAP_next(VBAP *unit, int inNumSamples)
 	// now scale the outputs
 	for (int i=0; i<(unit->mNumOutputs); ++i) {
 		float *out = ZOUT(i);
-		if (final_gs[i] == 0.f) {
-			ZClear(inNumSamples, out);
+		float chanamp = unit->m_chanamp[i];
+		float nextchanamp = final_gs[i];
+		if (nextchanamp == chanamp) {
+			if (nextchanamp == 0.f) {
+				ZClear(inNumSamples, out);
+			} else {
+				float *in = zin0;
+				LOOP(inNumSamples, 
+					 ZXP(out) = ZXP(in) * nextchanamp;
+					 )
+			}
 		} else {
+			float chanampslope  = CALCSLOPE(nextchanamp, chanamp);
 			float *in = zin0;
 			LOOP(inNumSamples, 
-				 ZXP(out) = ZXP(in) * final_gs[i];
+				 ZXP(out) = ZXP(in) * chanamp;
+				 chanamp += chanampslope;
 				 )
+			unit->m_chanamp[i] = nextchanamp;
 		}
 	}
 	
@@ -546,6 +560,12 @@ void VBAP_next(VBAP *unit, int inNumSamples)
 void VBAP_Ctor(VBAP* unit)
 {
 	int numOutputs = unit->mNumOutputs, counter = 0, datapointer=0, setpointer=0, i;
+	
+	// initialise interpolation levels and outputs
+	for (int i=0; i<numOutputs; ++i) {
+		unit->m_chanamp[i] = 0;
+		ZOUT0(i) = 0.f;	
+	}
 	
 	// [dim, numSpeakers, [chanOffsets 0-2, invmx 0-8, [lp1, lp2, lp2].x, sim.y, sim.z] * sets.size].flat
 	float fbufnum = ZIN0(1);
