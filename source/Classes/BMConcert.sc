@@ -213,7 +213,7 @@ BMConcertGUI  {
 			   .action_({ 
 			   	if (speakersWindow.isNil) 
 			   		{ speakersWindow = BMSpeakerArrayGUI(outputArray, {|newSpeakers| outputArray = newSpeakers; concertManager.setSpeakers(newSpeakers); concertManager.storeSession(configManager); 
-			   			thisProcess.recompile;
+			   			BMAlert("To change the speaker array the system must be restarted.\nDo you want to do this now?", [["cancel", Color.black, Color.new255(51, 111, 203, 255 * 0.95)], ["ok", Color.black, Color.new255(51, 111, 203, 255 * 0.95)]], [nil, {thisProcess.recompile;}], background: Color.white, color: Color.red, border:false);
 			   		}, 
 			   									    "Speaker Array Definition", 129 @ 34);
 			   		  speakersWindow.onClose_({ speakersWindow = nil })

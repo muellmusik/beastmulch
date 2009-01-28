@@ -1,5 +1,7 @@
-// wslib 2006
+// from wslib 2006
 // changed the class used for the buttons, the positions, fonts, colors, the window cannot be closed, etc. SL 
+
+// made window modal
 
 BMAlert {
 	
@@ -103,14 +105,14 @@ BMAlert {
 				
 		actions = actions ?? { ( { |i| { |button| buttons[i][0].postln; } } ! buttons.size ); };
 						
-		window = SCWindow( "Alert", 
+		window = SCModalWindow( "Alert", 
 			Rect.aboutPoint( SCWindow.screenBounds.center, 
 				((buttons.size * 42) + 2).max( 160 ), 
 					((26 + (string.occurrencesOf( $\n ) * 10) ) + 4 + 20 + 15).max( 52 )
-					), false, border ? true )
-				.userCanClose_(false);
+					), false, border ? true );
+				//.userCanClose_(false);
 					
-		window.front;
+		//window.front;
 		window.view.background_( background );
 		window.alwaysOnTop_( true );
 		window.alpha_( 0.95 );
