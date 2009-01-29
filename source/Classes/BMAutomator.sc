@@ -1139,10 +1139,11 @@ BMSnapShotSeqConfigGUI : BMAbstractGUI {
 		toggleWidth = allControls.keys.collect({|name| 
 			name.asString.bounds(font).width
 		}).maxItem + 8;
-		numColumns = (parent.bounds.width - 8 / (toggleWidth + 4)).floor;
-		numRows = (numControls / numColumns).ceil;
+		numColumns = (parent.bounds.width - 4 / (toggleWidth + 4)).floor;
+		numColumns = min(numColumns, numControls);
+		numRows = (numControls / numColumns.postln).ceil;
 		window = SCModalSheet.new(parent, 
-			Rect(300, 300, (numColumns * (toggleWidth + 4)) + 4, 28 * numRows + 28)); // 508
+			Rect(300, 300, (numColumns * (toggleWidth + 4)) + 4, 24 * numRows + 28)); // 508
 		window.view.decorator = FlowLayout(window.view.bounds);
 		window.view.background = Color.rand.alpha_(0.3);
 		sliders = IdentityDictionary.new;
@@ -1153,6 +1154,7 @@ BMSnapShotSeqConfigGUI : BMAbstractGUI {
 				.colorOn_(Color.white.alpha_(0.5))
 				.colorOff_(Color.black.alpha_(0.1))
 				.font_(font)
+				.canFocus_(false)
 				.string_(label.asString);
 		});
 		window.view.decorator.nextLine;
