@@ -3,7 +3,7 @@
 // assumes MIDIClient is initialised
 
 BMAbstractMackie : BMAbstractController {
-	var <uid, <outPort, <outUid, <midiout, spec;
+	var <uid, <outPort, <outUid, <midiout;
 	var <>sysexHdr, faderRoutine;
 	
 	*new { |uid, name, server|

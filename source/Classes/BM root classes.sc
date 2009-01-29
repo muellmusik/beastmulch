@@ -88,6 +88,7 @@ BMAbstractAudioSource : BMAbstractAudioChainElement {
 BMAbstractController {
 	classvar <allControllers, <allControls;
 	var <name, <bus, <busIndex, valueArray, labelArray, <server, <numFaders;
+	var spec;
 	
 //	*new {
 //		^super.new.addValuesToIndex;
@@ -164,6 +165,8 @@ BMAbstractController {
 	}
 	
 	acceptsAutomation { ^false }
+	
+	spec { ^spec.asSpec; } 
 }
 
 // don't make these yourself
@@ -181,6 +184,10 @@ BMControl {
 	value {^controller.getFaderVal(ctrlNum) }
 	
 	value_ {|val| controller.setFaderVal(ctrlNum, val) }
+	
+	controllerSpec { ^controller.spec }
+	
+	displaySpec { ^mappedTo.asSpec }
 }
 
 BMAbstractGUI {

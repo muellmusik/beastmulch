@@ -6,11 +6,19 @@
 
 \f0\fs18 \cf0 s.boot;\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 c = BMVirtualController(\\foo);\
+\cf0 c = BMVirtualController(\\MotorBEAST);\
 \
-c.setAllLabels(Array.fill(8, \{|i| "foo-" ++ (i+1)\}));\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 BMSnapShotSeqConfigGUI.new;\cf0 \
 \
-g = \cf2 BMVirtualControllerSliders(c);\
+c.setAllLabels(Array.fill(8, \{|i| "MotorBEAST-" ++ (i+1)\}));\
+\
+\cf2 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 \
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf0 \
@@ -20,13 +28,17 @@ x = \cf2 BMSoundFilePlayer\cf0 .new(8);\
 y = \cf2 BMSoundFilePlayerGUI\cf0 (x);\
 \
 \
+m = BMAmpControlMatrix(\cf2 c.asBMInOutArray, \cf0 x.asBMInOutArray);\
 \
-\
-\
-a = \cf2 BMControllerAutomator(c.asBMInOutArray.keys, x);\
+c.faderNames.do(\{|name, i| m.connect(name.asSymbol, x.asBMInOutArray.keys[i])\}); \
+m.mappings;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 a = \cf2 BMControllerAutomator(c.asBMInOutArray.keys, x);\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf2 \
+\cf0 g = \cf2 BMVirtualControllerSliders(c);\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf0 a.interval = 0.005;\cf2 \
@@ -37,12 +49,12 @@ a = \cf2 BMControllerAutomator(c.asBMInOutArray.keys, x);\
 \cf3 //a.removeSequence('test1');\cf0 \
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf2 a.\cf0 addSequence('test1', 5, ['foo-1', 'foo-2']);\
+\cf2 a.\cf0 addSequence('test1', 5, ['MotorBEAST-1', 'MotorBEAST-2']);\
 \
 \
 a.addSnapShot('test1', 10, 'test1-2');\
 \
-\cf2 a.\cf0 addSequence('test2', 6, ['foo-5', 'foo-6']);\
+\cf2 a.\cf0 addSequence('test2', 6, ['MotorBEAST-5', 'MotorBEAST-6']);\
 \
 a.addSnapShot('test2', 6.5, 'test2-2');\
 \

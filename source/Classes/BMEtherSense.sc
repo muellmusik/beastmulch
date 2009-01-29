@@ -7,7 +7,7 @@
 BMEtherSense : BMAbstractController {
 	//classvar <allControllers;
 	//var <name, <bus, <busIndex, valueArray, labelArray, <server, <numFaders;
-	var spec, <addr, responders, busBoard2Index;
+	var <addr, responders, busBoard2Index;
 	
 	// address should be with port 57120 (sclang)
 	*new { |addr, name, server|

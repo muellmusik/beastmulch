@@ -207,7 +207,7 @@ BMAmpControlMatrix : BMAbstractMatrix {
 				("Control mapping failed. Control" + input + "already controlling" + mappedTo.name).warn;
 				^this;
 			}, {
-				BMAbstractController.allControls[input].mappedTo = this;
+				BMAbstractController.allControls[input].mappedTo_(this);
 			});
 		});
 		
@@ -268,6 +268,10 @@ BMAmpControlMatrix : BMAbstractMatrix {
 //	}
 	
 	controlsForInputs { ^true }
+	
+	// for display purposes
+	asSpec{ ^\db.asSpec }
+	
 }
 
 // An Ordered Dictionary of associations (\name->index);

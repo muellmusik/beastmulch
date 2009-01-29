@@ -63,6 +63,7 @@ BMVirtualControllerSliders : BMAbstractGUI {
 	var needsRefresh = false;
 	var <>refreshInterval = 0.05;
 	var refreshLoopOn = false;
+	var specs;
 	
 	*new {|virtualCont, name, origin|
 		^super.new.init(virtualCont, name ? virtualCont.name)
@@ -83,18 +84,23 @@ BMVirtualControllerSliders : BMAbstractGUI {
 		window.view.decorator = FlowLayout(window.view.bounds);
 		window.view.background = Color.rand.alpha_(0.3);
 		sliders = Array.newClear(numSliders);
+		specs = Array.newClear(numSliders);
 		virtualCont.getAllLabels.do({|label, i|
-			var initVal;
-			initVal = virtualCont.getFaderVal(i + 1).ampdb;
+			var initVal, control, displaySpec;
+			control = BMAbstractController.allControls[label.asSymbol];
+			displaySpec = control.displaySpec;
+			initVal = displaySpec.map(virtualCont.getFaderVal(i + 1));
 			sliders[i] = EZSlider.new(window, 640@20, label.asString, \db,
 				{|ez| var setVal;
 					if(fromUpdate.not, {
-						setVal = ez.value.dbamp;
+						setVal = displaySpec.unmap(ez.value);
 						virtualCont.setFaderVal(i + 1, setVal);
+						setVal.postln;
 					})
 				}, initVal
 			);
 			sliders[i].numberView.background = Color.white.alpha_(0.4);
+			specs[i] = displaySpec;
 		
 		});
 		window.onClose = { virtualCont.removeDependant(this); onClose.value };
@@ -110,7 +116,7 @@ BMVirtualControllerSliders : BMAbstractGUI {
 				needsRefresh.if({resched = refreshInterval}, {refreshLoopOn = false});
 				fromUpdate = true; // prevent a loop
 				virtualCont.getAllFaders.do({|val, i| 
-					sliders[i].value_(val.ampdb);
+					sliders[i].value_(specs[i].map(val));
 				});
 				fromUpdate = false;
 				needsRefresh = false;
@@ -121,10 +127,10 @@ BMVirtualControllerSliders : BMAbstractGUI {
 	
 	update {|changed, what, index, val|
 		switch(what,
-			\faderVal, {
-				needsRefresh = true;
-				this.startRefreshLoop;
-			},
+//			\faderVal, {
+//				needsRefresh = true;
+//				this.startRefreshLoop;
+//			},
 			\label, {sliders[index].labelView.string_(val.asString)}
 		)
 	}

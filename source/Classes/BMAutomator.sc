@@ -489,7 +489,7 @@ BMSnapShotSequenceSeg {
 }
 
 BMAbstractSnapShot {
-	var <name, <time, <values;
+	var <name, <time, <values, <controlnames;
 	// these allow for customised behaviour upon entering a segment
 	
 	*new{|controls, time, name|
@@ -503,6 +503,7 @@ BMAbstractSnapShot {
 	
 	snap {|controls, argTime|  
 		time = argTime;
+		controlnames = controls;
 		values = controls.collectAs({|ctrlname| 
 			ctrlname -> BMAbstractController.getValueByName(ctrlname);
 		}, IdentityDictionary);
@@ -1049,29 +1050,36 @@ BMSnapShotSliders : BMAbstractGUI {
 	}
 	
 	makeWindow {|origin|
-		var numSliders, presetMenu;
+		var numSliders, font, labelWidth;
+		font = Font("Helvetica-Bold", 10);
 		numSliders = snapshot.values.size;
-		window = SCWindow.new(snapshot.name, 
-			Rect(300, 300, 652, (numSliders + 1) * 24), false); // 508
+		window = SCModalWindow.new(snapshot.name, 
+			Rect(300, 300, 652, (numSliders + 1) * 24), true); // 508
 		window.view.decorator = FlowLayout(window.view.bounds);
 		window.view.background = Color.rand.alpha_(0.3);
 		sliders = IdentityDictionary.new;
-		snapshot.values.keys.asArray.sort.do({|label, i|
-			var initVal;
-			initVal = snapshot.values[label];
-			sliders[label] = EZSlider.new(window, 640@20, label.asString, nil,
+		labelWidth = snapshot.controlnames.collect({|name| 
+			name.asString.bounds(font).width
+		}).maxItem;
+		snapshot.controlnames.asArray.sort.do({|label, i|
+			var initVal, control, displaySpec, unitWidth = 20;
+			control = BMAbstractController.allControls[label];
+			displaySpec = control.displaySpec;
+			initVal = displaySpec.map(snapshot.values[label.postln].postln);
+			postf("init: %\n", initVal);
+			sliders[label] = EZSlider.new(window, 640@20, label.asString, displaySpec,
 				{|ez| 
 					if(fromUpdate.not, {
-						
-						snapshot.setValue(label, ez.value);
+						// convert back to 0..1
+						snapshot.setValue(label, displaySpec.unmap(ez.value));
 					})
-				}, initVal
+				}, initVal, layout: \horz, labelWidth: labelWidth, unitWidth: unitWidth
 			);
-			sliders[label].numberView.background = Color.white.alpha_(0.4);
-		
+			//sliders[label].numberView.background = Color.white.alpha_(0.4);
+			sliders[label].font = font;
 		});
 		window.onClose = { snapshot.removeDependant(this); onClose.value };
-		window.front;
+		//window.front;
 	}
 	
 	// could be some jitter, but safer
@@ -1093,19 +1101,92 @@ BMSnapShotSliders : BMAbstractGUI {
 //	}
 	
 	update {|changed, what, index, val|
-		switch(what,
-			\snap, {
-				//needsRefresh = true;
-//				this.startRefreshLoop;
-				{
-				fromUpdate = true; // prevent a loop
-				snapshot.values.keysValuesDo({|key, value| 
-					sliders[key].value = value; });
-				fromUpdate = false;
-				}.defer;
-				
-			}
-		)
+//		switch(what,
+//			\snap, {
+//				//needsRefresh = true;
+////				this.startRefreshLoop;
+//				{
+//				fromUpdate = true; // prevent a loop
+//				snapshot.values.keysValuesDo({|key, value| 
+//					sliders[key].value = value; });
+//				fromUpdate = false;
+//				}.defer;
+//				
+//			}
+//		)
+	}
+	
+
+}
+
+BMSnapShotSeqConfigGUI : BMAbstractGUI {
+	var automator, sliders, fromUpdate = false;
+	var needsRefresh = false;
+	var <>refreshInterval = 0.05;
+	var refreshLoopOn = false;
+	
+	*new {|automator, origin|
+		^super.newCopyArgs(automator).makeWindow(origin ? (40@200));
+	}
+	
+	makeWindow {|origin|
+		var allControls, numControls, font, toggleWidth;
+		allControls = BMAbstractController.allControls;
+		font = Font("Helvetica-Bold", 10);
+		numControls = allControls.size;
+		toggleWidth = allControls.keys.collect({|name| 
+			name.asString.bounds(font).width
+		}).maxItem + 8;
+		window = SCModalWindow.new("Select Sequence Controls", 
+			Rect(300, 300, (numControls * (toggleWidth + 4)) * 0.5 + 4, 28 * 2), true); // 508
+		window.view.decorator = FlowLayout(window.view.bounds);
+		window.view.background = Color.rand.alpha_(0.3);
+		sliders = IdentityDictionary.new;
+		allControls.keys.asArray.sort.do({|label, i|
+			var control;
+			control = allControls[label];
+			ToggleView(window, Rect(0, 0, toggleWidth, 20))
+				.colorOn_(Color.white.alpha_(0.5))
+				.colorOff_(Color.black.alpha_(0.1))
+				.font_(font)
+				.string_(label.asString);
+		});
+		window.onClose = { onClose.value };
+		//window.front;
+	}
+	
+	// could be some jitter, but safer
+//	startRefreshLoop {
+//		refreshLoopOn.not.if({
+//			refreshLoopOn = true;
+//			AppClock.sched(refreshInterval, {
+//				var resched;
+//				needsRefresh.if({resched = refreshInterval}, {refreshLoopOn = false});
+//				fromUpdate = true; // prevent a loop
+//				snapshot.getAllFaders.do({|val, i| 
+//					sliders[i].value_(val.ampdb);
+//				});
+//				fromUpdate = false;
+//				needsRefresh = false;
+//				resched;
+//			});
+//		});
+//	}
+	
+	update {|changed, what, index, val|
+//		switch(what,
+//			\snap, {
+//				//needsRefresh = true;
+////				this.startRefreshLoop;
+//				{
+//				fromUpdate = true; // prevent a loop
+//				snapshot.values.keysValuesDo({|key, value| 
+//					sliders[key].value = value; });
+//				fromUpdate = false;
+//				}.defer;
+//				
+//			}
+//		)
 	}
 	
 
