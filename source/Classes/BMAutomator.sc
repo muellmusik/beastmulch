@@ -728,6 +728,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			.font_(Font("Helvetica-Bold", 10))
 			.states_([["Add Sequence"]])
 			.action_({
+				BMSnapShotSeqConfigGUI(window);
 				//ca.addSequence(activeSequence.name, nil, UniqueID.next.asSymbol);
 				//this.makeEnvView;
 			});		
@@ -1119,26 +1120,29 @@ BMSnapShotSliders : BMAbstractGUI {
 
 }
 
+// runs as a sheet
 BMSnapShotSeqConfigGUI : BMAbstractGUI {
-	var automator, sliders, fromUpdate = false;
+	var sliders, fromUpdate = false;
 	var needsRefresh = false;
 	var <>refreshInterval = 0.05;
 	var refreshLoopOn = false;
 	
-	*new {|automator, origin|
-		^super.newCopyArgs(automator).makeWindow(origin ? (40@200));
+	*new {|parent, origin|
+		^super.new.makeWindow(parent, origin ? (40@200));
 	}
 	
-	makeWindow {|origin|
-		var allControls, numControls, font, toggleWidth;
+	makeWindow {|parent, origin|
+		var allControls, numControls, font, toggleWidth, numColumns, numRows;
 		allControls = BMAbstractController.allControls;
 		font = Font("Helvetica-Bold", 10);
 		numControls = allControls.size;
 		toggleWidth = allControls.keys.collect({|name| 
 			name.asString.bounds(font).width
 		}).maxItem + 8;
-		window = SCModalWindow.new("Select Sequence Controls", 
-			Rect(300, 300, (numControls * (toggleWidth + 4)) * 0.5 + 4, 28 * 2), true); // 508
+		numColumns = (parent.bounds.width - 8 / (toggleWidth + 4)).floor;
+		numRows = (numControls / numColumns).ceil;
+		window = SCModalSheet.new(parent, 
+			Rect(300, 300, (numColumns * (toggleWidth + 4)) + 4, 28 * numRows + 28)); // 508
 		window.view.decorator = FlowLayout(window.view.bounds);
 		window.view.background = Color.rand.alpha_(0.3);
 		sliders = IdentityDictionary.new;
@@ -1151,6 +1155,19 @@ BMSnapShotSeqConfigGUI : BMAbstractGUI {
 				.font_(font)
 				.string_(label.asString);
 		});
+		window.view.decorator.nextLine;
+		SCStaticText(window, Rect(0, 0, window.bounds.width - 132, 20))
+			.font_(font)
+			.align_(\right)
+			.string_("Select Controls for Sequence");
+		RoundButton(window, 120@20)
+			.extrude_(false)
+			.canFocus_(false)
+			.font_(font)
+			.states_([["OK"]])
+			.action_({
+				window.close;
+			});		
 		window.onClose = { onClose.value };
 		//window.front;
 	}
