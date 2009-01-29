@@ -1007,9 +1007,9 @@ BMMultichannelPluginsStripGUI {
 	 
 	 makeGUI{|parent, name, origin|
 	 	name.postln;
-	 	containerView = SCCompositeView(parent, Rect(origin.x, origin.y, 100, 500));
+	 	containerView = SCCompositeView(parent, Rect(origin.x, origin.y, 300, 500));
 	 	containerView.decorator = FlowLayout(containerView.bounds);
-	 	labelView = SCStaticText(containerView, Rect(0, 0, 100, 30))
+	 	labelView = SCStaticText(containerView, Rect(0, 0, 300, 30))
 	 		.font_(Font("Helvetica-Bold", 13))
 	 		.background_(Color.grey.alpha_(0.3))
 	 		.string_(" " ++ name);
@@ -1017,7 +1017,7 @@ BMMultichannelPluginsStripGUI {
 //	 		{|ez| trimPluginsStrip.trim_(ez.value);}, trimPluginsStrip.trim, false, 96, 70);
 //	 	ezKnob.labelView.align_(\left).font_(Font("Helvetica-Bold", 12));
 //	 	ezKnob.numberView.background_(Color.white.alpha_(0.3));
-	 	listView = SCListView(containerView, Rect(0, 0, 100, 334))
+	 	listView = SCListView(containerView, Rect(0, 0, 300, 334))
 	 		.items_(trimPluginsStrip.plugins.collect({|plugin| plugin.spec.name}));
 	 	listView.enterKeyAction = {
 	 		var plgin;
