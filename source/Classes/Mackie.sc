@@ -35,12 +35,12 @@ BMAbstractMackie : BMAbstractController {
 		this.setOutUid.startListening;
 		midiout = MIDIOut(outPort, outUid);
 		// turn off touch sensitive faders
-		midiout.sysex(outUid, sysexHdr ++ Int8Array[16r0c, 1, 16rf7]);
+		midiout.sysex(sysexHdr ++ Int8Array[16r0c, 1, 16rf7]);
 		nameString = "Controller" + name.asString + "/////////////// Welcome to BEAST";
 		nameString = nameString ++ String.fill(111 - nameString.size, {$ });
 		titleArray = (sysexHdr ++ Int8Array[16r12, 0] 
 			++ nameString.collectAs({arg item; item.ascii}, Int8Array)).add(16rf7);
-		midiout.sysex(outUid, titleArray);
+		midiout.sysex(titleArray);
 		//spec = [1, 16385, -3].asSpec; // exp so must offset values by 1
 		spec = Env([0, 1], [16384], \sine);
 		this.updateAllFaders(valueArray);
@@ -98,7 +98,7 @@ BMAbstractMackie : BMAbstractController {
 			{label = label ++ String.fill(6 - label.size, {$ })}); // pad to block
 		label = label.copyFromStart(5);
 		labelArray.put(fader - 1, label);
-		midiout.sysex(outUid, sysexHdr ++ Int8Array[16r12, (fader - 1) * 7 + 16r38] 
+		midiout.sysex(sysexHdr ++ Int8Array[16r12, (fader - 1) * 7 + 16r38] 
 			++ label.collectAs({arg item; item.ascii}, Int8Array).add(16rf7));
 	}
 	
@@ -180,7 +180,7 @@ MackieCU : BMAbstractMackie {
 		// add decimal
 		message.put(3, message[3] + 16r40);
 		message = message.copyToEnd(2);
-		midiout.sysex(outUid, sysexHdr.copy.add(16rB0).addAll(message).add(-9));
+		midiout.sysex(sysexHdr.copy.add(16rB0).addAll(message).add(-9));
 	}
 	
 	setSysexHdr {
