@@ -871,22 +871,27 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		};
 		envView.mouseDownAction = {|view, x, y, modifiers, buttonNumber, clickCount|
 			var newTime;
-			\foo.postln;
 			// deselects on click in midst
-			activeSequence = seqs[view.index];
-			activeSnapshot = snapshots[view.index];
-			this.setFillColors;
-			this.drawConnections;
-			this.drawSelections;
-			
-			if(activeSnapshot.notNil, {
-				curSSTime.string_("Selected Snapshot Time:" + activeSnapshot.time.asTimeString);
+			if(clickCount < 2, {
+				activeSequence = seqs[view.index];
+				activeSnapshot = snapshots[view.index];
+				this.setFillColors;
+				this.drawConnections;
+				this.drawSelections;
+				
+				if(activeSnapshot.notNil, {
+					curSSTime.string_("Selected Snapshot Time:" + activeSnapshot.time.asTimeString);
+				}, {
+					curSSTime.string_("Selected Snapshot Time:");
+					// update time cursor
+					newTime = (x / view.bounds.width) * sf.duration;
+					ca.timeReference.setTime(newTime);
+				});
 			}, {
-				curSSTime.string_("Selected Snapshot Time:");
-				// update time cursor
-				newTime = (x / view.bounds.width) * sf.duration;
-				ca.timeReference.setTime(newTime);
-			});
+				if(activeSnapshot.notNil && activeSnapshot.isKnown, {
+					BMSnapShotSliders(activeSnapshot, window);
+				})
+			})
 			//envView.mouseMoveAction.value(envView);	
 		};
 		
@@ -1033,16 +1038,16 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	}
 }
 
-//Quick and dirty for now
+//Runs as a sheet
 BMSnapShotSliders : BMAbstractGUI {
 	var snapshot, sliders, fromUpdate = false;
 	var needsRefresh = false;
 	var <>refreshInterval = 0.05;
 	var refreshLoopOn = false;
 	
-	*new {|snapshot, origin|
+	*new {|snapshot, parent|
 		^super.new.init(snapshot)
-			.makeWindow(origin ? (40@200));
+			.makeWindow(parent);
 	}
 	
 	init {|argss|
@@ -1050,12 +1055,12 @@ BMSnapShotSliders : BMAbstractGUI {
 		snapshot.addDependant(this);
 	}
 	
-	makeWindow {|origin|
+	makeWindow {|parent|
 		var numSliders, font, labelWidth;
 		font = Font("Helvetica-Bold", 10);
 		numSliders = snapshot.values.size;
-		window = SCModalWindow.new(snapshot.name, 
-			Rect(300, 300, 652, (numSliders + 1) * 24), true); // 508
+		window = SCModalSheet.new(parent, 
+			Rect(0, 0, 652, (numSliders * 24) + 28)); // 508
 		window.view.decorator = FlowLayout(window.view.bounds);
 		window.view.background = Color.rand.alpha_(0.3);
 		sliders = IdentityDictionary.new;
@@ -1079,6 +1084,19 @@ BMSnapShotSliders : BMAbstractGUI {
 			//sliders[label].numberView.background = Color.white.alpha_(0.4);
 			sliders[label].font = font;
 		});
+		window.view.decorator.nextLine;
+		SCStaticText(window, Rect(0, 0, window.bounds.width - 132, 20))
+			.font_(font)
+			.align_(\right)
+			.string_("Adjust snapshot levels");
+		RoundButton(window, 120@20)
+			.extrude_(false)
+			.canFocus_(false)
+			.font_(font)
+			.states_([["OK"]])
+			.action_({
+				window.close;
+			});	
 		window.onClose = { snapshot.removeDependant(this); onClose.value };
 		//window.front;
 	}
@@ -1127,8 +1145,8 @@ BMSnapShotSeqConfigGUI : BMAbstractGUI {
 	var <>refreshInterval = 0.05;
 	var refreshLoopOn = false;
 	
-	*new {|parent, origin|
-		^super.new.makeWindow(parent, origin ? (40@200));
+	*new {|parent|
+		^super.new.makeWindow(parent);
 	}
 	
 	makeWindow {|parent, origin|
