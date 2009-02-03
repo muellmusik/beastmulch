@@ -589,7 +589,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		name = argName;
 		dependees = [ca.addDependant(this), ca.timeReference.addDependant(this)];
 		sequenceLevels = IdentityDictionary.new;
-		ca.sequences.do({|sq| sequenceLevels[sq] = 0.1});
+		ca.sequences.do({|sq, i| sequenceLevels[sq] = (0.1 * (i + 1))%1.0});
 	}
 	
 	makeWindow {
@@ -727,9 +727,13 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			.font_(Font("Helvetica-Bold", 10))
 			.states_([["Add Sequence"]])
 			.action_({
-				BMSnapShotSeqConfigGUI(window);
-				//ca.addSequence(activeSequence.name, nil, UniqueID.next.asSymbol);
-				//this.makeEnvView;
+				BMSnapShotSeqConfigGUI(window).onClose = {|results|
+					var newname;
+					newname = UniqueID.next.asSymbol;
+					ca.addSequence(newname, time, results);
+					sequenceLevels[ca.sequences[newname]] = 0.1;
+					this.makeEnvView;
+				}
 			});		
 		addSS = RoundButton(window, 120@20)
 			.extrude_(false)
@@ -1154,6 +1158,8 @@ BMSnapShotSeqConfigGUI : BMAbstractGUI {
 	
 	makeWindow {|parent, origin|
 		var allControls, numControls, font, toggleWidth, numColumns, numRows;
+		var results;
+		results = IdentitySet.new;
 		allControls = BMAbstractController.allControls;
 		font = Font("Helvetica-Bold", 10);
 		numControls = allControls.size;
@@ -1176,7 +1182,8 @@ BMSnapShotSeqConfigGUI : BMAbstractGUI {
 				.colorOff_(Color.black.alpha_(0.1))
 				.font_(font)
 				.canFocus_(false)
-				.string_(label.asString);
+				.string_(label.asString)
+				.action_({|v| v.value.if({results.add(control.name)}, {results.remove(control.name)})});
 		});
 		window.view.decorator.nextLine;
 		SCStaticText(window, Rect(0, 0, window.bounds.width - 132, 20))
@@ -1191,7 +1198,7 @@ BMSnapShotSeqConfigGUI : BMAbstractGUI {
 			.action_({
 				window.close;
 			});		
-		window.onClose = { onClose.value };
+		window.onClose = { onClose.value(results.asArray.sort.postcs) };
 		//window.front;
 	}
 	
