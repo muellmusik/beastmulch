@@ -577,7 +577,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	var seqs, snapshots, names, times, connections;
 	var addSS, remSS;
 	var showOnlySelected = false;
-	var curSSTime, refTime;
+	var time, curSSTime, refTime;
 	
 	*new {|ca, name, origin|
 		//^super.new.init(ca, name ? ca.name ? "test").makeWindow(origin ? (40@200));
@@ -593,7 +593,6 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	}
 	
 	makeWindow {
-		var time;
 		
 		path = ca.timeReference.path; // How best to do this?
 		sf = SoundFile.new;
@@ -702,7 +701,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 //			envView.refresh;
 			this.resetPoints;
 			scrollView.refresh;
-		}).knobSize_(1).canFocus_(false).hilightColor_(Color.blue).mode_( \move );
+		}).knobSize_(1).canFocus_(false).hilightColor_(Color.blue);
 		SCStaticText(window, Rect(0, 0, 10, 10)).string_("+").font_(Font("Helvetica-Bold", 10));
 		window.view.decorator.shift(0, -5);
 		
@@ -738,8 +737,10 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			.font_(Font("Helvetica-Bold", 10))
 			.states_([["Add Snapshot"]])
 			.action_({
-				ca.addSnapShot(activeSequence.name, nil, UniqueID.next.asSymbol);
-				//this.makeEnvView;
+				if(activeSequence.notNil, {
+					ca.addSnapShot(activeSequence.name, time, UniqueID.next.asSymbol);
+					this.makeEnvView;
+				});
 			});
 		remSS =RoundButton(window, 120@20)
 			.extrude_(false)
@@ -925,10 +926,10 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		showOnlySelected.not.if({
 			ca.sequences.do({|seq|
 				seq.snapshots.do({|ss|
-					var time;
-					time = ss.time;
-					times = times.add(time / sf.duration);
-					names.add(ss.name.asString + ss.time.asTimeString(0.01));
+					var sstime;
+					sstime = ss.time;
+					times = times.add(sstime / sf.duration);
+					names.add(ss.name.asString + sstime.asTimeString(0.01));
 					seqs.add(seq); // for ordered lookup
 					snapshots.add(ss);
 				});
@@ -977,16 +978,16 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	// we use SCSoundFileView Selections for the snapshot time cursors
 	drawSelections {
 	
-		var time;
+		var seltime;
 		//view.value.postln;
 		
 		this.clearSelections;
 		snapshots.do({|ss, index|
 			if(seqs[index] === activeSequence, {
-				time = envView.value[0][index];
+				seltime = envView.value[0][index];
 				sfView.setEditableSelectionStart(index, true);
 				sfView.setEditableSelectionSize(index, true);
-				sfView.setSelection(index, [sf.numFrames * time, 
+				sfView.setSelection(index, [sf.numFrames * seltime, 
 					sf.numFrames / sfView.bounds.width * 2]); 
 				sfView.setSelectionColor(index, Color.white);
 				//ss.time = (time * sf.duration);
@@ -1004,7 +1005,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	}
 	
 	update { arg changed, what ...args;
-		var time, cursorLoc;
+		var cursorLoc;
 		switch(what,
 			
 			\time, {
