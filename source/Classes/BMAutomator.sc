@@ -742,14 +742,16 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 					this.makeEnvView;
 				});
 			});
-		remSS =RoundButton(window, 120@20)
+		remSS = RoundButton(window, 120@20)
 			.extrude_(false)
 			.canFocus_(false)
 			.font_(Font("Helvetica-Bold", 10))
 			.states_([["Remove Snapshot"]])
 			.action_({
-				//ca.addSnapShot(activeSequence.name, nil, UniqueID.next.asSymbol);
-//				this.makeEnvView;
+				if(activeSnapshot.notNil, {
+					activeSequence.removeSnapShot(activeSnapshot.name);
+					this.makeEnvView;
+				});
 			});
 		
 		window.view.decorator.nextLine.nextLine;
