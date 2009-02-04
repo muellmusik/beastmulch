@@ -607,7 +607,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		//f.openRead("sounds/a11wlk01.wav");
 		//f.openRead("/Users/scottw/Music/SuperCollider\ Recordings/SC_080725_143355.aiff");
 		
-		window = SCWindow.new("Soundfile / Controller Snapshots", Rect(200, 200, 808, 400));
+		window = SCWindow.new("Soundfile / Controller Snapshots", Rect(200, 200, 808, 400), false);
 		window.view.decorator = FlowLayout(window.view.bounds);
 		
 		window.view.keyDownAction = { arg view,char,modifiers,unicode,keycode;
@@ -637,7 +637,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		sfView.mouseMoveAction = sfView.mouseDownAction;
 		sfView.gridOn = false;
 		//sfView.gridResolution = 10;
-		sfView.yZoom = 0.8;
+		//sfView.yZoom = 0.8;
 		
 		scrollView.canFocus_(false);
 		
@@ -753,7 +753,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	}
 	
 	setWaveColors {
-		sfView.waveColors_(Array.fill(sf.numChannels, {|i| Color.blue.blend(Color.cyan, 1 / (sf.numChannels - 1) * i)})); 
+		sfView.waveColors_(Array.fill(sf.numChannels, {|i| Color.grey(0.2, 0.6).blend(Color.grey(0.3, 0.6), 1 / (sf.numChannels - 1) * i)})); 
 	}
 	
 	makeTimesView {
