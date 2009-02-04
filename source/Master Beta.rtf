@@ -36,6 +36,7 @@
 \cf3 var\cf0  interpolFunc;\
 \cf3 var\cf0  concertManager, configManager, pieces, configurations;\
 \cf3 var\cf0  chainFunc, chain, cond, configsGUI, configsGUIFunc;\
+var controllerAutomator, bmMenu, autoMenuItem, autoGUI;\
 \
 cond = \cf3 Condition\cf0 .new;\
 s.bootSync(cond);\
@@ -49,7 +50,8 @@ arrays		= \cf3 this\cf0 .executeFile(\cf3 Document\cf0 .current.dir ++ \cf4 "/ja
 ~outPutArrayFromTheChannelListFile = arrays[0]; \
 \
 controllersList = \cf3 List\cf0 [];\
-controllersList.add(etherSense = \cf3 BMMotorBEAST\cf0 (\cf3 NetAddr\cf0 (\cf4 "192.168.5.77"\cf0 , 57120), \cf5 \\MotorBEAST\cf0 , s););\
+controllersList.add(etherSense = \cf3 BMMotorBEAST\cf0 (\cf3 NetAddr\cf0 (\cf4 "192.168.5.77"\cf0 , 57120), \cf5 \\MotorBEAST1\cf0 , s););\
+controllersList.add(\cf3 BMMotorBEAST\cf0 (\cf3 NetAddr\cf0 (\cf4 "192.168.5.78"\cf0 , 57120), \cf5 \\MotorBEAST2\cf0 , s););\
 \
 backupManager	= \cf3 BMBackup\cf0 .new;\
 \cf2 outputArray	= backupManager.rememberWorkspace([ \\concert, \\system, \\speakers ],  \{ BMInOutArray.new \});\
@@ -61,6 +63,7 @@ configurations= backupManager.rememberWorkspace(\cf5 \\configurations\cf0 ,  \{ 
 \cf0    \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf0 player		= \cf3 BMSoundFilePlayer\cf0 .new(8, name: \cf5 'Player'\cf0 );\
+\
 \cf2 //chainFunc = \{ BMAudiochain( \cf0 \
 \cf2 //					[player, BMInOutArray.hardwareInputArray], \cf0 \
 \cf2 //					['Pre-Processing'->BMTrimPluginsRack, 'Input Levels'->BMAmpControlMatrix], \cf0 \
@@ -98,10 +101,18 @@ chainFunc = \{ \
 			       \
 chain = chainFunc.value;\
 \
+controllerAutomator = \cf3 BMControllerAutomator\cf0 (\cf3 BMAbstractController.\cf0 masterInOutArray.keys\cf3 , \cf0 player);\
+~controllerAutomator = controllerAutomator;\
+bmMenu = CocoaMenuItem(nil, 5, "BEASTmulch", true);\
+autoMenuItem = CocoaMenuItem(bmMenu, 0, "SoundFile Display / Controller Automation", false, \{\
+	if(autoGUI.isNil, \{autoGUI = controllerAutomator.gui.onClose_(\{autoGUI = nil\})\}, \{\
+		autoGUI.window.front;\
+	\});\
+\});\
 \
-concertManager= \cf3 BMConcert\cf0 (pieces, [ outputArray, inputArray ], \cf3 BMAbstractController\cf0 .allControllers);\
+concertManager= \cf3 BMConcert\cf0 (pieces, [ outputArray, inputArray ], \cf3 BMAbstractController\cf0 .allControllers, controllerAutomator);\
 configManager	= \cf3 BMConfigurations\cf0 (configurations);\
-\
+~concertManager = concertManager;\
 \cf2 // backupManager is added as dependant of outputArray, concertManager, configManager \cf0 \
 [ outputArray, concertManager, configManager ].do\{\cf3 | x |\cf0  backupManager.watch(x) \};\
 \
@@ -112,7 +123,7 @@ configManager	= \cf3 BMConfigurations\cf0 (configurations);\
 configsGUIFunc =  \{\cf3 | chain |\cf0  \cf3 BMConfigurationsGUI\cf0 (chain, configManager, concertManager, \cf4 "Configuration Editor"\cf0 , 550 @ 550) \}; \
 configsGUI	 = configsGUIFunc.value(chain);\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf3 BMConcertGUI\cf0 (concertManager, configManager, outputArray, chain, chainFunc, configsGUIFunc, \cf4 "Concert Editor"\cf0 , 110 @ 600);\
+\cf3 BMConcertGUI\cf0 (concertManager, configManager, outputArray, chain, chainFunc, configsGUIFunc, controllerAutomator, \cf4 "Concert Editor"\cf0 , 110 @ 600);\
 \}.defer;\
 \
 \cf3 Updater\cf0 (concertManager,  \
@@ -123,6 +134,9 @@ configsGUI	 = configsGUIFunc.value(chain);\
 	   		\{ player.read(pieceEvent.path) \}\
 	   		\{ player.free \};\
 	   	  configManager.currentConfig_(pieceEvent.config, \cf5 \\concertEditor\cf0 );\
+	   	  if(pieceEvent.controllerAutomation.notNil, \{\
+	   	  	controllerAutomator.mappings = pieceEvent.controllerAutomation;\
+	   	  \});\
 	    	\}\
 	 )\
 	\}\

@@ -176,7 +176,16 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 		this.changed(\sequencesChanged);
 	}
 	
+	// not so sure...
+	mappings { ^sequences }
 	
+	mappings_ { |mappings|
+		sequences.do({|seq| seq.removeDependant(this);});
+		sequences = mappings;
+		sequences.do({|seq| seq.addDependant(this);});
+		oldSeqs = IdentitySet.new;
+		this.changed(\sequencesChanged);
+	}
 	
 	addStartSnapShot { }
 	
@@ -281,6 +290,8 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 			{super.update(changed, what, *args)}
 		)
 	}
+	
+	gui { ^BMControllerAutomatorGUI(this) }
 }
 
 // can't change the list of affected controllers after creation!

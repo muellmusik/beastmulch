@@ -1,11 +1,11 @@
 
 BMConcert {	
-	var <pieces, arrays, controllers;
+	var <pieces, arrays, controllers, controllerAutomator;
 	var <concert;
 	
 
-	*new {| pieces, arrays, controllers | 
-		^super.newCopyArgs(pieces, arrays, controllers).init
+	*new {| pieces, arrays, controllers, controllerAutomator | 
+		^super.newCopyArgs(pieces, arrays, controllers, controllerAutomator).init
 	}
 
 	init { 
@@ -24,7 +24,7 @@ BMConcert {
 		this.changed
 	}
 	
-	loadAt {| pieceEventIndex | "sergio".postln;
+	loadAt {| pieceEventIndex |
 		this.changed(\loadPiece, concert.pieces[pieceEventIndex])
 	}
 	
@@ -47,21 +47,22 @@ BMConcert {
 
 BMConcertGUI  {
 
-	var <concertManager, <configManager, outputArray, <>chain, <chainFunc, <configsGUIFunc, name;
+	var <concertManager, <configManager, outputArray, <>chain, <chainFunc, <configsGUIFunc, controllerAutomator, name;
 	var window, windowView, concertView, concertListView, listSection;
 	var addButton, deleteButton, buttonSection, upButton, downButton, storeButton;
 	var loadButton, configButton, systemSetup, configText;
 	var >onClose;
 	var selectable, pieceLoaded = false, loadButtonStates, speakersWindow, importPopUpMenu;
 	
-	*new {| concertManager, configManager, outputArray, chain, chainFunc,  configsGUIFunc, name, origin |
-		  ^super.newCopyArgs(concertManager, configManager, outputArray,  chain, chainFunc, configsGUIFunc, name)
+	*new {| concertManager, configManager, outputArray, chain, chainFunc,  configsGUIFunc, controllerAutomator, name, origin |
+		  ^super.newCopyArgs(concertManager, configManager, outputArray,  chain, chainFunc, configsGUIFunc, controllerAutomator, name)
 		  	.init.makeWindow(origin ? (40@200));
 	}
 	
 	init {
 		concertManager.addDependant(this);
-		configManager.addDependant(this)
+		configManager.addDependant(this);
+		controllerAutomator.addDependant(this);
 	}
 	
 	makeWindow {| origin |
@@ -417,11 +418,20 @@ BMConcertGUI  {
 	}
 			
 	update {| changed, change, config, from |
+			change.postln;
 		    if ((change == \currentConfig) and: { from == \configurationEditor }) 
 		    	  { 	if (selectable) { this.listViewSelection(false) } }
 			  {  if ((change != \storeSession) and: { change != \store }) 
 			  		{ concertListView.items = concertManager.concert.pieces.collect{| x | x.name }.asArray }
-			  }
+			  };
+			  
+			
+			if(change == \sequencesChanged, {
+				var piece;
+				\foo.postln;
+				piece = concertManager.concert.pieces[concertListView.value];
+				piece.controllerAutomation = controllerAutomator.mappings;
+			});
 		
 	}
 		
