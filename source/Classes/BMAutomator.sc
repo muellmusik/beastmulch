@@ -80,6 +80,11 @@ BMAbstractIndependentRateAutomator : BMAbstractAutomator {
 				
 				lastTime = time;
 			}
+//			,
+//			\base, {
+//				// inform my dependants
+//				this.update(\base);
+//			}
 		)
 	}
 }
@@ -639,49 +644,11 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		backView = SCCompositeView(scrollView, Rect(0, 20,  798, sfView.bounds.height)).background_(Color.clear);
 		backView.relativeOrigin = false;
 		
-		sfView.soundfile = sf;
+		path.notNil.if({sfView.soundfile = sf;});
 		
 		sfView.elasticMode = 1;
 		
-		timesView = SCUserView(scrollView, Rect(0, 0, sfView.bounds.width, scrollView.bounds.height - 20));
-		timesView.background = Color.clear;
-		timesView.canFocus_(false);
-		timesView.relativeOrigin_(false);
-		
-		timesView.drawFunc = {
-			var tenSecs, thirtySecs, bounds;
-			bounds = timesView.bounds;
-			Pen.addRect(Rect(0, 0, sfView.bounds.width, 20));
-			Pen.fillColor = Color.new255(0, 0, 238);
-			Pen.fill;
-//			Pen.fillRadialGradient(bounds.center, bounds.center, 0, bounds.width, 
-//				Color.cyan, Color.clear);
-			tenSecs = timesView.bounds.width * durInv * 10;
-			Pen.beginPath;
-			Pen.strokeColor = Color.blue.alpha_(0.8);
-			(sf.duration / 10).floor.do({|i|
-				var x;
-				x = (i + 1) * tenSecs;
-				Pen.line(x@(scrollView.bounds.height -21), x@0);
-				Pen.stroke;
-			});
-			thirtySecs = timesView.bounds.width * durInv * 30;
-			(sf.duration / 30).floor.do({|i|
-				((i + 1) * 30).asTimeString.drawLeftJustIn(
-					Rect((i+1) * thirtySecs + 1, 0, 50, 20),
-					Font("Helvetica-Bold", 11), 
-					Color.black
-				); 
-			});
-			Pen.strokeColor = Color.black;
-			Pen.lineDash_(FloatArray[3,3]);
-			Pen.line(0@20, timesView.bounds.width@20);
-			Pen.stroke;
-			Pen.lineDash_(FloatArray[]);
-		};
-		
-		timesView.mouseDownAction = sfView.mouseDownAction;
-		timesView.mouseMoveAction = sfView.mouseDownAction;
+		this.makeTimesView;
 		
 		window.onClose = {sf.close; dependees.do({|dee| dee.removeDependant(this)});};
 		
@@ -764,8 +731,8 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			.string_("Source Time:") // initialise
 			.font_(Font("Helvetica-Bold", 16));
 		time = BMTimeSources.currentTime(ca.timeReference);
-					sfView.timeCursorPosition = time * sf.sampleRate;
-					refTime.string_("Source Time:" + time.getTimeString);
+		sfView.timeCursorPosition = time * sf.sampleRate;
+		refTime.string_("Source Time:" + time.getTimeString);
 					
 		window.view.decorator.shift(0, 4);
 		curSSTime = SCStaticText(window, Rect(0, 0, 300, 20))
@@ -783,6 +750,50 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 //			.font_(Font("Helvetica-Bold", 16));
 			
 		//window.front;
+	}
+	
+	makeTimesView {
+		
+		timesView.notNil.if({timesView.remove});
+		timesView = SCUserView(scrollView, Rect(0, 0, sfView.bounds.width, scrollView.bounds.height - 20));
+		timesView.background = Color.clear;
+		timesView.canFocus_(false);
+		timesView.relativeOrigin_(false);
+		
+		timesView.drawFunc = {
+			var tenSecs, thirtySecs, bounds;
+			bounds = timesView.bounds;
+			Pen.addRect(Rect(0, 0, sfView.bounds.width, 20));
+			Pen.fillColor = Color.new255(0, 0, 238);
+			Pen.fill;
+//			Pen.fillRadialGradient(bounds.center, bounds.center, 0, bounds.width, 
+//				Color.cyan, Color.clear);
+			tenSecs = timesView.bounds.width * durInv * 10;
+			Pen.beginPath;
+			Pen.strokeColor = Color.blue.alpha_(0.8);
+			(sf.duration / 10).floor.do({|i|
+				var x;
+				x = (i + 1) * tenSecs;
+				Pen.line(x@(scrollView.bounds.height -21), x@0);
+				Pen.stroke;
+			});
+			thirtySecs = timesView.bounds.width * durInv * 30;
+			(sf.duration / 30).floor.do({|i|
+				((i + 1) * 30).asTimeString.drawLeftJustIn(
+					Rect((i+1) * thirtySecs + 1, 0, 50, 20),
+					Font("Helvetica-Bold", 11), 
+					Color.black
+				); 
+			});
+			Pen.strokeColor = Color.black;
+			Pen.lineDash_(FloatArray[3,3]);
+			Pen.line(0@20, timesView.bounds.width@20);
+			Pen.stroke;
+			Pen.lineDash_(FloatArray[]);
+		};
+		
+		timesView.mouseDownAction = sfView.mouseDownAction;
+		timesView.mouseMoveAction = sfView.mouseDownAction;
 	}
 	
 	makeEnvView {
@@ -1047,7 +1058,22 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			},
 			\stop, {
 				{sfView.timeCursorPosition = 0;}.defer;
-			}//,
+			},
+			\base, {
+				path = ca.timeReference.path; // How best to do this?
+				path.notNil.if({
+					{
+					sf.close;
+					sf.openRead(path);
+					durInv = sf.duration.reciprocal;
+					sfView.read(block: 256);
+					sfView.refresh;
+					this.makeTimesView;
+					this.makeEnvView;
+					}.defer;
+				});
+				
+			}
 //			\sequencesChanged, {
 //				{this.makeEnvViews; this.drawSelections(envViews[menu.value]);}.defer;
 //			}

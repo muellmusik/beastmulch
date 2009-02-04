@@ -15,18 +15,18 @@ p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
 p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0028b1}
+p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #002daf}
 p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica; min-height: 17.0px}
-p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #613b27}
-span.s1 {color: #0028b1}
-span.s2 {color: #55681e}
-span.s3 {font: 9.0px Monaco; color: #2b7000}
-span.s4 {color: #0016bd}
-span.s5 {color: #2b7000}
+p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #5c3c29}
+span.s1 {color: #002daf}
+span.s2 {color: #59661f}
+span.s3 {font: 9.0px Monaco; color: #3c6d00}
+span.s4 {color: #0020bb}
+span.s5 {color: #3c6d00}
 span.s6 {font: 12.0px Helvetica}
 span.s7 {color: #000000}
-span.s8 {text-decoration: underline ; color: #003cdc}
-span.s9 {color: #1637a6}
+span.s8 {text-decoration: underline ; color: #0041da}
+span.s9 {color: #153aa5}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -57,19 +57,23 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p3">Again it is up to dependants to interpret this, but stopping should normally be equivalent to<span class="Apple-converted-space"> </span></p>
 <p class="p2"><br></p>
-<p class="p8"><span class="s4">this</span>.changed(<span class="s5">\time</span>, 0, 0, <span class="s4">Main</span>.elapsedTime);<span class="s6">.</span></p>
+<p class="p8"><span class="s4"><span class="Apple-tab-span">	</span>this</span>.changed(<span class="s5">\time</span>, 0, 0, <span class="s4">Main</span>.elapsedTime);<span class="s6">.</span></p>
 <p class="p2"><br></p>
 <p class="p3">Stopped sources need not continue to regularly update their time.</p>
 <p class="p2"><br></p>
-<p class="p3">3. It must register itself with BMTimeSources as a reference.</p>
+<p class="p3">3. If the base for the time reference changes (for instance when a sound file player loads a new file), it should notify its dependants:</p>
+<p class="p2"><br></p>
+<p class="p8"><span class="s6"><span class="Apple-tab-span">	</span></span><span class="s1">this</span>.changed(<span class="s2">\base</span>);</p>
+<p class="p2"><br></p>
+<p class="p3">4. It must register itself with BMTimeSources as a reference.</p>
 <p class="p5"><span class="Apple-tab-span">	</span></p>
 <p class="p9"><span class="s7"><span class="Apple-tab-span">	</span></span>BMTimeSources<span class="s7">.addReference(</span>this<span class="s7">);</span></p>
 <p class="p2"><br></p>
-<p class="p3">4. It must respond to the message 'path' with either nil or a String. Time References which derive from files (such as sound file players) should return the file's path in response to this message. Those which don't, should return nil. This functionality allows dependants to access the source for things such as GUI representations.<span class="Apple-converted-space"> </span></p>
+<p class="p3">5. It must respond to the message 'path' with either nil or a String. Time References which derive from files (such as sound file players) should return the file's path in response to this message. Those which don't, should return nil. This functionality allows dependants to access the source for things such as GUI representations.<span class="Apple-converted-space"> </span></p>
 <p class="p2"><br></p>
-<p class="p3">5. It must respond to the message setTime(time) by setting its time in seconds accordingly, and notifying its dependants of the change.</p>
+<p class="p3">6. It must respond to the message setTime(time) by setting its time in seconds accordingly, and notifying its dependants of the change.</p>
 <p class="p2"><br></p>
-<p class="p3">6. It must at least understand the messages 'play', 'stop', 'pause', and 'togglePlay'. If the implementation of any or all of<span class="Apple-converted-space">  </span>these messages would be inappropriate, it can return nil to indicate this.</p>
+<p class="p3">7. It must at least understand the messages 'play', 'stop', 'pause', and 'togglePlay'. If the implementation of any or all of<span class="Apple-converted-space">  </span>these messages would be inappropriate, it can return nil to indicate this.</p>
 <p class="p2"><br></p>
 <p class="p3">Generally speaking time references should update reasonably frequently (say 10 times a second or faster). Note that what is done with the updated data is up to the dependant object to determine.</p>
 <p class="p2"><br></p>
