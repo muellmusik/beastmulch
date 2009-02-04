@@ -623,7 +623,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		sfView = SCSoundFileView.new(scrollView, Rect(0,20, 798, 300));
 		sfView.background = HiliteGradient(Color.blue, Color.cyan, steps: 256);
 		//a.waveColors_([HiliteGradient(Color.blue, Color.cyan), HiliteGradient(Color.blue, Color.cyan)]);
-		sfView.waveColors_(Array.fill(sf.numChannels, {|i| Color.blue.blend(Color.cyan, 1 / (sf.numChannels - 1) * i)})); 
+		this.setWaveColors;
 		sfView.timeCursorOn = true;
 		sfView.timeCursorColor = Color.red;
 		sfView.canFocus_(false);
@@ -677,7 +677,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 //		});
 		window.front;
 		
-		sfView.read(block: 256);
+		if(path.notNil, {sfView.read(block: 256)});
 		this.makeEnvView;
 
 		RoundButton(window, 120@20).extrude_(false)
@@ -750,6 +750,10 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 //			.font_(Font("Helvetica-Bold", 16));
 			
 		//window.front;
+	}
+	
+	setWaveColors {
+		sfView.waveColors_(Array.fill(sf.numChannels, {|i| Color.blue.blend(Color.cyan, 1 / (sf.numChannels - 1) * i)})); 
 	}
 	
 	makeTimesView {
@@ -1066,7 +1070,9 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 					sf.close;
 					sf.openRead(path);
 					durInv = sf.duration.reciprocal;
+					sfView.soundfile = sf;
 					sfView.read(block: 256);
+					this.setWaveColors;
 					sfView.refresh;
 					this.makeTimesView;
 					this.makeEnvView;
