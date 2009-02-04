@@ -788,6 +788,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	makeEnvView {
 		envView.notNil.if({envView.remove});
 		
+		
 		envView = SCEnvelopeView(backView, Rect(0, 20, sfView.bounds.width, sfView.bounds.height))
 			.thumbWidth_(19)
 			.thumbHeight_(19)
@@ -798,7 +799,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			.background_(Color.clear);
 			
 		//b.setStatic(0,true);
-		
+		(ca.sequences.size > 0).if({
 		if(activeSequence.isNil, {activeSequence = ca.sequences.values[0]});
 		if(activeSnapshot.isNil, {activeSnapshot = activeSequence.snapshots[0]});
 		
@@ -904,7 +905,17 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		
 		//menu.items_(ca.sequences.keys.asArray.sort).doAction;
 	
-
+		}, {
+			envView.mouseDownAction = {|view, x, y, modifiers, buttonNumber, clickCount|
+				var newTime;
+				curSSTime.string_("Selected Snapshot Time:");
+				// update time cursor
+				newTime = (x / view.bounds.width) * sf.duration;
+				ca.timeReference.setTime(newTime);
+			};
+			
+			envView.mouseMoveAction = envView.mouseDownAction;
+		});
 	}
 	
 //	selectSnapShot {|selected|
