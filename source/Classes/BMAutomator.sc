@@ -661,7 +661,11 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		
 		this.makeTimesView;
 		
-		window.onClose = {sf.close; dependees.do({|dee| dee.removeDependant(this)});};
+		window.onClose = {
+			sf.close; 
+			dependees.do({|dee| dee.removeDependant(this)});
+			onClose.value(this);	
+		};
 		
 		window.view.decorator.shift(0, 5);
 		SCStaticText(window, Rect(0, 0, 5, 10)).string_("-").font_(Font("Helvetica-Bold", 12));
