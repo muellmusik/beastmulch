@@ -50,8 +50,8 @@ arrays		= \cf3 this\cf0 .executeFile(\cf3 Document\cf0 .current.dir ++ \cf4 "/ja
 ~outPutArrayFromTheChannelListFile = arrays[0]; \
 \
 controllersList = \cf3 List\cf0 [];\
-controllersList.add(etherSense = \cf3 BMMotorBEAST\cf0 (\cf3 NetAddr\cf0 (\cf4 "192.168.5.77"\cf0 , 57120), \cf5 \\MotorBEAST1\cf0 , s););\
-controllersList.add(\cf3 BMMotorBEAST\cf0 (\cf3 NetAddr\cf0 (\cf4 "192.168.5.78"\cf0 , 57120), \cf5 \\MotorBEAST2\cf0 , s););\
+controllersList.add(etherSense = \cf3 BMMotorBEAST\cf0 (\cf3 NetAddr\cf0 (\cf4 "192.168.5.77"\cf0 , 57120), \cf5 \\Lower\cf0 , s););\
+controllersList.add(\cf3 BMMotorBEAST\cf0 (\cf3 NetAddr\cf0 (\cf4 "192.168.5.78"\cf0 , 57120), \cf5 \\Upper\cf0 , s););\
 \
 backupManager	= \cf3 BMBackup\cf0 .new;\
 \cf2 outputArray	= backupManager.rememberWorkspace([ \\concert, \\system, \\speakers ],  \{ BMInOutArray.new \});\
