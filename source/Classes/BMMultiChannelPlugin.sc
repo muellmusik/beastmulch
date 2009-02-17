@@ -634,7 +634,7 @@ BMMultichannelPlugin {
 		mappings = controlNames.values.collectAs({|cn| 
 			[cn.name, ("c" ++ (bus.index + cn.index)).asSymbol];
 		}, Array).flat;
-		CmdPeriod.add(this);
+		//CmdPeriod.add(this);
 	}
 	
 	makeDef {
@@ -719,14 +719,14 @@ BMMultichannelPlugin {
 		synth = nil; bus.free; 
 		bus = nil;
 		spec.cleanupFunc.value(this);
-		CmdPeriod.remove(this);
+		//CmdPeriod.remove(this);
 	} // I'm a lame duck...
 	
-	cmdPeriod { 
-		synth = nil; 
-		bus.free; 
-		CmdPeriod.remove(this);
-	}
+//	cmdPeriod { 
+//		synth = nil; 
+//		bus.free; 
+//		CmdPeriod.remove(this);
+//	}
 	
 	gui {
 		spec.guiFunc.value(this);
@@ -788,7 +788,7 @@ BMMultichannelPluginsRack : BMAbstractAudioChainElement {
 		outNames = outs.keys;
 		if(group.isNil, {this.makeGroup});
 		plugins = List.new;
-		CmdPeriod.add(this);
+		//CmdPeriod.add(this);
 		allChainElements[name] = this;
 	}
 
@@ -890,7 +890,7 @@ BMMultichannelPluginsRack : BMAbstractAudioChainElement {
 	free {
 		plugins.do{| plugin, i | this.removePlugin(i) };
 		SystemClock.sched(BMOptions.crossfade, { group.free; group = plugins = nil });
-		CmdPeriod.remove(this)
+		//CmdPeriod.remove(this)
 	}
 	
 	// this should return an instance of our default GUI class

@@ -124,7 +124,7 @@ MackieCU : BMAbstractMackie {
 	init { |arguid, argname, argserver|
 		super.init(arguid, argname, argserver);
 		this.addMasterFaderSynth;
-		CmdPeriod.add(this)
+		ServerTree.add(this)
 	}
 	
 	// a little hacky but works
@@ -135,7 +135,7 @@ MackieCU : BMAbstractMackie {
 		}.play(RootNode(server), addAction: \addToTail);
 	}
 	
-	cmdPeriod {this.addMasterFaderSynth;}
+	doOnServerTree {this.addMasterFaderSynth;}
 	
 	startListening {
 		buttonFuncDict = IdentityDictionary.new;

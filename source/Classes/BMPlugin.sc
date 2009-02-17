@@ -247,7 +247,7 @@ BMPlugin {
 		mappings = controlNames.values.collectAs({|cn| 
 			[cn.name, ("c" ++ (bus.index + cn.index)).asSymbol];
 		}, Array).flat;
-		CmdPeriod.add(this);
+		//CmdPeriod.add(this);
 	}
 	
 	makeDef {
@@ -325,14 +325,14 @@ BMPlugin {
 		synth.set(\cfgate, 0); 
 		synth = nil; bus.free; 
 		bus = nil;
-		CmdPeriod.remove(this);
+		//CmdPeriod.remove(this);
 	} // I'm a lame duck...
 	
-	cmdPeriod { 
-		synth = nil; 
-		bus.free; 
-		CmdPeriod.remove(this);
-	}
+//	cmdPeriod { 
+//		synth = nil; 
+//		bus.free; 
+//		CmdPeriod.remove(this);
+//	}
 	
 	gui {
 		spec.guiFunc.value(this);

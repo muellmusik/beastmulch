@@ -20,7 +20,7 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 		inNames.do({|chanName|
 			strips[chanName] = BMTrimPluginsStrip(group, ins[chanName]);
 		});
-		CmdPeriod.add(this);
+		//CmdPeriod.add(this);
 		allChainElements[name] = this;
 	}
 
@@ -45,24 +45,24 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 	// which builds the window itself
 	gui { ^BMTrimPluginsRackGUI(this) } 
 	
-	cmdPeriod {
-		server.makeBundle(nil, { 
-			server.sync;
-			this.makeGroup;
-			server.sync;
-			strips.do({|strip|
-				strip.target = group;
-				strip.clear;
-				server.sync;
-			});
-		});
-		//this.changed;
-	} 
+//	cmdPeriod {
+//		server.makeBundle(nil, { 
+//			server.sync;
+//			this.makeGroup;
+//			server.sync;
+//			strips.do({|strip|
+//				strip.target = group;
+//				strip.clear;
+//				server.sync;
+//			});
+//		});
+//		//this.changed;
+//	} 
 	
-	callCmdPeriod_ { |bool| 
-		bool.if({ CmdPeriod.add(this); }, {CmdPeriod.remove(this);});
-		callCmdPeriod = bool;
-	}
+//	callCmdPeriod_ { |bool| 
+//		bool.if({ CmdPeriod.add(this); }, {CmdPeriod.remove(this);});
+//		callCmdPeriod = bool;
+//	}
 	
 //	makeGroup { group = Group.tail(server); }
 	
@@ -73,7 +73,7 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 			} 
 		};
 		SystemClock.sched(BMOptions.crossfade, { group.free; group = strips = nil });
-		CmdPeriod.remove(this)
+		//CmdPeriod.remove(this)
 		
 	}
 
@@ -390,7 +390,7 @@ BMTrimPluginsStripGUI {
 	 		.font_(Font("Helvetica-Bold", 13))
 	 		.background_(Color.grey.alpha_(0.3))
 	 		.string_(" " ++ name);
-	 	ezKnob = EZKnob(containerView, 50@20, " Trim (dBFS)", \db.asSpec, 
+	 	ezKnob = EZKnobOld(containerView, 50@20, " Trim (dBFS)", \db.asSpec, 
 	 		{|ez| trimPluginsStrip.trim_(ez.value);}, trimPluginsStrip.trim, false, 96, 70);
 	 	ezKnob.labelView.align_(\left).font_(Font("Helvetica-Bold", 12));
 	 	ezKnob.numberView.background_(Color.white.alpha_(0.3));

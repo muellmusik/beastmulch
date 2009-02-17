@@ -33,8 +33,8 @@ BMAbstractAudioChainElement {
 	// which builds the window itself
 	gui { ^this.subclassResponsibility(thisMethod); } 
 	
-	// this should recreate our group and do any other necessary bookkeeping
-	cmdPeriod { ^this.subclassResponsibility(thisMethod); } 
+//	// this should recreate our group and do any other necessary bookkeeping
+//	cmdPeriod { ^this.subclassResponsibility(thisMethod); } 
 	
 	callCmdPeriod_ { |bool| } // maybe change this later
 	
@@ -97,6 +97,11 @@ BMAbstractController {
 	*initClass {
 		allControllers = IdentityDictionary.new;
 		allControls = IdentityDictionary.new;
+		CmdPeriod.add(this);
+	}
+	
+	*cmdPeriod {
+		allControls.do({|v| v.mappedTo_(nil)});
 	}
 	
 	*dumpAllValues {

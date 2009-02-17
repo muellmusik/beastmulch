@@ -54,7 +54,7 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 //		postf("defname %\n", defname);
 //		defname.do(_.postln);
 		this.sendDef;
-		CmdPeriod.add(this);
+		//CmdPeriod.add(this);
 		allChainElements[name] = this;
 	}
 	
@@ -113,7 +113,7 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 	free {
 		this.clear;
 		SystemClock.sched(0.1, {group.free; group = nil;});
-		CmdPeriod.remove(this);
+		//CmdPeriod.remove(this);
 	}
 	
 	mappings_ {|mappingsDict| // same format as instance var
@@ -122,18 +122,18 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 		mappingsDict.keysValuesDo({|input, outputs| this.connect(input, outputs.asArray)});
 	}
 	
-	cmdPeriod {
-		this.newCollections;
-		this.makeGroup;
-		this.changed;
-	}
+//	cmdPeriod {
+//		this.newCollections;
+//		this.makeGroup;
+//		this.changed;
+//	}
 	
-	// this defeats CmdPeriod control
-	// Allows for a chain manager to control ordering
-	callCmdPeriod_ { |bool|
-		bool.if({ CmdPeriod.add(this); }, {CmdPeriod.remove(this);});
-		callCmdPeriod = bool;
-	}
+//	// this defeats CmdPeriod control
+//	// Allows for a chain manager to control ordering
+//	callCmdPeriod_ { |bool|
+//		bool.if({ CmdPeriod.add(this); }, {CmdPeriod.remove(this);});
+//		callCmdPeriod = bool;
+//	}
 	
 	// subclass stuff
 	sendDef {
@@ -248,10 +248,10 @@ BMAmpControlMatrix : BMAbstractMatrix {
 		});
 	}
 	
-	cmdPeriod {
-		this.clearControlMappings;
-		super.cmdPeriod;
-	}
+//	cmdPeriod {
+//		this.clearControlMappings;
+//		super.cmdPeriod;
+//	}
 	
 	sendDef {
 		SynthDef(defname, {arg in, out, gate = 1;
@@ -815,9 +815,9 @@ BMMatrixGUI : BMAbstractGUI {
 //			t.align = \center;
 //		});
 		
-		CmdPeriod.add(this);
+		//CmdPeriod.add(this);
 		window.onClose = { 
-			CmdPeriod.remove(this); 
+			//CmdPeriod.remove(this); 
 			matrix.removeDependant(this); 
 			matrix.controlsForInputs.if({
 				matrix.inNames.do({|inName|
@@ -829,7 +829,7 @@ BMMatrixGUI : BMAbstractGUI {
 		window.refresh;
 	}
 	
-	cmdPeriod { window.refresh }
+	//cmdPeriod { window.refresh }
 	
 	update { |changed, what| window.refresh; }
 }

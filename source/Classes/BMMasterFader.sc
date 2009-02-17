@@ -48,17 +48,17 @@ BMMasterFader : BMAbstractAudioChainElement {
 	
 	gui { ^BMMasterFaderGUI(this) } 
 	
-	cmdPeriod { 
-
-		server.makeBundle(nil, { 
-			server.sync;
-			this.makeGroup;
-			server.sync;
-			this.addMasterFaderSynth;
-			server.sync
-		})
-	
-	} 
+//	cmdPeriod { 
+//
+//		server.makeBundle(nil, { 
+//			server.sync;
+//			this.makeGroup;
+//			server.sync;
+//			this.addMasterFaderSynth;
+//			server.sync
+//		})
+//	
+//	} 
 	
 //	makeGroup { group = Group.tail(server) }
 	
