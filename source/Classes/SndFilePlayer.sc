@@ -25,7 +25,7 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 		name = argName ? this.makeName;
 		bus = Bus.audio(server, maxNumChannels);
 		if(group.isNil, {this.makeGroup});
-		CmdPeriod.add(this);
+		//CmdPeriod.add(this);
 		allChainElements[name] = this;
 		BMTimeSources.addReference(this);
 		// we check by node ID but this should be good enough to avoid conflicts with others
@@ -59,6 +59,7 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 			buffer = Buffer.read(server, path, action: {(path + "loaded").postln;
 			sampleDur = buffer.sampleRate.reciprocal;
 			this.changed(\loaded);
+			this.changed(\base);
 			this.sendDef; action.value });
 		};
 
@@ -195,7 +196,7 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 //		group = Group.head(server);
 //	}
 	
-	cmdPeriod { blockPlay = false; this.makeGroup }
+//	cmdPeriod { blockPlay = false; this.makeGroup }
 	
 	gui { ^BMSoundFilePlayerGUI(this, this.name) }
 	
