@@ -190,46 +190,6 @@
 			<key>Content</key>
 			<dict>
 				<key>PBXProjectModuleGUID</key>
-				<string>FE5B5A7D0D6B2C93008C3FE7</string>
-				<key>PBXProjectModuleLabel</key>
-				<string>fastInverseSqrt.h</string>
-				<key>PBXSplitModuleInNavigatorKey</key>
-				<dict>
-					<key>Split0</key>
-					<dict>
-						<key>PBXProjectModuleGUID</key>
-						<string>FE5B5A7E0D6B2C93008C3FE7</string>
-						<key>PBXProjectModuleLabel</key>
-						<string>fastInverseSqrt.h</string>
-						<key>_historyCapacity</key>
-						<integer>0</integer>
-						<key>bookmark</key>
-						<string>FE5B5B8F0D6B363A008C3FE7</string>
-						<key>history</key>
-						<array>
-							<string>FE5B5A7F0D6B2C93008C3FE7</string>
-						</array>
-					</dict>
-					<key>SplitCount</key>
-					<string>1</string>
-				</dict>
-				<key>StatusBarVisibility</key>
-				<true/>
-			</dict>
-			<key>Geometry</key>
-			<dict>
-				<key>Frame</key>
-				<string>{{0, 20}, {1012, 529}}</string>
-				<key>PBXModuleWindowStatusBarHidden2</key>
-				<false/>
-				<key>RubberWindowFrame</key>
-				<string>38 432 1012 570 0 0 1680 1028 </string>
-			</dict>
-		</dict>
-		<dict>
-			<key>Content</key>
-			<dict>
-				<key>PBXProjectModuleGUID</key>
 				<string>FE5B5A970D6B2CE8008C3FE7</string>
 				<key>PBXProjectModuleLabel</key>
 				<string>BEASTMulchLoris.cpp</string>
@@ -244,7 +204,7 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>FE5B5B900D6B363A008C3FE7</string>
+						<string>FE5B5B930D6B7C57008C3FE7</string>
 						<key>history</key>
 						<array>
 							<string>FE5B5A8E0D6B2CB9008C3FE7</string>
@@ -270,6 +230,46 @@
 			<key>Content</key>
 			<dict>
 				<key>PBXProjectModuleGUID</key>
+				<string>FE5B5A7D0D6B2C93008C3FE7</string>
+				<key>PBXProjectModuleLabel</key>
+				<string>fastInverseSqrt.h</string>
+				<key>PBXSplitModuleInNavigatorKey</key>
+				<dict>
+					<key>Split0</key>
+					<dict>
+						<key>PBXProjectModuleGUID</key>
+						<string>FE5B5A7E0D6B2C93008C3FE7</string>
+						<key>PBXProjectModuleLabel</key>
+						<string>fastInverseSqrt.h</string>
+						<key>_historyCapacity</key>
+						<integer>0</integer>
+						<key>bookmark</key>
+						<string>FE5B5B940D6B7C57008C3FE7</string>
+						<key>history</key>
+						<array>
+							<string>FE5B5A7F0D6B2C93008C3FE7</string>
+						</array>
+					</dict>
+					<key>SplitCount</key>
+					<string>1</string>
+				</dict>
+				<key>StatusBarVisibility</key>
+				<true/>
+			</dict>
+			<key>Geometry</key>
+			<dict>
+				<key>Frame</key>
+				<string>{{0, 20}, {1012, 529}}</string>
+				<key>PBXModuleWindowStatusBarHidden2</key>
+				<false/>
+				<key>RubberWindowFrame</key>
+				<string>38 432 1012 570 0 0 1680 1028 </string>
+			</dict>
+		</dict>
+		<dict>
+			<key>Content</key>
+			<dict>
+				<key>PBXProjectModuleGUID</key>
 				<string>FE5B5A810D6B2C93008C3FE7</string>
 				<key>PBXProjectModuleLabel</key>
 				<string>Smoke.c</string>
@@ -284,7 +284,7 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>FE5B5B910D6B363A008C3FE7</string>
+						<string>FE5B5B950D6B7C57008C3FE7</string>
 						<key>history</key>
 						<array>
 							<string>FE5B5A830D6B2C93008C3FE7</string>
@@ -454,7 +454,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>FE5B5B8E0D6B363A008C3FE7</string>
+										<string>FE5B5B920D6B7C57008C3FE7</string>
 										<key>history</key>
 										<array>
 											<string>FE5B5A640D6B2C93008C3FE7</string>
@@ -699,10 +699,10 @@
 	<array>
 		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>FE5B5A810D6B2C93008C3FE7</string>
-		<string>FE5B5A970D6B2CE8008C3FE7</string>
 		<string>FE5B5A7D0D6B2C93008C3FE7</string>
 		<string>/Library/Application Support/SuperCollider/Extensions/BEASTMulch SVN/BEASTMulchPlugins/BEASTMulch Plugins.xcodeproj</string>
 		<string>FEDA692A0C949D67007670AE</string>
+		<string>FE5B5A970D6B2CE8008C3FE7</string>
 	</array>
 	<key>WindowString</key>
 	<string>251 420 690 397 0 0 1680 1028 </string>
