@@ -14,15 +14,30 @@ BMOptions {
 BMAbstractAudioChainElement {
 	classvar <allChainElements;
 	var <ins, <outs, <inNames, <outNames; // in the default case the getters return nil, as an element need not have both ins and outs
-	var <group, <>server, <name, <callCmdPeriod = true;
+	var <target, <addAction, <group, <>server, <name;
 	
 	// for chain construction in BMAudioChainManager
 	// overriding methods in subclasses should have these args, but may ignore them
 	// if appropriate
 	
-	// maybe don't need two audio arrays here
-	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
-		^this.subclassResponsibility(thisMethod);
+//	// maybe don't need two audio arrays here
+//	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
+//		^this.subclassResponsibility(thisMethod);
+//	}
+	
+	// simplest case
+//	*new { |target, addAction = \addToTail, name| 
+//		^super.new.init(target, addAction, name);
+//	}
+	
+	// simplest case
+	initNameAndTarget {|argtarget, argaddAction, argname|
+		target = argtarget.asTarget;
+		server = target.server;
+		addAction = argaddAction;
+		name = argname ?? {this.makeName};
+		allChainElements[name] = this;
+		this.makeGroup;
 	}
 	
 	*initClass {
@@ -36,12 +51,12 @@ BMAbstractAudioChainElement {
 //	// this should recreate our group and do any other necessary bookkeeping
 //	cmdPeriod { ^this.subclassResponsibility(thisMethod); } 
 	
-	callCmdPeriod_ { |bool| } // maybe change this later
-	
-	free {CmdPeriod.remove(this);} // overrride to do more complicated things
+//	callCmdPeriod_ { |bool| } // maybe change this later
+//	
+//	free {CmdPeriod.remove(this);} // overrride to do more complicated things
 	
 	// this way if you make them in order
-	makeGroup { group = Group.tail(server); }
+	makeGroup { group = Group.new(target, addAction); }
 	
 	makeName { ^(this.class.name ++ UniqueID.next)} 
 	
@@ -53,10 +68,15 @@ BMAbstractAudioChainElement {
 // should they support a rudimentary clock here?
 BMAbstractAudioSource : BMAbstractAudioChainElement {
 
-	// sources are not instantiated by the chain manager
-	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
-		^this.shouldNotImplement(thisMethod);
-	}
+//	// sources are not instantiated by the chain manager
+//	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
+//		^this.shouldNotImplement(thisMethod);
+//	}
+
+//	// sources addToHead
+////	*new { |target, addAction = \addToHead, name| 
+////		^super.new.init(target, addAction, name);
+////	}
 	
 	asBMInOutArray { ^this.subclassResponsibility(thisMethod);}
 	
@@ -79,8 +99,6 @@ BMAbstractAudioSource : BMAbstractAudioChainElement {
 	
 	setTime { }
 	
-	// sources at the head
-	makeGroup { group = Group.head(server);}
 }
 
 // valueArray holds the controller value in its native form

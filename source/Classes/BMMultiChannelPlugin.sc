@@ -773,28 +773,23 @@ BMMultichannelPluginsRack : BMAbstractAudioChainElement {
 //		});
 //	}
 	
-	*new { |ins, outs, group, server, name|
-		^super.new.init(ins, outs ? ins, group, server ? Server.default, name);
+	*new { |ins, outs, target, addAction = \addToTail, name|
+		^super.new.init(ins, outs ? ins, target, addAction, name);
 		// default name is class
 	}
 	
-	init {|argins, argouts, arggroup, argserver, argname|
+	init {|argins, argouts, argtarget, argaddAction, argname|
+		this.initNameAndTarget(argtarget, argaddAction, argname);
 		ins = argins;
 		outs = argouts;
-		group = arggroup;
-		server = argserver;
-		name = argname  ? this.makeName;
 		inNames = ins.keys;
 		outNames = outs.keys;
-		if(group.isNil, {this.makeGroup});
 		plugins = List.new;
-		//CmdPeriod.add(this);
-		allChainElements[name] = this;
 	}
 
-	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
-		^this.new(inAudioArray, group, server, name);
-	}
+//	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
+//		^this.new(inAudioArray, group, server, name);
+//	}
 	
 //	makeGroup { group = Group.tail(server); }
 	

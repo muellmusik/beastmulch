@@ -2,31 +2,25 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 	
 	var strips;
 	
-	*new { |ins, group, server, name|
-		^super.new.init(ins, group, server ? Server.default, name);
-		// default name is class
+	*new { |ins, target, addAction = \addToTail, name|
+		^super.new.init(ins, target, addAction, name);
 	}
 	
-	init {|argins, arggroup, argserver, argname|
+	init {|argins, argtarget, argaddAction, argname|
+		this.initNameAndTarget(argtarget, argaddAction, argname);
 		ins = argins;
 		outs = argins;
-		group = arggroup;
-		server = argserver;
-		name = argname  ? this.makeName;
 		inNames = ins.keys;
 		outNames = outs.keys;
-		if(group.isNil, {this.makeGroup});
 		strips = ();
 		inNames.do({|chanName|
 			strips[chanName] = BMTrimPluginsStrip(group, ins[chanName]);
 		});
-		//CmdPeriod.add(this);
-		allChainElements[name] = this;
 	}
 
-	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
-		^this.new(inAudioArray, group, server, name);
-	}
+//	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
+//		^this.new(inAudioArray, group, server, name);
+//	}
 	
 	mappings { ^strips.collect({|strip, name| strip.mappings});}
 	

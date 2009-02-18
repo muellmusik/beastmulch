@@ -25,17 +25,15 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 
 	var <matrixArray, <mappings, defname; // defname is the def for a node
 	
-	*new { |ins, outs, group, server, name|
-		^super.new.init(ins, outs, group, server ? Server.default, name);
+	*new { |ins, outs, target, addAction = \addToTail, name|
+		^super.new.init(ins, outs, target, addAction, name);
 		// default name is class
 	}
 	
-	init {|argins, argouts, arggroup, argserver, argname|
+	init {|argins, argouts, argTarget, argAddAction, argName|
+		this.initNameAndTarget(argTarget, argAddAction, argName);
 		ins = argins;
 		outs = argouts;
-		group = arggroup;
-		server = argserver;
-		name = argname  ? this.makeName;
 		// allow for arrays as well as Dictionaries
 		// if array, offset by input channels
 		if(ins.isBMInOutArray.not, 
@@ -48,14 +46,12 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 		// used for indices for matrix lookup
 		inNames = ins.keys;
 		outNames = outs.keys;
-		if(group.isNil, {this.makeGroup});
 		this.newCollections;
 		defname = ("BMMatrix-" ++ name);
 //		postf("defname %\n", defname);
 //		defname.do(_.postln);
 		this.sendDef;
 		//CmdPeriod.add(this);
-		allChainElements[name] = this;
 	}
 	
 	newCollections {
@@ -151,9 +147,9 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 // maps ins to outs
 BMAudioMatrix : BMAbstractMatrix {
 	
-	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
-		^this.new(inAudioArray, outAudioArray, group, server, name);
-	}
+//	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
+//		^this.new(inAudioArray, outAudioArray, group, server, name);
+//	}
 	
 	sendDef {
 		SynthDef(defname, { arg in, out, gate = 1;
@@ -176,9 +172,9 @@ BMAmpControlMatrix : BMAbstractMatrix {
 	
 	var outmappings;
 	
-	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
-		^this.new(controllerArray, outAudioArray, group, server, name);
-	}
+//	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
+//		^this.new(controllerArray, outAudioArray, group, server, name);
+//	}
 	
 	newCollections {
 		matrixArray = Array.newClear(outNames.size) ! ins.size;

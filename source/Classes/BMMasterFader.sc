@@ -4,26 +4,26 @@ BMMasterFader : BMAbstractAudioChainElement {
 	
 	var masterFaderSynth, <level = -12, <minLevel = -inf, <maxLevel = 0, bus, <busIndex;
 	
-	*new {| group, server, name |
-		 ^super.new.init(group, server ? Server.default, name);
+//use super
+//	*new {| group, server, name |
+//		 ^super.new.init(group, server ? Server.default, name);
+//	}
+
+	*new { |target, addAction = \addToTail, name| 
+		^super.new.init(target, addAction, name);
 	}
 	
-	init {| arggroup, argserver, argname |
-		  group	= arggroup;
-		  server	= argserver;
-		  name	= argname  ? this.makeName;
-		  if(group.isNil, {this.makeGroup });
-		  allChainElements[name] = this;
-		  bus = Bus.control(server, 1);
-		  busIndex = bus.index;
-		  this.level	= level;
-		  this.addMasterFaderSynth;
-		  CmdPeriod.add(this);
+	init {|argtarget, argaddAction, argname|
+		this.initNameAndTarget(argtarget, argaddAction, argname);
+		bus = Bus.control(server, 1);
+		busIndex = bus.index;
+		this.level	= level;
+		this.addMasterFaderSynth;
 	}
 	
-	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
-		^this.new(group, server, name)
-	}
+//	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
+//		^this.new(group, server, name)
+//	}
 
 	level_ {| x |
 	 	level = x.clip(minLevel, maxLevel);

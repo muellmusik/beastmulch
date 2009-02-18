@@ -12,21 +12,16 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 	var blockPlay = false;
 	var resp, trigID;
 	
-	*new {|maxNumChannels = 2, latency = 0.1, group, server, name|
-		^super.new.init(maxNumChannels, latency, group, server ? Server.default, name);
+	*new {|maxNumChannels = 2, latency = 0.1, target, addAction = \addToHead, name|
+		^super.new.init(maxNumChannels, latency, target, addAction, name);
 	}
 	
-	init { |argMaxNumChannels, argLatency, argGroup, argServer, argName|
+	init { |argMaxNumChannels, argLatency, argTarget, argAddAction, argName|
 		
+		this.initNameAndTarget(argTarget, argAddAction, argName);
 		maxNumChannels = argMaxNumChannels;
 		latency = argLatency;
-		server = argServer;
-		group = argGroup;
-		name = argName ? this.makeName;
 		bus = Bus.audio(server, maxNumChannels);
-		if(group.isNil, {this.makeGroup});
-		//CmdPeriod.add(this);
-		allChainElements[name] = this;
 		BMTimeSources.addReference(this);
 		// we check by node ID but this should be good enough to avoid conflicts with others
 		// if they don't
