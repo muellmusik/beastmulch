@@ -305,6 +305,7 @@ BMTrimPluginsRackGUI : BMAbstractGUI {
 			SCDragSource(pluglist, Rect(0, 0, 150, 20)).string_("   " ++ piName.asString)
 				.background_(Color.grey.alpha_(0.2))
 				.font_(Font("Helvetica-Bold", 12))
+				.dragLabel_(piName.asString)
 				.beginDragAction_({BMPlugin(piName, 1)}) // one channel for now
 				.mouseDownAction_({
 					descriptionHelpText.string = piName ++ ": " ++ 
