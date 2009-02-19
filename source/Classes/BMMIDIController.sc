@@ -7,9 +7,9 @@ BMAbstractMIDIController : BMAbstractController {
 	var responder, <>loopBack = false;
 	var <>acceptsAutomation = false;
 	
-	*new { |uid, name, server|
-		^super.new.init(uid, name, server ? Server.default).addControlsToIndex;
-	}
+//	*new { |uid, name, server|
+//		^super.new.init(uid, name, server ? Server.default).addControlsToIndex;
+//	}
 	
 	startListening { 
 		this.subclassResponsibility(thisMethod);
@@ -86,6 +86,10 @@ BMAbstractMIDIController : BMAbstractController {
 
 // 14 bit bend
 BMMIDIBendController : BMAbstractMIDIController {
+
+	*new { |uid, name, server|
+		^super.new.init(uid, name, server ? Server.default).addControlsToIndex;
+	}
 
 	setNumFaders { numFaders = 16;}
 	
