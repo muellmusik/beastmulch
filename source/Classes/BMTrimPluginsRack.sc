@@ -417,7 +417,10 @@ BMTrimPluginsStripGUI {
 		};
 		listView.canReceiveDragHandler = { SCView.currentDrag.isKindOf(BMPlugin) };
 		listView.receiveDragHandler = { trimPluginsStrip.addPlugin(SCView.currentDrag) };
-		listView.beginDragAction = { trimPluginsStrip.plugins[listView.value].copy };
+		listView.beginDragAction = { 
+			listView.dragLabel = listView.item.asString;
+			trimPluginsStrip.plugins[listView.value].copy;
+		};
 	 }
 	 
 	 update {|tpv, what|
