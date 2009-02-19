@@ -116,6 +116,27 @@ BMPluginSpec {
 				), 
 				description: "The classic open source Schroeder/Moorer reverb"
 			);
+			BMPluginSpec('Compander', 				// name
+				{|plugin, numChannels, input, thresh, slopeBelow, slopeAbove, 
+				clampTime, relaxTime| 
+					Compander.ar(input, input, thresh, slopeBelow, slopeAbove, 
+				clampTime, relaxTime);
+				},
+				(
+					thresh: ControlSpec(0.05, 1, \linear, 0, 0.5, units: ""),
+					slopeBelow: ControlSpec(0, 10, \linear, 0, 0.5, units: ""),
+					slopeAbove: ControlSpec(0, 10, \linear, 0, 0.5, units: ""),
+					clampTime: ControlSpec(0, 1, \linear, 0, 0.01, units: "secs"),
+					relaxTime: ControlSpec(0, 1, \linear, 0, 0.01, units: "secs")
+				), // specsDict
+				nil, 							// default GUI
+				('noise gate': (thresh: 0.5, slopeBelow: 10, slopeAbove: 1, clampTime: 0.01, relaxTime: 0.01),
+				'compressor': (thresh: 0.5, slopeBelow: 1, slopeAbove: 0.5, clampTime: 0.01, relaxTime: 0.01),
+				'limiter': (thresh: 0.5, slopeBelow: 1, slopeAbove: 0.1, clampTime: 0.01, relaxTime: 0.01),
+				'sustainer': (thresh: 0.5, slopeBelow: 0.1, slopeAbove: 1, clampTime: 0.01, relaxTime: 0.01)
+				), // presets
+				description: "General purpose (hard-knee) dynamics processor"
+			);
 			BMPluginSpec('3 Band EQ',
 				{|plugin, numChannels, input, lowFreq, lowGain, midFreq, midrq, midGain
 					hiFreq, hiGain| 
