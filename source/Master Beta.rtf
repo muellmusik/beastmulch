@@ -159,7 +159,7 @@ startButton.action = \{\cf4 |view|\cf2 \
 		if (view.value == 1) \{\
 			\cf3 // start sound\cf2 \
 			\
-			synth = \cf4 Synth\cf2 .tail(\cf4 RootNode\cf2 (s), \cf6 \\PinkTest\cf2 , [\cf6 \\amp\cf2 , ampControl.value.dbamp, \cf6 \\out\cf2 , \
+			synth = \cf4 Synth\cf2 .tail(\cf4 s.defaultGroup\cf2 , \cf6 \\PinkTest\cf2 , [\cf6 \\amp\cf2 , ampControl.value.dbamp, \cf6 \\out\cf2 , \
 				outputControl.value - 1]);\
 			\
 		\};\
