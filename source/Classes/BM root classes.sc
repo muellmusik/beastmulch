@@ -123,7 +123,13 @@ BMAbstractController {
 	}
 	
 	*dumpAllValues {
-		^allControllers.collect({|elem, key| key->(elem.getAllFaders)});
+		"\n///////////////////\nDumping all Controller Values\n".postln;
+		allControllers.keysValuesDo({|key, elem| 
+			(key ++ ": ").post;
+			elem.getAllFaders.postcs;
+			"\n".post
+		});
+		"///////////////////".postln;
 	}
 	
 	*getValueByName{|ctrlName|
