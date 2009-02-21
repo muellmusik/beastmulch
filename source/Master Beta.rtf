@@ -25,7 +25,8 @@
 \cf4 var\cf2  controllers, inputs, inputArray, privateIns, privateOuts;\
 \cf4 var\cf2  concertManager, configManager, pieces, configurations;\
 \cf4 var\cf2  chainFunc, chain, cond, configsGUI, configsGUIFunc;\
-\cf4 var\cf2  controllerAutomator, bmMenu, autoMenuItem, autoGUI;\
+\cf4 var\cf2  controllerAutomator, bmMenu, utilMenu, autoMenuItem, autoGUI;\
+\cf4 var\cf2  pinkNoiseFunc;\
 \
 cond = \cf4 Condition\cf2 .new;\
 s.bootSync(cond);\
@@ -91,8 +92,8 @@ chain = chainFunc.value;\
 \
 controllerAutomator = \cf4 BMControllerAutomator\cf2 (\cf4 BMAbstractController\cf2 .masterInOutArray.keys, player);\
 ~controllerAutomator = controllerAutomator;\
-bmMenu = \cf4 CocoaMenuItem\cf2 (\cf4 nil\cf2 , 5, \cf5 "BEASTmulch"\cf2 , \cf4 true\cf2 );\
-autoMenuItem = \cf4 CocoaMenuItem\cf2 (bmMenu, 0, \cf5 "SoundFile Display / Controller Automation"\cf2 , \cf4 false\cf2 , \{\
+bmMenu = \cf4 SCMenuGroup\cf2 (\cf4 nil\cf2 , \cf5 "BEASTmulch"\cf2 , 5);\
+autoMenuItem = \cf4 SCMenuItem\cf2 (bmMenu, \cf5 "SoundFile Display / Controller Automation"\cf2 , 0).action_(\{\
 	if(autoGUI.isNil, \{autoGUI = controllerAutomator.gui.onClose_(\{autoGUI = \cf4 nil\cf2 \})\}, \{\
 		autoGUI.window.front;\
 	\});\
@@ -129,6 +130,77 @@ configsGUI	 = configsGUIFunc.value(chain);\
 	\}\
 );\
 \
+\cf3 // PinkNoise Tester\cf2 \
+\
+pinkNoiseFunc = \{\
+\
+\cf4 var\cf2  pinkWin, startButton, synth;\
+\cf4 var\cf2  outputControl, ampControl;\
+\cf4 var\cf2  cmdPeriodFunc;\
+s.options.numOutputBusChannels = 96;\
+s.waitForBoot(\{\
+\cf4 SynthDef\cf2 (\cf6 \\PinkTest\cf2 , \{\cf4 |out, amp|\cf2  \cf4 Out\cf2 .ar(out, \cf4 PinkNoise\cf2 .ar(amp) * \cf4 Decay2\cf2 .ar(\cf4 Impulse\cf2 .ar(1))); \}).send(s);\
+\
+\cf3 // make the window\cf2 \
+pinkWin = \cf4 SCWindow\cf2 (\cf5 "PinkNoise Tester"\cf2 , \cf4 Rect\cf2 (20, 400, 440, 180));\
+pinkWin.front; \cf3 // make window visible and front window.\cf2 \
+pinkWin.view.decorator = \cf4 FlowLayout\cf2 (pinkWin.view.bounds);\
+\
+\cf3 //pinkWin.view.background = HiliteGradient(Color.rand(0.0,1.0),Color.rand(0.0,1.0),\cf2 \
+\cf3 //					[\\h,\\v].choose, 100, rrand(0.1,0.9));\cf2 \
+\
+\cf3 // add a button to start and stop the sound.\cf2 \
+startButton = \cf4 SCButton\cf2 (pinkWin, 75 @ 24);\
+startButton.states = [\
+	[\cf5 "Start"\cf2 , \cf4 Color\cf2 .black, \cf4 Color\cf2 .green],\
+	[\cf5 "Stop"\cf2 , \cf4 Color\cf2 .white, \cf4 Color\cf2 .red]\
+];\
+startButton.action = \{\cf4 |view|\cf2 \
+		if (view.value == 1) \{\
+			\cf3 // start sound\cf2 \
+			\
+			synth = \cf4 Synth\cf2 .tail(\cf4 RootNode\cf2 (s), \cf6 \\PinkTest\cf2 , [\cf6 \\amp\cf2 , ampControl.value.dbamp, \cf6 \\out\cf2 , \
+				outputControl.value - 1]);\
+			\
+		\};\
+		if (view.value == 0) \{\
+			\cf3 // stop sound\cf2 \
+			synth.free;\
+		\};\
+\};\
+\
+\cf3 // create controls for all parameters\cf2 \
+pinkWin.view.decorator.nextLine;\
+outputControl = \cf4 EZSlider\cf2 (pinkWin, 400 @ 24, \cf5 "Hardware Out"\cf2 , \cf4 ControlSpec\cf2 (1, 98, \cf6 \\lin\cf2 , 1.0), \
+	\{\cf4 |ez|\cf2  synth.set( \cf5 "out"\cf2 , ez.value -1); \}, 1);\
+	\
+pinkWin.view.decorator.nextLine;\
+ampControl = \cf4 EZSlider\cf2 (pinkWin, 400 @ 24, \cf5 "Amp"\cf2 , \cf6 \\db\cf2 , \
+	\{\cf4 |ez|\cf2  synth.set(\cf5 "amp"\cf2 , ez.value.dbamp); \}, -34);\
+\
+pinkWin.view.decorator.nextLine;\
+\cf4 SCStaticText\cf2 .new(pinkWin, \cf4 Rect\cf2 (0,0,300,80)).string_(\cf5 "Outputs are Hardware, not SC, i.e. 1 = 1"\cf2 );\
+			\
+\
+\cf3 // set start button to zero upon a cmd-period\cf2 \
+cmdPeriodFunc = \{ startButton.value = 0; \};\
+\cf4 CmdPeriod\cf2 .add(cmdPeriodFunc);\
+\
+\cf3 // stop the sound when window closes and remove cmdPeriodFunc.\cf2 \
+pinkWin.onClose = \{\
+	synth.free;\
+	\cf4 CmdPeriod\cf2 .remove(cmdPeriodFunc);\
+\};\
+\})\
+\
+\};\
+\
+\cf3 // Utilities\cf2 \
+utilMenu = \cf4 SCMenuGroup\cf2 (bmMenu, \cf5 "Utilities"\cf2 );\
+\cf4 SCMenuItem\cf2 (utilMenu, \cf5 "Test Outputs"\cf2 ).action_(pinkNoiseFunc);\
+\cf4 SCMenuItem\cf2 (utilMenu, \cf5 "Meter Bridge"\cf2 ).action_(\{s.meter\});\
+\cf4 SCMenuItem\cf2 (utilMenu, \cf5 "Dump Node Tree"\cf2 ).action_(\{s.queryAllNodes(\cf4 false\cf2 )\});\
+\cf4 SCMenuItem\cf2 (utilMenu, \cf5 "Dump All Controller Values"\cf2 ).action_(\{\cf4 BMAbstractController\cf2 .dumpAllValues\});\
 									\
 \}.defer(1);						\
 \}).play(\cf4 AppClock\cf2 );						\
