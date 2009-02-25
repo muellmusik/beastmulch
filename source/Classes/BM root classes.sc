@@ -195,7 +195,11 @@ BMAbstractController {
 	
 	acceptsAutomation { ^false }
 	
-	spec { ^spec.asSpec; } 
+	spec { ^spec.asSpec; }
+	
+	calibrate {
+		("No calibration to do for " ++ name ++ ".").postln;
+	} 
 }
 
 // don't make these yourself
