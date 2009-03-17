@@ -24,6 +24,15 @@
 #include "SC_Unit.h"
 #include "SC_Wire.h"
 
+#ifdef SC_WIN32
+// workaround for IN/OUT conflict with Win32 headers. see SC_Unit.h for details
+// (note: the pragma momentarily suppresses compiler warning about such conflict)
+#pragma warning(disable: 4005)
+#define IN SC_IN
+#define OUT SC_OUT
+#pragma warning(default: 4005)
+#endif
+
 // demand rate unit support.
 
 inline bool IsDemandInput(Unit* unit, int index)
@@ -40,6 +49,24 @@ inline float DemandInput(Unit* unit, int index)
 	return IN0(index);
 }
 
+// support for audio rate input to demand UGens
+// offset comes in as inNumSamples, so is in the range 1..size ! inNumSamples = 0 has a special meaning (reset).
+// it is converted to a buffer index here.
+
+inline float DemandInputA(Unit* unit, int index, int offset)
+{
+	Unit* fromUnit = unit->mInput[index]->mFromUnit;
+	if(!fromUnit) { return IN0(index); } 
+	if (fromUnit->mCalcRate == calc_DemandRate) {
+		(fromUnit->mCalcFunc)(fromUnit, offset);
+		return IN0(index);
+	} else if (fromUnit->mCalcRate == calc_FullRate) {
+		return IN(index)[offset - 1];
+	} else {
+		return IN0(index);
+	}
+}
+
 inline void ResetInput(Unit* unit, int index)
 {
 	Unit* fromUnit = unit->mInput[index]->mFromUnit;
@@ -49,6 +76,7 @@ inline void ResetInput(Unit* unit, int index)
 
 #define ISDEMANDINPUT(index) IsDemandInput(unit, (index))
 #define DEMANDINPUT(index) DemandInput(unit, (index))
+#define DEMANDINPUT_A(index, offset) DemandInputA(unit, (index), (offset))
 #define RESETINPUT(index) ResetInput(unit, (index))
 
 #endif

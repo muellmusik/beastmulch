@@ -77,7 +77,7 @@ struct sc_msg_iter
 	int32 geti(int32 defaultValue = 0);
 	float32 getf(float32 defaultValue = 0.f);
 	float64 getd(float64 defaultValue = 0.f);
-	char *gets(char* defaultValue = 0);
+	const char *gets(const char* defaultValue = 0);
 	int32 *gets4(char* defaultValue = 0);
 	size_t getbsize();
 	void getb(char* outData, size_t inSize);
@@ -122,11 +122,17 @@ inline int32 sc_msg_iter::geti(int32 defaultValue)
 		} else if (tags[count] == 'f') {
 			value = (int32)OSCfloat(rdpos);
 			rdpos += sizeof(float32);
-/*		} else if (tags[count] == 's') {
-			value = atoi(rdpos);
+		} else if (tags[count] == 's') {
+			/*	value = atoi(rdpos); */
+			value = defaultValue;
 			rdpos = OSCstrskip(rdpos);
-*/
+		} else if (tags[count] == 'b') {
+			value = defaultValue;
+			skipb();
 		} else {
+			/* this is dangerous, as rdpos is not
+			   advanced accordingly while count++ takes
+			   place */
 			value = defaultValue;
 		}
 	} else {
@@ -151,11 +157,17 @@ inline float32 sc_msg_iter::getf(float32 defaultValue)
 		} else if (tags[count] == 'i') {
 			value = static_cast<float32>(OSCint(rdpos));
 			rdpos += sizeof(int32);
-/*		} else if (tags[count] == 's') {
-			value = atof(rdpos);
+		} else if (tags[count] == 's') {
+			/*    value = atof(rdpos); */
+			value = defaultValue;
 			rdpos = OSCstrskip(rdpos);
-*/
+		} else if (tags[count] == 'b') {
+			value = defaultValue;
+			skipb();
 		} else {
+			/* this is dangerous, as rdpos is not
+			   advanced accordingly while count++ takes
+			   place */
 			value = defaultValue;
 		}
 	} else {
@@ -180,11 +192,17 @@ inline float64 sc_msg_iter::getd(float64 defaultValue)
 		} else if (tags[count] == 'i') {
 			value = (float64)OSCint(rdpos);
 			rdpos += sizeof(int32);
-/*		} else if (tags[count] == 's') {
-			value = atof(rdpos);
+		} else if (tags[count] == 's') {
+			/*    value = atof(rdpos); */
+			value = defaultValue;
 			rdpos = OSCstrskip(rdpos);
-*/
+		} else if (tags[count] == 'b') {
+			value = defaultValue;
+			skipb();
 		} else {
+			/* this is dangerous, as rdpos is not
+			   advanced accordingly while count++ takes
+			   place */
 			value = defaultValue;
 		}
 	} else {
@@ -196,9 +214,9 @@ inline float64 sc_msg_iter::getd(float64 defaultValue)
 }
 
 
-inline char* sc_msg_iter::gets(char* defaultValue)
+inline const char* sc_msg_iter::gets(const char* defaultValue)
 {
-	char* value;
+	const char* value;
 	if (remain() <= 0) return 0;
 	if (tags) {
 		if (tags[count] == 's') {

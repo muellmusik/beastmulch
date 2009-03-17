@@ -24,6 +24,7 @@
 #include "SC_Node.h"
 #include "SC_Rate.h"
 #include "SC_Dimension.h"
+#include "SC_SndBuf.h"
 
 struct Graph 
 {
@@ -35,8 +36,11 @@ struct Graph
 	uint32 mNumControls;
 	float *mControls;
 	float **mMapControls;
-		
-	uint32 mNumUnits;
+	
+	// try this for setting the rate of a control
+	int *mControlRates;
+
+        uint32 mNumUnits;
 	struct Unit **mUnits;
 	
 	int mNumCalcUnits;
@@ -49,6 +53,10 @@ struct Graph
 	struct Unit *mLocalControlBusUnit;
 	
 	float mSubsampleOffset;
+	
+	SndBuf *mLocalSndBufs;
+	int localBufNum;
+	int localMaxBufNum;
 };
 typedef struct Graph Graph;
 

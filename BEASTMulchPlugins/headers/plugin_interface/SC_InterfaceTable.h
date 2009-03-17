@@ -47,17 +47,17 @@ struct InterfaceTable
 	int32 (*fRanSeed)();
 	
 	// define a unit def
-	bool (*fDefineUnit)(char *inUnitClassName, size_t inAllocSize, 
+	bool (*fDefineUnit)(const char *inUnitClassName, size_t inAllocSize,
 			UnitCtorFunc inCtor, UnitDtorFunc inDtor, uint32 inFlags);
 
 	// define a command  /cmd
-	bool (*fDefinePlugInCmd)(char *inCmdName, PlugInCmdFunc inFunc, void* inUserData);
+	bool (*fDefinePlugInCmd)(const char *inCmdName, PlugInCmdFunc inFunc, void* inUserData);
 
 	// define a command for a unit generator  /u_cmd
-	bool (*fDefineUnitCmd)(char *inUnitClassName, char *inCmdName, UnitCmdFunc inFunc);
+	bool (*fDefineUnitCmd)(const char *inUnitClassName, const char *inCmdName, UnitCmdFunc inFunc);
 	
 	// define a buf gen
-	bool (*fDefineBufGen)(char *inName, BufGenFunc inFunc);
+	bool (*fDefineBufGen)(const char *inName, BufGenFunc inFunc);
 
 	// clear all of the unit's outputs.
 	void (*fClearUnitOutputs)(Unit *inUnit, int inNumSamples);
@@ -80,6 +80,9 @@ struct InterfaceTable
 	
 	// send a trigger from a Node to clients
 	void (*fSendTrigger)(struct Node* inNode, int triggerID, float value);	
+	
+	// send a reply message from a Node to clients
+	void (*fSendNodeReply)(struct Node* inNode, int replyID, const char* cmdName, int numArgs, const float* values);
 	
 	// sending messages between real time and non real time levels.
 	bool (*fSendMsgFromRT)(World *inWorld, struct FifoMsg& inMsg);
@@ -131,6 +134,7 @@ typedef struct InterfaceTable InterfaceTable;
 #define DefineBufGen (*ft->fDefineBufGen)
 #define ClearUnitOutputs (*ft->fClearUnitOutputs)
 #define SendTrigger (*ft->fSendTrigger)
+#define SendNodeReply (*ft->fSendNodeReply)
 #define SendMsgFromRT (*ft->fSendMsgFromRT)
 #define SendMsgToRT (*ft->fSendMsgToRT)
 #define DoneAction (*ft->fDoneAction)
