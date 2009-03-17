@@ -120,7 +120,7 @@
 		FE5B59480D6B2385008C3FE7 /* BEASTMulchLoris.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BEASTMulchLoris.cpp; sourceTree = "<group>"; };
 		FE5B594A0D6B23F8008C3FE7 /* fastInverseSqrt.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = fastInverseSqrt.h; sourceTree = "<group>"; };
 		FE5B5B160D6B328E008C3FE7 /* BEASTMulchLoris.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BEASTMulchLoris.h; sourceTree = "<group>"; };
-		FE5B5B180D6B32D7008C3FE7 /* BEASTMulchLoris.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BEASTMulchLoris.h; sourceTree = "<group>"; };
+		FE5B5B180D6B32D7008C3FE7 /* BEASTMulchLoris.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = BEASTMulchLoris.h; path = ../../BEASTMulchLoris.h; sourceTree = "<group>"; };
 		FEC02E180C4D1E72009EC06B /* BEASTMulchSendIndex.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = BEASTMulchSendIndex.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		FEC02ECE0C4D22F8009EC06B /* MsgFifo.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MsgFifo.h; sourceTree = "<group>"; };
 		FEC02ED70C4D234B009EC06B /* SC_SyncCondition.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SC_SyncCondition.h; sourceTree = "<group>"; };
@@ -176,7 +176,6 @@
 		F50D04F802E68E8201CA2799 = {
 			isa = PBXGroup;
 			children = (
-				FE5B5B180D6B32D7008C3FE7 /* BEASTMulchLoris.h */,
 				FE2BB3B40BB595ED009F34F8 /* headers */,
 				FE2BB4040BB598CF009F34F8 /* source */,
 				F50D060302E69C2101CA2799 /* Products */,
@@ -260,6 +259,7 @@
 		FE2BB3F10BB5975C009F34F8 /* plugin headers */ = {
 			isa = PBXGroup;
 			children = (
+				FE5B5B180D6B32D7008C3FE7 /* BEASTMulchLoris.h */,
 				FE5B594A0D6B23F8008C3FE7 /* fastInverseSqrt.h */,
 				FEC9FE6C0BFCD7D800237BCA /* BEASTMulchPV.h */,
 				FE2BB3F20BB5975C009F34F8 /* BEASTMulchVBAP.h */,
