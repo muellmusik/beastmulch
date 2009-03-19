@@ -1,12 +1,22 @@
 // maybe 'mappings' should be preset and used throughout the library
 
 
-// class for storing some library wide options
+// class for storing some library wide and BEASTmulch System options
 BMOptions {
 	classvar <>crossfade = 0.1;
 	classvar <>numInputBusChannels = 12;
 	classvar <>numOutputBusChannels = 96;
+	classvar <>numWireBufs = 512; // can be complicated
+	classvar <>numAudioBusChannels = 1024; // we need a lot
 	classvar <>allowMultipleControlMappings = false;
+	
+	defaultServerOptions {
+		^ServerOptions.new
+			.numWireBufs_(numWireBufs)
+			.numAudioBusChannels_(numAudioBusChannels)
+			.numOutputBusChannels_(numOutputBusChannels)
+			.numInputBusChannels_(numInputBusChannels);
+	}
 }
 
 // Defines the minimum interface for an AudioChainElement
