@@ -10,7 +10,7 @@ BMOptions {
 	classvar <>numAudioBusChannels = 1024; // we need a lot
 	classvar <>allowMultipleControlMappings = false;
 	
-	defaultServerOptions {
+	*defaultServerOptions {
 		^ServerOptions.new
 			.numWireBufs_(numWireBufs)
 			.numAudioBusChannels_(numAudioBusChannels)
