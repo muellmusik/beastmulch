@@ -190,6 +190,12 @@ BMAmpControlMatrix : BMAbstractMatrix {
 		
 		if(outputs.size == 0, {^this }); // this edge case arises. why? preset updating?
 		
+		// confirm that input exists
+		BMAbstractController.allControls[input].isNil.if({
+			("Control mapping failed because control" + input + "could not be found").error;
+			^this;
+		});
+		
 		// outputs can inly be mapped to a single input (control)
 		outputs.do({|output| 
 			currentIn = outmappings[output];
