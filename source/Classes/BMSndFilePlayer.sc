@@ -11,6 +11,7 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 	var <sampleDur = 2.2675736961451e-05;
 	var blockPlay = false;
 	var resp, trigID;
+	var <loading = false;
 	
 	*new {|maxNumChannels = 2, latency = 0.1, target, addAction = \addToHead, name|
 		^super.new.init(maxNumChannels, latency, target, addAction, name);
@@ -40,7 +41,7 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 		
 		Routine.run {
 			var condition, bundle;
-			this.dependants.postln;
+			loading = true;
 			this.changed(\loading);
 			
 			// create a condition variable to control execution of the Routine
@@ -53,6 +54,7 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 			"Old Buffer Freed".postln;
 			buffer = Buffer.read(server, path, action: {(path + "loaded").postln;
 			sampleDur = buffer.sampleRate.reciprocal;
+			loading = false;
 			this.changed(\loaded);
 			this.changed(\base);
 			this.sendDef; action.value });
@@ -246,14 +248,15 @@ BMSoundFilePlayerGUI : BMAbstractGUI {
 	     info.font = Font("Helvetica-Bold", 12);
 		dur = SCStaticText.new(clust2, Rect(10,10,150,20));
 		dur.font = Font("Helvetica-Bold", 12);
-		player.path.notNil.if({{
-			info.string = player.path.basename; 
-			dur.string =  "Length:" + 
-				(player.buffer.numFrames / player.buffer.sampleRate).asTimeString
-			}.defer });
+		player.loading.not.if({
+			player.path.notNil.if({{
+				info.string = player.path.basename; 
+				dur.string =  "Length:" + 
+					(player.buffer.numFrames / player.buffer.sampleRate).asTimeString
+				}.defer 
+			});
+		}, {info.string = "Loading...";});
 		
-//		loadButton = SCButton.new(clust, Rect(10,10,200,20));
-//		loadButton.states = [["Load File", Color.black,Color.clear]];
 		loadButton = RoundButton.new(clust, Rect(10,10,200,20)).extrude_(false).canFocus_(false);
 		loadButton.states = [[\folder, Color.black,Color.clear]];
 		loadButton.action = {
