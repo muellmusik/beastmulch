@@ -4,18 +4,18 @@ BMBackup {
 	var <zeroPad = 4,  <>list, <lastStoredSession;
 
 	*initClass {
-		backupsDirs	= (piece: 		"~/Library/Application Support/BEASTMulch/Backups/Pieces/".standardizePath,
-					   configuration:	"~/Library/Application Support/BEASTMulch/Backups/Configurations/".standardizePath,
-					   concert:		"~/Library/Application Support/BEASTMulch/Backups/Concerts/".standardizePath,
-					   system:		"~/Library/Application Support/BEASTMulch/Backups/Systems/".standardizePath
-					  );
+		backupsDirs = (
+			piece: "~/Library/Application Support/BEASTMulch/Backups/Pieces/".standardizePath,
+			configuration: "~/Library/Application Support/BEASTMulch/Backups/Configurations/".standardizePath,
+			concert: "~/Library/Application Support/BEASTMulch/Backups/Concerts/".standardizePath,
+			system: "~/Library/Application Support/BEASTMulch/Backups/Systems/".standardizePath
+		);
 		
-		backupsDirs.values
-				  .collect{| dir | 
-						 if (dir.pathMatch.isEmpty) 
-						    { systemCmd("mkdir -p" + dir.escapeChar($ )); ("creating directory: " + dir).inform }
-				 };
+		backupsDirs.values.collect{| dir | 
+			if (dir.pathMatch.isEmpty) { systemCmd("mkdir -p" + dir.escapeChar($ )); ("creating directory: " + dir).inform }
+		};
 		
+		// currently seems to just store last stored session
 		preferencesPath = "~/Library/Application Support/BEASTMulch/Preferences".standardizePath
 	}
 	 
@@ -28,31 +28,39 @@ BMBackup {
 		if (lastStoredSessionPath.notNil) {lastStoredSession =  Object.readTextArchive(lastStoredSessionPath) };
 	}
 	
+	// okay, seemingly this gets the value from the archive
+	// new object function just seems to be if there's nothing there
+	// not sure what role inject plays
 	rememberWorkspace {| path, newObjectFunc |
 		if (lastStoredSession.notNil) 
    			{ ^(path.asArray.inject(lastStoredSession, {| prev, next | prev[next]})  ?? newObjectFunc) }
    			{ ^newObjectFunc.value }
 	}
 
+	// this is some dependancy stuff
 	watch{| object | object.addDependant(this) }
 	
 	stopWatching{| object | object.removeDependant(this) }
-
+	
+	// this seems to be a generic make a directory if needed method
 	checkDirForPiece {| backupDir |
  		if (backupDir.pathMatch.isEmpty) 
  		   { systemCmd("mkdir" + backupDir.escapeChar($ )); 
  		     ("creating directory: " + backupDir).inform; 
  		   }
 	} 
-	 	 
+	 	
+	// get the number of the last named version 
 	lastID{| backupDir, backupName |
 	 	^((backupDir ++ backupName + "-*")
 	 		 .pathMatch
 	 	   	 .collect{| backupName | PathName(backupName).endNumber }.asInteger.maxItem 
 	 	   	? 0 
 	 	 )
-	 }
+	}
 	
+	// session seems to be a concert
+	// can it be generalised?
 	makeSessionBackup {| concertManager, configManager | 
 		var path, backup;
 
@@ -70,6 +78,7 @@ BMBackup {
 		^(concert: concertManager.concert, configurations: (dict: dict, names: configManager.names))
 	}
 	
+	// this seems to be a backup of any type
 	makeBackup {| backupType, backupName, backup |
 		var id, path, backupDir;
 		
@@ -81,6 +90,7 @@ BMBackup {
 		backup.writeTextArchive(path)
 	 }
 	 
+	 // get and set values from preferences (currently only last stored session)
 	 savePreference{| key, value |
 		var preferences;
 	 			  
@@ -96,10 +106,12 @@ BMBackup {
  		if (preferences.notNil) { ^preferences[key] } { ^nil }
 	 }
 	 
-	 update {| changed, change ... args |
-	 	switch(change,
-	 		\storeSession, { this.makeSessionBackup(*args) },
-	 		\store, { this.makeBackup(*args) }
-	 	)	
-	 }
+	 // why do we need this?
+	 // why can't the dependants just access this directly?
+//	 update {| changed, change ... args |
+//	 	switch(change,
+//	 		\storeSession, { this.makeSessionBackup(*args) },
+//	 		\store, { this.makeBackup(*args) }
+//	 	)	
+//	 }
 }

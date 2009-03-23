@@ -1,17 +1,27 @@
+// manages sets of chain configs
+// stores in a dict, but also seems to have to do with order?
+
+// configs seems to be an Event  (dict:  IdentityDictionary[], names: List[ 'all off' ])
+// configs could perhaps be something ordered? (BMInOutArray?)
+
+// should this take the chain itself?
+// should it take the backup manager?
 BMConfigurations {
-	var <configurations;
+	var <configurations, backup;
 	var <dict, <names, <currentConfig;
 
-	*new {| configurations |
-		^super.newCopyArgs(configurations).init
+	*new {| configurations, backup |
+		^super.newCopyArgs(configurations, backup).init
 	}
 
 	init {
 		dict = configurations.dict;
-		names = configurations.names;
+		names = configurations.names; // names is a List
 		this.addAllOff
 	}
 	
+	// adds the allOff configuration
+	// maybe this could just be a clear over the chain array
 	addAllOff{
 		dict.add('all off' -> 
 			 IdentityDictionary[
@@ -33,22 +43,28 @@ BMConfigurations {
 		names	= List[ 'all off' ]
 	}
 	
+	// this seems never to be called
+	// needed?
 	dict_{| x |
 		dict = x;
 		this.changed(\dict)
 	}
 	
+	// this is used
+	// why?
 	names_{| x |
 		names = x;
 		this.changed(\names) 
 	}
 	
+	// sets the current config and notifies dependants
 	currentConfig_{| configName, from |
 		currentConfig = configName;
 		this.loadConfig(configName);
 		this.changed(\currentConfig, configName, from)
 	}
-	 
+	
+	// seems to add and deals with order
 	add {| configuration, indexInNamesList |
 	     if (indexInNamesList.notNil)
 	   	   { names.insert(indexInNamesList + 1, configuration.key) }
@@ -77,8 +93,10 @@ BMConfigurations {
  		  	 { "The Configuration \"all off\" cannot be modified".error }
 	}
 	
+	// why does this happen through dependancy?
 	storeConfiguration {| configName |
-		this.changed(\store, \configuration, configName, configName -> dict[configName])
+		backup.makeBackup(\configuration, configName, configName -> dict[configName]);
+		//this.changed(\store, \configuration, configName, configName -> dict[configName])
 	}
 	
 	loadConfig {| configName |
@@ -201,7 +219,7 @@ BMConfigurationsGUI : BMAbstractGUI {
 		selected 		= false ! objects.size;
 		rows 		= chain.size;
 		columns		= chain[0].size;
-		width 		= max(450, columns * 150);
+		width 		= max(450, columns * 100);
 		
 		pseudoLevels 	= (1..rows).normalize * 0.8 + 0.1;
 		pseudoLevels 	= pseudoLevels.collect({|item, i| if(i == 0, {item ! columns}, {item})}).flat;
@@ -217,7 +235,7 @@ BMConfigurationsGUI : BMAbstractGUI {
 		configView			= SCCompositeView(window, configViewWidth @ 435);
 		configView.decorator 	= FlowLayout(configView.bounds, Point(5, 5), Point(5, 5));
 		configView.background	= Color.white.alpha_(0.2);
-		SCStaticText(configView, 180 @ 20).string_("Configurations");
+		SCStaticText(configView, 180 @ 20).string_("Configurations").font_(Font("Helvetica-Bold", 12));
 		configView.decorator.shift(0, 5);
 		configListView		= SCListView(configView, 200 @ 373).canReceiveDragHandler = false;
 		configListView.background_(Color.white).hiliteColor_(Color.new255(51, 111, 203, 255 * 0.95));
@@ -293,16 +311,16 @@ BMConfigurationsGUI : BMAbstractGUI {
 
 		chainView				= SCScrollView(window, 465 @ 435).hasBorder_(false);
 		if(width <= 465, { chainView.hasHorizontalScroller = false });
-		chainView 			= SCCompositeView(chainView, Rect(0, 0, width, max(450, rows * 80)));
+		chainView 			= SCCompositeView(chainView, Rect(0, 0, width, max(450, rows * 60)));
 		chainView.background 	= Color.white.alpha_(0.2);
-		chainView 			= SCUserView(chainView, Rect(0, 0, width, max(450, rows * 80)));
+		chainView 			= SCUserView(chainView, Rect(0, 0, width, max(450, rows * 60)));
 		
 		
 		pseudoLevels = pseudoLevels * chainView.bounds.height;
 		pseudoTimes = pseudoTimes * chainView.bounds.width;
 		
 		points = Array.fill(objects.size, {|i|  Point(pseudoTimes[i], pseudoLevels[i])});
-		rects = points.collect({|point| Rect.aboutPoint(point, 70, 25)});
+		rects = points.collect({|point| Rect.aboutPoint(point, 50, 20)});
 
 		chainView.drawFunc_({
 			// draw lines
@@ -316,7 +334,7 @@ BMConfigurationsGUI : BMAbstractGUI {
 				Pen.fillRect(rect);
 				Color.black.set;
 				Pen.strokeRect(rect);
-				objects[i].name.asString.drawCenteredIn(rect, Font("Arial", 12), Color.black);
+				objects[i].name.asString.drawCenteredIn(rect, Font("Arial", 10), Color.black);
 			});
 		});		
 		chainView.mouseDownAction = {|view, x, y|

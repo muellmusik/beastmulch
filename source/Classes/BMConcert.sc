@@ -1,11 +1,17 @@
+// manages a concert, which consists of 
+// (system: (speakers: arrays[0], controllers: controllers), pieces: pieces)
+
+// a piece is an optional file path, and controller automation
+// pieces is also ordered: backupManager.rememberWorkspace([ \concert, \pieces ],  { List[] });
+// could possibly take a BMInOutArray
 
 BMConcert {	
-	var <pieces, arrays, controllers, controllerAutomator;
+	var <pieces, arrays, controllers, controllerAutomator, backup;
 	var <concert;
 	
 
-	*new {| pieces, arrays, controllers, controllerAutomator | 
-		^super.newCopyArgs(pieces, arrays, controllers, controllerAutomator).init
+	*new {| pieces, arrays, controllers, controllerAutomator, backup | 
+		^super.newCopyArgs(pieces, arrays, controllers, controllerAutomator, backup).init
 	}
 
 	init { 
@@ -24,16 +30,21 @@ BMConcert {
 		this.changed
 	}
 	
+	// who gets this message?
 	loadAt {| pieceEventIndex |
 		this.changed(\loadPiece, concert.pieces[pieceEventIndex])
 	}
 	
+	// not sure about this dependancy stuff
+	// seems for backup
 	storeSession {| configManager |
-		this.changed(\storeSession, this, configManager)
+		backup.makeSessionBackup(this, configManager);
+		//this.changed(\storeSession, this, configManager)
 	}
 	
 	storePiece {| pieceName, pieceAndConfig |
-		this.changed(\store, \piece, pieceName, pieceAndConfig)
+		backup.makeBackup(\piece, pieceName, pieceAndConfig);
+		//this.changed(\store, \piece, pieceName, pieceAndConfig)
 	}
 	
 	// maybe move this later
@@ -76,7 +87,7 @@ BMConcertGUI  {
 		
 		concertView 				= SCCompositeView(windowView, Rect(0, 0, 200, 425));
 		concertView.decorator 		= FlowLayout(concertView.bounds, Point(10, 10), Point(10, 10));
-		SCStaticText.new(concertView, 180 @ 20).string = "Pieces";
+		SCStaticText.new(concertView, 180 @ 20).string_("Pieces").font_(Font("Helvetica-Bold", 12));
 
 
 		// Pieces List ---------------------
