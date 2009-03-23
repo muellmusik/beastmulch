@@ -579,7 +579,7 @@ BMMatrixGUI : BMAbstractGUI {
 
 	var h = 700, v = 700, numIns = 10, numOuts = 10, dotSize = 10;
 	var hinterval, vinterval, tabletView;
-	var cellsize = 40, screenBounds; // maximum cellsize
+	var cellsize = 25, screenBounds; // maximum cellsize
 	var hoffset = 80, voffset = 100;
 	var color, ringColor;
 	var lastx, lasty, on = false;
