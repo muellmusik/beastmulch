@@ -71,6 +71,8 @@ BMAbstractAudioChainElement {
 	makeName { ^(this.class.name ++ UniqueID.next)} 
 	
 	release { allChainElements[name] = nil}
+	
+	loadPiece { } // do nothing by default
 
 }
 

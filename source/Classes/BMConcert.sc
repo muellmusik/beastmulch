@@ -6,12 +6,12 @@
 // could possibly take a BMInOutArray
 
 BMConcert {	
-	var <pieces, arrays, controllers, controllerAutomator, backup;
+	var <pieces, <configManager, arrays, controllers, controllerAutomator, backup;
 	var <concert;
 	
 
-	*new {| pieces, arrays, controllers, controllerAutomator, backup | 
-		^super.newCopyArgs(pieces, arrays, controllers, controllerAutomator, backup).init
+	*new {| pieces, configManager, arrays, controllers, controllerAutomator, backup | 
+		^super.newCopyArgs(pieces, configManager, arrays, controllers, controllerAutomator, backup).init
 	}
 
 	init { 
@@ -31,8 +31,26 @@ BMConcert {
 	}
 	
 	// who gets this message?
+	// cause chain elements (i.e. soundfile players) to load any heavy resources
+	// asssociated with a piece
 	loadAt {| pieceEventIndex |
-		this.changed(\loadPiece, concert.pieces[pieceEventIndex])
+		var pieceEvent, element;
+		//this.changed(\loadPiece, concert.pieces[pieceEventIndex])
+		
+		pieceEvent = concert.pieces[pieceEventIndex];
+		// probably the way this should work, but for now...
+//		pieceEvent.chainResources.keysValuesDo{| key, value |
+// 			element = BMAbstractAudioChainElement.allChainElements[\key];
+//			element.notNil.if({ element.loadPiece(value) });
+// 		}
+		BMAbstractAudioChainElement.allChainElements.do({| value |
+ 			value.loadPiece(pieceEvent);
+ 		});
+ 		
+ 		configManager.currentConfig_(pieceEvent.config, \concertEditor);
+ 		if(pieceEvent.controllerAutomation.notNil, {
+			controllerAutomator.mappings = pieceEvent.controllerAutomation;
+		});
 	}
 	
 	// not sure about this dependancy stuff

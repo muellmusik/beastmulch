@@ -156,7 +156,7 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 	} // free bus somewhere? remove from allPlayers list?
 	
 	// maybe a controller better?
-	update {arg changed, what; 
+	update { arg changed, what; 
 		if(what == \n_end, {this.stopCleanUp});
 		this.changed(what);
 	}
@@ -197,7 +197,22 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 	
 	gui { ^BMSoundFilePlayerGUI(this, this.name) }
 	
-  
+	// this provides a hook for multiple players by first checking by name
+	// but then loading plain old path for simple case
+	loadPiece {|pieceEvent|
+		var playerSpecificInfo;
+		if(pieceEvent.soundFilePlayers.notNil, {
+			playerSpecificInfo = pieceEvent.soundFilePlayers[name];
+			if(playerSpecificInfo.notNil, {
+				this.read(playerSpecificInfo.path);
+			});
+		}, {
+			// in this case assume only one player and load path
+			pieceEvent.path.notNil.if({
+				this.read(pieceEvent.path);
+			});
+		});
+	}
 }
 
 

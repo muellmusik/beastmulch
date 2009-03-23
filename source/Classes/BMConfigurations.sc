@@ -106,85 +106,10 @@ BMConfigurations {
 			 			 BMAbstractAudioChainElement.allChainElements[key].mappings = dict[configName][key]
 			 }
 	}
+	
 }
 
 
-// Controls order of multiple audio chain elements
-// Takes an Array of elements and sets their groups in corresponding order within the target group
-// starting at the tail. Bundling ensures ordering.
-
-// Note that AbstractMatrix-cmdPeriod calls this.changed, so any dependencies will be updated before the bundle is sent. This may not be desirable, and possibly should be factored out
-
-// elements is an array containing elements of arrays of elements
-// the latter is used by the GUI
-
-
-
-BMAudioChainManager {
-	var <sources, <sourceProcessing, <outputProcessing, <controllerArray, <outputArray;
-	var <privateBusArray, <group;
-	var <sourceArray, <elements, <audioMatrix;
-	
-	// pre and post go before and after an audiomatrix which does routing
-	// sources and outputarray are instances
-	// processing arrays contain (name->class) associations and are automatically constructed
-	
-	*new {|sources, sourceProcessing, outputProcessing, controllerArray, outputArray, 
-		privateBusArray, group|
-		^super.newCopyArgs(sources, sourceProcessing, outputProcessing, controllerArray, 
-			outputArray, privateBusArray, group.asGroup).init; 
-		// default target is default Server
-	}
-	
-	// could check ServerOptions here to make sure they're correct
-	init {
-		this.initChain;
-		elements = sources.reject(_.isBMInOutArray) 
-			++ [sourceProcessing, audioMatrix, outputProcessing].flat;
-		CmdPeriod.add(this);
-		group.server.makeBundle(nil, {
-			elements.do({|element| 
-				element.callCmdPeriod_(false); 
-				element.group.moveToTail(group);
-			});
-		});
-	}
-	
-	// auto construct the chain
-
-	initChain {
-		sources.do({|source| sourceArray = sourceArray ++ source.asBMInOutArray});
-		sourceArray = sourceArray ++ privateBusArray;
-		sourceProcessing = sourceProcessing.collect({|item|
-			item.value.newFromChain(controllerArray, sourceArray, sourceArray, nil, group.server, 
-				item.key);
-		});
-		audioMatrix = BMAudioMatrix(sourceArray, outputArray, nil, group.server, 'Audio Routing');
-		outputProcessing = outputProcessing.collect({|item|
-			item.value.newFromChain(controllerArray, outputArray, outputArray, nil, group.server, 
-				item.key);
-		});
-	}
-	
-	cmdPeriod {
-		group.server.makeBundle(nil, {
-			elements.do({|element| element.cmdPeriod; element.group.moveToTail(group)});
-		});
-	}
-	
-	remove { |reactivateCP = false|
-		CmdPeriod.remove(this);
-		reactivateCP.if({ elements.do({|element| element.callCmdPeriod_(true);}) })
-	}
-	
-	free { 
-		elements.do({|el|
-       		el.free; // clean me up
-       		el.release; // remove me from BMAbstractAudioChainElement's dict
-		});
-		this.changed(\freed)
-	}
-}
 
 
 // display an element order and generates and tracks element GUIs
