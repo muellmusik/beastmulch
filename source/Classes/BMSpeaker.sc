@@ -128,6 +128,8 @@ BMSpeakerSpec {
 			 BMSpeakerSpec('8040A', (brand: 'Genelec', minFreq: 48, maxFreq: 20000, spl: 99, powered: true));
 			 BMSpeakerSpec('8050A', (brand: 'Genelec', minFreq: 38, maxFreq: 20000, spl: 101, powered: true));
 			 BMSpeakerSpec('1037C', (brand: 'Genelec', minFreq: 37, maxFreq: 21000, spl: 107, powered: true));
+			 BMSpeakerSpec('1038B', (brand: 'Genelec', minFreq: 35, maxFreq: 20000, spl: 120, powered: true));
+			 BMSpeakerSpec('1032A', (brand: 'Genelec', minFreq: 42, maxFreq: 21000, spl: 113, powered: true));
 			 BMSpeakerSpec('1037A', (brand: 'Genelec', minFreq: 39, maxFreq: 21000, spl: 106, powered: true));
 			 BMSpeakerSpec('1029A', (brand: 'Genelec', minFreq: 70, maxFreq: 18000, spl: 98, powered: true));
 			 BMSpeakerSpec('7070A', (brand: 'Genelec', minFreq: 19, maxFreq: 85, spl: nil, powered: true));
