@@ -332,7 +332,7 @@ BMInOutArray : List {
 	add { |assoc|
 		var index;
 		if(assoc.isValidBMInOutArrayMember.not, { 
-			MethodError("Attempted to add invalid type to BMInOutArray", this).throw;
+			MethodError("Attempted to add invalid type to BMInOutArray:" + assoc, this).throw;
 		}, {
 			index = this.keys.indexOf(assoc.key);
 			index.isNil.if({array = array.add(assoc);}, {array.put(index, assoc)});
