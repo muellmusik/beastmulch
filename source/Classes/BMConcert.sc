@@ -35,6 +35,7 @@ BMConcert {
 	// asssociated with a piece
 	loadAt {| pieceEventIndex |
 		var pieceEvent, element;
+		\loadAt.postln;
 		//this.changed(\loadPiece, concert.pieces[pieceEventIndex])
 		
 		pieceEvent = concert.pieces[pieceEventIndex];
@@ -43,14 +44,15 @@ BMConcert {
 // 			element = BMAbstractAudioChainElement.allChainElements[\key];
 //			element.notNil.if({ element.loadPiece(value) });
 // 		}
+		//controllerAutomator.mappings = pieceEvent.controllerAutomation;
+		
 		BMAbstractAudioChainElement.allChainElements.do({| value |
  			value.loadPiece(pieceEvent);
  		});
  		
  		configManager.currentConfig_(pieceEvent.config, \concertEditor);
- 		if(pieceEvent.controllerAutomation.notNil, {
-			controllerAutomator.mappings = pieceEvent.controllerAutomation;
-		});
+		controllerAutomator.mappings = pieceEvent.controllerAutomation;
+		
 	}
 	
 	// not sure about this dependancy stuff

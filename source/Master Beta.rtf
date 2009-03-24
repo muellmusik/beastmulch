@@ -28,6 +28,7 @@ controllersList.add(\cf2 BMMotorBEAST\cf0 (\cf2 NetAddr\cf0 (\cf4 "192.168.5.78"
 backupManager	= \cf2 BMBackup\cf0 .new;\
 outputArray	= backupManager.rememberWorkspace([ \cf5 \\concert\cf0 , \cf5 \\system\cf0 , \cf5 \\speakers\cf0  ],  \{ \cf2 BMInOutArray\cf0 .new \});\
 postf(\cf4 "outarray %\\n"\cf0 , outputArray);\
+~outputArray = outputArray;\
 \cf3 //outputArray	= ~outPutArrayFromTheChannelListFile;\cf0 \
 pieces		= backupManager.rememberWorkspace([ \cf5 \\concert\cf0 , \cf5 \\pieces\cf0  ],  \{ \cf2 List\cf0 [] \});\
 configurations= backupManager.rememberWorkspace(\cf5 \\configurations\cf0 ,  \{ (dict:  \cf2 IdentityDictionary\cf0 [], names: \cf2 List\cf0 [ \cf5 'all off'\cf0  ]) \});\
@@ -94,7 +95,7 @@ controllerAutomator = \cf2 BMControllerAutomator\cf0 (\cf2 BMAbstractController\
 ~controllerAutomator = controllerAutomator;\
 bmMenu = \cf2 SCMenuGroup\cf0 (\cf2 nil\cf0 , \cf4 "BEASTmulch"\cf0 , 5);\
 autoMenuItem = \cf2 SCMenuItem\cf0 (bmMenu, \cf4 "SoundFile Display / Controller Automation"\cf0 , 0).action_(\{\
-	if(autoGUI.isNil, \{autoGUI = controllerAutomator.gui.onClose_(\{autoGUI = \cf2 nil\cf0 \})\}, \{\
+	if(autoGUI.isNil, \{~gui = autoGUI = controllerAutomator.gui.onClose_(\{autoGUI = \cf2 nil\cf0 \})\}, \{\
 		autoGUI.window.front;\
 	\});\
 \});\

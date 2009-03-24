@@ -181,7 +181,7 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 	
 	mappings_ { |mappings|
 		sequences.do({|seq| seq.removeDependant(this);});
-		sequences = mappings;
+		sequences = mappings ?? {IdentityDictionary.new};
 		sequences.do({|seq| seq.addDependant(this);});
 		oldSeqs = IdentitySet.new;
 		this.changed(\sequencesChanged);
@@ -1030,7 +1030,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		var seltime;
 		//view.value.postln;
 		
-		this.clearSelections;
+		if(sfView.numFrames.notNil, {this.clearSelections;});
 		snapshots.do({|ss, index|
 			if(seqs[index] === activeSequence, {
 				seltime = envView.value[0][index];
@@ -1081,20 +1081,25 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 				{sfView.timeCursorPosition = 0;}.defer;
 			},
 			\base, {
+				\base.postln;
 				path = ca.timeReference.path; // How best to do this?
 				path.notNil.if({
 					{
+					zoomSlider.value = 0;
 					sf.close;
 					sf.openRead(path);
 					durInv = sf.duration.reciprocal;
 					sfView.soundfile = sf;
-					sfView.read(block: 256);
+					//sfView.read(block: 256);
 					this.setWaveColors;
 					sfView.refresh;
 					this.makeTimesView;
+					sfView.read(block: 256);
+					ca.sequences.do({|sq, i| sequenceLevels[sq] = (0.1 * (i + 1))%1.0});
 					this.makeEnvView;
 					zoomSlider.enabled = true;
-					zoomSlider.valueAction = 0; 
+					//zoomSlider.valueAction = 0; 
+					zoomSlider.doAction;
 					}.defer;
 				}, {zoomSlider.value = 0; zoomSlider.enabled = false;});
 				
@@ -1236,13 +1241,7 @@ BMSnapShotSeqConfigGUI : BMAbstractGUI {
 		window.view.decorator = FlowLayout(window.view.bounds);
 		window.view.background = Color.rand.alpha_(0.3);
 		sliders = IdentityDictionary.new;
-		allControls.keys.asArray.sort({|a, b|
-			a = a.asString;
-			b = b.asString;
-			a.difference(b).asInteger < b.difference(a).asInteger
-			
-		
-		}).do({|label, i|
+		allControls.keys.asArray.sort.do({|label, i|
 			var control;
 			control = allControls[label];
 			ToggleView(window, Rect(0, 0, toggleWidth, 20))
