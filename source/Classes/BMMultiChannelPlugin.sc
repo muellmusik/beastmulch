@@ -1048,7 +1048,7 @@ BMMultichannelPluginsStripGUI {
 		listView.receiveDragHandler = {
 			var piName;
 			piName = SCView.currentDrag;
-			BMSelectInsOutsGUI(trimPluginsStrip.ins, trimPluginsStrip.outs, {|ins, outs|
+			BMSelectInsOutsGUI(parent, trimPluginsStrip.ins, trimPluginsStrip.outs, {|ins, outs|
 				var plugin;
 				ins.postln;
 				outs.postln;
@@ -1075,9 +1075,9 @@ BMMultichannelPluginsStripGUI {
 BMSelectInsOutsGUI : BMAbstractGUI {
 	var ins, outs, okFunc;
 	
-	*new {|ins, outs, okFunc, origin|
+	*new {|parent, ins, outs, okFunc|
 		^super.new.init(ins, outs, okFunc)
-			.makeWindow(origin ? (40@400));
+			.makeWindow(parent);
 	}
 	
 	init {|argins, argouts, argokfunc|
@@ -1087,13 +1087,10 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 		name = "Define Ins and Outs";
 	}
 	
-	makeWindow {|origin|
-		var x, y, buttons, insSources, insLV, outsSources, insSubArrays, outsSubArrays;
+	makeWindow {|parent|
+		var buttons, insSources, insLV, outsSources, insSubArrays, outsSubArrays;
 		var inResult, outResult, outsLV, dragSource;
-		x = origin.x;
-		y = origin.y;
-		window = SCWindow(name, Rect.new(x, y, 500, 600), false);
-		window.alwaysOnTop = true; //pseudo modal
+		window = SCModalSheet(parent, Rect.new(0, 0, 500, 620), false);
 		window.view.decorator = FlowLayout(window.view.bounds);
 		
 		// ins
@@ -1109,6 +1106,7 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 			SCDragSource(insLV, Rect(0, 0, 150, 20)).string_("   " ++ inKey.asString)
 				.background_(Color.grey.alpha_(0.2))
 				.font_(Font("Helvetica-Bold", 12))
+				.dragLabel_(inKey.asString)
 				.beginDragAction_({
 					dragSource = \ins;
 					inKey
@@ -1181,6 +1179,7 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 			SCDragSource(outsLV, Rect(0, 0, 150, 20)).string_("   " ++ outKey.asString)
 				.background_(Color.grey.alpha_(0.2))
 				.font_(Font("Helvetica-Bold", 12))
+				.dragLabel_(outKey.asString)
 				.beginDragAction_({
 					dragSource = \outs;
 					outKey
@@ -1238,14 +1237,25 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 				menu.value = 0;
 			});
 
-		window.onClose = { 
-			okFunc.value(
-				inResult.items.collectAs({|key| key->ins[key]}, BMInOutArray),
-				outResult.items.collectAs({|key| key->outs[key]}, BMInOutArray)
-			);
-			onClose.value(this);
-		};
-		window.front;
+		window.view.decorator.nextLine;
+		window.view.decorator.shift(window.bounds.width - 242, 0);
+		
+		RoundButton(window, 115 @ 20)
+			.extrude_(false).canFocus_(false) 
+			.states_([[ "Cancel", Color.black, Color.white.alpha_(0.8) ]])
+			.action_({ window.close });
+			   
+		RoundButton(window, 115 @ 20)
+			.extrude_(false).canFocus_(false)
+			.states_([[ "OK", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ]])
+			.action_({ 
+				window.close;
+				okFunc.value(
+					inResult.items.collectAs({|key| key->ins[key]}, BMInOutArray),
+					outResult.items.collectAs({|key| key->outs[key]}, BMInOutArray)
+				);
+				onClose.value(this);
+			});
 		
 	}
 	
