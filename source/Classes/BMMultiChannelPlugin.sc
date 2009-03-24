@@ -1048,7 +1048,8 @@ BMMultichannelPluginsStripGUI {
 				outs.postln;
 				plugin = BMMultichannelPlugin(piName, ins, outs, 
 					trimPluginsStrip.server);
-				trimPluginsStrip.addPlugin(plugin);
+				// protect against bad plugin inputs
+				plugin.notNil.if({trimPluginsStrip.addPlugin(plugin)});
 			});
 		};
 		listView.beginDragAction = { trimPluginsStrip.plugins[listView.value].copy };
