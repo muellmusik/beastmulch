@@ -1229,7 +1229,7 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 		};
 		outsSubArrays = SCPopUpMenu(window, Rect(0, 0, 160, 20))
 			.font_(Font("Helvetica-Bold", 12))
-			.items_(["Add subarray", "-"] ++ ins.subArrays)
+			.items_(["Add subarray", "-"] ++ outs.subArrays)
 			.action_({|menu|
 				var subArray;
 				subArray = outs.getSubArray(menu.item.asSymbol);
