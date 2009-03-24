@@ -594,6 +594,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	var addSS, remSS;
 	var showOnlySelected = false;
 	var time, curSSTime, refTime;
+	var zoomSlider;
 	
 	*new {|ca, name, origin|
 		//^super.new.init(ca, name ? ca.name ? "test").makeWindow(origin ? (40@200));
@@ -669,7 +670,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		
 		window.view.decorator.shift(0, 5);
 		SCStaticText(window, Rect(0, 0, 5, 10)).string_("-").font_(Font("Helvetica-Bold", 12));
-		SmoothSlider(window, Rect(0, 5, 100, 10)).action_({|view| 
+		zoomSlider = SmoothSlider(window, Rect(0, 5, 100, 10)).action_({|view| 
 			var width;
 			width = scrollView.bounds.width - 2 + (sf.duration * 160 * ([0.001, 1.001, \exp].asSpec.map(view.value) - 0.001));
 			sfView.bounds = Rect(0,20, width, 300);
@@ -683,7 +684,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 //			envView.refresh;
 			this.resetPoints;
 			scrollView.refresh;
-		}).knobSize_(1).canFocus_(false).hilightColor_(Color.blue);
+		}).knobSize_(1).canFocus_(false).hilightColor_(Color.blue).enabled_(false);
 		SCStaticText(window, Rect(0, 0, 10, 10)).string_("+").font_(Font("Helvetica-Bold", 10));
 		window.view.decorator.shift(0, -5);
 		
@@ -692,7 +693,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 //		});
 		window.front;
 		
-		if(path.notNil, {sfView.read(block: 256)});
+		if(path.notNil, {sfView.read(block: 256); zoomSlider.enabled = true;});
 		this.makeEnvView;
 
 		RoundButton(window, 120@20).extrude_(false)
@@ -765,6 +766,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 //			.font_(Font("Helvetica-Bold", 16));
 			
 		//window.front;
+		zoomSlider.doAction; // hack to make envView take mouseDown initially
 	}
 	
 	setWaveColors {
@@ -1091,8 +1093,10 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 					sfView.refresh;
 					this.makeTimesView;
 					this.makeEnvView;
+					zoomSlider.enabled = true;
+					zoomSlider.valueAction = 0; 
 					}.defer;
-				});
+				}, {zoomSlider.value = 0; zoomSlider.enabled = false;});
 				
 			}
 //			\sequencesChanged, {
@@ -1232,7 +1236,13 @@ BMSnapShotSeqConfigGUI : BMAbstractGUI {
 		window.view.decorator = FlowLayout(window.view.bounds);
 		window.view.background = Color.rand.alpha_(0.3);
 		sliders = IdentityDictionary.new;
-		allControls.keys.asArray.sort.do({|label, i|
+		allControls.keys.asArray.sort({|a, b|
+			a = a.asString;
+			b = b.asString;
+			a.difference(b).asInteger < b.difference(a).asInteger
+			
+		
+		}).do({|label, i|
 			var control;
 			control = allControls[label];
 			ToggleView(window, Rect(0, 0, toggleWidth, 20))
