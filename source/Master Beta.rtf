@@ -81,7 +81,7 @@ chainFunc = \{ \
 		\cf2 BMAudioMatrix\cf0 (inputArray ++ privateIns, outputArray ++ privateOuts, name: \cf5 'Audio Routing'\cf0 ), \
 		\cf2 BMAmpControlMatrix\cf0 (controllers, outputArray ++ privateOuts, name:\cf5 'Output Levels'\cf0 ), \
 		\cf2 BMTrimPluginsRack\cf0 (outputArray ++ privateOuts, name: \cf5 'Post-Processing'\cf0 ), \
-		\cf2 BMMultichannelPluginsRack\cf0 (privateIns, outputArray, name: \cf5 'Multichannel Processing'\cf0 ),\
+		\cf2 BMMultichannelPluginsRack\cf0 (inputArray ++ privateIns, outputArray, name: \cf5 'Multichannel'\cf0 ),\
 		\cf2 BMAudioMatrix\cf0 (privateOuts, outputArray, name: \cf5 'Virtual Outputs'\cf0 ),\
 		\cf2 BMMasterFader\cf0 (name: \cf5 'Master Fader'\cf0 )\
 	]\
