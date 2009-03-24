@@ -510,6 +510,41 @@ BMMultichannelPluginSpec {
 				},								// setupFunc
 				nil								// cleanupFunc
 			);
+			BMMultichannelPluginSpec('Stereo Spectral Mag Split', // name
+				{|plugin, numInputs, numOutputs, inputs| // ugenGraphFunc
+					
+					var chainA, chainB, fftSize = 2048;
+					
+					chainA = FFT(LocalBuf(fftSize, 1, 12000), inputs[0]);
+					chainB = FFT(LocalBuf(fftSize), inputs[1]);
+					chainA = [chainA] ++ Array.fill(numOutputs/2 - 1, {|i| PV_Copy(chainA, LocalBuf(fftSize))});
+					chainB = [chainB] ++ Array.fill(numOutputs/2 - 1, {|i| PV_Copy(chainB, LocalBuf(fftSize))});
+					chainA = PV_MagMul(chainA, plugin.attributes[\fftMulBufsL]);
+					chainB = PV_MagMul(chainB, plugin.attributes[\fftMulBufsR]);  
+					IFFT([chainA, chainB]).flop.flat;
+				}, 								
+				nil,				// specsDict
+				nil, 							// default GUI
+				nil, // presets
+				"Spectral Magnitude Diffuser\nFFT size = 2048\nOutputs should be even",
+				nil, 							// defaultAttributes
+				[2, 2],							// inRange
+				[4, inf],							// outRange
+				{|plugin| 
+					var scalesL, scalesR, numChannels, fftSize = 2048, fftMulBufsL, fftMulBufsR;
+					numChannels = plugin.numOutputs;
+					scalesL = Array.fill(fftSize, {Array.fill(numChannels/2, {1.0.rand}).normalizeSum }).flop;
+					scalesR = Array.fill(fftSize, {Array.fill(numChannels/2, {1.0.rand}).normalizeSum }).flop;
+					fftMulBufsL = scalesL.collect({|channel| Buffer.loadCollection(plugin.server,channel)});
+					fftMulBufsR = scalesR.collect({|channel| Buffer.loadCollection(plugin.server,channel)});
+					plugin.attributes[\fftMulBufsL] = fftMulBufsL;
+					plugin.attributes[\fftMulBufsR] = fftMulBufsR;
+				},								// setupFunc
+				{|plugin|
+					plugin.attributes[\fftMulBufsL].do(_.free);
+					plugin.attributes[\fftMulBufsR].do(_.free);
+				}								// cleanupFunc
+			);
 		// read application directory for source code files of user plugins specs
 		// or maybe in app
 		});
