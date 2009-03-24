@@ -914,19 +914,21 @@ BMMultichannelPluginsRackGUI : BMAbstractGUI {
 		var x, y, width, pluglist, numTypes, numStrips, stripGUIs, buttons;
 		x = origin.x;
 		y = origin.y;
-		width = 4 + 170 + 4 + min(104 * trimPluginsRack.ins.size, 1078); // max 7 visible
+		//width = 4 + 210 + 4 + min(104 * trimPluginsRack.ins.size, 1078); // max 7 visible
+		width = 4 + 210 + 300;
 		window = SCWindow(name, Rect.new(x, y, width, 618), false);
 		window.view.decorator = FlowLayout(window.view.bounds);
-		pluglist = SCScrollView(window, Rect(0, 0, 160, 508))
+		pluglist = SCScrollView(window, Rect(0, 0, 200, 508))
 			.hasHorizontalScroller_(false)
 			.hasBorder_(true);
 		numTypes = BMMultichannelPluginSpec.specs.size;
 		numStrips = 1;
-		pluglist = SCVLayoutView(pluglist, Rect(4,4,150, numTypes * 24 + 4));
+		pluglist = SCVLayoutView(pluglist, Rect(4,4,190, numTypes * 24 + 4));
 		BMMultichannelPluginSpec.specs.keysDo({|piName| 
 			SCDragSource(pluglist, Rect(0, 0, 150, 20)).string_("   " ++ piName.asString)
 				.background_(Color.grey.alpha_(0.2))
 				.font_(Font("Helvetica-Bold", 12))
+				.dragLabel_(piName.asString)
 				.beginDragAction_({
 					piName.asSymbol;
 				}) 
@@ -935,17 +937,21 @@ BMMultichannelPluginsRackGUI : BMAbstractGUI {
 						BMMultichannelPluginSpec.specs[piName].description;
 				});
 		});
-		stripGUIs = SCScrollView(window, Rect(0, 0, width - 174, 508))
-			.hasVerticalScroller_(false)
-			.hasBorder_(true);
-		stripGUIs.action = {window.refresh};
-		//stripGUIs = SCHLayoutView(stripGUIs, Rect(4, 4, 104 * numStrips + 4, 500));
-		stripGUIs = SCCompositeView(stripGUIs, Rect(4, 4, 104 * numStrips + 4, 500));
-		stripGUIs.decorator = FlowLayout(stripGUIs.bounds, 0@0);
-		//trimPluginsRack.inNames.do({|chanName|
-			trimPluginsStripGUIs.add(
-				BMMultichannelPluginsStripGUI(trimPluginsRack, stripGUIs, trimPluginsRack.name)
-			);
+
+		trimPluginsStripGUIs.add(
+			BMMultichannelPluginsStripGUI(trimPluginsRack, window, trimPluginsRack.name)
+		);
+//		stripGUIs = SCScrollView(window, Rect(0, 0, width - 216, 508))
+//			.hasVerticalScroller_(false)
+//			.hasBorder_(true);
+//		stripGUIs.action = {window.refresh};
+//		//stripGUIs = SCHLayoutView(stripGUIs, Rect(4, 4, 104 * numStrips + 4, 500));
+//		stripGUIs = SCCompositeView(stripGUIs, Rect(4, 4, 104 * numStrips + 4, 500));
+//		stripGUIs.decorator = FlowLayout(stripGUIs.bounds, 0@0);
+//		//trimPluginsRack.inNames.do({|chanName|
+//			trimPluginsStripGUIs.add(
+//				BMMultichannelPluginsStripGUI(trimPluginsRack, stripGUIs, trimPluginsRack.name)
+//			);
 		//});
 		defaultHelpString = "Click names at left for description.\nDrag from left to add plugins.\nDouble-click or select and press enter to edit plugin settings.\nCmd down and up arrows to change order.\nCmd drag to copy trim or a plugin and its settings to another channel.";
 		window.view.decorator.nextLine;
@@ -961,21 +967,21 @@ BMMultichannelPluginsRackGUI : BMAbstractGUI {
 			.font_(Font("Helvetica-Bold", 14))
 			.colorOn_(Color.white.alpha_(0.2))
 			.action_({descriptionHelpText.string = defaultHelpString;});
-		TriggerView(buttons, Rect(0, 0, 20, 20))
-			.string_("APi")
-			.font_(Font("Helvetica-Bold", 8))
-			.colorOn_(Color.white.alpha_(0.2))
-			.action_({|v|v.value.if{trimPluginsRack.autoPlugins}});
-		TriggerView(buttons, Rect(0, 0, 20, 20))
-			.string_("ATr")
-			.font_(Font("Helvetica-Bold", 8))
-			.colorOn_(Color.white.alpha_(0.2))
-			.action_({|v| v.value.if{trimPluginsRack.autoTrim}});
-		TriggerView(buttons, Rect(0, 0, 20, 20))
-			.string_("dT")
-			.font_(Font("Helvetica-Bold", 12))
-			.colorOn_(Color.white.alpha_(0.2))
-			.action_({|v|v.value.if{trimPluginsRack.compensateDistance}});
+//		TriggerView(buttons, Rect(0, 0, 20, 20))
+//			.string_("APi")
+//			.font_(Font("Helvetica-Bold", 8))
+//			.colorOn_(Color.white.alpha_(0.2))
+//			.action_({|v|v.value.if{trimPluginsRack.autoPlugins}});
+//		TriggerView(buttons, Rect(0, 0, 20, 20))
+//			.string_("ATr")
+//			.font_(Font("Helvetica-Bold", 8))
+//			.colorOn_(Color.white.alpha_(0.2))
+//			.action_({|v| v.value.if{trimPluginsRack.autoTrim}});
+//		TriggerView(buttons, Rect(0, 0, 20, 20))
+//			.string_("dT")
+//			.font_(Font("Helvetica-Bold", 12))
+//			.colorOn_(Color.white.alpha_(0.2))
+//			.action_({|v|v.value.if{trimPluginsRack.compensateDistance}});
 
 		window.onClose = { 
 			trimPluginsStripGUIs.do({|tpisg|
@@ -1002,17 +1008,17 @@ BMMultichannelPluginsStripGUI {
 	 
 	 makeGUI{|parent, name, origin|
 	 	name.postln;
-	 	containerView = SCCompositeView(parent, Rect(origin.x, origin.y, 300, 500));
-	 	containerView.decorator = FlowLayout(containerView.bounds);
-	 	labelView = SCStaticText(containerView, Rect(0, 0, 300, 30))
-	 		.font_(Font("Helvetica-Bold", 13))
-	 		.background_(Color.grey.alpha_(0.3))
-	 		.string_(" " ++ name);
+	 	containerView = SCCompositeView(parent, Rect(origin.x, origin.y, 300, 508));
+	 	//containerView.decorator = FlowLayout(containerView.bounds);
+//	 	labelView = SCStaticText(containerView, Rect(0, 0, 300, 30))
+//	 		.font_(Font("Helvetica-Bold", 13))
+//	 		.background_(Color.grey.alpha_(0.3))
+//	 		.string_(" " ++ name);
 //	 	ezKnob = EZKnob(containerView, 50@20, " Trim (dBFS)", \db.asSpec, 
 //	 		{|ez| trimPluginsStrip.trim_(ez.value);}, trimPluginsStrip.trim, false, 96, 70);
 //	 	ezKnob.labelView.align_(\left).font_(Font("Helvetica-Bold", 12));
 //	 	ezKnob.numberView.background_(Color.white.alpha_(0.3));
-	 	listView = SCListView(containerView, Rect(0, 0, 300, 334))
+	 	listView = SCListView(containerView, Rect(0, 0, 300, 508))
 	 		.items_(trimPluginsStrip.plugins.collect({|plugin| plugin.spec.name}));
 	 	listView.enterKeyAction = {
 	 		var plgin;
