@@ -14,6 +14,15 @@ BMEtherSense : BMAbstractController {
 		^super.new.init(addr, name, server ? Server.default).addControlsToIndex;
 	}
 	
+	*parameterList { 
+		^(
+			name: [String, nil, "Name"],
+			addr: [NetAddr, nil, "IP Address"]
+		); 
+	}
+	
+	*humanName {  ^"EtherSense"  }
+	
 	init { |argaddr, argname, argserver|
 		addr = argaddr;
 		name = argname;

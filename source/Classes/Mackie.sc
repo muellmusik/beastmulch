@@ -10,6 +10,13 @@ BMAbstractMackie : BMAbstractController {
 		^super.new.init(uid, name, server ? Server.default).addControlsToIndex;
 	}
 	
+	*parameterList { 
+		^(
+			name: [String, nil, "Name"],
+			uid: [Integer, [-inf, inf, \linear, 1, 0].asSpec, "MIDI Source uid"]
+		); 
+	}
+	
 	startListening { 
 		faderRoutine = Routine({
 			var	event, port, channel, bend;
@@ -120,6 +127,8 @@ BMAbstractMackie : BMAbstractController {
 
 MackieCU : BMAbstractMackie {
 	var buttonRoutine, buttonOffRoutine, buttonFuncDict, masterFaderSynth;
+		
+	*humanName {  ^"Mackie Control Universal"  }
 	
 	init { |arguid, argname, argserver|
 		super.init(arguid, argname, argserver);
@@ -212,6 +221,8 @@ MackieTimeDispatcher {
 
 MackieXT : BMAbstractMackie {
 
+	*humanName {  ^"Mackie XT"  }
+
 	setNumFaders { numFaders = 8; }
 	
 	setSysexHdr {
@@ -221,6 +232,8 @@ MackieXT : BMAbstractMackie {
 }
 
 MackieCUNoMaster : BMAbstractMackie {
+
+	*humanName {  ^"Mackie Control Universal (no master)"  }
 
 	setNumFaders { numFaders = 9; }
 	

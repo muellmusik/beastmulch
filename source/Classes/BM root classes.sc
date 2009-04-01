@@ -211,7 +211,17 @@ BMAbstractController {
 	
 	calibrate {
 		("No calibration to do for " ++ name ++ ".").postln;
-	} 
+	}
+	
+	
+	// a dictionary of arguments, excluding server int the form
+	// argname->[class, spec, humanName];
+	// class should be Integer, float, String, Symbol, NetAddr or corresponding RawArrays
+	// humanName is a String
+	*parameterList {  ^this.subclassResponsibility(thisMethod);  }
+	
+	*humanName {   ^this.subclassResponsibility(thisMethod);  }
+	
 }
 
 // don't make these yourself

@@ -8,6 +8,15 @@ BMVirtualController : BMAbstractController {
 		^super.new.init(name, server ? Server.default, numFaders).addControlsToIndex;
 	}
 	
+	*parameterList { 
+		^(
+			name: [String, nil, "Name"],
+			numFaders: [Integer, [1, 64, \linear, 1].asSpec, "Number of Faders"]
+		); 
+	}
+	
+	*humanName {  ^"GUI Faders"  }
+	
 	init { |argname, argserver, argnumFaders|
 		name = argname;
 		server = argserver.postln;

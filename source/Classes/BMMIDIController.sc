@@ -90,6 +90,15 @@ BMMIDIBendController : BMAbstractMIDIController {
 	*new { |uid, name, server|
 		^super.new.init(uid, name, server ? Server.default).addControlsToIndex;
 	}
+	
+	*parameterList { 
+		^(
+			name: [String, nil, "Name"],
+			uid: [Integer, [-inf, inf, \linear, 1, 0].asSpec, "MIDI Source uid"]
+		); 
+	}
+	
+	*humanName {  ^"MIDI Pitchbend Controller"  }
 
 	setNumFaders { numFaders = 16;}
 	
@@ -125,6 +134,17 @@ BMMIDICCController : BMAbstractMIDIController {
 			.setCCParams(chan, ccArray)
 			.init(uid, name, server ? Server.default).addControlsToIndex;
 	}
+	
+	*parameterList { 
+		^(
+			name: [String, nil, "Name"],
+			uid: [Integer, [-inf, inf, \linear, 1, 0].asSpec, "MIDI Source uid"],
+			chan: [Integer, [0, 15, \linear, 1, 0].asSpec, "MIDI Source uid"],
+			ccArray: [IntegerArray, nil, "CC numbers"]
+		); 
+	}
+	
+	*humanName {  ^"MIDI CC Controller"  }
 	
 	setNumFaders { numFaders = ccArray.size}
 	
