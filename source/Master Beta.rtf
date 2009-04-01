@@ -1,7 +1,7 @@
 {\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf430
 {\fonttbl\f0\fnil\fcharset0 Monaco;}
-{\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red191\green0\blue0;\red96\green96\blue96;
-\red0\green115\blue0;\red191\green0\blue0;\red0\green0\blue0;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red0\green115\blue0;\red96\green96\blue96;
+\red191\green0\blue0;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
 \f0\fs18 \cf0 (\
@@ -20,71 +20,71 @@
 \
 s.options = \cf2 BMOptions\cf0 .defaultServerOptions;\
 \
-\cf3 // config controllers recall workspace and system config\cf0 \
-controllersList = \cf2 List\cf0 [];\
-controllersList.add(etherSense = \cf2 BMMotorBEAST\cf0 (\cf2 NetAddr\cf0 (\cf4 "192.168.5.77"\cf0 , 57120), \cf5 \\Lower\cf0 , s););\
-controllersList.add(\cf2 BMMotorBEAST\cf0 (\cf2 NetAddr\cf0 (\cf4 "192.168.5.78"\cf0 , 57120), \cf5 \\Upper\cf0 , s););\
-\
 backupManager	= \cf2 BMBackup\cf0 .new;\
-outputArray	= backupManager.rememberWorkspace([ \cf5 \\concert\cf0 , \cf5 \\system\cf0 , \cf5 \\speakers\cf0  ],  \{ \cf2 BMInOutArray\cf0 .new \});\
+outputArray	= backupManager.rememberWorkspace([ \cf3 \\concert\cf0 , \cf3 \\system\cf0 , \cf3 \\speakers\cf0  ],  \{ \cf2 BMInOutArray\cf0 .new \});\
 postf(\cf4 "outarray %\\n"\cf0 , outputArray);\
 ~outputArray = outputArray;\
-\cf3 //outputArray	= ~outPutArrayFromTheChannelListFile;\cf0 \
-pieces		= backupManager.rememberWorkspace([ \cf5 \\concert\cf0 , \cf5 \\pieces\cf0  ],  \{ \cf2 List\cf0 [] \});\
-configurations= backupManager.rememberWorkspace(\cf5 \\configurations\cf0 ,  \{ (dict:  \cf2 IdentityDictionary\cf0 [], names: \cf2 List\cf0 [ \cf5 'all off'\cf0  ]) \});\
+\cf5 //outputArray	= ~outPutArrayFromTheChannelListFile;\cf0 \
+pieces		= backupManager.rememberWorkspace([ \cf3 \\concert\cf0 , \cf3 \\pieces\cf0  ],  \{ \cf2 List\cf0 [] \});\
+configurations= backupManager.rememberWorkspace(\cf3 \\configurations\cf0 ,  \{ (dict:  \cf2 IdentityDictionary\cf0 [], names: \cf2 List\cf0 [ \cf3 'all off'\cf0  ]) \});\
 \
-\cf3 // make sure we have enough output channels\cf0 \
+\cf5 // make sure we have enough output channels\cf0 \
 s.options.numOutputBusChannels = max(\
 	s.options.numOutputBusChannels, \
 	outputArray.values.asUGenInput.maxItem + 1\
 );\
 \
-\cf3 // boot\cf0 \
+\cf5 // boot\cf0 \
 cond = \cf2 Condition\cf0 .new;\
 s.bootSync(cond);\
 \
 0.2.wait;\
 \
+\cf5 // config controllers recall workspace and system config\cf0 \
+controllersList = \cf2 List\cf0 [];\
+controllersList.add(etherSense = \cf2 BMMotorBEAST\cf0 (\cf2 NetAddr\cf0 (\cf4 "192.168.5.77"\cf0 , 57120), \cf3 \\Lower\cf0 , s););\
+controllersList.add(\cf2 BMMotorBEAST\cf0 (\cf2 NetAddr\cf0 (\cf4 "192.168.5.78"\cf0 , 57120), \cf3 \\Upper\cf0 , s););\
+\
 \{\
-\cf3 //arrays		= this.executeFile(Document.current.dir ++ "/january channel list.rtf");\cf0 \
-\cf3 ////inputArray 	= arrays[1];\cf0 \
-\cf3 //~outPutArrayFromTheChannelListFile = arrays[0]; \cf0 \
+\cf5 //arrays		= this.executeFile(Document.current.dir ++ "/january channel list.rtf");\cf0 \
+\cf5 ////inputArray 	= arrays[1];\cf0 \
+\cf5 //~outPutArrayFromTheChannelListFile = arrays[0]; \cf0 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf0    \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf0 player		= \cf2 BMSoundFilePlayer\cf0 .new(8, name: \cf5 'Player'\cf0 );\
+\cf0 player		= \cf2 BMSoundFilePlayer\cf0 .new(8, name: \cf3 'Player'\cf0 );\
 \
-\cf3 //chainFunc = \{ BMAudiochain( \cf0 \
-\cf3 //					[player, BMInOutArray.hardwareInputArray], \cf0 \
-\cf3 //					['Pre-Processing'->BMTrimPluginsRack, 'Input Levels'->BMAmpControlMatrix], \cf0 \
-\cf3 //					['Output Levels'->BMAmpControlMatrix, 'Post-Processing'->BMTrimPluginsRack, 'Master Fader' -> BMMasterFader],\cf0 \
-\cf3 //					BMAbstractController.allControllers.values.collect(\{|item| item.getInputArray \}).flat.as(BMInOutArray), \cf0 \
-\cf3 //			 		outputArray\cf0 \
-\cf3 //			       );\cf0 \
-\cf3 //			       \};	\cf0 \
+\cf5 //chainFunc = \{ BMAudiochain( \cf0 \
+\cf5 //					[player, BMInOutArray.hardwareInputArray], \cf0 \
+\cf5 //					['Pre-Processing'->BMTrimPluginsRack, 'Input Levels'->BMAmpControlMatrix], \cf0 \
+\cf5 //					['Output Levels'->BMAmpControlMatrix, 'Post-Processing'->BMTrimPluginsRack, 'Master Fader' -> BMMasterFader],\cf0 \
+\cf5 //					BMAbstractController.allControllers.values.collect(\{|item| item.getInputArray \}).flat.as(BMInOutArray), \cf0 \
+\cf5 //			 		outputArray\cf0 \
+\cf5 //			       );\cf0 \
+\cf5 //			       \};	\cf0 \
 \
 chainFunc = \{ \
 	controllers = \cf2 BMAbstractController\cf0 .masterInOutArray;\
 	inputs = [player, \cf2 BMInOutArray\cf0 .hardwareInputArray];\
-	\cf3 //inputArray = player.asBMInOutArray ++ inputs[1].asBMInOutArray;\cf0 \
+	\cf5 //inputArray = player.asBMInOutArray ++ inputs[1].asBMInOutArray;\cf0 \
 	inputArray = \cf2 BMInOutArray\cf0 [];\
 	inputs.do(\{\cf2 |input|\cf0  inputArray = inputArray ++ input.asBMInOutArray \});\
-	privateIns = \cf2 BMInOutArray\cf0 .privateBusBlock(\cf5 'Virtual In'\cf0 , 8);\
-	privateOuts = \cf2 BMInOutArray\cf0 .privateBusBlock(\cf5 'Virtual Out'\cf0 , 8);\
-	\cf3 //(inputArray ++ privateIns).postln;\cf0 \
+	privateIns = \cf2 BMInOutArray\cf0 .privateBusBlock(\cf3 'Virtual In'\cf0 , 8);\
+	privateOuts = \cf2 BMInOutArray\cf0 .privateBusBlock(\cf3 'Virtual Out'\cf0 , 8);\
+	\cf5 //(inputArray ++ privateIns).postln;\cf0 \
 	\
 	~getIns = inputArray;\
 	[\
 		inputs,\
-		\cf2 BMAudioMatrix\cf0 (inputArray, privateIns, name: \cf5 'Virtual Inputs'\cf0 ),\
-		\cf2 BMTrimPluginsRack\cf0 (inputArray ++ privateIns, name:\cf5 'Pre-Processing'\cf0 ), \
-		\cf2 BMAmpControlMatrix\cf0 (controllers, inputArray ++ privateIns, name:\cf5 'Input Levels'\cf0 ),\
-		\cf2 BMAudioMatrix\cf0 (inputArray ++ privateIns, outputArray ++ privateOuts, name: \cf5 'Audio Routing'\cf0 ), \
-		\cf2 BMAmpControlMatrix\cf0 (controllers, outputArray ++ privateOuts, name:\cf5 'Output Levels'\cf0 ), \
-		\cf2 BMTrimPluginsRack\cf0 (outputArray ++ privateOuts, name: \cf5 'Post-Processing'\cf0 ), \
-		\cf2 BMMultichannelPluginsRack\cf0 (inputArray ++ privateIns, outputArray, name: \cf5 'Multichannel'\cf0 ),\
-		\cf2 BMAudioMatrix\cf0 (privateOuts, outputArray, name: \cf5 'Virtual Outputs'\cf0 ),\
-		\cf2 BMMasterFader\cf0 (name: \cf5 'Master Fader'\cf0 )\
+		\cf2 BMAudioMatrix\cf0 (inputArray, privateIns, name: \cf3 'Virtual Inputs'\cf0 ),\
+		\cf2 BMTrimPluginsRack\cf0 (inputArray ++ privateIns, name:\cf3 'Pre-Processing'\cf0 ), \
+		\cf2 BMAmpControlMatrix\cf0 (controllers, inputArray ++ privateIns, name:\cf3 'Input Levels'\cf0 ),\
+		\cf2 BMAudioMatrix\cf0 (inputArray ++ privateIns, outputArray ++ privateOuts, name: \cf3 'Audio Routing'\cf0 ), \
+		\cf2 BMAmpControlMatrix\cf0 (controllers, outputArray ++ privateOuts, name:\cf3 'Output Levels'\cf0 ), \
+		\cf2 BMTrimPluginsRack\cf0 (outputArray ++ privateOuts, name: \cf3 'Post-Processing'\cf0 ), \
+		\cf2 BMMultichannelPluginsRack\cf0 (inputArray ++ privateIns, outputArray, name: \cf3 'Multichannel'\cf0 ),\
+		\cf2 BMAudioMatrix\cf0 (privateOuts, outputArray, name: \cf3 'Virtual Outputs'\cf0 ),\
+		\cf2 BMMasterFader\cf0 (name: \cf3 'Master Fader'\cf0 )\
 	]\
 \
 \};	\
@@ -104,35 +104,35 @@ configManager	= \cf2 BMConfigurations\cf0 (configurations, backupManager);\
 concertManager= \cf2 BMConcert\cf0 (pieces, configManager, [ outputArray, inputArray ], \cf2 BMAbstractController\cf0 .allControllers, controllerAutomator, backupManager);\
 \
 ~concertManager = concertManager;\
-\cf3 // backupManager is added as dependant of outputArray, concertManager, configManager \cf0 \
+\cf5 // backupManager is added as dependant of outputArray, concertManager, configManager \cf0 \
 //[ outputArray, concertManager, configManager ].do\{\cf2 | x |\cf0  backupManager.watch(x) \};\
 \
-\cf3 // at some point, backupManager will have to be removed from the list of dependants of outputArray, concertManager, configManager\cf0 \
-\cf3 // [ outputArray, concertManager, configManager ].do\{| x | backupManager.stopWatching(x) \};\cf0 \
+\cf5 // at some point, backupManager will have to be removed from the list of dependants of outputArray, concertManager, configManager\cf0 \
+\cf5 // [ outputArray, concertManager, configManager ].do\{| x | backupManager.stopWatching(x) \};\cf0 \
 \
 \{\
 configsGUIFunc =  \{\cf2 | chain |\cf0  \cf2 BMConfigurationsGUI\cf0 (chain, configManager, concertManager, \cf4 "Configuration Editor"\cf0 , 550 @ 550) \}; \
 configsGUI	 = configsGUIFunc.value(chain);\
 \cf2 BMConcertGUI\cf0 (concertManager, configManager, outputArray, chain, chainFunc, configsGUIFunc, controllerAutomator, \cf4 "Concert Editor"\cf0 , 110 @ 600);\
 \}.defer;\
-\cf6 //\cf7 \
-\cf6 //Updater(concertManager,  \cf7 \
-\cf6 //	\{| changed, change, pieceEvent |\cf7 \
-\cf6 //	 switch (change,\cf7 \
-\cf6 //	 	\\loadPiece,	 	\cf7 \
-\cf6 //	   	\{ if (pieceEvent.path.notNil)\cf7 \
-\cf6 //	   		\{ player.read(pieceEvent.path) \}\cf7 \
-\cf6 //	   		\{ player.free \};\cf7 \
-\cf6 //	   	  configManager.currentConfig_(pieceEvent.config, \\concertEditor);\cf7 \
-\cf6 //	   	  if(pieceEvent.controllerAutomation.notNil, \{\cf7 \
-\cf6 //	   	  	controllerAutomator.mappings = pieceEvent.controllerAutomation;\cf7 \
-\cf6 //	   	  \});\cf7 \
-\cf6 //	    	\}\cf7 \
-\cf6 //	 )\cf7 \
-\cf6 //	\}\cf7 \
-\cf6 //);\cf7 \
-\cf0 \
-\cf3 // PinkNoise Tester\cf0 \
+\cf5 //\cf0 \
+\cf5 //Updater(concertManager,  \cf0 \
+\cf5 //	\{| changed, change, pieceEvent |\cf0 \
+\cf5 //	 switch (change,\cf0 \
+\cf5 //	 	\\loadPiece,	 	\cf0 \
+\cf5 //	   	\{ if (pieceEvent.path.notNil)\cf0 \
+\cf5 //	   		\{ player.read(pieceEvent.path) \}\cf0 \
+\cf5 //	   		\{ player.free \};\cf0 \
+\cf5 //	   	  configManager.currentConfig_(pieceEvent.config, \\concertEditor);\cf0 \
+\cf5 //	   	  if(pieceEvent.controllerAutomation.notNil, \{\cf0 \
+\cf5 //	   	  	controllerAutomator.mappings = pieceEvent.controllerAutomation;\cf0 \
+\cf5 //	   	  \});\cf0 \
+\cf5 //	    	\}\cf0 \
+\cf5 //	 )\cf0 \
+\cf5 //	\}\cf0 \
+\cf5 //);\cf0 \
+\
+\cf5 // PinkNoise Tester\cf0 \
 \
 pinkNoiseFunc = \{\
 \
@@ -141,17 +141,17 @@ pinkNoiseFunc = \{\
 \cf2 var\cf0  cmdPeriodFunc;\
 s.options.numOutputBusChannels = 96;\
 s.waitForBoot(\{\
-\cf2 SynthDef\cf0 (\cf5 \\PinkTest\cf0 , \{\cf2 |out, amp|\cf0  \cf2 Out\cf0 .ar(out, \cf2 PinkNoise\cf0 .ar(amp) * \cf2 Decay2\cf0 .ar(\cf2 Impulse\cf0 .ar(1))); \}).send(s);\
+\cf2 SynthDef\cf0 (\cf3 \\PinkTest\cf0 , \{\cf2 |out, amp|\cf0  \cf2 Out\cf0 .ar(out, \cf2 PinkNoise\cf0 .ar(amp) * \cf2 Decay2\cf0 .ar(\cf2 Impulse\cf0 .ar(1))); \}).send(s);\
 \
-\cf3 // make the window\cf0 \
+\cf5 // make the window\cf0 \
 pinkWin = \cf2 SCWindow\cf0 (\cf4 "PinkNoise Tester"\cf0 , \cf2 Rect\cf0 (20, 400, 440, 180));\
-pinkWin.front; \cf3 // make window visible and front window.\cf0 \
+pinkWin.front; \cf5 // make window visible and front window.\cf0 \
 pinkWin.view.decorator = \cf2 FlowLayout\cf0 (pinkWin.view.bounds);\
 \
-\cf3 //pinkWin.view.background = HiliteGradient(Color.rand(0.0,1.0),Color.rand(0.0,1.0),\cf0 \
-\cf3 //					[\\h,\\v].choose, 100, rrand(0.1,0.9));\cf0 \
+\cf5 //pinkWin.view.background = HiliteGradient(Color.rand(0.0,1.0),Color.rand(0.0,1.0),\cf0 \
+\cf5 //					[\\h,\\v].choose, 100, rrand(0.1,0.9));\cf0 \
 \
-\cf3 // add a button to start and stop the sound.\cf0 \
+\cf5 // add a button to start and stop the sound.\cf0 \
 startButton = \cf2 SCButton\cf0 (pinkWin, 75 @ 24);\
 startButton.states = [\
 	[\cf4 "Start"\cf0 , \cf2 Color\cf0 .black, \cf2 Color\cf0 .green],\
@@ -159,36 +159,36 @@ startButton.states = [\
 ];\
 startButton.action = \{\cf2 |view|\cf0 \
 		if (view.value == 1) \{\
-			\cf3 // start sound\cf0 \
+			\cf5 // start sound\cf0 \
 			\
-			synth = \cf2 Synth\cf0 .tail(s.defaultGroup, \cf5 \\PinkTest\cf0 , [\cf5 \\amp\cf0 , ampControl.value.dbamp, \cf5 \\out\cf0 , \
+			synth = \cf2 Synth\cf0 .tail(s.defaultGroup, \cf3 \\PinkTest\cf0 , [\cf3 \\amp\cf0 , ampControl.value.dbamp, \cf3 \\out\cf0 , \
 				outputControl.value - 1]);\
 			\
 		\};\
 		if (view.value == 0) \{\
-			\cf3 // stop sound\cf0 \
+			\cf5 // stop sound\cf0 \
 			synth.free;\
 		\};\
 \};\
 \
-\cf3 // create controls for all parameters\cf0 \
+\cf5 // create controls for all parameters\cf0 \
 pinkWin.view.decorator.nextLine;\
-outputControl = \cf2 EZSlider\cf0 (pinkWin, 400 @ 24, \cf4 "Hardware Out"\cf0 , \cf2 ControlSpec\cf0 (1, 98, \cf5 \\lin\cf0 , 1.0), \
+outputControl = \cf2 EZSlider\cf0 (pinkWin, 400 @ 24, \cf4 "Hardware Out"\cf0 , \cf2 ControlSpec\cf0 (1, 98, \cf3 \\lin\cf0 , 1.0), \
 	\{\cf2 |ez|\cf0  synth.set( \cf4 "out"\cf0 , ez.value -1); \}, 1);\
 	\
 pinkWin.view.decorator.nextLine;\
-ampControl = \cf2 EZSlider\cf0 (pinkWin, 400 @ 24, \cf4 "Amp"\cf0 , \cf5 \\db\cf0 , \
+ampControl = \cf2 EZSlider\cf0 (pinkWin, 400 @ 24, \cf4 "Amp"\cf0 , \cf3 \\db\cf0 , \
 	\{\cf2 |ez|\cf0  synth.set(\cf4 "amp"\cf0 , ez.value.dbamp); \}, -34);\
 \
 pinkWin.view.decorator.nextLine;\
 \cf2 SCStaticText\cf0 .new(pinkWin, \cf2 Rect\cf0 (0,0,300,80)).string_(\cf4 "Outputs are Hardware, not SC, i.e. 1 = 1"\cf0 );\
 			\
 \
-\cf3 // set start button to zero upon a cmd-period\cf0 \
+\cf5 // set start button to zero upon a cmd-period\cf0 \
 cmdPeriodFunc = \{ startButton.value = 0; \};\
 \cf2 CmdPeriod\cf0 .add(cmdPeriodFunc);\
 \
-\cf3 // stop the sound when window closes and remove cmdPeriodFunc.\cf0 \
+\cf5 // stop the sound when window closes and remove cmdPeriodFunc.\cf0 \
 pinkWin.onClose = \{\
 	synth.free;\
 	\cf2 CmdPeriod\cf0 .remove(cmdPeriodFunc);\
@@ -197,7 +197,7 @@ pinkWin.onClose = \{\
 \
 \};\
 \
-\cf3 // Utilities\cf0 \
+\cf5 // Utilities\cf0 \
 utilMenu = \cf2 SCMenuGroup\cf0 (bmMenu, \cf4 "Utilities"\cf0 );\
 \cf2 SCMenuItem\cf0 (utilMenu, \cf4 "Test Outputs"\cf0 ).action_(pinkNoiseFunc);\
 \cf2 SCMenuItem\cf0 (utilMenu, \cf4 "Meter Bridge"\cf0 ).action_(\{s.meter\});\
