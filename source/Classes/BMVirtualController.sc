@@ -8,6 +8,10 @@ BMVirtualController : BMAbstractController {
 		^super.new.init(name, server ? Server.default, numFaders).addControlsToIndex;
 	}
 	
+	*newFromParamDict {|dict, server| 
+		^this.new(dict[\name], dict[\numFaders], server);
+	}
+	
 	*parameterList { 
 		^(
 			name: [String, nil, "Name"],

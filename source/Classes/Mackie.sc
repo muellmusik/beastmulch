@@ -10,6 +10,10 @@ BMAbstractMackie : BMAbstractController {
 		^super.new.init(uid, name, server ? Server.default).addControlsToIndex;
 	}
 	
+	*newFromParamDict {|dict, server| 
+		^this.new(dict[\uid], dict[\name], server);
+	}
+	
 	*parameterList { 
 		^(
 			name: [String, nil, "Name"],
@@ -128,7 +132,7 @@ BMAbstractMackie : BMAbstractController {
 MackieCU : BMAbstractMackie {
 	var buttonRoutine, buttonOffRoutine, buttonFuncDict, masterFaderSynth;
 		
-	*humanName {  ^"Mackie Control Universal"  }
+	*humanName {  ^"Mackie CU"  }
 	
 	init { |arguid, argname, argserver|
 		super.init(arguid, argname, argserver);
@@ -233,7 +237,7 @@ MackieXT : BMAbstractMackie {
 
 MackieCUNoMaster : BMAbstractMackie {
 
-	*humanName {  ^"Mackie Control Universal (no master)"  }
+	*humanName {  ^"Mackie CU (no master)"  }
 
 	setNumFaders { numFaders = 9; }
 	

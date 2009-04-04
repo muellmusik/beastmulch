@@ -14,6 +14,10 @@ BMEtherSense : BMAbstractController {
 		^super.new.init(addr, name, server ? Server.default).addControlsToIndex;
 	}
 	
+	*newFromParamDict {|dict, server| 
+		^this.new(NetAddr(dict[\addr], 57120), dict[\name], server);
+	}
+	
 	*parameterList { 
 		^(
 			name: [String, nil, "Name"],

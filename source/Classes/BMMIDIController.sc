@@ -91,6 +91,10 @@ BMMIDIBendController : BMAbstractMIDIController {
 		^super.new.init(uid, name, server ? Server.default).addControlsToIndex;
 	}
 	
+	*newFromParamDict {|dict, server| 
+		^this.new(dict[\uid], dict[\name], server);
+	}
+	
 	*parameterList { 
 		^(
 			name: [String, nil, "Name"],
@@ -129,18 +133,22 @@ BMMIDIBendController : BMAbstractMIDIController {
 BMMIDICCController : BMAbstractMIDIController {
 	var chan, ccArray;
 
-	*new { |uid, name, server, chan, ccArray|
+	*new { |uid, name, chan, ccArray, server|
 		^super.new
 			.setCCParams(chan, ccArray)
 			.init(uid, name, server ? Server.default).addControlsToIndex;
+	}
+	
+	*newFromParamDict {|dict, server| 
+		^this.new(dict[\uid], dict[\name], dict[\chan], dict[\ccArray], server);
 	}
 	
 	*parameterList { 
 		^(
 			name: [String, nil, "Name"],
 			uid: [Integer, [-inf, inf, \linear, 1, 0].asSpec, "MIDI Source uid"],
-			chan: [Integer, [0, 15, \linear, 1, 0].asSpec, "MIDI Source uid"],
-			ccArray: [IntegerArray, nil, "CC numbers"]
+			chan: [Integer, [0, 15, \linear, 1, 0].asSpec, "MIDI Channel"],
+			ccArray: [Int8Array, nil, "CC numbers"]
 		); 
 	}
 	

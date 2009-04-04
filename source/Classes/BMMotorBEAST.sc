@@ -10,11 +10,15 @@ BMMotorBEAST : BMAbstractController {
 	*new { |addr, name, server|
 		^super.new.init(addr, name, server ? Server.default).addControlsToIndex;
 	}
+
+	*newFromParamDict {|dict, server| 
+		^this.new(NetAddr(dict[\addr], 57120), dict[\name], server);
+	}
 	
 	*parameterList { 
 		^(
 			name: [String, nil, "Name"],
-			addr: [NetAddr, nil, "IP Address"]
+			addr: [String, nil, "IP Address"]
 		); 
 	}
 	

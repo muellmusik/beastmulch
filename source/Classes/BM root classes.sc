@@ -214,13 +214,16 @@ BMAbstractController {
 	}
 	
 	
-	// a dictionary of arguments, excluding server int the form
+	// a dictionary of arguments, excluding server in the form
 	// argname->[class, spec, humanName];
 	// class should be Integer, float, String, Symbol, NetAddr or corresponding RawArrays
 	// humanName is a String
 	*parameterList {  ^this.subclassResponsibility(thisMethod);  }
 	
 	*humanName {   ^this.subclassResponsibility(thisMethod);  }
+	
+	// {|argsDict| Me.new(...) }
+	*newFromParamDict {|dict, server|   ^this.subclassResponsibility(thisMethod);  }
 	
 }
 
