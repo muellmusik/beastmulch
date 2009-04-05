@@ -5,17 +5,19 @@
 // pieces is also ordered: backupManager.rememberWorkspace([ \concert, \pieces ],  { List[] });
 // could possibly take a BMInOutArray
 
+// now duplicates controllers and sysconfig
+
 BMConcert {	
-	var <pieces, <configManager, arrays, controllers, controllerAutomator, backup;
+	var <pieces, <configManager, arrays, controllers, controllerAutomator, sysconfig, backup;
 	var <concert;
 	
 
-	*new {| pieces, configManager, arrays, controllers, controllerAutomator, backup | 
-		^super.newCopyArgs(pieces, configManager, arrays, controllers, controllerAutomator, backup).init
+	*new {| pieces, configManager, arrays, controllers, controllerAutomator, sysconfig, backup | 
+		^super.newCopyArgs(pieces, configManager, arrays, controllers, controllerAutomator, sysconfig, backup).init
 	}
 
 	init { 
-		concert = (system: (speakers: arrays[0], controllers: controllers), pieces: pieces)
+		concert = (system: (speakers: arrays[0], controllers: controllers, sysconfig:sysconfig), pieces: pieces)
 	}
 	
 	add {| pieceEvent, indexInList |	 
@@ -72,6 +74,10 @@ BMConcert {
 		arrays[0] = newSpeakers;
 		concert.system.speakers = newSpeakers;
 		//this.changed(\store, \system, "speakers", newSpeakers);
+	}
+	
+	setSysConfig {|newSysConfig|
+		concert.system.sysconfig = newSysConfig;
 	}
 }
 
