@@ -9,7 +9,7 @@ BMVirtualController : BMAbstractController {
 	}
 	
 	*newFromParamDict {|dict, server| 
-		^this.new(dict[\name], dict[\numFaders], server);
+		^this.new(dict[\name], server, dict[\numFaders]);
 	}
 	
 	*parameterList { 

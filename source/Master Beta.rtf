@@ -45,10 +45,16 @@ s.bootSync(cond);\
 \
 0.2.wait;\
 \
+\cf0 if(systemConfig.controllers.size == 0, \{\
+	systemConfig.controllers.add('Sample Controller' -> (paramsDict: (name: "Sample Controller", numFaders: 8), class: \cf7 BMVirtualController\cf0 ));\
+\});\
+\cf2 \
 \cf6 // config controllers recall workspace and system config\cf2 \
 controllersList = \cf0 systemConfig.controllers.collectAs(\{|assoc| \
-	assoc.value.class.newFromParamDict(assoc.value.paramsDict, s);\
-\}, Array)\cf2 ;\
+	assoc.value.postln;\
+	assoc.value[\\class].newFromParamDict(assoc.value[\\paramsDict], s);\
+\}, List)\cf2 ;\
+\
 \cf6 //controllersList.add(etherSense = BMMotorBEAST(NetAddr("192.168.5.77", 57120), \\Lower, s););\cf2 \
 \cf6 //controllersList.add(BMMotorBEAST(NetAddr("192.168.5.78", 57120), \\Upper, s););\cf2 \
 \
