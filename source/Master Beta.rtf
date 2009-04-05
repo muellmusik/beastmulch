@@ -130,6 +130,8 @@ concertManager= \cf3 BMConcert\cf2 (pieces, configManager, [ outputArray, inputA
 		\cf7 BMAlert\cf0 (\cf8 "To change the system configuration the system must be restarted.\\nPress okay to do this now."\cf0 , [[\cf8 "ok"\cf0 , \cf7 Color\cf0 .black, \cf7 Color\cf0 .new255(51, 111, 203, 255 * 0.95)]], [\{\cf7 thisProcess\cf0 .recompile;\}], background: \cf7 Color\cf0 .white, color: \cf7 Color\cf0 .red, border:\cf7 false\cf0 );\
 	\});\
 \});\
+\
+SCMenuSeparator(bmMenu, 3);\
 \cf2 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf6 // backupManager is added as dependant of outputArray, concertManager, configManager \cf2 \

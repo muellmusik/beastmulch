@@ -36,7 +36,7 @@ BMSystemConfigAppGUI : BMAbstractGUI {
 			"Number of Output Channels",	// label
 			[1, 200, \linear, 1, sysconfig.numOutChannels].asSpec, 	// controlSpec
 			nil, // action
-			8,		// initValue
+			nil,		// initValue
 			true,		// initAction
 			200
 		);
@@ -46,7 +46,7 @@ BMSystemConfigAppGUI : BMAbstractGUI {
 			"Number of Input Channels",	// label
 			[1, 200, \linear, 1, sysconfig.numInChannels].asSpec, 	// controlSpec
 			nil, // action
-			8,		// initValue
+			nil,		// initValue
 			true,		// initAction
 			200
 		);
@@ -56,7 +56,7 @@ BMSystemConfigAppGUI : BMAbstractGUI {
 			"Max Soundfile Player Channels",	// label
 			[1, 200, \linear, 1, sysconfig.numSoundFilePlayerChans].asSpec, 	// controlSpec
 			nil, // action
-			8,		// initValue
+			nil,		// initValue
 			true,		// initAction
 			200
 		);
@@ -66,7 +66,7 @@ BMSystemConfigAppGUI : BMAbstractGUI {
 			"Virtual Ins",	// label
 			[1, 200, \linear, 1, sysconfig.numVirtIns].asSpec, 	// controlSpec
 			nil, // action
-			8,		// initValue
+			nil,		// initValue
 			true,		// initAction
 			200
 		);
@@ -76,7 +76,7 @@ BMSystemConfigAppGUI : BMAbstractGUI {
 			"Virtual Outs",	// label
 			[1, 200, \linear, 1, sysconfig.numVirtOuts].asSpec, 	// controlSpec
 			nil, // action
-			8,		// initValue
+			nil,		// initValue
 			true,		// initAction
 			200
 		);
