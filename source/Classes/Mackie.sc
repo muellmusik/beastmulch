@@ -15,8 +15,10 @@ BMAbstractMackie : BMAbstractController {
 	}
 	
 	*parameterList { 
+		var class;
+		class = this;
 		^(
-			name: [String, nil, "Name"],
+			name: [String, {class.makeName}, "Name"],
 			uid: [Integer, [-inf, inf, \linear, 1, 0].asSpec, "MIDI Source uid"]
 		); 
 	}

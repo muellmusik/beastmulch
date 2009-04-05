@@ -19,9 +19,11 @@ BMEtherSense : BMAbstractController {
 	}
 	
 	*parameterList { 
+		var class;
+		class = this;
 		^(
-			name: [String, nil, "Name"],
-			addr: [NetAddr, nil, "IP Address"]
+			name: [String, {class.makeName}, "Name"],
+			addr: [NetAddr, "0.0.0.0", "IP Address"]
 		); 
 	}
 	

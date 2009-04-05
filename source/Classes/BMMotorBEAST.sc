@@ -16,9 +16,11 @@ BMMotorBEAST : BMAbstractController {
 	}
 	
 	*parameterList { 
+		var class;
+		class = this;
 		^(
-			name: [String, nil, "Name"],
-			addr: [String, nil, "IP Address"]
+			name: [String, {class.makeName}, "Name"],
+			addr: [String, "0.0.0.0", "IP Address"]
 		); 
 	}
 	

@@ -222,6 +222,8 @@ BMAbstractController {
 	
 	*humanName {   ^this.subclassResponsibility(thisMethod);  }
 	
+	*makeName { ^(this.humanName + UniqueID.next)} 
+	
 	// {|argsDict| Me.new(...) }
 	*newFromParamDict {|dict, server|   ^this.subclassResponsibility(thisMethod);  }
 	

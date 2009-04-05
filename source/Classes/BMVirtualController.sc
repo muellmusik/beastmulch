@@ -13,8 +13,10 @@ BMVirtualController : BMAbstractController {
 	}
 	
 	*parameterList { 
+		var class;
+		class = this;
 		^(
-			name: [String, nil, "Name"],
+			name: [String, {class.makeName}, "Name"],
 			numFaders: [Integer, [1, 64, \linear, 1].asSpec, "Number of Faders"]
 		); 
 	}

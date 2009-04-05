@@ -15,10 +15,13 @@ BMControllerConfigGUI : BMAbstractGUI {
 	}
 	
 	makeWindow {
-		var result;
+		var result, textFields;
 		result = ();
-		window = SCModalSheet(parent, Rect(30, 30, 300, params.size + 1 * 24));
+		textFields = List.new;
+		window = SCModalSheet(parent, Rect(30, 30, 300, params.size + 1 * 24 + 44));
 		window.addFlowLayout;
+		StaticText(window, Rect(10, 10, 200, 20)).font_(Font("Helvetica-Bold", 12))
+			.string_("Configure new" + class.humanName);
 		params.keys.asArray.sort.do({|argName|
 			var vals, widget, paramclass, lastValidInput;
 			vals = params[argName]; // argname->[class, spec, humanName];
@@ -27,7 +30,8 @@ BMControllerConfigGUI : BMAbstractGUI {
 				widget = EZNumber(window, 292@20, vals[2], vals[1], labelWidth: 100);
 			}, {
 				SCStaticText(window, 100@20).string_(vals[2]).align_(\right);
-				widget = SCTextField(window, 188@20);
+				widget = SCTextField(window, 188@20).string_(vals[1].value);
+				textFields.add(widget);
 			});
 			
 			if(paramclass != String && paramclass.superclasses.includes(RawArray), {
@@ -49,9 +53,24 @@ BMControllerConfigGUI : BMAbstractGUI {
 			widget.doAction;
 		});
 		
-		window.onClose = {
-			okayFunc.value(result);
-		}
+		window.view.decorator.nextLine.nextLine;
+		window.view.decorator.shift(window.bounds.width - 242, 0);
+		
+		RoundButton(window, 115 @ 20)
+			.extrude_(false).canFocus_(false) 
+			.states_([[ "Cancel", Color.black, Color.white.alpha_(0.8) ]])
+			.action_({ window.close });
+			   
+		RoundButton(window, 115 @ 20)
+			.extrude_(false).canFocus_(false)
+			.states_([[ "OK", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ]])
+			.action_({ 
+				textFields.do({|tf| tf.doAction});
+				window.close;
+				okayFunc.value(result);
+				onClose.value(this);
+			});
+		
 		
 	}
 }
