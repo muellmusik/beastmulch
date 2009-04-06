@@ -1,16 +1,17 @@
 // result is a dict of (argname:value) which can be passed to newFromParamDict
 BMControllerConfigGUI : BMAbstractGUI {
-	var class, parent, okayFunc, params, widgets;
+	var class, parent, okayFunc, existingParams, params, widgets;
 	
-	*new {|class, parent, okayFunc|
-		^super.new.init(class, parent, okayFunc).makeWindow;
+	*new {|class, parent, okayFunc, existingParams|
+		^super.new.init(class, parent, okayFunc, existingParams).makeWindow;
 	}
 	
-	init {|argclass, argparent, argokayFunc|
+	init {|argclass, argparent, argokayFunc, argexistingParams|
 		class = argclass;
 		parent = argparent;
 		okayFunc = argokayFunc;
 		params = class.parameterList;
+		existingParams = argexistingParams ? ();
 		widgets = Array.new(params.size);
 	}
 	
@@ -27,10 +28,13 @@ BMControllerConfigGUI : BMAbstractGUI {
 			vals = params[argName]; // argname->[class, spec, humanName];
 			paramclass = vals[0];
 			if(paramclass == Integer || (paramclass == Float), {
-				widget = EZNumber(window, 292@20, vals[2], vals[1], labelWidth: 100);
+				widget = EZNumber(window, 292@20, vals[2], vals[1], 
+					initVal: existingParams[argName], // maybe nil
+					labelWidth: 100);
 			}, {
 				SCStaticText(window, 100@20).string_(vals[2]).align_(\right);
-				widget = SCTextField(window, 188@20).string_(vals[1].value);
+				widget = SCTextField(window, 188@20)
+					.string_(existingParams[argName] ?? {vals[1].value});
 				textFields.add(widget);
 			});
 			

@@ -118,9 +118,9 @@ BMSystemConfigAppGUI : BMAbstractGUI {
 			var class;
 			dragSource = nil;
 			class = SCView.currentDrag;
-			BMControllerConfigGUI(SCView.currentDrag, window, {|result|
+			BMControllerConfigGUI(class, window, {|result|
 				result.postln;
-				controllersList.add(result.name -> (class: class, paramsDict: result));
+				controllersList.add(result.name.asSymbol -> (class: class, paramsDict: result));
 				addedControllers.items = controllersList.keys;
 				addedControllers.focus;
 				addedControllers.value = controllersList.size - 1;
@@ -146,13 +146,32 @@ BMSystemConfigAppGUI : BMAbstractGUI {
 				});
 				if(unicode == 127, {
 					view.item.notNil.if({
-						controllersList.removeAt(view.item);
+						controllersList.removeAt(view.item.asSymbol);
 						view.items = controllersList.keys;
 					});
 					break.value;
 				});
 				view.defaultKeyDownAction(char,modifiers,unicode);
 			}
+		};
+				 
+		addedControllers.enterKeyAction = {
+			var class, index;
+			class = controllersList[addedControllers.item][\class];
+			index = addedControllers.value;
+	 		BMControllerConfigGUI(class, window, {|result|
+				result.postln;
+				controllersList.removeAt(addedControllers.item);
+				controllersList.insert(index, result.name.asSymbol -> (class: class, paramsDict: result));
+				addedControllers.items = controllersList.keys;
+				addedControllers.focus;
+			},  controllersList[addedControllers.item][\paramsDict]);
+	 	};
+	 	
+		addedControllers.mouseDownAction = {|view, x, y, modifiers, buttonNumber, clickCount|
+			if(clickCount == 2, {
+				addedControllers.enterKeyAction.value;
+			});
 		};
 		
 		StaticText(window, Rect(10, 10, 320, 20)).font_(Font("Helvetica-Bold", 11)).string_(" Drag from left to create a new controller");
