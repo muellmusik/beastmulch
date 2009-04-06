@@ -10,6 +10,8 @@ BMSpeakerListVisualiser : BMAbstractGUI {
 		speakerList = argspeakerList;
 	}
 	
+	speakerList_ {|list| }
+	
 	makeWindow {
 		var rect;
 	//
@@ -40,13 +42,15 @@ BMSpeakerListVisualiser : BMAbstractGUI {
 		zoom = SCSlider(window, Rect(0,0,rect.width, 20));
 		qcView = SCQuartzComposerView(window, rect.moveTo(0,20));
 		qcView.resize_(5);
+		//qcView.maxFPS_(20);
 		zoom.action = {qcView.zoom = zoom.value * 4 - 2;};
 		
 		qcView.path = this.class.filenameSymbol.asString.dirname ++ "/QC/SpeakerVis.qtz";
 		zoom.doAction;
 		qcView.sphereScale = 0.02;
 		
-		colours = Pseq([Color.green.alpha_(0.6), Color.red.alpha_(0.6), Color.blue.alpha_(0.6), Color.yellow.alpha_(0.6), Color.white.alpha_(0.6)], inf).asStream;
+		//colours = Pseq([Color.green.alpha_(0.6), Color.red.alpha_(0.6), Color.blue.alpha_(0.6), Color.yellow.alpha_(0.6), Color.white.alpha_(0.6)], inf).asStream;
+		colours = Pseq([Color.green, Color.red, Color.blue, Color.yellow, Color.white], inf).asStream;
 		qcView.startY = hiY;
 		qcView.endY = lowY;
 		floorZ = speakerList.collectAs({|assoc| assoc.value.z }, Array).minItem / maxX;
