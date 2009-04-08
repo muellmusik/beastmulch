@@ -39,7 +39,7 @@ BMSpeakerListVisualiser : BMAbstractGUI {
 		//SCButton(w, Rect(0, 0, 150, 20))
 		//	.states_([["pick another QC file"]])
 		//	.action_({ File.openDialog("", { |path| m.path_(path) }) });
-		zoom = SCSlider(window, Rect(0,0,rect.width - 30, 20));
+		zoom = SCSlider(window, Rect(0,0,rect.width, 20));
 //		labels = RoundButton(window, Rect(rect.width - 20, 0, 20, 20))
 //			.extrude_(false)
 //			.canFocus_(false)
@@ -56,7 +56,7 @@ BMSpeakerListVisualiser : BMAbstractGUI {
 		qcView.sphereScale = 0.02;
 		//qcView.labels_(false);
 		
-		colours = Pseq([Color.green.alpha_(0.6), Color.red.alpha_(0.6), Color.blue.alpha_(0.6), Color.yellow.alpha_(0.6), Color.white.alpha_(0.6)], inf).asStream;
+		colours = Pseq([Color.green.alpha_(0.9), Color.red.alpha_(0.9), Color.blue.alpha_(0.9), Color.yellow.alpha_(0.9), Color.white.alpha_(0.9)], inf).asStream;
 		//colours = Pseq([Color.green, Color.red, Color.blue, Color.yellow, Color.white], inf).asStream;
 		subArraysCols = speakerList.subArrays.collectAs({|key| key->colours.next }, IdentityDictionary) ?? { () };
 		speakerColours = ();
@@ -66,8 +66,11 @@ BMSpeakerListVisualiser : BMAbstractGUI {
 		
 		qcView.startY = hiY;
 		qcView.endY = lowY;
-		floorZ = speakerList.collectAs({|assoc| assoc.value.z }, Array).minItem / maxX;
-		qcView.floorZ = floorZ - 0.2;
+//		floorZ = speakerList.collectAs({|assoc| assoc.value.z }, Array).minItem / maxX;
+//		qcView.floorZ = floorZ - 0.06;
+		
+		floorZ = -0.8 / maxX - 0.09;
+		qcView.floorZ = floorZ;
 		
 		viewSpeakers = speakerList.collectAs({|assoc| 
 			var x, y, z, colour, tilt;
