@@ -1,7 +1,7 @@
 BMSpeakerListVisualiser : BMAbstractGUI {
 
 	var speakerList, radius = 12, lowerel = 0;
-	var maxX, yvals, hiY, lowY, ySIze, hiZ, lowZ, zoom, qcView;
+	var maxX, yvals, hiY, lowY, ySIze, hiZ, lowZ, zoom, labels, qcView;
 	var colours, floorZ, viewSpeakers;
 	
 	*new {|speakerList| ^super.new.init(speakerList).makeWindow }
@@ -39,18 +39,25 @@ BMSpeakerListVisualiser : BMAbstractGUI {
 		//SCButton(w, Rect(0, 0, 150, 20))
 		//	.states_([["pick another QC file"]])
 		//	.action_({ File.openDialog("", { |path| m.path_(path) }) });
-		zoom = SCSlider(window, Rect(0,0,rect.width, 20));
+		zoom = SCSlider(window, Rect(0,0,rect.width - 30, 20));
+//		labels = RoundButton(window, Rect(rect.width - 20, 0, 20, 20))
+//			.extrude_(false)
+//			.canFocus_(false)
+//			.states_([[ "Labels Off"], ["Labels On"]] )
+//			.action_({qcView.labels = labels.value.booleanValue});
 		qcView = SCQuartzComposerView(window, rect.moveTo(0,20));
 		qcView.resize_(5);
+		
 		//qcView.maxFPS_(20);
 		zoom.action = {qcView.zoom = zoom.value * 4 - 2;};
 		
 		qcView.path = this.class.filenameSymbol.asString.dirname ++ "/QC/SpeakerVis.qtz";
 		zoom.doAction;
 		qcView.sphereScale = 0.02;
+		//qcView.labels_(false);
 		
-		//colours = Pseq([Color.green.alpha_(0.6), Color.red.alpha_(0.6), Color.blue.alpha_(0.6), Color.yellow.alpha_(0.6), Color.white.alpha_(0.6)], inf).asStream;
-		colours = Pseq([Color.green, Color.red, Color.blue, Color.yellow, Color.white], inf).asStream;
+		colours = Pseq([Color.green.alpha_(0.6), Color.red.alpha_(0.6), Color.blue.alpha_(0.6), Color.yellow.alpha_(0.6), Color.white.alpha_(0.6)], inf).asStream;
+		//colours = Pseq([Color.green, Color.red, Color.blue, Color.yellow, Color.white], inf).asStream;
 		qcView.startY = hiY;
 		qcView.endY = lowY;
 		floorZ = speakerList.collectAs({|assoc| assoc.value.z }, Array).minItem / maxX;
@@ -64,7 +71,7 @@ BMSpeakerListVisualiser : BMAbstractGUI {
 			nameStart = assoc.value.name.asString.copyFromStart(3);
 			if(nameStart == oldNameStart, { colour = oldColour}, {colour = colours.next});
 			oldNameStart = nameStart; oldColour = colour;
-			[x, y, z, colour, Point(x, y).theta * 57.295779513082, assoc.key.asString] 
+			[x, y, z, colour, Point(x, y).theta * 57.295779513082, assoc.key.asString, atan2(z, hypot(x, y)) * 57.295779513082] 
 			
 		}, Array);
 	//	
