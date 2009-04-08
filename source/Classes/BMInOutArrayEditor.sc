@@ -518,7 +518,7 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 				   			name = subarrayNameField.string;
 				   			if (name.size > 0) 
 				   				{ name = name.asSymbol;
-				   				  if (outputArray.subArrays.any{| nameInList | nameInList == name })
+				   				  if (outputArray.postln.subArrays.postln.any{| nameInList | nameInList == name })
 				   			        	{ BMAlert("The name \"" ++ name ++ "\" is already taken. Please choose a different name.", 
 				   			        			 [[ "OK", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ]],
 				   			        			 background: Color.white,

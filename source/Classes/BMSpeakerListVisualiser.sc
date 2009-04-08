@@ -13,7 +13,7 @@ BMSpeakerListVisualiser : BMAbstractGUI {
 	speakerList_ {|list| }
 	
 	makeWindow {
-		var rect;
+		var rect, subArraysCols, speakerColours;
 	//
 	//	//speakerList = [[-22.5, -35, 1.2022282867427], [22.5, 10, 1], [-67.5, 10, 1], [67.5, -35, 1.2022282867427], [-112.5, -35, 1.2022282867427], [112.5, 10, 1], [-157.5, 10, 1], [157.5, -35, 1.2022282867427]].collectAs({|coords, i| i->BMSpeaker.newFromSpherical(i.asString, indices[i], coords[0], coords[1], coords[2], '8030A')}, BMInOutArray);
 	//
@@ -58,20 +58,23 @@ BMSpeakerListVisualiser : BMAbstractGUI {
 		
 		colours = Pseq([Color.green.alpha_(0.6), Color.red.alpha_(0.6), Color.blue.alpha_(0.6), Color.yellow.alpha_(0.6), Color.white.alpha_(0.6)], inf).asStream;
 		//colours = Pseq([Color.green, Color.red, Color.blue, Color.yellow, Color.white], inf).asStream;
+		subArraysCols = speakerList.subArrays.collectAs({|key| key->colours.next }, IdentityDictionary) ?? { () };
+		speakerColours = ();
+		subArraysCols.keysValuesDo({|key, value| 
+			speakerList.getSubArrayKeys(key).do({|speakKey| speakerColours[speakKey] = value;});
+		});
+		
 		qcView.startY = hiY;
 		qcView.endY = lowY;
 		floorZ = speakerList.collectAs({|assoc| assoc.value.z }, Array).minItem / maxX;
 		qcView.floorZ = floorZ - 0.2;
 		
 		viewSpeakers = speakerList.collectAs({|assoc| 
-			var x, y, z, nameStart, oldNameStart, colour, oldColour, tilt;
+			var x, y, z, colour, tilt;
 			x = assoc.value.x / maxX;
 			y = assoc.value.y / maxX;
 			z = assoc.value.z / maxX;
-			nameStart = assoc.value.name.asString.copyFromStart(3);
-			if(nameStart == oldNameStart, { colour = oldColour}, {colour = colours.next});
-			oldNameStart = nameStart; oldColour = colour;
-			//[x, y, z, colour, Point(x, y).theta * 57.295779513082, assoc.key.asString, atan2(z, hypot(x, y)) * 57.295779513082] 
+			colour = speakerColours[assoc.key] ?? {colours.next};
 			tilt = atan2(z, hypot(x, y)) * 57.295779513082;
 			[x, y, z, colour, Point(x, y).theta * 57.295779513082, assoc.key.asString, cos(assoc.value.azi * 0.017453292519943) * tilt, sin(assoc.value.azi * 0.017453292519943).neg * tilt] 
 			
