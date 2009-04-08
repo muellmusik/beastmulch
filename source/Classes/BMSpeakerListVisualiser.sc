@@ -64,14 +64,16 @@ BMSpeakerListVisualiser : BMAbstractGUI {
 		qcView.floorZ = floorZ - 0.2;
 		
 		viewSpeakers = speakerList.collectAs({|assoc| 
-			var x, y, z, nameStart, oldNameStart, colour, oldColour;
+			var x, y, z, nameStart, oldNameStart, colour, oldColour, tilt;
 			x = assoc.value.x / maxX;
 			y = assoc.value.y / maxX;
 			z = assoc.value.z / maxX;
 			nameStart = assoc.value.name.asString.copyFromStart(3);
 			if(nameStart == oldNameStart, { colour = oldColour}, {colour = colours.next});
 			oldNameStart = nameStart; oldColour = colour;
-			[x, y, z, colour, Point(x, y).theta * 57.295779513082, assoc.key.asString, atan2(z, hypot(x, y)) * 57.295779513082] 
+			//[x, y, z, colour, Point(x, y).theta * 57.295779513082, assoc.key.asString, atan2(z, hypot(x, y)) * 57.295779513082] 
+			tilt = atan2(z, hypot(x, y)) * 57.295779513082;
+			[x, y, z, colour, Point(x, y).theta * 57.295779513082, assoc.key.asString, cos(assoc.value.azi * 0.017453292519943) * tilt, sin(assoc.value.azi * 0.017453292519943).neg * tilt] 
 			
 		}, Array);
 	//	
