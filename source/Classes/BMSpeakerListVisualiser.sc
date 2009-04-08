@@ -56,7 +56,7 @@ BMSpeakerListVisualiser : BMAbstractGUI {
 		qcView.sphereScale = 0.02;
 		//qcView.labels_(false);
 		
-		colours = Pseq([Color.green.alpha_(0.9), Color.red.alpha_(0.9), Color.blue.alpha_(0.9), Color.yellow.alpha_(0.9), Color.white.alpha_(0.9)], inf).asStream;
+		colours = Pseq([Color.green.alpha_(0.95), Color.red.alpha_(0.95), Color.blue.alpha_(0.95), Color.yellow.alpha_(0.95), Color.white.alpha_(0.95)], inf).asStream;
 		//colours = Pseq([Color.green, Color.red, Color.blue, Color.yellow, Color.white], inf).asStream;
 		subArraysCols = speakerList.subArrays.collectAs({|key| key->colours.next }, IdentityDictionary) ?? { () };
 		speakerColours = ();
