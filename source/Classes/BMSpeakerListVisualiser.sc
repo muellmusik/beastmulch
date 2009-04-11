@@ -12,6 +12,10 @@ BMSpeakerListVisualiser : BMAbstractGUI {
 	
 	speakerList_ {|list| }
 	
+	showBoids_{|bool| qcView.showBoids = bool }
+	
+	boidPositions_{|boidsArray| qcView.positions = boidsArray }
+	
 	makeWindow {
 		var rect, subArraysCols, speakerColours;
 	//
@@ -46,12 +50,13 @@ BMSpeakerListVisualiser : BMAbstractGUI {
 //			.states_([[ "Labels Off"], ["Labels On"]] )
 //			.action_({qcView.labels = labels.value.booleanValue});
 		qcView = SCQuartzComposerView(window, rect.moveTo(0,20));
+		qcView.path = this.class.filenameSymbol.asString.dirname ++ "/QC/SpeakerVis.qtz";
+		qcView.showBoids = true;
 		qcView.resize_(5);
 		
 		//qcView.maxFPS_(20);
 		zoom.action = {qcView.zoom = zoom.value * 4 - 2;};
 		
-		qcView.path = this.class.filenameSymbol.asString.dirname ++ "/QC/SpeakerVis.qtz";
 		zoom.doAction;
 		qcView.sphereScale = 0.02;
 		//qcView.labels_(false);

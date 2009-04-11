@@ -100,19 +100,19 @@ BMVirtualControllerSliders : BMAbstractGUI {
 		window.view.background = Color.rand.alpha_(0.3);
 		sliders = Array.newClear(numSliders);
 		specs = Array.newClear(numSliders);
-		virtualCont.getAllLabels.do({|label, i|
+		virtualCont.faderNames.do({|faderName, i|
 			var initVal, control, displaySpec;
-			control = BMAbstractController.allControls[label.asSymbol];
+			control = BMAbstractController.allControls[faderName.asSymbol];
 			displaySpec = control.displaySpec;
 			initVal = displaySpec.map(virtualCont.getFaderVal(i + 1));
-			sliders[i] = EZSlider.new(window, 640@20, label.asString, \db,
+			sliders[i] = EZSlider.new(window, 640@20, faderName.asString.postln, displaySpec,
 				{|ez| var setVal;
 					if(fromUpdate.not, {
 						setVal = displaySpec.unmap(ez.value);
 						virtualCont.setFaderVal(i + 1, setVal);
-						setVal.postln;
+						//setVal.postln;
 					})
-				}, initVal
+				}, initVal, labelWidth: 120
 			);
 			sliders[i].numberView.background = Color.white.alpha_(0.4);
 			specs[i] = displaySpec;
@@ -142,10 +142,10 @@ BMVirtualControllerSliders : BMAbstractGUI {
 	
 	update {|changed, what, index, val|
 		switch(what,
-//			\faderVal, {
-//				needsRefresh = true;
-//				this.startRefreshLoop;
-//			},
+			\faderVal, {
+				needsRefresh = true;
+				this.startRefreshLoop;
+			},
 			\label, {sliders[index].labelView.string_(val.asString)}
 		)
 	}

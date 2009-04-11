@@ -64,7 +64,7 @@ BMSwarmGranulator {
 		curEnvir = thisEnvir;
 		playing.not.if({
 			playing = true;
-			CmdPeriod.add(this);
+			//CmdPeriod.add(this);
 			decayTime = decay;
 			clock = TempoClock.new;
 			granBus = Bus.audio(server, numChan);
@@ -106,13 +106,14 @@ BMSwarmGranulator {
 		}, {"Already Playing".inform});
 	}
 	
+	// this needs to be fixed?
 	stop { this.release(0.1);}
 	
 	release { arg time;
 		var oldbus, oldclock, releaseTime;
 		playing.if({ 
 			playing = false;
-			CmdPeriod.remove(this);
+			//CmdPeriod.remove(this);
 			releaseTime = time ? decayTime;
 			server.sendBundle((releaseTime) + 0.05, granGroup.freeMsg);
 			granGroup = nil;
@@ -133,7 +134,7 @@ BMSwarmGranulator {
 		}, {"Already freed".inform});
 	}
 	
-	cmdPeriod { this.stop; }
+//	cmdPeriod { this.stop; }
 	
 	doesNotUnderstand { arg selector ... args; // assume I know what I'm doing...
 		curEnvir.perform(selector, *args);
