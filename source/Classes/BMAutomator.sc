@@ -776,7 +776,8 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	makeTimesView {
 		
 		timesView.notNil.if({timesView.remove});
-		timesView = SCUserView(scrollView, Rect(0, 0, sfView.bounds.width, scrollView.bounds.height - 20));
+		//timesView = SCUserView(scrollView, Rect(0, 0, sfView.bounds.width, scrollView.bounds.height - 20));
+		timesView = SCUserView(scrollView, Rect(0, 0, sfView.bounds.width, 20));
 		timesView.background = Color.clear;
 		timesView.canFocus_(false);
 		timesView.relativeOrigin_(false);
@@ -791,13 +792,22 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 //				Color.cyan, Color.clear);
 			tenSecs = timesView.bounds.width * durInv * 10;
 			Pen.beginPath;
-			Pen.strokeColor = Color.blue.alpha_(0.8);
+			Pen.strokeColor = Color.new255(125, 125, 255).alpha_(0.8);
 			(sf.duration / 10).floor.do({|i|
 				var x;
+				if((i + 1)%3 == 0, {
+					Pen.width = 2;
+					Pen.lineDash_(FloatArray[]);
+				}, {
+					Pen.width = 1;
+					Pen.lineDash_(FloatArray[3,3]);
+				});
 				x = (i + 1) * tenSecs;
-				Pen.line(x@(scrollView.bounds.height -21), x@0);
+				Pen.line(x@20, x@0);
 				Pen.stroke;
 			});
+			Pen.width = 1;
+			Pen.lineDash_(FloatArray[]);
 			thirtySecs = timesView.bounds.width * durInv * 30;
 			(sf.duration / 30).floor.do({|i|
 				((i + 1) * 30).asTimeString.drawLeftJustIn(
