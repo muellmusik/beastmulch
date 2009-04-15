@@ -49,7 +49,7 @@ BMAbstractMackie : BMAbstractController {
 		midiout = MIDIOut(outPort, outUid);
 		// turn off touch sensitive faders
 		midiout.sysex(sysexHdr ++ Int8Array[16r0c, 1, 16rf7]);
-		nameString = "Controller" + name.asString + "/////////////// Welcome to BEAST";
+		nameString = "Controller" + name.asString + "/////////////// Welcome to BEASTmulch";
 		nameString = nameString ++ String.fill(111 - nameString.size, {$ });
 		titleArray = (sysexHdr ++ Int8Array[16r12, 0] 
 			++ nameString.collectAs({arg item; item.ascii}, Int8Array)).add(16rf7);
@@ -138,19 +138,7 @@ MackieCU : BMAbstractMackie {
 	
 	init { |arguid, argname, argserver|
 		super.init(arguid, argname, argserver);
-		this.addMasterFaderSynth;
-		ServerTree.add(this)
 	}
-	
-	// a little hacky but works
-	addMasterFaderSynth {
-		masterFaderSynth = {
-			ReplaceOut.ar(0, In.ar(0, server.options.numOutputBusChannels) 
-				* In.kr(busIndex + numFaders - 1, 1));
-		}.play(RootNode(server), addAction: \addToTail);
-	}
-	
-	doOnServerTree {this.addMasterFaderSynth;}
 	
 	startListening {
 		buttonFuncDict = IdentityDictionary.new;
@@ -210,20 +198,6 @@ MackieCU : BMAbstractMackie {
 
 }
 
-MackieTimeDispatcher {
-	var uid, port, midiout, sysexHdr;
-	
-	*new{|uid, port|
-		^super.newCopyArgs(uid, port).init;
-	}
-	
-	init {
-		midiout = MIDIOut(port, uid);
-		sysexHdr = Int8Array[ -16, 0, 0, 102, 20];
-	}
-	
-	
-}
 
 MackieXT : BMAbstractMackie {
 
@@ -236,3 +210,4 @@ MackieXT : BMAbstractMackie {
 	}
 
 }
+
