@@ -54,8 +54,7 @@ BMAbstractMackie : BMAbstractController {
 		titleArray = (sysexHdr ++ Int8Array[16r12, 0] 
 			++ nameString.collectAs({arg item; item.ascii}, Int8Array)).add(16rf7);
 		midiout.sysex(titleArray);
-		//spec = [1, 16385, -3].asSpec; // exp so must offset values by 1
-		spec = Env([0, 1], [16384], \sine);
+		spec = [0, 16384, 'cos', 0.0].asSpec;
 		this.updateAllFaders(valueArray);
 		allControllers[name] = this;
 	}
@@ -83,10 +82,10 @@ BMAbstractMackie : BMAbstractController {
 		// map for amplitude
 		//value = spec.unmap(bend.post + 1); // exp warp so can't have zero
 		//" ".post;
-		value = spec.at(bend);
-		server.sendMsg("/c_set", busIndex + chan, value);
-		valueArray[chan] = bend;
-		midiout.bend(chan, bend); // loopback bend to fader
+		value = spec.map(bend);
+		server.sendMsg("/c_set", busIndex + chan, bend);
+		valueArray[chan] = value;
+		midiout.bend(chan, value); // loopback bend to fader
 	}
 		
 	updateAllFaders { |array|
@@ -94,14 +93,14 @@ BMAbstractMackie : BMAbstractController {
 	}
 	
 	// assumes fader 1 = 1 not 0
-	// returns 14 bit value
-	getFaderVal { |faderNum| ^valueArray[faderNum -1] }
+	// returns value between 0 and 1
+	getFaderVal { |faderNum| ^spec.unmap(valueArray[faderNum -1]) }
 	
 	setFaderVal { |faderNum, val| this.updateValue(faderNum -1, val) }
 	
-	getAllFaders { ^valueArray }
+	getAllFaders { ^valueArray.collect({|val| spec.unmap(val)}) }
 	
-	setAllFaders {|array| { array.do({|item, i| this.updateValue(i, item); 0.1.wait; }); }.fork;}
+	setAllFaders {|array| array.do({|item, i| this.updateValue(i, item); });}
 	
 	setLabel { |fader, name|
 		var label;

@@ -39,7 +39,7 @@ BMEtherSense : BMAbstractController {
 		bus = Bus.control(server, numFaders);
 		busIndex = bus.index;
 		busBoard2Index = busIndex + 16; // save an add every message
-		spec = Env([0, 1], [65536], \sine);
+		spec = [0, 65535, 'cos', 0.0].asSpec;
 		this.startListening;
 		//this.updateAllFaders(valueArray);
 		allControllers[name] = this;
@@ -65,18 +65,14 @@ BMEtherSense : BMAbstractController {
 	stopListening { responders.do(_.remove); responders = Array.newClear(2); }
 	
 	// assumes fader 1 = 1 not 0
-	// returns 16 bit value
-	getFaderVal { |faderNum| ^valueArray[faderNum -1] }
+	// returns value between 0 and 1
+	getFaderVal { |faderNum| ^spec.unmap(valueArray[faderNum -1]) }
 	
-	setFaderVal { |faderNum, val| this.updateValue(faderNum -1, val) }
+	setFaderVal { this.shouldNotImplement(thisMethod) }
 	
-	getAllFaders { ^valueArray.flat }
+	getAllFaders { ^valueArray.flat.collect({|val| spec.unmap(val)})  }
 	
-	// 32 faders
-	setAllFaders {|array|
-		server.sendMsg("/c_setn", busIndex, 32, *(array.collect({|val| spec.at(val)})));
-		valueArray = array.reshape(2, 16);
-	}
+	setAllFaders {|array| this.shouldNotImplement(thisMethod) }
 	
 	// for faders
 //	getInputArray {

@@ -56,12 +56,8 @@ BMAbstractMIDIController : BMAbstractController {
 	
 	updateValue { |ind, val|
 		var value;
-		// map for amplitude
-		//value = spec.unmap(bend.post + 1); // exp warp so can't have zero
-		//" ".post;
-		value = spec.unmap(val);
-		server.sendMsg("/c_set", busIndex + ind, value);
-		valueArray[ind] = val;
+		server.sendMsg("/c_set", busIndex + ind, val);
+		valueArray[ind] = value = spec.map(val).asInteger;
 		if(loopBack || acceptsAutomation, {this.loopback(ind, value)});
 	}
 		
@@ -70,17 +66,23 @@ BMAbstractMIDIController : BMAbstractController {
 	}
 	
 	// assumes fader 1 = 1 not 0
-	// returns 14 bit value
-	getFaderVal { |faderNum| ^valueArray[faderNum -1] }
+	// returns value between 0 and 1
+	getFaderVal { |faderNum| ^spec.unmap(valueArray[faderNum -1]) }
 	
 	setFaderVal { |faderNum, val| this.updateValue(faderNum -1, val) }
 	
-	getAllFaders { ^valueArray }
+	getAllFaders { ^valueArray.collect({|val| spec.unmap(val)}) }
 	
 	setAllFaders {|array| array.do({|item, i| this.updateValue(i, item); });}
 	
+	// this has no labels
+	setLabel { |fader, name| this.shouldNotImplement(thisMethod) }
 	
-	setAllLabels { |array| array.do({|item, i| this.setLabel(i+1, item); });}
+	getLabel { |fader| ^this.shouldNotImplement(thisMethod) }
+	
+	getAllLabels { ^this.shouldNotImplement(thisMethod) }
+	
+	setAllLabels { |array| this.shouldNotImplement(thisMethod)}
 
 }
 

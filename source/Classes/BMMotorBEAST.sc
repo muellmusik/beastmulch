@@ -56,12 +56,12 @@ BMMotorBEAST : BMAbstractController {
 	stopListening { responder.remove; responder = nil }
 	
 	// assumes fader 1 = 1 not 0
-	// returns 16 bit value
+	// returns value between 0 and 1
 	getFaderVal { |faderNum| ^spec.unmap(valueArray[faderNum -1]) }
 	
 	// we set the local value on loopback, so we're always in sync
 	setFaderVal { |faderNum, val| 
-		addr.sendMsg("/MF/" ++ (faderNum - 1), spec.map(val).asInteger.postln) 
+		addr.sendMsg("/MF/" ++ (faderNum - 1), spec.map(val).asInteger) 
 		//addr.sendMsg("/MF", *(valueArray.copy[faderNum - 1] = spec.map(val).asInteger))
 	}
 	
@@ -105,6 +105,8 @@ BMMotorBEAST : BMAbstractController {
 	getAllLabels { ^this.shouldNotImplement(thisMethod) }
 	
 	setAllLabels { |array| this.shouldNotImplement(thisMethod)}
+	
+	acceptsAutomation { ^true }
 	
 	initFromArchive { this.startListening }
 	
