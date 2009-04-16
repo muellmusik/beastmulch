@@ -610,7 +610,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	}
 	
 	makeWindow {
-		
+		var width = 1008;
 		path = ca.timeReference.path; // How best to do this?
 		sf = SoundFile.new;
 		path.notNil.if({sf.openRead(path);});
@@ -619,7 +619,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		//f.openRead("sounds/a11wlk01.wav");
 		//f.openRead("/Users/scottw/Music/SuperCollider\ Recordings/SC_080725_143355.aiff");
 		
-		window = SCWindow.new("Soundfile / Controller Snapshots", Rect(200, 200, 808, 400), false);
+		window = SCWindow.new("Soundfile / Controller Snapshots", Rect(200, 200, width, 400), false);
 		window.view.decorator = FlowLayout(window.view.bounds);
 		
 		window.view.keyDownAction = { arg view,char,modifiers,unicode,keycode;
@@ -627,12 +627,12 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			if(unicode == 13, {ca.timeReference.stop});
 		};
 		
-		scrollView = SCScrollView(window, Rect(0, 0, 800, 334));
+		scrollView = SCScrollView(window, Rect(0, 0, width - 8, 334));
 		scrollView.hasBorder = true;
 		scrollView.resize = 2;
 		scrollView.background = Color.black;
 		
-		sfView = SCSoundFileView.new(scrollView, Rect(0,20, 798, 300));
+		sfView = SCSoundFileView.new(scrollView, Rect(0,20, width - 10, 300));
 		sfView.background = HiliteGradient(Color.blue, Color.cyan, steps: 256);
 		//a.waveColors_([HiliteGradient(Color.blue, Color.cyan), HiliteGradient(Color.blue, Color.cyan)]);
 		this.setWaveColors;
@@ -653,7 +653,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		
 		scrollView.canFocus_(false);
 		
-		backView = SCCompositeView(scrollView, Rect(0, 20,  798, sfView.bounds.height)).background_(Color.clear);
+		backView = SCCompositeView(scrollView, Rect(0, 20,  width - 10, sfView.bounds.height)).background_(Color.clear);
 		backView.relativeOrigin = false;
 		
 		path.notNil.if({sfView.soundfile = sf;});
@@ -770,7 +770,11 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	}
 	
 	setWaveColors {
-		sfView.waveColors_(Array.fill(sf.numChannels, {|i| Color.grey(0.2, 0.6).blend(Color.grey(0.3, 0.6), 1 / (sf.numChannels - 1) * i)})); 
+		sfView.waveColors_(
+			Array.fill(sf.numChannels, {|i| 
+				Color.grey(0.2, 0.6).blend(Color.grey(0.3, 0.6), 1 / (sf.numChannels - 1) * i)
+			})
+		); 
 	}
 	
 	makeTimesView {
