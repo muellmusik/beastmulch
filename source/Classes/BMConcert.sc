@@ -244,22 +244,22 @@ BMConcertGUI  {
 					  .font_(Font("Helvetica-Bold", 14));
 		
 		
-		buttonSection.decorator.shift(0, 207);	
+		buttonSection.decorator.shift(0, 237);	
 		
-		RoundButton(buttonSection, 180 @ 20).extrude_(false).canFocus_(false)			   .extrude_(false).canFocus_(false) 
-			   .states_([[ "Speakers", Color.black, Color.white.alpha_(0.8) ]])
-			   .action_({ 
-			   	if (speakersWindow.isNil) 
-			   		{ speakersWindow = BMSpeakerArrayGUI(outputArray, {|newSpeakers| outputArray = newSpeakers; concertManager.setSpeakers(newSpeakers); concertManager.storeSession(configManager); 
-			   			BMAlert("To change the speaker array the system must be restarted.\nDo you want to do this now?", [["cancel", Color.black, Color.new255(51, 111, 203, 255 * 0.95)], ["ok", Color.black, Color.new255(51, 111, 203, 255 * 0.95)]], [nil, {thisProcess.recompile;}], background: Color.white, color: Color.red, border:false);
-			   		}, 
-			   									    "Speaker Array Definition", 129 @ 34);
-			   		  speakersWindow.onClose_({ speakersWindow = nil })
-			   		}
-			   });
+//		RoundButton(buttonSection, 180 @ 20).extrude_(false).canFocus_(false)			   .extrude_(false).canFocus_(false) 
+//			   .states_([[ "Speakers", Color.black, Color.white.alpha_(0.8) ]])
+//			   .action_({ 
+//			   	if (speakersWindow.isNil) 
+//			   		{ speakersWindow = BMSpeakerArrayGUI(outputArray, {|newSpeakers| outputArray = newSpeakers; concertManager.setSpeakers(newSpeakers); concertManager.storeSession(configManager); 
+//			   			BMAlert("To change the speaker array the system must be restarted.\nDo you want to do this now?", [["cancel", Color.black, Color.new255(51, 111, 203, 255 * 0.95)], ["ok", Color.black, Color.new255(51, 111, 203, 255 * 0.95)]], [nil, {thisProcess.recompile;}], background: Color.white, color: Color.red, border:false);
+//			   		}, 
+//			   									    "Speaker Array Definition", 129 @ 34);
+//			   		  speakersWindow.onClose_({ speakersWindow = nil })
+//			   		}
+//			   });
+//			   
 			   
-			   
-		buttonSection.decorator.shift(0, 10);	
+//		buttonSection.decorator.shift(0, 10);	
 		SCStaticText.new(buttonSection, 180 @ 20).string = "Import / Export:";
 		
 		importPopUpMenu = SCPopUpMenu(buttonSection, 180 @ 20)
