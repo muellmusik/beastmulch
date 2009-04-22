@@ -379,9 +379,9 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 	}
 	
 	init { |argoutputArray, argname |
-		outputArray 	= argoutputArray;
-		name				= argname;
-		assigns			= List.new;
+		outputArray = argoutputArray;
+		name	= argname;
+		assigns = List.new;
 	}
 	
 	makeWindow { |origin|
@@ -391,34 +391,36 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 		
 		window = SCWindow(name, Rect.new(x, y, 800-20, 300), false);
 		window.view.decorator = FlowLayout(window.view.bounds);
-		subarraySection	= SCCompositeView(window, 200 @ 281).background_(Color.grey.alpha_(0.3));
+		subarraySection	= SCCompositeView(window, 200 @ 281)
+			.background_(Color.grey.alpha_(0.3));
 		
 		subarraySection.decorator = FlowLayout(subarraySection.bounds);
 		SCStaticText.new(subarraySection, Rect(0,0,180,20)).font_(Font("Helvetica-Bold", 14))
 			.string = "Subarrays";
-		subarrayView	= SCListView(subarraySection, (200-8) @ (250 - 25))
-	 					.items_(outputArray.subArrays.asArray)
-	 					.action_({ speakerView.value_(0); assignView.value_(0); this.update });
+		subarrayView = SCListView(subarraySection, (200-8) @ (250 - 26))
+	 		.items_(outputArray.subArrays.asArray)
+	 		.action_({ speakerView.value_(0); assignView.value_(0); this.updateLists });
 
 		subarraySection.decorator.nextLine;
 	
-		newButton				= RoundButton(subarraySection, 20 @ 20).extrude_(false).canFocus_(false)
-					 		  .font_(Font("Arial", 11)).states_([['+', Color.black,  Color.white.alpha_(0.8) ]])
-					 		  .action_({ this.makeNewSubarrayWindow(490 @ 500) });
-		deleteButton			= RoundButton(subarraySection, 20 @ 20).extrude_(false).canFocus_(false);		deleteButton.states	= [[ '-', Color.black,  Color.white.alpha_(0.8) ]];
-		deleteButton.action	= { var viewIndex, name;
-							    if (subarrayView.item.notNil)
-							  	  { viewIndex = subarrayView.value;
-							  	    name = subarrayView.item;
-							  	    if ((viewIndex == (outputArray.subArrays.lastIndex)) and: { outputArray.subArrays.size > 1 })
-							  	    	   { subarrayView.value_(viewIndex - 1) }
-							  	    	   { subarrayView.value_(viewIndex) };
-							  	    outputArray.removeSubArray(name.asSymbol);
-							  	  }
-							   };
+		newButton	 = RoundButton(subarraySection, 20 @ 20).extrude_(false).canFocus_(false)
+			.font_(Font("Arial", 11)).states_([['+', Color.black,  Color.white.alpha_(0.8) ]])
+			.action_({ this.makeNewSubarrayWindow(490 @ 500) });
+		deleteButton = RoundButton(subarraySection, 20 @ 20).extrude_(false).canFocus_(false);		deleteButton.states = [[ '-', Color.black,  Color.white.alpha_(0.8) ]];
+		deleteButton.action = { var viewIndex, name;
+			if (subarrayView.item.notNil)
+		  	  { viewIndex = subarrayView.value;
+		  	    name = subarrayView.item;
+		  	    if ((viewIndex == (outputArray.subArrays.lastIndex)) and: { outputArray.subArrays.size > 1 })
+		  	    	   { subarrayView.value_(viewIndex - 1) }
+		  	    	   { subarrayView.value_(viewIndex) };
+		  	    outputArray.removeSubArray(name.asSymbol);
+		  	 }
+		   };
 
 		
-		assignSection = SCCompositeView(window, Rect(0, 0, 200, 281)).background_(Color.grey.alpha_(0.3));
+		assignSection = SCCompositeView(window, Rect(0, 0, 200, 281))
+			.background_(Color.grey.alpha_(0.3));
 		assignSection.decorator = FlowLayout(assignSection.bounds);
 		SCStaticText.new(assignSection, Rect(0,0,180,20)).font_(Font("Helvetica-Bold", 14))
 			.string = "Assignments";
@@ -437,12 +439,14 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 			     if ((viewIndex == assigns.lastIndex) and: { assigns.size > 1 })
 							  	    	   { assignView.value_(viewIndex - 1) }
 							  	    	   { assignView.value_(viewIndex) };
-			   	outputArray.removeFromSubArray(subarrayView.item.asSymbol, name.asSymbol) }
+			   	outputArray.removeFromSubArray(subarrayView.item.asSymbol, name.asSymbol) };
+			this.updateLists;
 			
 		};
 	
 			
-		speakerSection = SCCompositeView(window, Rect(0, 0, 200, 281)).background_(Color.grey.alpha_(0.3));
+		speakerSection = SCCompositeView(window, Rect(0, 0, 200, 281))
+			.background_(Color.grey.alpha_(0.3));
 		speakerSection.decorator = FlowLayout(speakerSection.bounds);
 		SCStaticText.new(speakerSection, Rect(0,0,75,20)).font_(Font("Helvetica-Bold", 14))
 			.string = "Speakers";
@@ -461,7 +465,12 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 		buttonSection = SCVLayoutView(window, Rect(0, 0, 155, 300));
 		SCStaticText.new(buttonSection, Rect(0,0,80,24)).string_(" ");// placeholder
 		clearButton = SCButton(buttonSection, Rect(0,0,110,20)).canReceiveDragHandler = false;		clearButton.states = [["Clear Assignments", Color.black,Color.clear]];
-		clearButton.action = { if (subarrayView.item.notNil) { outputArray.defineSubArray(subarrayView.item.asSymbol, []) } };
+		clearButton.action = { 
+			if (subarrayView.item.notNil) { 
+				outputArray.defineSubArray(subarrayView.item.asSymbol, []);
+				this.updateLists;
+			} 
+		};
 		
 		SCStaticText.new(buttonSection, Rect(0,0,80,0)).string_(" ");// placeholder
 		SCStaticText.new(buttonSection, Rect(0,0,80,0)).string_(" ");// placeholder
