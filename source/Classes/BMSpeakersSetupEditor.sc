@@ -187,7 +187,7 @@ BMSpeakerArrayGUI {
 			   .states_([[ "Subarrays", Color.black, Color.white.alpha_(0.8) ]])
 			   .action_({ 
 			   	if (subarraysWindow.isNil) 
-			   		{ subarraysWindow = BMSubarrayMenuGUI(outputArray, "Define Subarray");
+			   		{ subarraysWindow = BMSubarrayMenuGUI(window, outputArray);
 			   		  subarraysWindow.onClose_({ subarraysWindow = nil })
 			   		}
 			   });
@@ -368,30 +368,27 @@ BMSpeakerArrayGUI {
 
 BMSubarrayMenuGUI : BMAbstractGUI {
 
-	var outputArray;
+	var parent, outputArray;
 	var assigns, assignSection, assignButton, assignView, newButton;
 	var subarrays, subarraySection, subarrayView, speakerSection, speakerView;
 	var newButton, deleteButton, addButton, upButton, downButton;
 	var labelPlusButton, matrixButton, clearButton, buttonSection;
 	
-	*new {|outputArray, name, origin|
-		^super.new.init(outputArray, name).makeWindow(origin ? (40@200));
+	*new {|parent, outputArray|
+		^super.new.init(parent, outputArray).makeWindow;
 	}
 	
-	init { |argoutputArray, argname |
+	init { |argparent, argoutputArray |
+		parent = argparent;
 		outputArray = argoutputArray;
-		name	= argname;
 		assigns = List.new;
 	}
 	
-	makeWindow { |origin|
-		var x, y;
-		x = origin.x;
-		y = origin.y;
+	makeWindow {
 		
-		window = SCWindow(name, Rect.new(x, y, 800-20, 300), false);
+		window = SCModalSheet(parent, (800-20)@300, false);
 		window.view.decorator = FlowLayout(window.view.bounds);
-		subarraySection	= SCCompositeView(window, 200 @ 281)
+		subarraySection = SCCompositeView(window, 200 @ 281)
 			.background_(Color.grey.alpha_(0.3));
 		
 		subarraySection.decorator = FlowLayout(subarraySection.bounds);
@@ -415,6 +412,7 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 		  	    	   { subarrayView.value_(viewIndex - 1) }
 		  	    	   { subarrayView.value_(viewIndex) };
 		  	    outputArray.removeSubArray(name.asSymbol);
+		  	    this.updateLists;
 		  	 }
 		   };
 
@@ -462,9 +460,8 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 			.canReceiveDragHandler = false;
 		this.updateLists;
 		speakerView.beginDragAction = {|view| view.item };
-		buttonSection = SCVLayoutView(window, Rect(0, 0, 155, 300));
-		SCStaticText.new(buttonSection, Rect(0,0,80,24)).string_(" ");// placeholder
-		clearButton = SCButton(buttonSection, Rect(0,0,110,20)).canReceiveDragHandler = false;		clearButton.states = [["Clear Assignments", Color.black,Color.clear]];
+		buttonSection = SCCompositeView(window, Rect(0, 0, 155, 281));
+		clearButton = SCButton(buttonSection, Rect(0,30,155,20)).canReceiveDragHandler = false;		clearButton.states = [["Clear Assignments", Color.black,Color.clear]];
 		clearButton.action = { 
 			if (subarrayView.item.notNil) { 
 				outputArray.defineSubArray(subarrayView.item.asSymbol, []);
@@ -472,17 +469,22 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 			} 
 		};
 		
-		SCStaticText.new(buttonSection, Rect(0,0,80,0)).string_(" ");// placeholder
-		SCStaticText.new(buttonSection, Rect(0,0,80,0)).string_(" ");// placeholder
+//		SCStaticText.new(buttonSection, Rect(0,0,80,0)).string_(" ");// placeholder
+//		SCStaticText.new(buttonSection, Rect(0,0,80,0)).string_(" ");// placeholder
 		
-		SCStaticText.new(buttonSection, Rect(0,0,80,110))
+		SCStaticText.new(buttonSection, Rect(0,30,155,115))
 		 .string_("Assign speakers to selected subarray. Cmd-drag or use button to add, select and press delete to remove.");
-		this.update;
+		this.updateLists;
+		
+//		buttonSection.decorator.shift(0, 40);
+		RoundButton(buttonSection, Rect(40, 260, 115, 20))
+			.extrude_(false).canFocus_(false)
+			.states_([[ "OK", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ]])
+			.action_({ window.close; });
 		
 		window.onClose = { 
 			onClose.value(this)
 		};
-		window.front;
 	}
 	
 	updateLists {
