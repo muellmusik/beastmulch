@@ -37,7 +37,7 @@ configurations= backupManager.rememberWorkspace(\cf3 \\configurations\cf0 ,  \{ 
 s.options.numOutputBusChannels = max(\
 	systemConfig.numOutChannels, \
 	outputArray.values.asUGenInput.maxItem + 1\
-);\
+).asInteger;\
 \
 \cf5 // boot\cf0 \
 cond = \cf2 Condition\cf0 .new;\
