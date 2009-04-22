@@ -1,15 +1,19 @@
-BMSpeakerArrayGUI {
+BMSpeakerArrayGUI : BMAbstractGUI {
 
-	var outputArray, okayFunc, name, origin;
-	var window, windowView;
+	var outputArray, okayFunc;
 	var speakerListCompView, speakerList, instanceVarsBoxes, subarraysWindow;
 	var speakerButtonsView, deleteButton, upButton, downButton, importPopUpMenu, okButton;
-	var >onClose;
 	
 	
 	*new {| startArray, okayFunc, name, origin |
-		  ^super.newCopyArgs(startArray.deepCopy ?? { BMInOutArray[]}, okayFunc, name)
+		  ^super.new.init(startArray.deepCopy ?? { BMInOutArray[]}, okayFunc, name)
 		  	.makeWindow(origin ? (40@200));
+	}
+	
+	init {|startArray, argokayFunc, argname|
+		outputArray = startArray;
+		okayFunc = argokayFunc;
+		name = argname;
 	}
 	
 	makeWindow {| origin |
@@ -21,6 +25,7 @@ BMSpeakerArrayGUI {
 		
 	   window		= SCWindow(name, Rect.new(x, y, 496, 554+31+10), false);
 	   window.alwaysOnTop_(true);
+
 	   window.view.decorator = FlowLayout(window.view.bounds);
 	   specsList	= SCScrollView(window, Rect(0, 0, 160, 508))
 				   .hasHorizontalScroller_(false)
@@ -501,51 +506,50 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 	
 	makeNewSubarrayWindow {| origin |
 
-		var window, name, subarrayNameField, okButton;
+		var newSAWindow, subarrayNameField, okButton;
 		 
 		origin		= origin ?? { 490 @ 500 };
-		window 		= SCWindow("New Subarray", Rect(origin.x, origin.y, 260, 110), false).userCanClose_(false);
-		window.view.decorator = FlowLayout(window.view.bounds, Point(10, 10), Point(10, 10));
+		newSAWindow 		= SCModalSheet(window, 260@110, false);
+		newSAWindow.view.decorator = FlowLayout(newSAWindow.view.bounds, Point(10, 10), Point(10, 10));
 		
-		SCStaticText(window, 50 @ 20).string = "Name:";
+		SCStaticText(newSAWindow, 50 @ 20).string = "Name:";
 
-		subarrayNameField	= SCTextView(window, 180 @ 20)
+		subarrayNameField	= SCTextView(newSAWindow, 180 @ 20)
 							.hasVerticalScroller_(false)
 							.hasHorizontalScroller_(false)
 							.enterInterpretsSelection_(false);
 					
-		window.view.decorator.shift(0, 30);
+		newSAWindow.view.decorator.shift(0, 30);
 		
-		RoundButton(window, 115 @ 20)
+		RoundButton(newSAWindow, 115 @ 20)
 			   .extrude_(false).canFocus_(false) 
 			   .states_([[ "Cancel", Color.black, Color.white.alpha_(0.8) ]])
-			   .action_({	window.close });
+			   .action_({	newSAWindow.close });
 			   
-		okButton = RoundButton(window, 115 @ 20)
-				   .extrude_(false).canFocus_(false)
-				   .states_([[ "Create", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ]])
-				   .action_({ var name;
-				   			
-				   			name = subarrayNameField.string;
-				   			if (name.size > 0) 
-				   				{ name = name.asSymbol;
-				   				  if (outputArray.postln.subArrays.postln.any{| nameInList | nameInList == name })
-				   			        	{ BMAlert("The name \"" ++ name ++ "\" is already taken. Please choose a different name.", 
-				   			        			 [[ "OK", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ]],
-				   			        			 background: Color.white,
-				   			        			 color: Color.red,
-				   			        			 border: false
-				   			        	 ) 
-				   			          }
-				   			          { window.close;
-				   			            outputArray.defineSubArray(name, []);
-				   			            subarrayView.items_(outputArray.subArrays.asArray);
-				   			            subarrayView.value_(outputArray.subArrays.lastIndex)
-				   			            	.doAction;
-				   				 	}
-				   				 }
-				   	});
+		okButton = RoundButton(newSAWindow, 115 @ 20)
+			.extrude_(false).canFocus_(false)
+			.states_([[ "Create", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ]])
+			.action_({ var name;
+		   			
+	   			name = subarrayNameField.string;
+	   			if (name.size > 0) 
+	   				{ name = name.asSymbol;
+	   				  if (outputArray.postln.subArrays.postln.any{| nameInList | nameInList == name })
+	   			        	{ BMAlert("The name \"" ++ name ++ "\" is already taken. Please choose a different name.", 
+	   			        			 [[ "OK", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ]],
+	   			        			 background: Color.white,
+	   			        			 color: Color.red,
+	   			        			 border: false
+	   			        	 ) 
+	   			          }
+	   			          { newSAWindow.close;
+	   			            outputArray.defineSubArray(name, []);
+	   			            subarrayView.items_(outputArray.subArrays.asArray);
+	   			            subarrayView.value_(outputArray.subArrays.lastIndex)
+	   			            	.doAction;
+	   				 	}
+	   				 }
+			});
 		subarrayNameField.focus;
-		window.front
 	}
 }
