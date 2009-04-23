@@ -313,7 +313,7 @@ BMConcertGUI  {
 								if (selectable.not) { this.listViewSelection(true) };
 								concertListView.value_(0).doAction;
 								concertManager.storeSession(configManager);
-								}, maxSize: 1);
+								}, allowsMultiple: false);
 
 							 },
 							 
@@ -588,12 +588,7 @@ BMConcertGUI  {
 		
 		SCStaticText(window, 50 @ 20).string = "Name:";
 
-		pieceNameField	= SCTextView(window, 180 @ 20)
-							.string_(suggestedName.asString)
-							.hasVerticalScroller_(false)
-							.hasHorizontalScroller_(false)
-							.enterInterpretsSelection_(false);
-				
+		pieceNameField	= SCTextField(window, 180 @ 20).string_(suggestedName.asString);				
 		window.view.decorator.shift(0, 30);
 
 		RoundButton(window, 115 @ 20)

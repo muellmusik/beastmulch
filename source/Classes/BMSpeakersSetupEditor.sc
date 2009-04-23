@@ -323,16 +323,10 @@ BMSpeakerArrayGUI : BMAbstractGUI {
 		
 		SCStaticText(newWindow, 50 @ 20).string = "Name:";
 
-		speakerNameField	= SCTextView(newWindow, 180 @ 20)
-							.hasVerticalScroller_(false)
-							.hasHorizontalScroller_(false)
-							.enterInterpretsSelection_(false);
+		speakerNameField	= SCTextField(newWindow, 180 @ 20);
 		
 		SCStaticText(newWindow, 50 @ 20).string = "HW Out:";
-		speakerIndexField	= SCTextView(newWindow, 180 @ 20)
-							.hasVerticalScroller_(false)
-							.hasHorizontalScroller_(false)
-							.enterInterpretsSelection_(false);
+		speakerIndexField	= SCTextField(newWindow, 180 @ 20);
 					
 		newWindow.view.decorator.shift(0, 30);
 		
@@ -522,10 +516,7 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 		
 		SCStaticText(newSAWindow, 50 @ 20).string = "Name:";
 
-		subarrayNameField	= SCTextView(newSAWindow, 180 @ 20)
-							.hasVerticalScroller_(false)
-							.hasHorizontalScroller_(false)
-							.enterInterpretsSelection_(false);
+		subarrayNameField	= SCTextField(newSAWindow, 180 @ 20);
 					
 		newSAWindow.view.decorator.shift(0, 30);
 		

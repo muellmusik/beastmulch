@@ -316,10 +316,7 @@ BMConfigurationsGUI : BMAbstractGUI {
 		
 		SCStaticText(window, 50 @ 20).string = "Name:";
 
-		pieceNameField	= SCTextView(window, 180 @ 20)
-							.hasVerticalScroller_(false)
-							.hasHorizontalScroller_(false)
-							.enterInterpretsSelection_(false);
+		pieceNameField	= SCTextField(window, 180 @ 20);
 					
 		window.view.decorator.shift(0, 30);
 		
