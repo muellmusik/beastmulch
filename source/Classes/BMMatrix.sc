@@ -523,7 +523,12 @@ BMMatrixMenuGUI : BMAbstractGUI {
 		labelPlusButton = SCHLayoutView(outputSection, Rect(0, 0, 200, 20));
 		SCStaticText.new(labelPlusButton, Rect(0,0,80,20)).font_(Font("Helvetica-Bold", 14))
 			.string = "Outputs";
-		assignButton = SCButton(labelPlusButton, Rect(0,0,110,20)).canReceiveDragHandler = false;		assignButton.states = [["<", Color.black,Color.clear]];
+		assignButton = RoundButton(labelPlusButton, Rect(0,0,110,20))
+			.extrude_(false)
+			.canFocus_(false)
+			.canReceiveDragHandler = false;		
+		
+		assignButton.states = [["<", Color.black, Color.white.alpha_(0.8)]];
 		assignButton.action = { matrix.connect(inputView.item, outputView.item);};
 		outputView = SCListView(outputSection, Rect(0, 0, 200, 250)).canReceiveDragHandler = false;
 		outputView.beginDragAction = {|view| view.item };
@@ -533,13 +538,21 @@ BMMatrixMenuGUI : BMAbstractGUI {
 		buttonSection = SCVLayoutView(window, Rect(0, 0, 150, 300));
 		SCStaticText.new(buttonSection, Rect(0,0,80,20)).string_(" ");// placeholder
 		
-		clearButton = SCButton(buttonSection, Rect(0,0,110,20)).canReceiveDragHandler = false;		clearButton.states = [["Clear Matrix", Color.black,Color.clear]];
+		clearButton = RoundButton(buttonSection, Rect(0,0,110,20))
+			.extrude_(false)
+			.canFocus_(false)
+			.canReceiveDragHandler = false;		
+		clearButton.states = [["Clear Matrix", Color.black, Color.white.alpha_(0.8)]];
 		clearButton.action = { matrix.clear};
 		
 		SCStaticText.new(buttonSection, Rect(0,0,80,0)).string_(" ");// placeholder
 		SCStaticText.new(buttonSection, Rect(0,0,80,0)).string_(" ");// placeholder
 		
-		matrixButton = SCButton(buttonSection, Rect(0,0,110,20)).canReceiveDragHandler = false;		matrixButton.states = [["View Matrix", Color.black,Color.clear]];
+		matrixButton = RoundButton(buttonSection, Rect(0,0,110,20))
+			.extrude_(false)
+			.canFocus_(false)
+			.canReceiveDragHandler = false;		
+		matrixButton.states = [["View Matrix", Color.black, Color.white.alpha_(0.8)]];
 		matrixButton.action = { if (matrixGUI.isNil) 
 			   					{ matrixGUI = BMMatrixGUI(matrix, name);
 			   		  			  matrixGUI.onClose_({ matrixGUI = nil })

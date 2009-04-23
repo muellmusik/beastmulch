@@ -453,7 +453,11 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 		speakerSection.decorator = FlowLayout(speakerSection.bounds);
 		SCStaticText.new(speakerSection, Rect(0,0,75,20)).font_(Font("Helvetica-Bold", 14))
 			.string = "Speakers";
-		assignButton = SCButton(speakerSection, Rect(0,0,110,20)).canReceiveDragHandler = false;		assignButton.states = [["<", Color.black,Color.clear]];
+		assignButton = RoundButton(speakerSection, Rect(0,0,110,20))
+			.extrude_(false)
+			.canFocus_(false)
+			.canReceiveDragHandler = false;		
+		assignButton.states = [["<", Color.black, Color.white.alpha_(0.8)]];
 		assignButton.action = { 
 			if (subarrayView.item.notNil and: { speakerView.item.notNil },{
 				outputArray.addToSubArray(subarrayView.item.asSymbol, 
@@ -466,7 +470,11 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 		this.updateLists;
 		speakerView.beginDragAction = {|view| view.item };
 		buttonSection = SCCompositeView(window, Rect(0, 0, 155, 281));
-		clearButton = SCButton(buttonSection, Rect(0,30,155,20)).canReceiveDragHandler = false;		clearButton.states = [["Clear Assignments", Color.black,Color.clear]];
+		clearButton = RoundButton(buttonSection, Rect(0,30,155,20))
+			.extrude_(false)
+			.canFocus_(false)
+			.canReceiveDragHandler = false;		
+		clearButton.states = [["Clear Assignments", Color.black, Color.white.alpha_(0.8)]];
 		clearButton.action = { 
 			if (subarrayView.item.notNil) { 
 				outputArray.defineSubArray(subarrayView.item.asSymbol, []);
