@@ -198,14 +198,14 @@ configsGUI	 = configsGUIFunc.value(chain);\
 pinkNoiseFunc = \{\
 \
 \cf2 var\cf0  pinkWin, startButton, synth;\
-\cf2 var\cf0  outputControl, ampControl;\
+\cf2 var\cf0  outputControl, outputNumber, ampControl;\
 \cf2 var\cf0  cmdPeriodFunc;\
 s.options.numOutputBusChannels = 96;\
 s.waitForBoot(\{\
 \cf2 SynthDef\cf0 (\cf3 \\PinkTest\cf0 , \{\cf2 |out, amp|\cf0  \cf2 Out\cf0 .ar(out, \cf2 PinkNoise\cf0 .ar(amp) * \cf2 Decay2\cf0 .ar(\cf2 Impulse\cf0 .ar(1))); \}).send(s);\
 \
 \cf5 // make the window\cf0 \
-pinkWin = \cf2 SCWindow\cf0 (\cf4 "PinkNoise Tester"\cf0 , \cf2 Rect\cf0 (20, 400, 440, 180));\
+pinkWin = \cf2 SCWindow\cf0 (\cf4 "PinkNoise Tester"\cf0 , \cf2 Rect\cf0 (20, 400, 440, 100), false);\
 pinkWin.front; \cf5 // make window visible and front window.\cf0 \
 pinkWin.view.decorator = \cf2 FlowLayout\cf0 (pinkWin.view.bounds);\
 \
@@ -213,7 +213,7 @@ pinkWin.view.decorator = \cf2 FlowLayout\cf0 (pinkWin.view.bounds);\
 \cf5 //					[\\h,\\v].choose, 100, rrand(0.1,0.9));\cf0 \
 \
 \cf5 // add a button to start and stop the sound.\cf0 \
-startButton = \cf2 SCButton\cf0 (pinkWin, 75 @ 24);\
+startButton = \cf2 RoundButton\cf0 (pinkWin, 75 @ 20).extrude_(\cf2 false\cf0 ).canFocus_(\cf2 false\cf0 );\
 startButton.states = [\
 	[\cf4 "Start"\cf0 , \cf2 Color\cf0 .black, \cf2 Color\cf0 .green],\
 	[\cf4 "Stop"\cf0 , \cf2 Color\cf0 .white, \cf2 Color\cf0 .red]\
@@ -223,7 +223,7 @@ startButton.action = \{\cf2 |view|\cf0 \
 			\cf5 // start sound\cf0 \
 			\
 			synth = \cf2 Synth\cf0 .tail(s.defaultGroup, \cf3 \\PinkTest\cf0 , [\cf3 \\amp\cf0 , ampControl.value.dbamp, \cf3 \\out\cf0 , \
-				outputControl.value - 1]);\
+				outputArray[outputControl.menu.item]]);\
 			\
 		\};\
 		if (view.value == 0) \{\
@@ -232,17 +232,27 @@ startButton.action = \{\cf2 |view|\cf0 \
 		\};\
 \};\
 \
+\
 \cf5 // create controls for all parameters\cf0 \
 pinkWin.view.decorator.nextLine;\
-outputControl = \cf2 EZSlider\cf0 (pinkWin, 400 @ 24, \cf4 "Hardware Out"\cf0 , \cf2 ControlSpec\cf0 (1, 98, \cf3 \\lin\cf0 , 1.0), \
-	\{\cf2 |ez|\cf0  synth.set( \cf4 "out"\cf0 , ez.value -1); \}, 1);\
+\
+outputControl = \cf2 EZPopUpMenu\cf0 (pinkWin, 200 @ 20, \cf4 "Hardware Out "\cf0 , \cf2 outputArray.asArray.postln\cf0 , \{\cf2 |ez|\cf0  \
+	synth.set(\cf4 "out"\cf0 , \cf2 outputArray[\cf0 ez.menu.item]); \
+	outputNumber.string_(\cf4 "Channel:" + (\cf2 outputArray[\cf0 ez.menu.item].asControlInput\cf2  + 1)\cf0 );\
+\
+\});\
+\
+outputNumber = \cf2 SCStaticText\cf0 (pinkWin, \cf2 Rect\cf0 (0,0,196,20))\
+	.string_(\cf4 "Channel:" + (\cf2 outputArray.first.value.\cf0 asControlInput\cf2  + 1)\cf0 )\
+	.font_(Font("Helvetica-Bold", 12))\
+	.align_(\\right);\
 	\
-pinkWin.view.decorator.nextLine;\
+pinkWin.view.decorator.nextLine.nextLine;\
 ampControl = \cf2 EZSlider\cf0 (pinkWin, 400 @ 24, \cf4 "Amp"\cf0 , \cf3 \\db\cf0 , \
 	\{\cf2 |ez|\cf0  synth.set(\cf4 "amp"\cf0 , ez.value.dbamp); \}, -34);\
 \
 pinkWin.view.decorator.nextLine;\
-\cf2 SCStaticText\cf0 .new(pinkWin, \cf2 Rect\cf0 (0,0,300,80)).string_(\cf4 "Outputs are Hardware, not SC, i.e. 1 = 1"\cf0 );\
+\cf2 SCStaticText\cf0 (pinkWin, \cf2 Rect\cf0 (0,0,300,80)).string_(\cf4 "Outputs are Hardware, not SC, i.e. 1 = 1"\cf0 );\
 			\
 \
 \cf5 // set start button to zero upon a cmd-period\cf0 \
