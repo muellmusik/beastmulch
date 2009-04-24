@@ -997,10 +997,12 @@ BMMultichannelPluginsRackGUI : BMAbstractGUI {
 			.font_(Font("Helvetica-Bold", 12));
 		
 		buttons = SCVLayoutView(window, Rect(0, 0, 20, 70));
-		TriggerView(buttons, Rect(0, 0, 20, 20))
-			.string_(" ?")
+		RoundButton(buttons, Rect(0, 0, 20, 20))
+			.extrude_(false)
+			.canFocus_(false)
+			.radius_(5)
+			.states_([["?", Color.black, Color.white.alpha_(0.2)]])
 			.font_(Font("Helvetica-Bold", 14))
-			.colorOn_(Color.white.alpha_(0.2))
 			.action_({descriptionHelpText.string = defaultHelpString;});
 //		TriggerView(buttons, Rect(0, 0, 20, 20))
 //			.string_("APi")

@@ -333,26 +333,34 @@ BMTrimPluginsRackGUI : BMAbstractGUI {
 			.font_(Font("Helvetica-Bold", 12));
 		
 		buttons = SCVLayoutView(window, Rect(0, 0, 20, 70));
-		TriggerView(buttons, Rect(0, 0, 20, 20))
-			.string_(" ?")
+		RoundButton(buttons, Rect(0, 0, 20, 20))
+			.extrude_(false)
+			.canFocus_(false)
+			.radius_(5)
+			.states_([["?", Color.black, Color.white.alpha_(0.2)]])
 			.font_(Font("Helvetica-Bold", 14))
-			.colorOn_(Color.white.alpha_(0.2))
 			.action_({descriptionHelpText.string = defaultHelpString;});
-		TriggerView(buttons, Rect(0, 0, 20, 20))
-			.string_("APi")
+		RoundButton(buttons, Rect(0, 0, 20, 20))
+			.extrude_(false)
+			.canFocus_(false)
+			.radius_(5)
+			.states_([["APi", Color.black, Color.white.alpha_(0.2)]])
 			.font_(Font("Helvetica-Bold", 8))
-			.colorOn_(Color.white.alpha_(0.2))
-			.action_({|v|v.value.if{trimPluginsRack.autoPlugins}});
-		TriggerView(buttons, Rect(0, 0, 20, 20))
-			.string_("ATr")
+			.action_({ trimPluginsRack.autoPlugins });
+		RoundButton(buttons, Rect(0, 0, 20, 20))
+			.extrude_(false)
+			.canFocus_(false)
+			.radius_(5)
+			.states_([["ATr", Color.black, Color.white.alpha_(0.2)]])
 			.font_(Font("Helvetica-Bold", 8))
-			.colorOn_(Color.white.alpha_(0.2))
-			.action_({|v| v.value.if{trimPluginsRack.autoTrim}});
-		TriggerView(buttons, Rect(0, 0, 20, 20))
-			.string_("dT")
+			.action_({ trimPluginsRack.autoTrim });
+		RoundButton(buttons, Rect(0, 0, 20, 20))
+			.extrude_(false)
+			.canFocus_(false)
+			.radius_(5)
+			.states_([["dT", Color.black, Color.white.alpha_(0.2)]])
 			.font_(Font("Helvetica-Bold", 12))
-			.colorOn_(Color.white.alpha_(0.2))
-			.action_({|v|v.value.if{trimPluginsRack.compensateDistance}});
+			.action_({ trimPluginsRack.compensateDistance });
 
 		window.onClose = { 
 			trimPluginsStripGUIs.do({|tpisg|
