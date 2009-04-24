@@ -79,7 +79,8 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 	compensateDistance { 
 		var rads, diff, farthest, plugin;
 		
-		rads = ins.select({|in| in.value.isBMSpeaker}).collect({|speaker| speaker.value.rad });
+		rads = ins.select({|in| in.value.isBMSpeaker})
+			.collectAs({|speaker| speaker.value.rad }, Array);
 		farthest = rads.maxItem;
 		ins.do({|speaker| 
 			speaker.value.isBMSpeaker.if({
@@ -113,7 +114,7 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 		var powered, min, diff;
 		
 		min = ins.select({|in| in.value.isBMSpeaker})
-			.collect({|speaker| speaker.value.autoTrim })
+			.collectAs({|speaker| speaker.value.autoTrim }, Array)
 			.minItem; 
 		ins.do({|speaker| 
 			speaker.value.isBMSpeaker.if({
@@ -332,7 +333,7 @@ BMTrimPluginsRackGUI : BMAbstractGUI {
 			.string_(defaultHelpString)
 			.font_(Font("Helvetica-Bold", 12));
 		
-		buttons = SCVLayoutView(window, Rect(0, 0, 20, 70));
+		buttons = SCVLayoutView(window, Rect(0, 0, 20, 80));
 		RoundButton(buttons, Rect(0, 0, 20, 20))
 			.extrude_(false)
 			.canFocus_(false)
@@ -360,7 +361,7 @@ BMTrimPluginsRackGUI : BMAbstractGUI {
 			.radius_(5)
 			.states_([["dT", Color.black, Color.white.alpha_(0.2)]])
 			.font_(Font("Helvetica-Bold", 12))
-			.action_({ trimPluginsRack.compensateDistance });
+			.action_({ trimPluginsRack.compensateDistance; });
 
 		window.onClose = { 
 			trimPluginsStripGUIs.do({|tpisg|
@@ -386,7 +387,7 @@ BMTrimPluginsStripGUI {
 	 }
 	 
 	 makeGUI{|parent, name, origin|
-	 	name.postln;
+	 	
 	 	containerView = SCCompositeView(parent, Rect(origin.x, origin.y, 100, 500));
 	 	containerView.decorator = FlowLayout(containerView.bounds);
 	 	labelView = SCStaticText(containerView, Rect(0, 0, 100, 30))

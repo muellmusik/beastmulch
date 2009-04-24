@@ -4,14 +4,16 @@
 // class for storing some library wide and BEASTmulch System options
 BMOptions {
 	classvar <>crossfade = 0.1;
-	classvar <>numInputBusChannels = 12;
-	classvar <>numOutputBusChannels = 96;
+	classvar <>numInputBusChannels = 8;
+	classvar <>numOutputBusChannels = 8;
 	classvar <>numWireBufs = 512; // can be complicated
 	classvar <>numAudioBusChannels = 1024; // we need a lot
+	classvar <>memSize = 131072; // all those delays for compensating
 	classvar <>allowMultipleControlMappings = false;
 	
 	*defaultServerOptions {
 		^ServerOptions.new
+			.memSize_(memSize)
 			.numWireBufs_(numWireBufs)
 			.numAudioBusChannels_(numAudioBusChannels)
 			.numOutputBusChannels_(numOutputBusChannels)
