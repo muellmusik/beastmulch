@@ -22,7 +22,7 @@ s.options = \cf2 BMOptions\cf0 .defaultServerOptions;\
 \
 backupManager	= \cf2 BMBackup\cf0 .new;\
 outputArray	= backupManager.rememberWorkspace([ \cf3 \\concert\cf0 , \cf3 \\system\cf0 , \cf3 \\speakers\cf0  ],  \{ \cf2 BMInOutArray\cf0 .new \});\
-postf(\cf4 "outarray %\\n"\cf0 , outputArray);\
+//postf(\cf4 "outarray %\\n"\cf0 , outputArray);\
 ~outputArray = outputArray;\
 \
 systemConfig = backupManager.rememberWorkspace([ \cf3 \\concert\cf0 , \cf3 \\system\cf0 , \cf3 \\sysconfig\cf0  ],  \{ \cf2 BMSystemAppConfig\cf0 .new \});\
@@ -35,7 +35,7 @@ configurations= backupManager.rememberWorkspace(\cf3 \\configurations\cf0 ,  \{ 
 \
 \cf5 // make sure we have enough output channels\cf0 \
 s.options.numOutputBusChannels = max(\
-	systemConfig.numOutChannels, \
+	s.options.numOutputBusChannels, \
 	outputArray.values.asUGenInput.maxItem + 1\
 ).asInteger;\
 \
