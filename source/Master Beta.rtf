@@ -205,7 +205,7 @@ s.waitForBoot(\{\
 \cf2 SynthDef\cf0 (\cf3 \\PinkTest\cf0 , \{\cf2 |out, amp|\cf0  \cf2 Out\cf0 .ar(out, \cf2 PinkNoise\cf0 .ar(amp) * \cf2 Decay2\cf0 .ar(\cf2 Impulse\cf0 .ar(1))); \}).send(s);\
 \
 \cf5 // make the window\cf0 \
-pinkWin = \cf2 SCWindow\cf0 (\cf4 "PinkNoise Tester"\cf0 , \cf2 Rect\cf0 (20, 400, 416, 100), false);\
+pinkWin = \cf2 SCWindow\cf0 (\cf4 "PinkNoise Tester"\cf0 , \cf2 Rect\cf0 (20, 600, 416, 100), false);\
 pinkWin.front; \cf5 // make window visible and front window.\cf0 \
 pinkWin.view.decorator = \cf2 FlowLayout\cf0 (pinkWin.view.bounds);\
 \
@@ -215,8 +215,8 @@ pinkWin.view.decorator = \cf2 FlowLayout\cf0 (pinkWin.view.bounds);\
 \cf5 // add a button to start and stop the sound.\cf0 \
 startButton = \cf2 RoundButton\cf0 (pinkWin, 75 @ 20).extrude_(\cf2 false\cf0 ).canFocus_(\cf2 false\cf0 );\
 startButton.states = [\
-	[\cf4 "Start"\cf0 , \cf2 Color\cf0 .black, \cf2 Color\cf0 .green],\
-	[\cf4 "Stop"\cf0 , \cf2 Color\cf0 .white, \cf2 Color\cf0 .red]\
+	[\cf4 "Start"\cf0 , \cf2 Color\cf0 .black, \cf2 Color\cf0 .green.alpha_(0.2)],\
+	[\cf4 "Stop"\cf0 , \cf2 Color\cf0 .white, \cf2 Color\cf0 .red.alpha_(0.2)]\
 ];\
 startButton.action = \{\cf2 |view|\cf0 \
 		if (view.value == 1) \{\
