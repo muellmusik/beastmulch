@@ -105,7 +105,7 @@ BMMasterFaderGUI : BMAbstractGUI {
 							 numberBox.value 	= masterFader.level.round(0.1)
 				     });
 				   
-		numberBox	= ScrollingNBox(window, window.view.bounds
+		numberBox	= NumberBox(window, window.view.bounds
 					.resizeTo(90, 60)
 					.moveBy(15, window.view.bounds.height - 80))
 					.value_(masterFader.level.round(0.1))
