@@ -39,11 +39,11 @@ BMAbstractMackie : BMAbstractController {
 		name = argname;
 		server = argserver.postln;
 		("Server: " ++ server).postln;
-		this.setNumFaders;
+		this.setNumControls;
 		this.setSysexHdr;
-		valueArray = Array.fill(numFaders, {0});
-		labelArray = Array.fill(numFaders, {"      "});
-		bus = Bus.control(server, numFaders);
+		valueArray = Array.fill(numControls, {0});
+		labelArray = Array.fill(numControls, {"      "});
+		bus = Bus.control(server, numControls);
 		busIndex = bus.index;
 		this.setOutUid.startListening;
 		midiout = MIDIOut(outPort, outUid);
@@ -59,7 +59,7 @@ BMAbstractMackie : BMAbstractController {
 		allControllers[name] = this;
 	}
 	
-	setNumFaders {
+	setNumControls {
 		^this.subclassResponsibility(thisMethod);
 	}
 	
@@ -94,13 +94,13 @@ BMAbstractMackie : BMAbstractController {
 	
 	// assumes fader 1 = 1 not 0
 	// returns value between 0 and 1
-	getFaderVal { |faderNum| ^spec.unmap(valueArray[faderNum -1]) }
+	getVal { |faderNum| ^spec.unmap(valueArray[faderNum -1]) }
 	
-	setFaderVal { |faderNum, val| this.updateValue(faderNum -1, val) }
+	setVal { |faderNum, val| this.updateValue(faderNum -1, val) }
 	
-	getAllFaders { ^valueArray.collect({|val| spec.unmap(val)}) }
+	getAllValues { ^valueArray.collect({|val| spec.unmap(val)}) }
 	
-	setAllFaders {|array| array.do({|item, i| this.updateValue(i, item); });}
+	setAllValues {|array| array.do({|item, i| this.updateValue(i, item); });}
 	
 	setLabel { |fader, name|
 		var label;
@@ -125,12 +125,12 @@ BMAbstractMackie : BMAbstractController {
 //		^this.faderNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
 //	}
 	
-	//faderNames {^Array.fill(numFaders, {|i| name.asString ++ "-" ++ (i+1)})}
+	//faderNames {^Array.fill(numControls, {|i| name.asString ++ "-" ++ (i+1)})}
 
 	acceptsAutomation { ^true }
 }
 
-MackieCU : BMAbstractMackie {
+BMMackieCU : BMAbstractMackie {
 	var buttonRoutine, buttonOffRoutine, buttonFuncDict, masterFaderSynth;
 		
 	*humanName {  ^"Mackie CU"  }
@@ -163,9 +163,9 @@ MackieCU : BMAbstractMackie {
 	ffFunc_ {|onfunc, offfunc| buttonFuncDict[\92] = onfunc; buttonFuncDict[\off92] = offfunc }
 	fbFunc_ {|onfunc, offfunc| buttonFuncDict[\91] = onfunc; buttonFuncDict[\off91] = offfunc }
 	
-	setNumFaders { numFaders = 9; }
+	setNumControls { numControls = 9; }
 	
-//	faderNames { ^Array.fill(numFaders - 1, {|i| name.asString ++ "-" ++ (i+1)})
+//	faderNames { ^Array.fill(numControls - 1, {|i| name.asString ++ "-" ++ (i+1)})
 //		//.add(name.asString ++ "-mstr")
 //	}
 	
@@ -198,11 +198,11 @@ MackieCU : BMAbstractMackie {
 }
 
 
-MackieXT : BMAbstractMackie {
+BMMackieXT : BMAbstractMackie {
 
 	*humanName {  ^"Mackie XT"  }
 
-	setNumFaders { numFaders = 8; }
+	setNumControls { numControls = 8; }
 	
 	setSysexHdr {
 		sysexHdr = Int8Array[ -16, 0, 0, 102, 21];
