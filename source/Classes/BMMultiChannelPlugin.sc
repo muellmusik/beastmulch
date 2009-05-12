@@ -770,7 +770,7 @@ BMMultichannelPlugin {
 	copy {
 		var values, newplugin;
 		values = this.values;
-		newplugin = BMPlugin(this.spec.name, this.inputs, this.outputs, this.server, this.attributes);
+		newplugin = BMMultichannelPlugin(this.spec.name, this.inputs, this.outputs, this.server, this.attributes);
 		values.keysValuesDo({|key, val| newplugin.set(key, val)});
 		^newplugin;
 	}
