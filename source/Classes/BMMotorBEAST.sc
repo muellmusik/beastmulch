@@ -1,9 +1,9 @@
 
 // valueArray holds the controller value in its native form
-// setFaderValue should convert to 0-1 and send to the bus 
+// setValue should convert to 0-1 and send to the bus 
 BMMotorBEAST : BMAbstractController {
 	//classvar <allControllers;
-	//var <name, <bus, <busIndex, valueArray, labelArray, <server, <numFaders;
+	//var <name, <bus, <busIndex, valueArray, labelArray, <server, <numControls;
 	var <addr, responder;
 	
 	// address should be with port 57120 (sclang)
@@ -30,9 +30,9 @@ BMMotorBEAST : BMAbstractController {
 		addr = argaddr;
 		name = argname;
 		server = argserver;
-		numFaders = 32;
+		numControls = 32;
 		valueArray = 0 ! 32;
-		bus = Bus.control(server, numFaders);
+		bus = Bus.control(server, numControls);
 		busIndex = bus.index;
 		//spec = Env([0, 1], [65536], \sine);
 		// clip bottom
@@ -57,18 +57,18 @@ BMMotorBEAST : BMAbstractController {
 	
 	// assumes fader 1 = 1 not 0
 	// returns value between 0 and 1
-	getFaderVal { |faderNum| ^spec.unmap(valueArray[faderNum -1]) }
+	getVal { |faderNum| ^spec.unmap(valueArray[faderNum -1]) }
 	
 	// we set the local value on loopback, so we're always in sync
-	setFaderVal { |faderNum, val| 
+	setVal { |faderNum, val| 
 		addr.sendMsg("/MF/" ++ (faderNum - 1), spec.map(val).asInteger) 
 		//addr.sendMsg("/MF", *(valueArray.copy[faderNum - 1] = spec.map(val).asInteger))
 	}
 	
-	getAllFaders { ^valueArray.collect({|val| spec.unmap(val)}) }
+	getAllValues { ^valueArray.collect({|val| spec.unmap(val)}) }
 	
 	// 32 faders
-	setAllFaders {|array|
+	setAllValues {|array|
 		addr.sendMsg("/MF", *(array.collect({|val| spec.map(val).asInteger})))
 	}
 	
@@ -77,7 +77,7 @@ BMMotorBEAST : BMAbstractController {
 //		^this.faderNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
 //	}
 	
-//	faderNames {^Array.fill(numFaders, {|i| name.asString ++ "-" ++ (i+1)})}
+//	faderNames {^Array.fill(numControls, {|i| name.asString ++ "-" ++ (i+1)})}
 
 	setLED {|faderNum, colour|
 		addr.sendMsg("/mfLED/" ++ (faderNum - 1), colour)
@@ -89,12 +89,12 @@ BMMotorBEAST : BMAbstractController {
 	
 	// perhaps this should be more generalised and named something else like 'preset'
 	mappings {
-		^IdentityDictionary[\faders->this.getAllFaders];
+		^IdentityDictionary[\faders->this.getAllValues];
 	}
 	
 	mappings_ {|mappings|
 		mappings = mappings ? ();
-		this.setAllFaders(mappings[\faders]);
+		this.setAllValues(mappings[\faders]);
 	}
 	
 	// this has no labels

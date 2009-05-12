@@ -3,10 +3,10 @@
 // Set send rate to 20 ms
 
 // valueArray holds the controller value in its native form
-// setFaderValue should convert to 0-1 and send to the bus 
+// setValue should convert to 0-1 and send to the bus 
 BMEtherSense : BMAbstractController {
 	//classvar <allControllers;
-	//var <name, <bus, <busIndex, valueArray, labelArray, <server, <numFaders;
+	//var <name, <bus, <busIndex, valueArray, labelArray, <server, <numControls;
 	var <addr, responders, busBoard2Index;
 	
 	// address should be with port 57120 (sclang)
@@ -34,9 +34,9 @@ BMEtherSense : BMAbstractController {
 		name = argname;
 		server = argserver;
 		responders = Array.newClear(2);
-		numFaders = 32;
+		numControls = 32;
 		valueArray = Array.fill(2, {0 ! 16});
-		bus = Bus.control(server, numFaders);
+		bus = Bus.control(server, numControls);
 		busIndex = bus.index;
 		busBoard2Index = busIndex + 16; // save an add every message
 		spec = [0, 65535, 'cos', 0.0].asSpec;
@@ -66,29 +66,29 @@ BMEtherSense : BMAbstractController {
 	
 	// assumes fader 1 = 1 not 0
 	// returns value between 0 and 1
-	getFaderVal { |faderNum| ^spec.unmap(valueArray[faderNum -1]) }
+	getVal { |faderNum| ^spec.unmap(valueArray[faderNum -1]) }
 	
-	setFaderVal { this.shouldNotImplement(thisMethod) }
+	setVal { this.shouldNotImplement(thisMethod) }
 	
-	getAllFaders { ^valueArray.flat.collect({|val| spec.unmap(val)})  }
+	getAllValues { ^valueArray.flat.collect({|val| spec.unmap(val)})  }
 	
-	setAllFaders {|array| this.shouldNotImplement(thisMethod) }
+	setAllValues {|array| this.shouldNotImplement(thisMethod) }
 	
 	// for faders
 //	getInputArray {
 //		^this.faderNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
 //	}
 	
-//	faderNames {^Array.fill(numFaders, {|i| name.asString ++ "-" ++ (i+1)})}
+//	faderNames {^Array.fill(numControls, {|i| name.asString ++ "-" ++ (i+1)})}
 	
 	// perhaps this should be more generalised and named something else like 'preset'
 	mappings {
-		^IdentityDictionary[\faders->this.getAllFaders];
+		^IdentityDictionary[\faders->this.getAllValues];
 	}
 	
 	mappings_ {|mappings|
 		mappings = mappings ? ();
-		this.setAllFaders(mappings[\faders]);
+		this.setAllValues(mappings[\faders]);
 	}
 	
 	// this has no labels

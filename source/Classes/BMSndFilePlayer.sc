@@ -129,14 +129,14 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 	}
 	
 	stop { 
-		synth.isPlaying.if({ this.stopCleanUp }); 
+		synth.isPlaying.if({ this.stopAndCleanUp }); 
 	}
 	
 	togglePlay {
 		synth.isPlaying.if({ if(rate != 0, {this.pause}, {this.play}) }, {this.play });
 	}
 	
-	stopCleanUp {
+	stopAndCleanUp {
 		resp.remove;
 		blockPlay = true;
 		watcher.stop;
@@ -157,7 +157,7 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 	
 	// maybe a controller better?
 	update { arg changed, what; 
-		if(what == \n_end, {this.stopCleanUp});
+		if(what == \n_end, {this.stopAndCleanUp});
 		this.changed(what);
 	}
 	

@@ -25,9 +25,9 @@ BMAbstractMIDIController : BMAbstractController {
 		name = argname;
 		server = argserver.postln;
 		("Server: " ++ server).postln;
-		this.setNumFaders;
-		valueArray = Array.fill(numFaders, {0});
-		bus = Bus.control(server, numFaders);
+		this.setNumControls;
+		valueArray = Array.fill(numControls, {0});
+		bus = Bus.control(server, numControls);
 		busIndex = bus.index;
 		this.setOutUid.startListening;
 		midiout = MIDIOut(outPort, outUid);
@@ -36,7 +36,7 @@ BMAbstractMIDIController : BMAbstractController {
 		allControllers[name] = this;
 	}
 	
-	setNumFaders {
+	setNumControls {
 		this.subclassResponsibility(thisMethod);
 	}
 	
@@ -67,13 +67,13 @@ BMAbstractMIDIController : BMAbstractController {
 	
 	// assumes fader 1 = 1 not 0
 	// returns value between 0 and 1
-	getFaderVal { |faderNum| ^spec.unmap(valueArray[faderNum -1]) }
+	getVal { |faderNum| ^spec.unmap(valueArray[faderNum -1]) }
 	
-	setFaderVal { |faderNum, val| this.updateValue(faderNum -1, val) }
+	setVal { |faderNum, val| this.updateValue(faderNum -1, val) }
 	
-	getAllFaders { ^valueArray.collect({|val| spec.unmap(val)}) }
+	getAllValues { ^valueArray.collect({|val| spec.unmap(val)}) }
 	
-	setAllFaders {|array| array.do({|item, i| this.updateValue(i, item); });}
+	setAllValues {|array| array.do({|item, i| this.updateValue(i, item); });}
 	
 	// this has no labels
 	setLabel { |fader, name| this.shouldNotImplement(thisMethod) }
@@ -108,7 +108,7 @@ BMMIDIBendController : BMAbstractMIDIController {
 	
 	*humanName {  ^"MIDI Pitchbend Controller"  }
 
-	setNumFaders { numFaders = 16;}
+	setNumControls { numControls = 16;}
 	
 	makeSpec {
 		spec = [0, 16384, 'cos', 0.0].asSpec;
@@ -160,7 +160,7 @@ BMMIDICCController : BMAbstractMIDIController {
 	
 	*humanName {  ^"MIDI CC Controller"  }
 	
-	setNumFaders { numFaders = ccArray.size}
+	setNumControls { numControls = ccArray.size}
 	
 	setCCParams { |argchan, argccArray|
 		chan = argchan;

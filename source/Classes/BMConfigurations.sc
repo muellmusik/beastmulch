@@ -29,7 +29,7 @@ BMConfigurations {
 							.allControllers
 							.collect({|interface, name|
 								      IdentityDictionary[
-								         \faders -> interface.getAllFaders
+								         \faders -> interface.getAllValues
 								      ]
 						      })			      
 			 ].deepCopy

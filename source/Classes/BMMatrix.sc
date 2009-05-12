@@ -140,7 +140,8 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 		^BMMatrixMenuGUI(this);
 	}
 	
-	controlsForInputs {^false }
+	// does this take controls for inputs
+	takesControlsForInputs {^false }
 
 }
 
@@ -269,7 +270,7 @@ BMAmpControlMatrix : BMAbstractMatrix {
 //		group = Group.tail(server);
 //	}
 	
-	controlsForInputs { ^true }
+	takesControlsForInputs { ^true }
 	
 	// for display purposes
 	asSpec{ ^\db.asSpec }
@@ -479,7 +480,7 @@ BMMatrixMenuGUI : BMAbstractGUI {
 		matrix = argmatrix;
 		name = argname;
 		matrix.addDependant(this);
-		matrix.controlsForInputs.if({
+		matrix.takesControlsForInputs.if({
 			matrix.inNames.do({|inName|
 				BMAbstractController.allControls[inName].addDependant(this);
 			});
@@ -565,7 +566,7 @@ BMMatrixMenuGUI : BMAbstractGUI {
 		this.update;
 		window.onClose = { 
 			matrix.removeDependant(this); 
-			matrix.controlsForInputs.if({
+			matrix.takesControlsForInputs.if({
 				matrix.inNames.do({|inName|
 					BMAbstractController.allControls[inName].removeDependant(this);
 				});
@@ -577,7 +578,7 @@ BMMatrixMenuGUI : BMAbstractGUI {
 	
 	update {
 		var mappedTo;
-		(matrix.controlsForInputs && BMOptions.allowMultipleControlMappings.not).if({
+		(matrix.takesControlsForInputs && BMOptions.allowMultipleControlMappings.not).if({
 			mappedTo = BMAbstractController.allControls[inputView.item.asSymbol].mappedTo;
 			if(mappedTo.notNil && (mappedTo !== matrix), {
 				assignView.items = ["Mapped to" + matrix.name];
@@ -610,7 +611,7 @@ BMMatrixGUI : BMAbstractGUI {
 		matrix = argmatrix;
 		name = argname;
 		matrix.addDependant(this);
-		matrix.controlsForInputs.if({
+		matrix.takesControlsForInputs.if({
 			matrix.inNames.do({|inName|
 				BMAbstractController.allControls[inName].addDependant(this);
 			});
@@ -766,7 +767,7 @@ BMMatrixGUI : BMAbstractGUI {
 			ins.do({|item, i|
 				var inColor, mappedTo;
 
-				(matrix.controlsForInputs && BMOptions.allowMultipleControlMappings.not).if({
+				(matrix.takesControlsForInputs && BMOptions.allowMultipleControlMappings.not).if({
 					mappedTo = BMAbstractController.allControls[item].mappedTo;
 					if(mappedTo.notNil && (mappedTo !== matrix), {
 						inColor = Color.grey;
@@ -818,7 +819,7 @@ BMMatrixGUI : BMAbstractGUI {
 //				Rect.aboutPoint((hoffset / 2)@(voffset + vinterval + (vinterval * i)), 40, 10)
 //			);
 //			t.string = item.asString;
-//			(matrix.controlsForInputs && BMOptions.allowMultipleControlMappings.not).if({
+//			(matrix.takesControlsForInputs && BMOptions.allowMultipleControlMappings.not).if({
 //				var mappedTo;
 //				mappedTo = BMAbstractController.allControls[item].mappedTo;
 //				if(mappedTo.notNil && (mappedTo !== matrix), {
@@ -834,7 +835,7 @@ BMMatrixGUI : BMAbstractGUI {
 		window.onClose = { 
 			//CmdPeriod.remove(this); 
 			matrix.removeDependant(this); 
-			matrix.controlsForInputs.if({
+			matrix.takesControlsForInputs.if({
 				matrix.inNames.do({|inName|
 					BMAbstractController.allControls[inName].removeDependant(this);
 				});

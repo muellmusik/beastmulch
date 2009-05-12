@@ -1197,7 +1197,7 @@ BMSnapShotSliders : BMAbstractGUI {
 //				var resched;
 //				needsRefresh.if({resched = refreshInterval}, {refreshLoopOn = false});
 //				fromUpdate = true; // prevent a loop
-//				snapshot.getAllFaders.do({|val, i| 
+//				snapshot.getAllValues.do({|val, i| 
 //					sliders[i].value_(val.ampdb);
 //				});
 //				fromUpdate = false;
@@ -1291,7 +1291,7 @@ BMSnapShotSeqConfigGUI : BMAbstractGUI {
 //				var resched;
 //				needsRefresh.if({resched = refreshInterval}, {refreshLoopOn = false});
 //				fromUpdate = true; // prevent a loop
-//				snapshot.getAllFaders.do({|val, i| 
+//				snapshot.getAllValues.do({|val, i| 
 //					sliders[i].value_(val.ampdb);
 //				});
 //				fromUpdate = false;

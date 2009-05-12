@@ -26,7 +26,7 @@ BMOptions {
 BMAbstractAudioChainElement {
 	classvar <allChainElements;
 	var <ins, <outs, <inNames, <outNames; // in the default case the getters return nil, as an element need not have both ins and outs
-	var <target, <addAction, <group, <>server, <name;
+	var <target, <addAction, <group, <server, <name;
 	
 	// for chain construction in BMAudioChainManager
 	// overriding methods in subclasses should have these args, but may ignore them
@@ -116,10 +116,10 @@ BMAbstractAudioSource : BMAbstractAudioChainElement {
 }
 
 // valueArray holds the controller value in its native form
-// setFaderValue should convert to 0-1 and send to the bus 
+// setValue should convert to 0-1 and send to the bus 
 BMAbstractController {
 	classvar <allControllers, <allControls;
-	var <name, <bus, <busIndex, valueArray, labelArray, <server, <numFaders;
+	var <name, <bus, <busIndex, valueArray, labelArray, <server, <numControls;
 	var spec;
 	
 //	*new {
@@ -140,7 +140,7 @@ BMAbstractController {
 		"\n///////////////////\nDumping all Controller Values\n".postln;
 		allControllers.keysValuesDo({|key, elem| 
 			(key ++ ": ").post;
-			elem.getAllFaders.postcs;
+			elem.getAllValues.postcs;
 			"\n".post
 		});
 		"///////////////////".postln;
@@ -165,15 +165,15 @@ BMAbstractController {
 		});
 	}
 	
-	getFaderVal { |faderNum| ^this.subclassResponsibility(thisMethod) }
+	getVal { |faderNum| ^this.subclassResponsibility(thisMethod) }
 	
-	setFaderVal { |faderNum, val| this.subclassResponsibility(thisMethod) }
+	setVal { |faderNum, val| this.subclassResponsibility(thisMethod) }
 	
-	getAllFaders { ^this.subclassResponsibility(thisMethod) }
+	getAllValues { ^this.subclassResponsibility(thisMethod) }
 	
-	setAllFaders {|array| this.subclassResponsibility(thisMethod)}
+	setAllValues {|array| this.subclassResponsibility(thisMethod)}
 	
-	setFaders {|array| this.subclassResponsibility(thisMethod)} 
+	//setFaders {|array| this.subclassResponsibility(thisMethod)} 
 	
 	setLabel { |fader, name|
 		this.subclassResponsibility(thisMethod)
@@ -186,7 +186,7 @@ BMAbstractController {
 	
 	setAllLabels { |array| }
 	
-	faderNames {^Array.fill(numFaders, {|i| name.asString ++ "-" ++ (i+1)})}
+	faderNames {^Array.fill(numControls, {|i| name.asString ++ "-" ++ (i+1)})}
 	
 //	getInputArray {
 //		^this.faderNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
@@ -198,13 +198,13 @@ BMAbstractController {
 	
 	// perhaps this should be more generalised and named something else like 'preset'
 	mappings {
-		^IdentityDictionary[\labels->this.getAllLabels, \faders->this.getAllFaders];
+		^IdentityDictionary[\labels->this.getAllLabels, \faders->this.getAllValues];
 	}
 	
 	mappings_ {|mappings|
 		mappings = mappings ? ();
 		this.setAllLabels(mappings[\labels]);
-		this.setAllFaders(mappings[\faders]);
+		this.setAllValues(mappings[\faders]);
 	}
 	
 	acceptsAutomation { ^false }
@@ -243,9 +243,9 @@ BMControl {
 	
 	automator_ {|atmtr| automator = atmtr; this.changed(\automator) }
 	
-	value {^controller.getFaderVal(ctrlNum) }
+	value {^controller.getVal(ctrlNum) }
 	
-	value_ {|val| controller.setFaderVal(ctrlNum, val) }
+	value_ {|val| controller.setVal(ctrlNum, val) }
 	
 	controllerSpec { ^controller.spec }
 	

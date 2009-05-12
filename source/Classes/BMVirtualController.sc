@@ -4,12 +4,12 @@
 
 BMVirtualController : BMAbstractController {
 
-	*new { |name, server, numFaders = 8|
-		^super.new.init(name, server ? Server.default, numFaders).addControlsToIndex;
+	*new { |name, server, numControls = 8|
+		^super.new.init(name, server ? Server.default, numControls).addControlsToIndex;
 	}
 	
 	*newFromParamDict {|dict, server| 
-		^this.new(dict[\name], server, dict[\numFaders]);
+		^this.new(dict[\name], server, dict[\numControls]);
 	}
 	
 	*parameterList { 
@@ -17,30 +17,30 @@ BMVirtualController : BMAbstractController {
 		class = this;
 		^(
 			name: [String, {class.makeName}, "Name"],
-			numFaders: [Integer, [1, 64, \linear, 1].asSpec, "Number of Faders"]
+			numControls: [Integer, [1, 64, \linear, 1].asSpec, "Number of Faders"]
 		); 
 	}
 	
 	*humanName {  ^"GUI Faders"  }
 	
-	init { |argname, argserver, argnumFaders|
+	init { |argname, argserver, argnumControls|
 		name = argname;
 		server = argserver.postln;
-		numFaders = argnumFaders;
+		numControls = argnumControls;
 
 		// possibly should move this into super
-		valueArray = Array.fill(numFaders, {0});
-		labelArray = Array.fill(numFaders, {""});
-		bus = Bus.control(server, numFaders);
+		valueArray = Array.fill(numControls, {0});
+		labelArray = Array.fill(numControls, {""});
+		bus = Bus.control(server, numControls);
 		busIndex = bus.index;
 		allControllers[name] = this;
 	}
 	
-	getFaderVal { |faderNum|
+	getVal { |faderNum|
 		^valueArray[faderNum -1];
 	}
 	
-	setFaderVal { |faderNum, val| 
+	setVal { |faderNum, val| 
 		var chan;
 		chan = faderNum - 1;
 		server.sendMsg("/c_set", busIndex + chan, val);
@@ -48,9 +48,9 @@ BMVirtualController : BMAbstractController {
 		this.changed(\faderVal, chan, val);
 	}
 	
-	getAllFaders { ^valueArray; }
+	getAllValues { ^valueArray; }
 	
-	setAllFaders {|array|  array.do({|item, i| this.setFaderVal(i + 1, item);}); }
+	setAllValues {|array|  array.do({|item, i| this.setVal(i + 1, item);}); }
 	
 	setLabel { |fader, name|
 		labelArray[fader - 1] = name;
@@ -67,7 +67,7 @@ BMVirtualController : BMAbstractController {
 //		^this.faderNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
 //	}
 	
-//	faderNames {^Array.fill(numFaders, {|i| name.asString ++ "-" ++ (i+1)})}
+//	faderNames {^Array.fill(numControls, {|i| name.asString ++ "-" ++ (i+1)})}
 
 	acceptsAutomation { ^true }
 }
@@ -93,7 +93,7 @@ BMVirtualControllerSliders : BMAbstractGUI {
 	
 	makeWindow {|origin|
 		var numSliders, presetMenu;
-		numSliders = virtualCont.numFaders;
+		numSliders = virtualCont.numControls;
 		window = SCWindow.new(name, 
 			Rect(300, 300, 652, (numSliders + 1) * 24), false); // 508
 		window.view.decorator = FlowLayout(window.view.bounds);
@@ -104,12 +104,12 @@ BMVirtualControllerSliders : BMAbstractGUI {
 			var initVal, control, displaySpec;
 			control = BMAbstractController.allControls[faderName.asSymbol];
 			displaySpec = control.displaySpec;
-			initVal = displaySpec.map(virtualCont.getFaderVal(i + 1));
+			initVal = displaySpec.map(virtualCont.getVal(i + 1));
 			sliders[i] = EZSlider.new(window, 640@20, faderName.asString.postln, displaySpec,
 				{|ez| var setVal;
 					if(fromUpdate.not, {
 						setVal = displaySpec.unmap(ez.value);
-						virtualCont.setFaderVal(i + 1, setVal);
+						virtualCont.setVal(i + 1, setVal);
 						//setVal.postln;
 					})
 				}, initVal, labelWidth: 120
@@ -130,7 +130,7 @@ BMVirtualControllerSliders : BMAbstractGUI {
 				var resched;
 				needsRefresh.if({resched = refreshInterval}, {refreshLoopOn = false});
 				fromUpdate = true; // prevent a loop
-				virtualCont.getAllFaders.do({|val, i| 
+				virtualCont.getAllValues.do({|val, i| 
 					sliders[i].value_(specs[i].map(val));
 				});
 				fromUpdate = false;
