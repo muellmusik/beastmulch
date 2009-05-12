@@ -176,7 +176,7 @@ BMTrimPluginsStrip {
 		dict[\trim] = trim;
 		dict[\plugins] = plugins.collect({|plugin|
 			// could be a problem if pluginspec changes in the meantime
-			[plugin.spec.name, plugin.numChannels, plugin.attributes, plugin.values];
+			[plugin.spec.name, plugin.attributes, plugin.values];
 		}); // these are in order
 		^dict;
 	}
@@ -188,9 +188,9 @@ BMTrimPluginsStrip {
 		this.trim_(dict[\trim]);
 		dict[\plugins].do({|pluginArray|
 			var plugin;
-			plugin = BMPlugin(pluginArray[0], pluginArray[1], server, pluginArray[2]);
+			plugin = BMPlugin(pluginArray[0], server, pluginArray[1]);
 			this.addPlugin(plugin);
-			pluginArray[3].keysValuesDo({|k, v| plugin.set(k, v)});
+			pluginArray[2].keysValuesDo({|k, v| plugin.set(k, v)});
 		});
 		this.changed;
 	}
@@ -307,7 +307,7 @@ BMTrimPluginsRackGUI : BMAbstractGUI {
 				.background_(Color.grey.alpha_(0.2))
 				.font_(Font("Helvetica-Bold", 12))
 				.dragLabel_(piName.asString)
-				.beginDragAction_({BMPlugin(piName, 1)}) // one channel for now
+				.beginDragAction_({BMPlugin(piName)}) // one channel for now
 				.mouseDownAction_({
 					descriptionHelpText.string = piName ++ ": " ++ 
 						BMPluginSpec.specs[piName].description;

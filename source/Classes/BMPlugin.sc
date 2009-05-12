@@ -59,7 +59,7 @@ BMPluginSpec {
 		StartUp.add({ 
 			specs = ();
 			BMPluginSpec('highpass', 				// name
-				{|plugin, numChannels, input, freq| 	// ugenGraphFunc
+				{|plugin, input, freq| 	// ugenGraphFunc
 					HPF.ar(input, freq);
 				}, 								
 				(freq: \freq.asSpec),				// specsDict
@@ -68,7 +68,7 @@ BMPluginSpec {
 				"2nd Order Butterworth Highpass Filter -12db/Oct"
 			);
 			BMPluginSpec('lowpass', 				// name
-				{|plugin, numChannels, input, freq| 	// ugenGraphFunc
+				{|plugin, input, freq| 	// ugenGraphFunc
 					LPF.ar(input, freq);
 				}, 								
 				(freq: \freq.asSpec),				// specsDict
@@ -77,7 +77,7 @@ BMPluginSpec {
 				"2nd Order Butterworth Lowpass Filter -12db/Oct"
 			);
 			BMPluginSpec('bandpass', 				// name
-				{|plugin, numChannels, input, freq, rq| 
+				{|plugin, input, freq, rq| 
 					BPF.ar(input, freq, rq);
 				}, 								
 				(freq: \freq.asSpec, rq: \rq.asSpec.units = " 1/Q"),	
@@ -86,27 +86,27 @@ BMPluginSpec {
 				"2nd Order Butterworth Bandpass Filter"
 			);
 			BMPluginSpec('Kill DC', 				// name
-				{|plugin, numChannels, input| 	// ugenGraphFunc
+				{|plugin, input| 	// ugenGraphFunc
 					LeakDC.ar(input);
 				}, 								
 				description: "Cuts through that greasy DC buildup..."
 			);
 			BMPluginSpec('Delay', 				// name
-				{|plugin, numChannels, input, delayTime| 
+				{|plugin, input, delayTime| 
 					DelayC.ar(input, 2, delayTime);
 				},
 				(delayTime: ControlSpec(0.0001, 1, \linear, 0, 0.5, units: " secs")), 
 				description: "Simple Delay with Cubic Interpolation; 1 second maximum"
 			);
 			BMPluginSpec('Distance Compensate', 				// name
-				{|plugin, numChannels, input, delayTime| 
+				{|plugin, input, delayTime| 
 					DelayC.ar(input, 2, delayTime);
 				},
 				(delayTime: ControlSpec(0.0001, 1, \linear, 0, 0.5, units: " secs")), 
 				description: "Automatically added Delay with Cubic Interpolation; 1 second maximum"
 			);
 			BMPluginSpec('FreeVerb', 				// name
-				{|plugin, numChannels, input, mix, roomSize, hfDamp| 
+				{|plugin, input, mix, roomSize, hfDamp| 
 					FreeVerb.ar(input, mix,  roomSize,  hfDamp);
 				},
 				(
@@ -117,7 +117,7 @@ BMPluginSpec {
 				description: "The classic open source Schroeder/Moorer reverb"
 			);
 			BMPluginSpec('Compander', 				// name
-				{|plugin, numChannels, input, thresh, slopeBelow, slopeAbove, 
+				{|plugin, input, thresh, slopeBelow, slopeAbove, 
 				clampTime, relaxTime| 
 					Compander.ar(input, input, thresh, slopeBelow, slopeAbove, 
 				clampTime, relaxTime);
@@ -138,7 +138,7 @@ BMPluginSpec {
 				description: "General purpose (hard-knee) dynamics processor"
 			);
 			BMPluginSpec('3 Band EQ',
-				{|plugin, numChannels, input, lowFreq, lowGain, midFreq, midrq, midGain
+				{|plugin, input, lowFreq, lowGain, midFreq, midrq, midGain
 					hiFreq, hiGain| 
 					var eqchain;
 					eqchain = BLowShelf.ar(input, lowFreq, 1, lowGain);
@@ -216,25 +216,24 @@ BMPluginSpec {
 
 // Class which manages resources for a plugin instance
 BMPlugin {
-	var <spec, <numChannels = 1, <server, <attributes, <defName, <def;
+	var <spec, <server, <attributes, <defName, <def;
 	var <synth, <values, defaultValues, <bus, numControls, controlNames, mappings;
 	var <preset;
 	
-	*new {|pluginSpecName, numChannels = 1, server, attributes|
-		^super.new.init(pluginSpecName, numChannels = 1, server ? Server.default, attributes);
+	*new {|pluginSpecName, server, attributes|
+		^super.new.init(pluginSpecName, server ? Server.default, attributes);
 	}
 	
 	copy {
 		var values, newplugin;
 		values = this.values;
-		newplugin = BMPlugin(this.spec.name, this.numChannels, this.server, this.attributes);
+		newplugin = BMPlugin(this.spec.name, this.server, this.attributes);
 		values.keysValuesDo({|key, val| newplugin.set(key, val)});
 		^newplugin;
 	}
 	
-	init { |argpluginSpecName, argnumChannels, argserver, argattributes|
+	init { |argpluginSpecName, argserver, argattributes|
 		spec = BMPluginSpec.specs[argpluginSpecName.asSymbol];
-		numChannels = argnumChannels;
 		server = argserver;
 		attributes = spec.defaultAttributes.copy;
 		argattributes.notNil.if({attributes.putAll(argattributes)}); // local settings override
@@ -272,12 +271,12 @@ BMPlugin {
 	}
 	
 	makeDef {
-		defName = spec.name ++ numChannels; 
+		defName = spec.name; 
 		if(attributes.notNil, { defName = defName ++ "-" ++ UniqueID.next});
 		def = SynthDef(defName, {arg i_in, cfgate = 1;
 			var input, out;
 			input = In.ar(i_in);
-			out = SynthDef.wrap(spec.ugenGraphFunc, nil, [this, numChannels, input]);
+			out = SynthDef.wrap(spec.ugenGraphFunc, nil, [this, input]);
 			XOut.ar(i_in, 
 				EnvGen.kr(Env.asr(BMOptions.crossfade, 1, BMOptions.crossfade), cfgate, 
 					doneAction: 2),
