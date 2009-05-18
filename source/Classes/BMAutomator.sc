@@ -585,7 +585,7 @@ BMArbitraryStartSnapShot : BMAbstractSnapShot {
 // needs to respond to loading, etc.
 // need to protect against path = nil
 BMControllerAutomatorGUI : BMAbstractGUI {
-	var ca, <envView;
+	var ca, envView;
 	var path, sf, durInv, sfView, scrollView, selectView, backView, timesView;
 	var activeSequence, activeSnapshot;
 	var sequenceLevels;
@@ -598,7 +598,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	
 	*new {|ca, name, origin|
 		//^super.new.init(ca, name ? ca.name ? "test").makeWindow(origin ? (40@200));
-		^super.new.init(ca, name ? "test").makeWindow(origin ? (40@200));
+		^super.new.init(ca, name ? "Soundfile / Controller Snapshots").makeWindow(origin ? (40@200));
 	}
 	
 	init {|argCa, argName|
@@ -619,7 +619,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		//f.openRead("sounds/a11wlk01.wav");
 		//f.openRead("/Users/scottw/Music/SuperCollider\ Recordings/SC_080725_143355.aiff");
 		
-		window = SCWindow.new("Soundfile / Controller Snapshots", Rect(200, 200, width, 400), false);
+		window = SCWindow.new(name, Rect(200, 200, width, 400), false);
 		window.view.decorator = FlowLayout(window.view.bounds);
 		
 		window.view.keyDownAction = { arg view,char,modifiers,unicode,keycode;
@@ -1128,10 +1128,11 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 
 //Runs as a sheet
 BMSnapShotSliders : BMAbstractGUI {
-	var snapshot, sliders, fromUpdate = false;
-	var needsRefresh = false;
-	var <>refreshInterval = 0.05;
-	var refreshLoopOn = false;
+	var snapshot, sliders;
+//	var fromUpdate = false;
+//	var needsRefresh = false;
+//	var <>refreshInterval = 0.05;
+//	var refreshLoopOn = false;
 	
 	*new {|snapshot, parent|
 		^super.new.init(snapshot)
@@ -1163,10 +1164,10 @@ BMSnapShotSliders : BMAbstractGUI {
 			postf("init: %\n", initVal);
 			sliders[label] = EZSlider.new(window, 640@20, label.asString, displaySpec,
 				{|ez| 
-					if(fromUpdate.not, {
+//					if(fromUpdate.not, {
 						// convert back to 0..1
 						snapshot.setValue(label, displaySpec.unmap(ez.value));
-					})
+//					})
 				}, initVal, layout: \horz, labelWidth: labelWidth, unitWidth: unitWidth
 			);
 			//sliders[label].numberView.background = Color.white.alpha_(0.4);
@@ -1228,10 +1229,10 @@ BMSnapShotSliders : BMAbstractGUI {
 
 // runs as a sheet
 BMSnapShotSeqConfigGUI : BMAbstractGUI {
-	var sliders, fromUpdate = false;
-	var needsRefresh = false;
-	var <>refreshInterval = 0.05;
-	var refreshLoopOn = false;
+//	var sliders, fromUpdate = false;
+//	var needsRefresh = false;
+//	var <>refreshInterval = 0.05;
+//	var refreshLoopOn = false;
 	
 	*new {|parent|
 		^super.new.makeWindow(parent);
@@ -1254,7 +1255,7 @@ BMSnapShotSeqConfigGUI : BMAbstractGUI {
 			Rect(300, 300, (numColumns * (toggleWidth + 4)) + 4, 24 * numRows + 28)); // 508
 		window.view.decorator = FlowLayout(window.view.bounds);
 		window.view.background = Color.rand.alpha_(0.3);
-		sliders = IdentityDictionary.new;
+		//sliders = IdentityDictionary.new;
 		allControls.keys.asArray.sort.do({|label, i|
 			var control;
 			control = allControls[label];
