@@ -1,316 +1,148 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
- <hmtl>
- 
+<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="Content-Style-Type" content="text/css">
-<title>SuperCollider Help -BMControllerAutomator</title>
+<title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="824.42">
+<meta name="CocoaVersion" content="949.43">
 <style type="text/css">
-p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
-p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
-p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p8 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
-p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #d40000}
-p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000ff}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
+p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
+p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p10 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
 p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
 p.p12 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica; min-height: 17.0px}
-p.p13 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #d40000}
-p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #1200c4}
-span.s3 {color: #1200c4}
-span.s4 {color: #000000}
-span.s5 {color: #1200c4}
-span.s6 {color: #d40000}
-span.s7 {font: 12.0px Helvetica; color: #000000}
-span.s8 {color: #1200c4}
-span.s9 {color: #1200c4}
+p.p13 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #c21d1c}
+p.p14 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0017c2}
+p.p15 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
+p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #c21d1c}
+p.p17 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0017c2}
+p.p18 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+span.s1 {font: 12.0px Helvetica}
+span.s2 {color: #000000}
+span.s3 {color: #0000ff}
+span.s4 {color: #c21d1c}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
- <body>
- 
-<p class="p1"><span class="s1"><b>BMControllerAutomator<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>explanation of what BMControllerAutomator is and/or does</b><span class="s1"><b><span class="Apple-tab-span">	</span></b></span></p>
+<body>
+<p class="p1"><b>BMControllerAutomator<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b><span class="s1"><b>automate Controls</b></span><b><span class="Apple-tab-span">	</span></b></p>
 <p class="p2"><br></p>
-<p class="p1"><b>Inherits from: </b><b> Object : BMAbstractAutomator : BMAbstractIndependentRateAutomator </b></p>
-<p class="p3"><br></p>
-<p class="p1">More detailed prose description of BMControllerAutomator.</p>
+<p class="p3"><span class="s2"><b>Inherits from: </b><a href="SC://Object"><b>Object</b></a><b> : </b><a href="BMAbstractAutomator.html"><b>BMAbstractAutomator</b></a><b> : </b><a href="BMAbstractIndependentRateAutomator.html"><b>BMAbstractIndependentRateAutomator</b></a></span></p>
+<p class="p4"><br></p>
+<p class="p5">BMControllerAutomator is used to automate controls such as motorised faders or GUI sliders. The subclass instance of BMAbstractController representing the any automated controls should respond to <b>acceptsAutomation</b> with true.</p>
 <p class="p2"><br></p>
-<p class="p1"><b>See also:</b> <a href="../Core/Object.html"><span class="s2">Object</span></a> [some other help files]</p>
+<p class="p5">BMControllerAutomator may have any number of automation sequences (instances of <a href="BMSnapShotSeq.html"><span class="s3">BMSnapShotSeq</span></a>), each consisting of a number of <a href="BMSnapShot.html"><span class="s3">BMSnapShot</span></a>s and beginning with a <a href="BMArbitraryStartSnapShot.html"><span class="s3">BMArbitraryStartSnapShot</span></a>. (This allows one to combine realtime performance with automation, by accounting for the fact that the state of controllers at the start of a sequence may not be known.)<span class="Apple-converted-space"> </span></p>
 <p class="p2"><br></p>
-<p class="p4"><b>Some Important Issues Regarding BMControllerAutomator (optional)</b></p>
+<p class="p5">Snapshots represent a series of momentary states for the controls being automated in a sequence, and are used as target points for interpolation.</p>
+<p class="p2"><span class="Apple-converted-space"> </span></p>
+<p class="p5">Sequences can overlap in time, and can automate any desired subgroup of controls. <b>N.B.</b> If more than one sequence attempts to automate the same control within a given automation cycle, all but the first processed will be ignored.</p>
 <p class="p2"><br></p>
-<p class="p1">Explanation of the issues. For more information see <a href="../Core/Nil.html"><span class="s3">Nil</span></a> and [some other help files].</p>
+<p class="p5">Since the times and orderings of sequences and snapshots might change, they are referred to by name, represented by a <a href="SC://Symbol"><span class="s3">Symbol</span></a>.</p>
 <p class="p2"><br></p>
- 
-<p class="p4"><b>Creation / Class Methods</b></p>
-<p class="p5"><br></p>
-  
-<p class="p6"><b><span class="Apple-tab-span">	</span>*new (controls, timeref)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>controls </b>- Explanation of controls. Default value is nil. Other information.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>timeref </b>- Explanation of timeref. Default value is nil. Other information.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMControllerAutomator</span>.new;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
+<p class="p3"><span class="s2"><b>See also:</b> <a href="../Root Classes/BMControl.html">BMControl</a>, <a href="../Root Classes/BMAbstractController.html">BMAbstractController</a>, <a href="BMAbstractAutomator.html">BMAbstractAutomator</a>, <a href="BMAbstractIndependentRateAutomator.html">BMAbstractIndependentRateAutomator</a>, <a href="../../Time References and Automation.html">Time References and Automation</a>, <a href="BMAbstractSnapShot.html">BMAbstractSnapShot</a>, <a href="BMSnapShotSeq.html">BMSnapShotSeq</a></span></p>
+<p class="p2"><br></p>
+<p class="p6"><b>Creation / Class Methods</b></p>
+<p class="p7"><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>*new (controls, timeref)</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Create a new BMControllerAutomator.</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>controls </b>- An <a href="SC://Array"><span class="s3">Array</span></a> of Symbols corresponding the names of the <a href="../Root Classes/BMControl.html"><span class="s3">BMControl</span></a> instances to be automated.</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>timeref </b>- The object to serve as this automator's time reference. This might be any object which complies with the guidelines set out in <a href="../../Time References and Automation.html"><span class="s3">Time References and Automation</span></a>.</p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
 <p class="p11"><b>Accessing Instance and Class Variables</b></p>
-<p class="p7"><span class="Apple-tab-span">	</span></p>
-  
-<p class="p6"><b><span class="Apple-tab-span">	</span>sequences</b></p>
- 
-<p class="p7"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Explanation including the type of <b>sequences </b>and a link to its help file.</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Default value is nil.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>controls</b></p>
- 
-<p class="p7"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Explanation including the type of <b>controls </b>and a link to its help file.</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Default value is nil.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
- <p class="p11"><b>Doing Some Task (optional)</b></p>
+<p class="p9"><span class="Apple-tab-span">	</span></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>sequences</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Returns an <a href="SC://IdentityDictionary"><span class="s3">IdentityDictionary</span></a> containing one or more instances of <a href="BMSnapShotSeq.html"><span class="s3">BMSnapShotSeq</span></a>. Sequence names serve as keys.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>controls</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Returns an <a href="SC://Array"><span class="s3">Array</span></a> of Symbols corresponding the names of the <a href="../Root Classes/BMControl.html"><span class="s3">BMControl</span></a> instances to be automated.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><b>Instance Methods</b></p>
 <p class="p12"><br></p>
-<p class="p6">A short bit of prose explaining something about the task.</p>
-<p class="p7"><span class="Apple-tab-span">	</span></p>
-    
-<p class="p6"><b><span class="Apple-tab-span">	</span>init (argctrls, argref)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>argctrls </b>- Explanation of argctrls. Default value is nil. Other information.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>argref </b>- Explanation of argref. Default value is nil. Other information.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMControllerAutomator</span>.init;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>addSequence (seqName, startTime, ctrlNames)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>seqName </b>- Explanation of seqName. Default value is nil. Other information.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>startTime </b>- Explanation of startTime. Default value is nil. Other information.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>ctrlNames </b>- Explanation of ctrlNames. Default value is nil. Other information.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMControllerAutomator</span>.addSequence;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>mappings</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMControllerAutomator</span>.mappings;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>mappings_ (mappings)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>mappings </b>- Explanation of mappings. Default value is nil. Other information.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMControllerAutomator</span>.mappings_;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>addStartSnapShot</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMControllerAutomator</span>.addStartSnapShot;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>addSnapShot (seqName, ssTime, ssName)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>seqName </b>- Explanation of seqName. Default value is nil. Other information.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>ssTime </b>- Explanation of ssTime. Default value is nil. Other information.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>ssName </b>- Explanation of ssName. Default value is nil. Other information.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMControllerAutomator</span>.addSnapShot;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>addIndividualSequences (seqName, startTime)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>seqName </b>- Explanation of seqName. Default value is nil. Other information.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>startTime </b>- Explanation of startTime. Default value is nil. Other information.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMControllerAutomator</span>.addIndividualSequences;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>removeSequence (seq)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>seq </b>- Explanation of seq. Default value is nil. Other information.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMControllerAutomator</span>.removeSequence;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>sequence (name)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>name </b>- Explanation of name. Default value is nil. Other information.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMControllerAutomator</span>.sequence;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>automate</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMControllerAutomator</span>.automate;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>reset</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMControllerAutomator</span>.reset;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>clearLastAutomated</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMControllerAutomator</span>.clearLastAutomated;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>free</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMControllerAutomator</span>.free;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>update (changed, what, args)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>changed </b>- Explanation of changed. Default value is nil. Other information.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>what </b>- Explanation of what. Default value is nil. Other information.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>args </b>- Explanation of args. Default value is  [  ]. Other information.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMControllerAutomator</span>.update;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>gui</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMControllerAutomator</span>.gui;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
+<p class="p8"><b><span class="Apple-tab-span">	</span>addSequence (seqName, startTime, ctrlNames)</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Add a new automation sequence.</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>seqName </b>- A <a href="SC://Symbol"><span class="s3">Symbol</span></a> serving as a name for this sequence.</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>startTime </b>- A time in seconds corresponding to the start time of this sequence.</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>ctrlNames </b>- An <a href="SC://Array"><span class="s3">Array</span></a> of Symbols corresponding the names of the <a href="../Root Classes/BMControl.html"><span class="s3">BMControl</span></a> instances to be automated. These must be inculded in the list of <b>controls</b> passed when this automator was created.</p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>mappings</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Returns an <a href="SC://IdentityDictionary"><span class="s3">IdentityDictionary</span></a> containing this automator's sequences. Sequence names serve as keys.</p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>mappings_ (mappings)</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Sets this automators sequences. <b>mappings</b> should be an IdentityDictionary in the form of sequenceNameSymbol-&gt;BMSnapShotSeq.</p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>addSnapShot (seqName, ssTime, ssName)</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Add a controller snapshot to a sequence.</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>seqName </b>- A <a href="SC://Symbol"><span class="s3">Symbol</span></a> indicating the name of the sequence to add the snapshot to.</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>ssTime </b>- The time in seconds at which to add the snapshot.</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>ssName </b>- A <a href="SC://Symbol"><span class="s3">Symbol</span></a> indicating the name of this snapshot.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p13"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
+<p class="p14"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMControllerAutomator<span class="s2">.addSnapShot;</span></p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s4">// explanation</span></p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>addIndividualSequences (seqName, startTime)</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>This is a convenience method to add individual sequences for each controller. The sequences will have names in the form of <b>seqName-controllerName</b>.</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>seqName </b>- A <a href="SC://Symbol"><span class="s3">Symbol</span></a> indicating the base name for the individual sequences.</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>startTime </b>- The start time in seconds at which to add the sequences.</p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>removeSequence (seq)</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Remove an automation sequence from this automator.</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>seq </b>- A <a href="SC://Symbol"><span class="s3">Symbol</span></a> indicating the name of the sequence to be removed.</p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>sequence (name)</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Return a particular sequence.</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>name </b>- A Symbol indicating the name of the sequence to return.</p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>reset</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>This resets all sequences (clears the states of their arbitrary start snapshots).</p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>free</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Unassigns this as automator for all its controls.</p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span>gui</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Creates and returns a new <a href="BMControllerAutomatorGUI.html"><span class="s3">BMControllerAutomatorGUI</span></a> for this automator.</p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
 <p class="p11"><b>Examples</b></p>
-<p class="p3"><br></p>
-<p class="p14">// what this example does</p>
-<p class="p15">e = <span class="s9">BMControllerAutomator</span>.new;</p>
-<p class="p15">e.instanceMethod(someObject);</p>
-<p class="p15">e.cleanUp;</p>
-<p class="p3"><br></p>
-<p class="p15">...</p>
- </body> </html>
+<p class="p4"><br></p>
+<p class="p16">// what this example does</p>
+<p class="p17"><span class="s2">e = </span>BMControllerAutomator<span class="s2">.new;</span></p>
+<p class="p18">e.instanceMethod(someObject);</p>
+<p class="p18">e.cleanUp;</p>
+<p class="p4"><br></p>
+<p class="p18">...</p>
+</body>
+</html>
