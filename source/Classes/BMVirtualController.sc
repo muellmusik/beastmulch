@@ -101,18 +101,23 @@ BMVirtualControllerSliders : BMAbstractGUI {
 		sliders = Array.newClear(numSliders);
 		specs = Array.newClear(numSliders);
 		virtualCont.controlNames.do({|controlName, i|
-			var initVal, control, displaySpec;
+			var initVal, control, label, displaySpec;
+			label = virtualCont.getLabel(i + 1);
+			if(label.size == 0, {label =  controlName.asString }); 
 			control = BMAbstractController.allControls[controlName.asSymbol];
 			displaySpec = control.displaySpec;
 			initVal = displaySpec.map(virtualCont.getVal(i + 1));
-			sliders[i] = EZSlider.new(window, 640@20, controlName.asString.postln, displaySpec,
+			sliders[i] = EZSlider.new(window, 
+				640@20, 
+				label, 
+				displaySpec,
 				{|ez| var setVal;
 					if(fromUpdate.not, {
 						setVal = displaySpec.unmap(ez.value);
 						virtualCont.setVal(i + 1, setVal);
 						//setVal.postln;
 					})
-				}, initVal, labelWidth: 120
+				}, initVal, labelWidth: 100
 			);
 			sliders[i].numberView.background = Color.white.alpha_(0.4);
 			specs[i] = displaySpec;
