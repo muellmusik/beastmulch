@@ -1,4 +1,4 @@
-{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf330
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf350
 {\fonttbl\f0\fnil\fcharset0 Monaco;}
 {\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red0\green115\blue0;
 \red96\green96\blue96;}
@@ -19,6 +19,7 @@
 s.options.numOutputBusChannels = 32;s.boot;\
 (\
 ~numGrains = 32;\
+\pard\pardeftab560\ql\qnatural
 \cf2 //~outs = this.executeFile(Document.current.dir.dirname ++ "/january channel list.rtf".standardizePath)[0];\cf0 \
 \cf2 //~outs = Object.readArchive(Document.current.dir.dirname ++ "/january channel listLev.rtf".standardizePath);\cf0 \
 \cf2 //~outs = Object.readArchive(Document.current.dir.dirname ++"/august\\ 08\\ channel\\ list calc.rtf");\cf0 \
@@ -33,18 +34,18 @@ s.options.numOutputBusChannels = 32;s.boot;\
 \cf2 // el of 5m for upper assuming lower is 1m\cf0 \
 ~outs.copy.do(\{\cf3 |assoc, i|\cf0  ~outs.add((i+8)->assoc.value.deepCopy.index_(~indices[i]+8).z_(5));\});\
 \
-(8..13).do(\{|i| var speak; speak = ~outs.atIndex(i).value; speak.y = speak.y + 4 \});\
+(8..13).do(\{|i| var speak; speak = ~outs.at(i).value; speak.y = speak.y + 4 \});\
 \
 \
-~maxX = ~outs.collect(\{\cf3 |assoc|\cf0  assoc.value.x.abs \}).maxItem;\
-~yvals = ~outs.collect(\{\cf3 |assoc|\cf0  assoc.value.y \});\
+~maxX = ~outs.collectAs(\{\cf3 |assoc|\cf0  assoc.value.x.abs \}, Array).maxItem;\
+~yvals = ~outs.collectAs(\{\cf3 |assoc|\cf0  assoc.value.y \}, Array);\
 ~hiY = ~yvals.maxItem / ~maxX;\
 ~lowY = ~yvals.minItem / ~maxX;\
 ~ySIze = ~hiY - ~lowY;\
 w = \cf3 SCWindow\cf0 (\cf5 "Swarm Granulate"\cf0 , ~rect = \cf3 Rect\cf0 (100,200, 1000 / ([~hiY, ~lowY].abs.maxItem) * 0.8, 1020)).front;\
 \
-~hiZ = ~outs.collect(\{\cf3 |assoc|\cf0  assoc.value.z \}).maxItem / ~maxX;\
-~lowZ = ~outs.collect(\{\cf3 |assoc|\cf0  assoc.value.z \}).minItem / ~maxX;\
+~hiZ = ~outs.collectAs(\{\cf3 |assoc|\cf0  assoc.value.z \}, Array).maxItem / ~maxX;\
+~lowZ = ~outs.collectAs(\{\cf3 |assoc|\cf0  assoc.value.z \}, Array).minItem / ~maxX;\
 \cf2 //SCButton(w, Rect(0, 0, 150, 20))\cf0 \
 \cf2 //	.states_([["pick another QC file"]])\cf0 \
 \cf2 //	.action_(\{ File.openDialog("", \{ |path| m.path_(path) \}) \});\cf0 \
@@ -60,10 +61,10 @@ m.sphereScale = 0.02;\
 ~colours = \cf3 Pseq\cf0 ([\cf3 Color\cf0 .green.alpha_(0.6), \cf3 Color\cf0 .red.alpha_(0.6), \cf3 Color\cf0 .blue.alpha_(0.6), \cf3 Color\cf0 .yellow.alpha_(0.6), \cf3 Color\cf0 .white.alpha_(0.6)], \cf3 inf\cf0 ).asStream;\
 m.startY = ~hiY;\
 m.endY = ~lowY;\
-~floorZ = ~outs.collect(\{\cf3 |assoc|\cf0  assoc.value.z \}).minItem / ~maxX;\
+~floorZ = ~outs.collectAs(\{\cf3 |assoc|\cf0  assoc.value.z \}, Array).minItem / ~maxX;\
 m.floorZ = ~floorZ - 0.2;\
 \
-r = ~outs.collect(\{\cf3 |assoc|\cf0  \
+r = ~outs.collectAs(\{\cf3 |assoc|\cf0  \
 	\cf3 var\cf0  x, y, z, nameStart, colour;\
 	x = assoc.value.x / ~maxX;\
 	y = assoc.value.y / ~maxX;\
@@ -73,9 +74,9 @@ r = ~outs.collect(\{\cf3 |assoc|\cf0  \
 	~oldNameStart = nameStart; ~oldColour = colour;\
 	[x, y, z, colour, \cf3 Point\cf0 (x, y).theta * 57.295779513082, assoc.key.asString] \
 	\
-\});\
+\}, Array);\
 \
-k = \cf3 KDTree\cf0 (~outs.collect(\{\cf3 |assoc|\cf0  \
+k = \cf3 KDTree\cf0 (~outs.collectAs(\{\cf3 |assoc|\cf0  \
 	\cf3 var\cf0  x, y, z;\
 	x = assoc.value.x / ~maxX;\
 	y = assoc.value.y / ~maxX;\
@@ -83,12 +84,13 @@ k = \cf3 KDTree\cf0 (~outs.collect(\{\cf3 |assoc|\cf0  \
 	\
 	[x, y, z, assoc.value.index] \
 	\
-\}), lastIsLabel: \cf3 true\cf0 );\
+\}, Array), lastIsLabel: \cf3 true\cf0 );\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
 \cf0 \
 \pard\pardeftab560\ql\qnatural
 \cf0 \
+\pard\pardeftab560\ql\qnatural
 \cf2 //k.nearest([0, 0, 0])[0].label\cf0 \
 \
 \cf2 //\cf0 \
@@ -120,6 +122,7 @@ b = \cf3 BMGrainBoidSpace\cf0 (3, ~numGrains, \cf3 nil\cf0 , [[-1.2, ~lowY * 1.2
 \pard\pardeftab560\ql\qnatural
 \cf0 \
 ~draw = \cf3 Task\cf0 (\{\
+\pard\pardeftab560\ql\qnatural
 \cf3 AppClock\cf0 .sched(0, \{\
 \cf2 //b.numBoids.do(\{b.moveNext\});\cf0 \
 m.positions = b.boids.collect(\cf3 _\cf0 .pos);\

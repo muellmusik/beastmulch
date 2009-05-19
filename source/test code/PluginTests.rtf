@@ -1,34 +1,33 @@
-{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf420
-{\fonttbl\f0\fnil\fcharset77 Monaco;}
-{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red0\green115\blue0;
-\red191\green0\blue0;\red0\green115\blue0;\red191\green0\blue0;\red0\green0\blue191;}
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf430
+{\fonttbl\f0\fnil\fcharset0 Monaco;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red0\green115\blue0;\red191\green0\blue0;
+}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
-\f0\fs18 \cf2 p = \cf3 BMPlugin\cf2 (\cf4 \\lowpass\cf2 , 1);\
+\f0\fs18 \cf0 p = \cf2 BMPlugin\cf0 (\cf3 \\lowpass\cf0 );\
 \
 p.makeSynth(3);\
 \
 p.synth.trace;\
 \
-p.set(\cf4 \\freq\cf2 , 880);\
+p.set(\cf3 \\freq\cf0 , 880);\
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf2 p.synth.trace;\
+p.synth.trace;\
 \
 p.debug;\
 \
 p.release;\
 \
-p = \cf3 BMPlugin\cf2 (\cf4 \\highpass\cf2 , 1);\
+p = \cf2 BMPlugin\cf0 (\cf3 \\highpass\cf0 );\
 \
-p.preset = \cf4 \\tweeters\cf2 ;\
+p.preset = \cf3 \\tweeters\cf0 ;\
 \
 p.gui;\
 p.debug;\
 \
 p.bus;\
 \
-p = \cf3 BMPlugin\cf2 (\cf4 '3 Band EQ'\cf2 , 1);\
+p = \cf2 BMPlugin\cf0 (\cf3 '3 Band EQ'\cf0 );\
 \
 p.makeSynth(3);\
 p.gui;\
@@ -36,41 +35,42 @@ p.debug;\
 \
 p.attributes.dump\
 \
-\cf5 /////\cf2 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf4 /////\cf0 \
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf2 ~ins = [\cf4 \\DistL\cf2 , \cf4 \\DistR\cf2 , \cf4 \\WideL\cf2 , \cf4 \\WideR\cf2 , \cf4 \\SideL\cf2 , \cf4 \\SideR\cf2 , \cf4 \\RearL\cf2 , \cf4 \\RearR\cf2 , \cf4 \\MainL\cf2 , \cf4 \\MainR\cf2 , \cf4 \\SubL\cf2 , \cf4 \\SubR\cf2 , \cf4 \\SeaShl\cf2 , \cf4 \\Aux1\cf2 , \cf4 \\Aux2\cf2 ].collectAs(\{\cf3 |item, i|\cf2  item -> i\}, \cf3 OutputArray\cf2 );\
+\cf0 ~ins = [\cf3 \\DistL\cf0 , \cf3 \\DistR\cf0 , \cf3 \\WideL\cf0 , \cf3 \\WideR\cf0 , \cf3 \\SideL\cf0 , \cf3 \\SideR\cf0 , \cf3 \\RearL\cf0 , \cf3 \\RearR\cf0 , \cf3 \\MainL\cf0 , \cf3 \\MainR\cf0 , \cf3 \\SubL\cf0 , \cf3 \\SubR\cf0 , \cf3 \\SeaShl\cf0 , \cf3 \\Aux1\cf0 , \cf3 \\Aux2\cf0 ].collectAs(\{\cf2 |item, i|\cf0  item -> i\}, \cf2 OutputArray\cf0 );\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf2 r = \cf3 BMTrimPluginsRack\cf2 (~ins, name: \cf4 \\foo\cf2 );\
+\cf0 r = \cf2 BMTrimPluginsRack\cf0 (~ins, name: \cf3 \\foo\cf0 );\
 \
-r[\cf4 \\DistR\cf2 ].input;\
-r[\cf4 \\DistL\cf2 ].addPlugin(\cf3 BMPlugin\cf2 (\cf4 '3 Band EQ'\cf2 , 1))\
+r[\cf3 \\DistR\cf0 ].input;\
+r[\cf3 \\DistL\cf0 ].addPlugin(\cf2 BMPlugin\cf0 (\cf3 '3 Band EQ'\cf0 ))\
 \
-r[\cf4 \\DistL\cf2 ].group;\
+r[\cf3 \\DistL\cf0 ].group;\
 \
-r[\cf4 \\DistL\cf2 ].addPlugin(\cf3 BMPlugin\cf2 (\cf4 \\highpass\cf2 , 1));\
+r[\cf3 \\DistL\cf0 ].addPlugin(\cf2 BMPlugin\cf0 (\cf3 \\highpass\cf0 ));\
 \
-r[\cf4 \\DistL\cf2 ].addPlugin(p = \cf3 BMPlugin\cf2 (\cf4 \\lowpass\cf2 , 1));\
+r[\cf3 \\DistL\cf0 ].addPlugin(p = \cf2 BMPlugin\cf0 (\cf3 \\lowpass\cf0 ));\
 \
-r[\cf4 \\DistL\cf2 ].movePluginUp(2);\
+r[\cf3 \\DistL\cf0 ].movePluginUp(2);\
 \
-r[\cf4 \\DistL\cf2 ].movePluginDown(1);\
+r[\cf3 \\DistL\cf0 ].movePluginDown(1);\
 \
-r[\cf4 \\DistL\cf2 ].movePluginUp(0); \cf5 // should do nothing\
+r[\cf3 \\DistL\cf0 ].movePluginUp(0); \cf4 // should do nothing\
 \
-\cf0 r[\cf6 \\DistL\cf0 ].movePluginDown(2); \cf7 // should do nothing\
+\cf0 r[\cf3 \\DistL\cf0 ].movePluginDown(2); \cf4 // should do nothing\
 \
-\cf0 r[\cf6 \\DistL\cf0 ].removePlugin(0);\cf2 \
+\cf0 r[\cf3 \\DistL\cf0 ].removePlugin(0);\
 s.dumpOSC(0)\
 \
 (\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf0 ~ins = [\cf6 \\DistL\cf0 , \cf6 \\DistR\cf0 , \cf6 \\WideL\cf0 , \cf6 \\WideR\cf0 , \cf6 \\SideL\cf0 , \cf6 \\SideR\cf0 , \cf6 \\RearL\cf0 , \cf6 \\RearR\cf0 , \cf6 \\MainL\cf0 , \cf6 \\MainR\cf0 , \cf6 \\SubL\cf0 , \cf6 \\SubR\cf0 , \cf6 \\SeaShl\cf0 , \cf6 \\Aux1\cf0 , \cf6 \\Aux2\cf0 ].collectAs(\{\cf8 |item, i|\cf0  item -> i\}, \cf8 OutputArray\cf0 );\
+\cf0 ~ins = [\cf3 \\DistL\cf0 , \cf3 \\DistR\cf0 , \cf3 \\WideL\cf0 , \cf3 \\WideR\cf0 , \cf3 \\SideL\cf0 , \cf3 \\SideR\cf0 , \cf3 \\RearL\cf0 , \cf3 \\RearR\cf0 , \cf3 \\MainL\cf0 , \cf3 \\MainR\cf0 , \cf3 \\SubL\cf0 , \cf3 \\SubR\cf0 , \cf3 \\SeaShl\cf0 , \cf3 \\Aux1\cf0 , \cf3 \\Aux2\cf0 ].collectAs(\{\cf2 |item, i|\cf0  item -> i\}, \cf2 OutputArray\cf0 );\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 r = \cf8 BMTrimPluginsRack\cf0 (~ins, name: \cf6 'Pre-processing'\cf0 );\
-r[\cf6 \\DistL\cf0 ].addPlugin(\cf8 BMPlugin\cf0 (\cf6 \\highpass\cf0 , 1));\
-r[\cf6 \\DistL\cf0 ].addPlugin(\cf8 BMPlugin\cf0 (\cf6 \\lowpass\cf0 , 1));\cf2 \
+\cf0 r = \cf2 BMTrimPluginsRack\cf0 (~ins, name: \cf3 'Pre-processing'\cf0 );\
+r[\cf3 \\DistL\cf0 ].addPlugin(\cf2 BMPlugin\cf0 (\cf3 \\highpass\cf0 ));\
+r[\cf3 \\DistL\cf0 ].addPlugin(\cf2 BMPlugin\cf0 (\cf3 \\lowpass\cf0 ));\
 r.gui;\
 )}

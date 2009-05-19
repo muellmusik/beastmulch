@@ -66,7 +66,7 @@ BMEtherSense : BMAbstractController {
 	
 	// assumes fader 1 = 1 not 0
 	// returns value between 0 and 1
-	getVal { |faderNum| ^spec.unmap(valueArray[faderNum -1]) }
+	getVal { |controlNum| ^spec.unmap(valueArray[controlNum -1]) }
 	
 	setVal { this.shouldNotImplement(thisMethod) }
 	
@@ -76,10 +76,10 @@ BMEtherSense : BMAbstractController {
 	
 	// for faders
 //	getInputArray {
-//		^this.faderNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
+//		^this.controlNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
 //	}
 	
-//	faderNames {^Array.fill(numControls, {|i| name.asString ++ "-" ++ (i+1)})}
+//	controlNames {^Array.fill(numControls, {|i| name.asString ++ "-" ++ (i+1)})}
 	
 	// perhaps this should be more generalised and named something else like 'preset'
 	mappings {

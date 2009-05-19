@@ -660,16 +660,16 @@ importButton.action 	= \{ \cf3 CocoaDialog\cf0 .getPaths(\{\cf3 |paths|\cf0  \
 						\
 						from.keysValuesDo\{\cf3 | controllerName, value |\cf0 \
 							         envs.add(controllerName -> \
-							         		    value.collect\{\cf3 | faderValue, faderNum |\cf0  \
+							         		    value.collect\{\cf3 | faderValue, controlNum |\cf0  \
 							          			\cf3 Env\cf0 ([ faderValue ] \
 							          			    ++ \
 							          			    levels.collect\{\cf3 | aLevel, levelNum |\cf0  \
 							          			        [ controllerName, \
-							          			          \cf4 "faderNum: "\cf0  + faderNum, \
+							          			          \cf4 "controlNum: "\cf0  + controlNum, \
 							          			          \cf4 "levelNum: "\cf0  + (levelNum + 1), \
-							          			          \cf4 "levelValue: "\cf0  + aLevel[controllerName][faderNum] \
+							          			          \cf4 "levelValue: "\cf0  + aLevel[controllerName][controlNum] \
 							          			        ].postln;\
-							          			        aLevel[controllerName][faderNum] \}, \
+							          			        aLevel[controllerName][controlNum] \}, \
 							          			    \
 							          			    durs, \
 							          			    ~curve) \

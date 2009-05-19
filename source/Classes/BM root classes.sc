@@ -159,15 +159,25 @@ BMAbstractController {
 	}
 	
 	addControlsToIndex {
-		this.faderNames.do({|ctrlName, i|
+		this.controlNames.do({|ctrlName, i|
 			ctrlName = ctrlName.asSymbol;
 			allControls[ctrlName] = BMControl(ctrlName, this, i + 1);
 		});
 	}
 	
-	getVal { |faderNum| ^this.subclassResponsibility(thisMethod) }
+	free {
+		this.controlNames.do({|ctrlName, i|
+			ctrlName = ctrlName.asSymbol;
+			allControls[ctrlName].mappedTo_(nil);
+			allControls[ctrlName] = nil;
+		});
+		allControllers[name] = nil;	
+		bus.free;
+	}
 	
-	setVal { |faderNum, val| this.subclassResponsibility(thisMethod) }
+	getVal { |controlNum| ^this.subclassResponsibility(thisMethod) }
+	
+	setVal { |controlNum, val| this.subclassResponsibility(thisMethod) }
 	
 	getAllValues { ^this.subclassResponsibility(thisMethod) }
 	
@@ -186,14 +196,14 @@ BMAbstractController {
 	
 	setAllLabels { |array| }
 	
-	faderNames {^Array.fill(numControls, {|i| name.asString ++ "-" ++ (i+1)})}
+	controlNames {^Array.fill(numControls, {|i| name.asString ++ "-" ++ (i+1)})}
 	
 //	getInputArray {
-//		^this.faderNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
+//		^this.controlNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
 //	}
 
 	asBMInOutArray {
-		^this.faderNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
+		^this.controlNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
 	}
 	
 	// perhaps this should be more generalised and named something else like 'preset'

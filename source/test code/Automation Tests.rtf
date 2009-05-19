@@ -30,7 +30,7 @@ y = \cf2 BMSoundFilePlayerGUI\cf0 (x);\
 \
 m = BMAmpControlMatrix(\cf2 c.asBMInOutArray, \cf0 x.asBMInOutArray);\
 \
-c.faderNames.do(\{|name, i| m.connect(name.asSymbol, x.asBMInOutArray.keys[i])\}); \
+c.controlNames.do(\{|name, i| m.connect(name.asSymbol, x.asBMInOutArray.keys[i])\}); \
 m.mappings;\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf0 \

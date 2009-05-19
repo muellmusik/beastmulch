@@ -36,13 +36,13 @@ BMVirtualController : BMAbstractController {
 		allControllers[name] = this;
 	}
 	
-	getVal { |faderNum|
-		^valueArray[faderNum -1];
+	getVal { |controlNum|
+		^valueArray[controlNum -1];
 	}
 	
-	setVal { |faderNum, val| 
+	setVal { |controlNum, val| 
 		var chan;
-		chan = faderNum - 1;
+		chan = controlNum - 1;
 		server.sendMsg("/c_set", busIndex + chan, val);
 		valueArray[chan] = val; 
 		this.changed(\faderVal, chan, val);
@@ -64,10 +64,10 @@ BMVirtualController : BMAbstractController {
 	setAllLabels {|array| array.do({|item, i| this.setLabel(i+1, item);}); }
 	
 //	getInputArray {
-//		^this.faderNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
+//		^this.controlNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
 //	}
 	
-//	faderNames {^Array.fill(numControls, {|i| name.asString ++ "-" ++ (i+1)})}
+//	controlNames {^Array.fill(numControls, {|i| name.asString ++ "-" ++ (i+1)})}
 
 	acceptsAutomation { ^true }
 }
@@ -100,12 +100,12 @@ BMVirtualControllerSliders : BMAbstractGUI {
 		window.view.background = Color.rand.alpha_(0.3);
 		sliders = Array.newClear(numSliders);
 		specs = Array.newClear(numSliders);
-		virtualCont.faderNames.do({|faderName, i|
+		virtualCont.controlNames.do({|controlName, i|
 			var initVal, control, displaySpec;
-			control = BMAbstractController.allControls[faderName.asSymbol];
+			control = BMAbstractController.allControls[controlName.asSymbol];
 			displaySpec = control.displaySpec;
 			initVal = displaySpec.map(virtualCont.getVal(i + 1));
-			sliders[i] = EZSlider.new(window, 640@20, faderName.asString.postln, displaySpec,
+			sliders[i] = EZSlider.new(window, 640@20, controlName.asString.postln, displaySpec,
 				{|ez| var setVal;
 					if(fromUpdate.not, {
 						setVal = displaySpec.unmap(ez.value);

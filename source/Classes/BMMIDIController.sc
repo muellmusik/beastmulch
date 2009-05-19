@@ -67,9 +67,9 @@ BMAbstractMIDIController : BMAbstractController {
 	
 	// assumes fader 1 = 1 not 0
 	// returns value between 0 and 1
-	getVal { |faderNum| ^spec.unmap(valueArray[faderNum -1]) }
+	getVal { |controlNum| ^spec.unmap(valueArray[controlNum -1]) }
 	
-	setVal { |faderNum, val| this.updateValue(faderNum -1, val) }
+	setVal { |controlNum, val| this.updateValue(controlNum -1, val) }
 	
 	getAllValues { ^valueArray.collect({|val| spec.unmap(val)}) }
 	

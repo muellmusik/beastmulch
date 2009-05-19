@@ -57,12 +57,12 @@ BMMotorBEAST : BMAbstractController {
 	
 	// assumes fader 1 = 1 not 0
 	// returns value between 0 and 1
-	getVal { |faderNum| ^spec.unmap(valueArray[faderNum -1]) }
+	getVal { |controlNum| ^spec.unmap(valueArray[controlNum -1]) }
 	
 	// we set the local value on loopback, so we're always in sync
-	setVal { |faderNum, val| 
-		addr.sendMsg("/MF/" ++ (faderNum - 1), spec.map(val).asInteger) 
-		//addr.sendMsg("/MF", *(valueArray.copy[faderNum - 1] = spec.map(val).asInteger))
+	setVal { |controlNum, val| 
+		addr.sendMsg("/MF/" ++ (controlNum - 1), spec.map(val).asInteger) 
+		//addr.sendMsg("/MF", *(valueArray.copy[controlNum - 1] = spec.map(val).asInteger))
 	}
 	
 	getAllValues { ^valueArray.collect({|val| spec.unmap(val)}) }
@@ -74,13 +74,13 @@ BMMotorBEAST : BMAbstractController {
 	
 	// for faders
 //	getInputArray {
-//		^this.faderNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
+//		^this.controlNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
 //	}
 	
-//	faderNames {^Array.fill(numControls, {|i| name.asString ++ "-" ++ (i+1)})}
+//	controlNames {^Array.fill(numControls, {|i| name.asString ++ "-" ++ (i+1)})}
 
-	setLED {|faderNum, colour|
-		addr.sendMsg("/mfLED/" ++ (faderNum - 1), colour)
+	setLED {|controlNum, colour|
+		addr.sendMsg("/mfLED/" ++ (controlNum - 1), colour)
 	}
 	
 	setAllLED {|colour|
