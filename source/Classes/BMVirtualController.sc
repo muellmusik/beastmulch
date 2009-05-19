@@ -25,7 +25,7 @@ BMVirtualController : BMAbstractController {
 	
 	init { |argname, argserver, argnumControls|
 		name = argname;
-		server = argserver.postln;
+		server = argserver;
 		numControls = argnumControls;
 
 		// possibly should move this into super
