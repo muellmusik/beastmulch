@@ -22,7 +22,7 @@ BMEtherSense : BMAbstractController {
 		var class;
 		class = this;
 		^(
-			name: [String, {class.makeName}, "Name"],
+			name: [Symbol, {class.makeName}, "Name"],
 			addr: [NetAddr, "0.0.0.0", "IP Address"]
 		); 
 	}

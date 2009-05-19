@@ -52,7 +52,12 @@ BMControllerConfigGUI : BMAbstractGUI {
 					};
 				});
 			}, {
-				widget.action_({result[argName] = widget.value});
+				widget.action_({
+					var res;
+					res = widget.value;
+					if(paramclass == Symbol, { res = res.asSymbol });
+					result[argName] = res;
+				});
 			});
 			widget.doAction;
 		});

@@ -101,7 +101,7 @@ BMMIDIBendController : BMAbstractMIDIController {
 		var class;
 		class = this;
 		^(
-			name: [String, {class.makeName}, "Name"],
+			name: [Symbol, {class.makeName}, "Name"],
 			uid: [Integer, [-inf, inf, \linear, 1, 0].asSpec, "MIDI Source uid"]
 		); 
 	}
@@ -151,7 +151,7 @@ BMMIDICCController : BMAbstractMIDIController {
 		var class;
 		class = this;
 		^(
-			name: [String, {class.makeName}, "Name"],
+			name: [Symbol, {class.makeName}, "Name"],
 			uid: [Integer, [-inf, inf, \linear, 1, 0].asSpec, "MIDI Source uid"],
 			chan: [Integer, [0, 15, \linear, 1, 0].asSpec, "MIDI Channel"],
 			ccArray: [Int8Array, "", "CC numbers"]

@@ -47,7 +47,7 @@ BMAbstractAudioChainElement {
 		target = argtarget.asTarget;
 		server = target.server;
 		addAction = argaddAction;
-		name = argname ?? {this.makeName};
+		name = argname.asSymbol ?? {this.makeName};
 		allChainElements[name] = this;
 		this.makeGroup;
 	}
@@ -70,7 +70,7 @@ BMAbstractAudioChainElement {
 	// this way if you make them in order
 	makeGroup { group = Group.new(target, addAction); }
 	
-	makeName { ^(this.class.name ++ UniqueID.next)} 
+	makeName { ^(this.class.name ++ UniqueID.next).asSymbol} 
 	
 	release { allChainElements[name] = nil}
 	
@@ -234,7 +234,7 @@ BMAbstractController {
 	
 	*humanName {   ^this.subclassResponsibility(thisMethod);  }
 	
-	*makeName { ^(this.humanName + UniqueID.next)} 
+	*makeName { ^(this.humanName + UniqueID.next).asSymbol} 
 	
 	// {|argsDict| Me.new(...) }
 	*newFromParamDict {|dict, server|   ^this.subclassResponsibility(thisMethod);  }

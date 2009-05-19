@@ -16,7 +16,7 @@ BMVirtualController : BMAbstractController {
 		var class;
 		class = this;
 		^(
-			name: [String, {class.makeName}, "Name"],
+			name: [Symbol, {class.makeName}, "Name"],
 			numControls: [Integer, [1, 64, \linear, 1].asSpec, "Number of Faders"]
 		); 
 	}

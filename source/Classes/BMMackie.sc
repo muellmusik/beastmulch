@@ -18,7 +18,7 @@ BMAbstractMackie : BMAbstractController {
 		var class;
 		class = this;
 		^(
-			name: [String, {class.makeName}, "Name"],
+			name: [Symbol, {class.makeName}, "Name"],
 			uid: [Integer, [-inf, inf, \linear, 1, 0].asSpec, "MIDI Source uid"]
 		); 
 	}

@@ -19,7 +19,7 @@ BMMotorBEAST : BMAbstractController {
 		var class;
 		class = this;
 		^(
-			name: [String, {class.makeName}, "Name"],
+			name: [Symbol, {class.makeName}, "Name"],
 			addr: [String, "0.0.0.0", "IP Address"]
 		); 
 	}
