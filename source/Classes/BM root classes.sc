@@ -185,18 +185,18 @@ BMAbstractController {
 	
 	//setFaders {|array| this.subclassResponsibility(thisMethod)} 
 	
-	setLabel { |fader, name|
+	setLabel { |controlNum, name|
 		this.subclassResponsibility(thisMethod)
 	}
 	
 	// by default controllers have no labels
-	getLabel { |fader| ^nil }
+	getLabel { |controlNum| ^nil }
 	
 	getAllLabels { ^nil}
 	
 	setAllLabels { |array| }
 	
-	controlNames {^Array.fill(numControls, {|i| name.asString ++ "-" ++ (i+1)})}
+	controlNames {^Array.fill(numControls, {|i| (name.asString ++ "-" ++ (i+1)).asSymbol})}
 	
 //	getInputArray {
 //		^this.controlNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);

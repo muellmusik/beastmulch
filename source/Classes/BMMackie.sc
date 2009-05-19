@@ -102,19 +102,19 @@ BMAbstractMackie : BMAbstractController {
 	
 	setAllValues {|array| array.do({|item, i| this.updateValue(i, item); });}
 	
-	setLabel { |fader, name|
+	setLabel { |controlNum, name|
 		var label;
 		//name.notNil.if({label = name.asString;}, {label = "      "});
 		label = name.asString;
 		if(label.size > 6, {"Label too long".warn; }, 
 			{label = label ++ String.fill(6 - label.size, {$ })}); // pad to block
 		label = label.copyFromStart(5);
-		labelArray.put(fader - 1, label);
-		midiout.sysex(sysexHdr ++ Int8Array[16r12, (fader - 1) * 7 + 16r38] 
+		labelArray.put(controlNum - 1, label);
+		midiout.sysex(sysexHdr ++ Int8Array[16r12, (controlNum - 1) * 7 + 16r38] 
 			++ label.collectAs({arg item; item.ascii}, Int8Array).add(16rf7));
 	}
 	
-	getLabel { |fader| ^labelArray[fader-1] }
+	getLabel { |controlNum| ^labelArray[controlNum-1] }
 	
 	getAllLabels { ^labelArray }
 	

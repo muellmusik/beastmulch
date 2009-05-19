@@ -76,9 +76,9 @@ BMAbstractMIDIController : BMAbstractController {
 	setAllValues {|array| array.do({|item, i| this.updateValue(i, item); });}
 	
 	// this has no labels
-	setLabel { |fader, name| this.shouldNotImplement(thisMethod) }
+	setLabel { |controlNum, name| this.shouldNotImplement(thisMethod) }
 	
-	getLabel { |fader| ^this.shouldNotImplement(thisMethod) }
+	getLabel { |controlNum| ^this.shouldNotImplement(thisMethod) }
 	
 	getAllLabels { ^this.shouldNotImplement(thisMethod) }
 	
