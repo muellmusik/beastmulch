@@ -5,7 +5,7 @@
 BMVirtualController : BMAbstractController {
 
 	*new { |name, server, numControls = 8|
-		^super.new.init(name, server ? Server.default, numControls).addControlsToIndex;
+		^super.new.init(name.asSymbol, server ? Server.default, numControls).addControlsToIndex;
 	}
 	
 	*newFromParamDict {|dict, server| 

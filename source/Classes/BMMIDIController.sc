@@ -3,11 +3,11 @@
 // assumes MIDIClient is initialised
 
 BMAbstractMIDIController : BMAbstractController {
-	var <uid, <outPort, <outUid, <midiout;
+	var <midiport, <uid, <outPort, <outUid, <midiout;
 	var responder, <>loopBack = false;
 	var <>acceptsAutomation = false;
 	
-//	*new { |uid, name, server|
+//	*new { |midiport, name, server|
 //		^super.new.init(uid, name, server ? Server.default).addControlsToIndex;
 //	}
 	
@@ -19,20 +19,22 @@ BMAbstractMIDIController : BMAbstractController {
 		this.subclassResponsibility(thisMethod);
 	}
 	
-	init { |arguid, argname, argserver|
-		var titleArray, nameString;
-		uid = arguid;
+	init { |argmidiport, argname, argserver|
+		midiport = argmidiport;
+		uid = midiport.inuid;
+		outUid = midiport.outuid;
+		outPort = midiport.outport;
+		outUid.isNil.if({("outport for" + name + "not found.").warn});
 		name = argname;
-		server = argserver.postln;
-		("Server: " ++ server).postln;
+		server = argserver;
 		this.setNumControls;
 		valueArray = Array.fill(numControls, {0});
 		bus = Bus.control(server, numControls);
 		busIndex = bus.index;
-		this.setOutUid.startListening;
+		this.startListening;
 		midiout = MIDIOut(outPort, outUid);
 		this.makeSpec;
-		this.updateAllFaders(valueArray);
+		this.updateAllValues(valueArray);
 		allControllers[name] = this;
 	}
 	
@@ -43,33 +45,25 @@ BMAbstractMIDIController : BMAbstractController {
 	loopback {
 		this.subclassResponsibility(thisMethod);
 	}
-
-	setOutUid {
-		MIDIClient.sources.do({ |source, i| 
-			if(source.uid == uid, { 
-				outUid = MIDIClient.destinations[i].uid;
-				outPort = i;
-			});	
-		});
-		outUid.isNil.if({("destination for" + uid + "not found.").warn});
-	}
 	
 	updateValue { |ind, val|
 		var value;
-		server.sendMsg("/c_set", busIndex + ind, val);
-		valueArray[ind] = value = spec.map(val).asInteger;
-		if(loopBack || acceptsAutomation, {this.loopback(ind, value)});
+		//server.sendMsg("/c_set", busIndex + ind, val);
+		//valueArray[ind] = value = spec.map(val).asInteger;
+		valueArray[ind] = value = spec.unmap(val).asInteger;
+		server.sendMsg("/c_set", busIndex + ind, value);
+		if(loopBack || acceptsAutomation, {this.loopback(ind, val)});
 	}
 		
-	updateAllFaders { |array|
+	updateAllValues { |array|
 		array.do({|item, i| this.updateValue(i, item)});
 	}
 	
 	// assumes fader 1 = 1 not 0
 	// returns value between 0 and 1
-	getVal { |controlNum| ^spec.unmap(valueArray[controlNum -1]) }
+	getVal { |controlNum| ^spec.map(valueArray[controlNum -1]) }
 	
-	setVal { |controlNum, val| this.updateValue(controlNum -1, val) }
+	setVal { |controlNum, val| this.updateValue(controlNum -1, spec.map(val)) }
 	
 	getAllValues { ^valueArray.collect({|val| spec.unmap(val)}) }
 	
@@ -89,12 +83,12 @@ BMAbstractMIDIController : BMAbstractController {
 // 14 bit bend
 BMMIDIBendController : BMAbstractMIDIController {
 
-	*new { |uid, name, server|
-		^super.new.init(uid, name, server ? Server.default).addControlsToIndex;
+	*new { |midiport, name, server|
+		^super.new.init(midiport, name, server ? Server.default).addControlsToIndex;
 	}
 	
 	*newFromParamDict {|dict, server| 
-		^this.new(dict[\uid], dict[\name], server);
+		^this.new(dict[\midiport], dict[\name], server);
 	}
 	
 	*parameterList { 
@@ -102,7 +96,7 @@ BMMIDIBendController : BMAbstractMIDIController {
 		class = this;
 		^(
 			name: [Symbol, {class.makeName}, "Name"],
-			uid: [Integer, [-inf, inf, \linear, 1, 0].asSpec, "MIDI Source uid"]
+			midiport: [BMMIDIPort, nil, "MIDI Port"]
 		); 
 	}
 	
@@ -137,14 +131,14 @@ BMMIDIBendController : BMAbstractMIDIController {
 BMMIDICCController : BMAbstractMIDIController {
 	var chan, ccArray;
 
-	*new { |uid, name, chan, ccArray, server|
+	*new { |midiport, name, chan, ccArray, server|
 		^super.new
 			.setCCParams(chan, ccArray)
-			.init(uid, name, server ? Server.default).addControlsToIndex;
+			.init(midiport, name, server ? Server.default).addControlsToIndex;
 	}
 	
 	*newFromParamDict {|dict, server| 
-		^this.new(dict[\uid], dict[\name], dict[\chan], dict[\ccArray], server);
+		^this.new(dict[\midiport], dict[\name], dict[\chan], dict[\ccArray], server);
 	}
 	
 	*parameterList { 
@@ -152,7 +146,7 @@ BMMIDICCController : BMAbstractMIDIController {
 		class = this;
 		^(
 			name: [Symbol, {class.makeName}, "Name"],
-			uid: [Integer, [-inf, inf, \linear, 1, 0].asSpec, "MIDI Source uid"],
+			midiport: [BMMIDIPort, nil, "MIDI Port"],
 			chan: [Integer, [0, 15, \linear, 1, 0].asSpec, "MIDI Channel"],
 			ccArray: [Int8Array, "", "CC numbers"]
 		); 

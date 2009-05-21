@@ -1,338 +1,211 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
- <hmtl>
- 
+<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="Content-Style-Type" content="text/css">
-<title>SuperCollider Help -BMAbstractMIDIController</title>
+<title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="824.42">
+<meta name="CocoaVersion" content="949.43">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
-p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
-p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p8 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
-p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #d40000}
-p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
-p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
-p.p12 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica; min-height: 17.0px}
-p.p13 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #d40000}
-p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000ff}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica; min-height: 17.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
+p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
+p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica; min-height: 17.0px}
+p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #bf0000}
+p.p12 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #000000}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
+p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p15 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
+p.p16 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #c21d1c}
+p.p17 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0017c2}
+p.p18 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
+p.p19 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #c21d1c}
+p.p20 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0017c2}
+p.p21 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #1200c4}
-span.s3 {color: #1200c4}
-span.s4 {color: #000000}
-span.s5 {color: #1200c4}
-span.s6 {color: #d40000}
-span.s7 {font: 12.0px Helvetica; color: #000000}
-span.s8 {color: #1200c4}
-span.s9 {color: #1200c4}
+span.s2 {color: #000000}
+span.s3 {color: #0000ff}
+span.s4 {color: #0000bf}
+span.s5 {font: 12.0px Helvetica; color: #000000}
+span.s6 {color: #007300}
+span.s7 {color: #c21d1c}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
- <body>
- 
-<p class="p1"><span class="s1"><b>BMAbstractMIDIController<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>explanation of what BMAbstractMIDIController is and/or does</b><span class="s1"><b><span class="Apple-tab-span">	</span></b></span></p>
+<body>
+<p class="p1"><span class="s1"><b>BMAbstractMIDIController<span class="Apple-tab-span">	</span></b></span><b>abstract superclass of MIDI controllers in the BM library</b><span class="s1"><b><span class="Apple-tab-span">	</span></b></span></p>
 <p class="p2"><br></p>
-<p class="p1"><b>Inherits from: </b><b> Object : BMAbstractController </b></p>
-<p class="p3"><br></p>
-<p class="p1">More detailed prose description of BMAbstractMIDIController.</p>
+<p class="p3"><span class="s2"><b>Inherits from: </b><a href="SC://Object"><b>Object</b></a><b> : </b><a href="../Root Classes/BMAbstractController.html"><b>BMAbstractController</b></a></span></p>
+<p class="p4"><br></p>
+<p class="p1">BMAbstractMIDIController is the abstract superclass of generic MIDI controllers in the BEASTmulch library.</p>
 <p class="p2"><br></p>
-<p class="p1"><b>See also:</b> <a href="../Core/Object.html"><span class="s2">Object</span></a> [some other help files]</p>
-<p class="p2"><br></p>
-<p class="p4"><b>Some Important Issues Regarding BMAbstractMIDIController (optional)</b></p>
-<p class="p2"><br></p>
-<p class="p1">Explanation of the issues. For more information see <a href="../Core/Nil.html"><span class="s3">Nil</span></a> and [some other help files].</p>
-<p class="p2"><br></p>
- 
-<p class="p4"><b>Creation / Class Methods</b></p>
+<p class="p3"><span class="s2"><b>See also: </b><a href="../Root Classes/BMAbstractController.html">BMAbstractController</a>, <a href="BMMIDICCController.html">BMMIDICCController</a>, <a href="BMMIDIBendController.html">BMMIDIBendController</a>, <a href="../Root Classes/BMControl.html">BMControl</a></span></p>
 <p class="p5"><br></p>
-  
-<p class="p11"><b>Accessing Instance and Class Variables</b></p>
-<p class="p7"><span class="Apple-tab-span">	</span></p>
-  
-<p class="p6"><b><span class="Apple-tab-span">	</span>uid</b></p>
- 
-<p class="p7"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Explanation including the type of <b>uid </b>and a link to its help file.</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Default value is nil.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>midiout</b></p>
- 
-<p class="p7"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Explanation including the type of <b>midiout </b>and a link to its help file.</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Default value is nil.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>outUid</b></p>
- 
-<p class="p7"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Explanation including the type of <b>outUid </b>and a link to its help file.</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Default value is nil.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>acceptsAutomation_(arg1)</b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>acceptsAutomation</b></p>
- 
-<p class="p7"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Explanation including the type of <b>acceptsAutomation </b>and a link to its help file.</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Default value is nil.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>outPort</b></p>
- 
-<p class="p7"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Explanation including the type of <b>outPort </b>and a link to its help file.</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Default value is nil.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>loopBack_(arg1)</b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>loopBack</b></p>
- 
-<p class="p7"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Explanation including the type of <b>loopBack </b>and a link to its help file.</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Default value is nil.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
- <p class="p11"><b>Doing Some Task (optional)</b></p>
-<p class="p12"><br></p>
-<p class="p6">A short bit of prose explaining something about the task.</p>
-<p class="p7"><span class="Apple-tab-span">	</span></p>
-          
-<p class="p6"><b><span class="Apple-tab-span">	</span>startListening</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMAbstractMIDIController</span>.startListening;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>makeSpec</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMAbstractMIDIController</span>.makeSpec;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>init (arguid, argname, argserver)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>arguid </b>- Explanation of arguid. Default value is nil. Other information.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>argname </b>- Explanation of argname. Default value is nil. Other information.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>argserver </b>- Explanation of argserver. Default value is nil. Other information.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMAbstractMIDIController</span>.init;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>setNumControls</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMAbstractMIDIController</span>.setNumControls;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>loopback</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMAbstractMIDIController</span>.loopback;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>setOutUid</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMAbstractMIDIController</span>.setOutUid;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>updateValue (ind, val)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>ind </b>- Explanation of ind. Default value is nil. Other information.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>val </b>- Explanation of val. Default value is nil. Other information.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMAbstractMIDIController</span>.updateValue;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>updateAllFaders (array)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>array </b>- Explanation of array. Default value is nil. Other information.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMAbstractMIDIController</span>.updateAllFaders;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>getVal (controlNum)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>controlNum </b>- Explanation of controlNum. Default value is nil. Other information.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMAbstractMIDIController</span>.getVal;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>setVal (controlNum, val)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>controlNum </b>- Explanation of controlNum. Default value is nil. Other information.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>val </b>- Explanation of val. Default value is nil. Other information.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMAbstractMIDIController</span>.setVal;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>getAllValues</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMAbstractMIDIController</span>.getAllValues;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>setAllValues (array)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>array </b>- Explanation of array. Default value is nil. Other information.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMAbstractMIDIController</span>.setAllValues;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>setLabel (fader, name)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>fader </b>- Explanation of fader. Default value is nil. Other information.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>name </b>- Explanation of name. Default value is nil. Other information.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMAbstractMIDIController</span>.setLabel;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>getLabel (fader)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>fader </b>- Explanation of fader. Default value is nil. Other information.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMAbstractMIDIController</span>.getLabel;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>getAllLabels</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMAbstractMIDIController</span>.getAllLabels;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>setAllLabels (array)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>array </b>- Explanation of array. Default value is nil. Other information.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMAbstractMIDIController</span>.setAllLabels;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p11"><b>Examples</b></p>
-<p class="p3"><br></p>
-<p class="p14">// what this example does</p>
-<p class="p15">e = <span class="s9">BMAbstractMIDIController</span>.new;</p>
-<p class="p15">e.instanceMethod(someObject);</p>
-<p class="p15">e.cleanUp;</p>
-<p class="p3"><br></p>
-<p class="p15">...</p>
- </body> </html>
+<p class="p6"><br></p>
+<p class="p7"><b>Accessing Instance and Class Variables</b></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>acceptsAutomation_(bool)</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>acceptsAutomation</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>By default this is false, but can be set to true. Some MIDI controllers are motorised for instance, and thus automatable.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>loopBack_(bool)</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>loopBack</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Get or set a <a href="SC://Boolean"><span class="s3">Boolean</span></a> indicating whether incoming messages are echoed back out to the controller. Some more complex MIDI devices require this. The default is false.</p>
+<p class="p8"><span class="Apple-tab-span">	</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span><b>midiout</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Get this controller's <a href="SC://MIDIOut"><span class="s3">MIDIOut</span></a> object.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p7"><b>Subclassing</b></p>
+<p class="p10"><br></p>
+<p class="p1">The following methods (at least) must be implemented by subclasses in addition to those outlined in <a href="../Root Classes/BMAbstractController.html"><span class="s3">BMAbstractController</span></a>.</p>
+<p class="p8"><span class="Apple-tab-span">	</span></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>startListening</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>This should add appropriate responder object(s) to update values when messages are received. It should call <b>updateValue</b> to do this.</p>
+<p class="p6"><br></p>
+<p class="p11"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// sample implementation from BMMIDICCController</p>
+<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>startListening {<span class="Apple-converted-space"> </span></p>
+<p class="p13"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>responder = </span>CCResponder<span class="s2">({</span>|src, chan, num, value|</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">this</span>.updateValue(ccArray.indexOf(num), value);</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}, uid, chan, ccArray);</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>makeSpec</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>This should create a spec to convert to and from incoming values to 0..1.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// sample implementation from BMMIDICCController</p>
+<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>makeSpec {</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>spec = [0, 127, <span class="s6">'cos'</span>, 0.0].asSpec;</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>setNumControls</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>This should set the <b>numControls</b> instance var appropriately.</p>
+<p class="p6"><br></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p7"><b>Instance Methods</b></p>
+<p class="p6"><br></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>updateValue (ind, val)</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Called by responders when a MIDI message is received to update control busses and <b>loopBack</b> if specified.</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>ind </b>- Index of control to update. Starts from 0.</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>val </b>- Value to update. This should be in native units (e.g. 0..127) rather than 0..1.</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>updateAllValues (array)</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Update all values at once.</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>array </b>- An array of values to update. These should be in native units (e.g. 0..127) rather than 0..1.</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>getVal (controlNum)</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>controlNum </b>- Explanation of controlNum. Default value is nil. Other information.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p16"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
+<p class="p17"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMAbstractMIDIController<span class="s2">.getVal;</span></p>
+<p class="p18"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s7">// explanation</span></p>
+<p class="p18"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>setVal (controlNum, val)</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>controlNum </b>- Explanation of controlNum. Default value is nil. Other information.</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>val </b>- Explanation of val. Default value is nil. Other information.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p16"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
+<p class="p17"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMAbstractMIDIController<span class="s2">.setVal;</span></p>
+<p class="p18"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s7">// explanation</span></p>
+<p class="p18"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>getAllValues</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p16"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
+<p class="p17"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMAbstractMIDIController<span class="s2">.getAllValues;</span></p>
+<p class="p18"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s7">// explanation</span></p>
+<p class="p18"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>setAllValues (array)</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>array </b>- Explanation of array. Default value is nil. Other information.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p16"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
+<p class="p17"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMAbstractMIDIController<span class="s2">.setAllValues;</span></p>
+<p class="p18"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s7">// explanation</span></p>
+<p class="p18"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>setLabel (fader, name)</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>fader </b>- Explanation of fader. Default value is nil. Other information.</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>name </b>- Explanation of name. Default value is nil. Other information.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p16"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
+<p class="p17"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMAbstractMIDIController<span class="s2">.setLabel;</span></p>
+<p class="p18"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s7">// explanation</span></p>
+<p class="p18"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>getLabel (fader)</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>fader </b>- Explanation of fader. Default value is nil. Other information.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p16"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
+<p class="p17"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMAbstractMIDIController<span class="s2">.getLabel;</span></p>
+<p class="p18"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s7">// explanation</span></p>
+<p class="p18"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>getAllLabels</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p16"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
+<p class="p17"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMAbstractMIDIController<span class="s2">.getAllLabels;</span></p>
+<p class="p18"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s7">// explanation</span></p>
+<p class="p18"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>setAllLabels (array)</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>array </b>- Explanation of array. Default value is nil. Other information.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p16"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
+<p class="p17"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMAbstractMIDIController<span class="s2">.setAllLabels;</span></p>
+<p class="p18"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s7">// explanation</span></p>
+<p class="p18"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p7"><b>Examples</b></p>
+<p class="p4"><br></p>
+<p class="p19">// what this example does</p>
+<p class="p20"><span class="s2">e = </span>BMAbstractMIDIController<span class="s2">.new;</span></p>
+<p class="p21">e.instanceMethod(someObject);</p>
+<p class="p21">e.cleanUp;</p>
+<p class="p4"><br></p>
+<p class="p21">...</p>
+</body>
+</html>

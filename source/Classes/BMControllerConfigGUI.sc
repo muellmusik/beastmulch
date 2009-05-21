@@ -27,16 +27,44 @@ BMControllerConfigGUI : BMAbstractGUI {
 			var vals, widget, paramclass, lastValidInput;
 			vals = params[argName]; // argname->[class, spec, humanName];
 			paramclass = vals[0];
-			if(paramclass == Integer || (paramclass == Float), {
-				widget = EZNumber(window, 292@20, vals[2], vals[1], 
-					initVal: existingParams[argName], // maybe nil
-					labelWidth: 100);
-			}, {
-				SCStaticText(window, 100@20).string_(vals[2]).align_(\right);
-				widget = SCTextField(window, 188@20)
-					.string_(existingParams[argName] ?? {vals[1].value});
-				textFields.add(widget);
-			});
+
+			case(
+				{paramclass == Integer || (paramclass == Float)}, {
+					widget = EZNumber(window, 292@20, vals[2], vals[1], 
+						initVal: existingParams[argName], // maybe nil
+						labelWidth: 100);
+					widget.numberView.background_(Color.white.alpha_(0.3));
+				}, 
+				{paramclass == BMMIDIPort }, {
+					var keys;
+					keys = BMMIDIPort.ports.keys.asArray.sort;
+					SCStaticText(window, 100@20).string_(vals[2]).align_(\right);
+					widget = SCPopUpMenu(window, 188@20)
+						.background_(Color.white.alpha_(0.3))
+						.items_(keys) 
+						.value_(keys.indexOf(existingParams[argName]) ? 0); // maybe nil
+				},
+				{paramclass != String && paramclass.superclasses.includes(RawArray)}, {
+					var string;
+					SCStaticText(window, 100@20).string_(vals[2]).align_(\right);
+					existingParams[argName].do({|item|
+						if(string.size > 0, { string = string ++ ", "});
+						string = string ++ item.asString;
+					});
+					widget = SCTextField(window, 188@20)
+						.background_(Color.white.alpha_(0.3))
+						.string_(string ?? {vals[1].value});
+					textFields.add(widget);
+				},
+				// default
+				{
+					SCStaticText(window, 100@20).string_(vals[2]).align_(\right);
+					widget = SCTextField(window, 188@20)
+						.string_(existingParams[argName] ?? {vals[1].value})
+						.background_(Color.white.alpha_(0.3));
+					textFields.add(widget);
+				}
+			);
 			
 			if(paramclass != String && paramclass.superclasses.includes(RawArray), {
 				lastValidInput = "";
@@ -56,6 +84,9 @@ BMControllerConfigGUI : BMAbstractGUI {
 					var res;
 					res = widget.value;
 					if(paramclass == Symbol, { res = res.asSymbol });
+					if(paramclass == BMMIDIPort , {
+						 res = BMMIDIPort.ports[widget.item]; 
+					});
 					result[argName] = res;
 				});
 			});

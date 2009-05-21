@@ -50,6 +50,7 @@ BMSystemConfigAppGUI : BMAbstractGUI {
 			true,		// initAction
 			200
 		);
+		numInChannels.numberView.background_(Color.white.alpha_(0.3));
 		
 		numSoundFilePlayerChans = EZNumber(	window,  	// parent
 			300@20,	// bounds
@@ -60,6 +61,7 @@ BMSystemConfigAppGUI : BMAbstractGUI {
 			true,		// initAction
 			200
 		);
+		numSoundFilePlayerChans.numberView.background_(Color.white.alpha_(0.3));
 		
 		numVirtIns = EZNumber(	window,  	// parent
 			300@20,	// bounds
@@ -70,6 +72,7 @@ BMSystemConfigAppGUI : BMAbstractGUI {
 			true,		// initAction
 			200
 		);
+		numVirtIns.numberView.background_(Color.white.alpha_(0.3));
 		
 		numVirtOuts = EZNumber(	window,  	// parent
 			300@20,	// bounds
@@ -80,6 +83,8 @@ BMSystemConfigAppGUI : BMAbstractGUI {
 			true,		// initAction
 			200
 		);
+		numVirtOuts.numberView.background_(Color.white.alpha_(0.3));
+		
 		window.view.decorator.nextLine;
 		StaticText(window, Rect(10, 10, 320, 20)).font_(Font("Helvetica-Bold", 11)).string_(" Number of output channels is set automatically").align_(\center);
 		
