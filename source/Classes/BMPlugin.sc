@@ -58,7 +58,7 @@ BMPluginSpec {
 		// define some plugin specs
 		StartUp.add({ 
 			specs = ();
-			BMPluginSpec('highpass', 				// name
+			BMPluginSpec('Highpass', 				// name
 				{|plugin, input, freq| 	// ugenGraphFunc
 					HPF.ar(input, freq);
 				}, 								
@@ -67,7 +67,7 @@ BMPluginSpec {
 				(atcs: (freq: 80), tweeters: (freq: 10000)), // presets
 				"2nd Order Butterworth Highpass Filter -12db/Oct"
 			);
-			BMPluginSpec('lowpass', 				// name
+			BMPluginSpec('Lowpass', 				// name
 				{|plugin, input, freq| 	// ugenGraphFunc
 					LPF.ar(input, freq);
 				}, 								
@@ -76,7 +76,7 @@ BMPluginSpec {
 				('very distants': (freq: 4000)), // presets
 				"2nd Order Butterworth Lowpass Filter -12db/Oct"
 			);
-			BMPluginSpec('bandpass', 				// name
+			BMPluginSpec('Bandpass', 				// name
 				{|plugin, input, freq, rq| 
 					BPF.ar(input, freq, rq);
 				}, 								
