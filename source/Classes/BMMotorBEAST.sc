@@ -35,11 +35,69 @@ BMMotorBEAST : BMAbstractController {
 		bus = Bus.control(server, numControls);
 		busIndex = bus.index;
 		//spec = Env([0, 1], [65536], \sine);
-		// clip bottom
-		spec = [16, 65535, 'cos', 0.0].asSpec;
+		spec = Archive.global[name] ?? {this.initialSpecs};
 		this.startListening;
 		//this.updateAllFaders(valueArray);
 		allControllers[name] = this;
+	}
+	
+	initialSpecs {
+		^[0, 65535, 'cos', 0.0].asSpec ! 32;
+	}
+	
+	calibrate {
+		var envs, highs, lows, interval = 0.005;
+		var transitionTime = 0.18, tries = 4;
+		var lowError = 0.003, hiError = 0.02;
+		
+		
+		lowError = spec[0].map(lowError).asInteger;
+		hiError = spec[0].map(hiError).asInteger;
+		
+		// take worst of 4 tries
+		lows = 1 ! 32;
+		highs = 65535 ! 32;
+		{	
+			("Calibrating" + name).postln;
+			tries.do({
+			spec = this.initialSpecs; // full range
+			// highs
+			envs = this.getAllValues.collect({|start| 
+				Env([start, 1.0, 1.0], transitionTime ! 2, 'sine').asStream;
+			});
+			
+			(transitionTime * 2 / interval).do({
+				this.setAllValues(envs.collect({|env| env.next}););
+				interval.wait;
+			});
+			0.5.wait;
+			highs = valueArray.copy.min(highs);
+			
+			// lows
+			envs = this.getAllValues.collect({|start|
+				Env([start, 0.0, 0.0], transitionTime ! 2, 'sine').asStream;
+			});
+			
+			(transitionTime * 2 / interval).do({
+				this.setAllValues(envs.collect({|env| env.next}););
+				interval.wait;
+			});
+			0.5.wait;
+			lows = valueArray.copy.max(lows);
+			
+			
+			});
+			("Low Values: " ++ lows.collect({|val, i| spec[i].unmap(val); })).postln;
+			("\nHigh Values: " ++ highs.collect({|val, i| spec[i].unmap(val); })).postln;
+			spec = Array.fill(32, {|i| [lows[i] + lowError, highs[i] - hiError, 'cos', 0.0].asSpec });
+			
+			// for now use Archive
+			Archive.global[name] = spec;
+			Archive.write;
+			("\nCalibration for" + name + "done").postln;
+		}.fork;
+		^(transitionTime * 4 + 1 * tries);
+		
 	}
 	
 	startListening { 
@@ -47,7 +105,8 @@ BMMotorBEAST : BMAbstractController {
 		responder = OSCresponderNode(addr, '/analogMF', { arg time, resp, msg; 
 			var values;
 			values = msg.copyToEnd(1);
-			server.sendMsg("/c_setn", busIndex, 32, *(values.collect({|val| spec.unmap(val)})));
+			server.sendMsg("/c_setn", busIndex, 32, *(values.collect({|val, i| 
+				spec[i].unmap(val)})));
 			valueArray= values;
 			this.changed(\faderVal);
 		}).add;
@@ -57,19 +116,19 @@ BMMotorBEAST : BMAbstractController {
 	
 	// assumes fader 1 = 1 not 0
 	// returns value between 0 and 1
-	getVal { |controlNum| ^spec.unmap(valueArray[controlNum -1]) }
+	getVal { |controlNum| ^spec[controlNum - 1].unmap(valueArray[controlNum -1]) }
 	
 	// we set the local value on loopback, so we're always in sync
 	setVal { |controlNum, val| 
-		addr.sendMsg("/MF/" ++ (controlNum - 1), spec.map(val).asInteger) 
+		addr.sendMsg("/MF/" ++ (controlNum - 1), spec[controlNum - 1].map(val).asInteger) 
 		//addr.sendMsg("/MF", *(valueArray.copy[controlNum - 1] = spec.map(val).asInteger))
 	}
 	
-	getAllValues { ^valueArray.collect({|val| spec.unmap(val)}) }
+	getAllValues { ^valueArray.collect({|val, i| spec[i].unmap(val)}) }
 	
 	// 32 faders
 	setAllValues {|array|
-		addr.sendMsg("/MF", *(array.collect({|val| spec.map(val).asInteger})))
+		addr.sendMsg("/MF", *(array.collect({|val, i| spec[i].map(val).asInteger})))
 	}
 	
 	// for faders

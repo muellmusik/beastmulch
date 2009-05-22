@@ -223,6 +223,7 @@ BMAbstractController {
 	
 	calibrate {
 		("No calibration to do for " ++ name ++ ".").postln;
+		^0;
 	}
 	
 	
