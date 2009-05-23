@@ -1259,13 +1259,20 @@ BMSnapShotSeqConfigGUI : BMAbstractGUI {
 		allControls.keys.asArray.sort.do({|label, i|
 			var control;
 			control = allControls[label];
-			ToggleView(window, Rect(0, 0, toggleWidth, 20))
-				.colorOn_(Color.white.alpha_(0.5))
-				.colorOff_(Color.black.alpha_(0.1))
+			//ToggleView(window, Rect(0, 0, toggleWidth, 20))
+//				.colorOn_(Color.white.alpha_(0.5))
+//				.colorOff_(Color.black.alpha_(0.1))
+//				.font_(font)
+//				.canFocus_(false)
+//				.string_(label.asString)
+//				.action_({|v| v.value.if({results.add(control.name)}, {results.remove(control.name)})});
+			RoundButton(window, Rect(0, 0, toggleWidth, 20))
+				.states_([[label.asString, Color.black, Color.black.alpha_(0.1)], [label.asString, Color.black, Color.white.alpha_(0.5)]])
 				.font_(font)
+				.radius_(2)
 				.canFocus_(false)
-				.string_(label.asString)
-				.action_({|v| v.value.if({results.add(control.name)}, {results.remove(control.name)})});
+				.extrude_(false)
+				.action_({|v| v.value.booleanValue.if({results.add(control.name)}, {results.remove(control.name)})});
 		});
 		window.view.decorator.nextLine;
 		SCStaticText(window, Rect(0, 0, window.bounds.width - 132, 20))
