@@ -9,7 +9,8 @@
 \cf0 \
 \cf2 Routine\cf0 (\{\
 \
-\cf2 var\cf0  player, etherSense, controllersList;\
+var screenBounds, titleWindow;\
+\cf2 var\cf0  player, controllersList;\
 \cf2 var\cf0  pieceUpdater,  changeFromPlayerGUI = \cf2 true\cf0 , newPresetGUIFunc, addButton, backupManager;\
 \cf2 var\cf0  arrays, outputArray, systemConfig;\
 \cf2 var\cf0  controllers, inputs, inputArray, privateIns, privateOuts;\
@@ -61,6 +62,14 @@ controllersList = systemConfig.controllers.collectAs(\{\cf2 |assoc|\cf0  \
 \
 \cf4 //controllersList.add(etherSense = BMMotorBEAST(NetAddr("192.168.5.77", 57120), \\Lower, s););\cf0 \
 \cf4 //controllersList.add(BMMotorBEAST(NetAddr("192.168.5.78", 57120), \\Upper, s););\cf0 \
+\
+screenBounds = SCWindow.screenBounds;\
+titleWindow = SCWindow("Welcome", Rect(screenBounds.width / 2 - 350, screenBounds.height / 2 - 262,  700, 524), false, false).alwaysOnTop_(true).front;\
+\
+SCQuartzComposerView(titleWindow, 700@524).path_(Document.current.path.dirname ++ "/Title.qtz").start;\
+\
+6.wait;\
+titleWindow.close;\
 \
 \{\
 \cf4 //arrays		= this.executeFile(Document.current.dir ++ "/january channel list.rtf");\cf0 \
