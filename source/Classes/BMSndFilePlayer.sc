@@ -343,7 +343,7 @@ BMSoundFilePlayerGUI : BMAbstractGUI {
 	
 	// always updated from player
 	update {arg changed, what ...args; 
-		
+		window.isClosed.not.if({
 		{
 		switch(what,
 			\n_end, {this.updateTimeDisplay(0.getTimeString);
@@ -370,6 +370,7 @@ BMSoundFilePlayerGUI : BMAbstractGUI {
 			\time, { this.updateTimeDisplay(args.first.getTimeString) }
 		)
 		}.defer
+		});
 	}
 	
 	changed { arg what ... moreArgs;
