@@ -455,20 +455,20 @@ BMConcertGUI  {
 	}
 			
 	update {| changed, change, config, from |
-			change.postln;
-		    if ((change == \currentConfig) and: { from == \configurationEditor }) 
-		    	  { 	if (selectable) { this.listViewSelection(false) } }
-			  {  if ((change != \storeSession) and: { change != \store }) 
-			  		{ concertListView.items = concertManager.concert.pieces.collect{| x | x.name }.asArray }
-			  };
-			  
+		var piece;
+		change.postln;
+		if ((change == \currentConfig) and: { from == \configurationEditor }) 
+	    	  { 	if (selectable) { this.listViewSelection(false) } }
+		  {  if ((change != \storeSession) and: { change != \store }) 
+		  		{ concertListView.items = concertManager.concert.pieces.collect{| x | x.name }.asArray }
+		  };
+		  
+		
+		if(change == \sequencesChanged, {
 			
-			if(change == \sequencesChanged, {
-				var piece;
-				\foo.postln;
-				piece = concertManager.concert.pieces[concertListView.value];
-				piece.controllerAutomation = controllerAutomator.mappings;
-			});
+			piece = concertManager.concert.pieces[concertListView.value];
+			piece.controllerAutomation = controllerAutomator.mappings;
+		});
 		
 	}
 		
