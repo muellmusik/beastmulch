@@ -189,8 +189,10 @@ BMTrimPluginsStrip {
 		dict[\plugins].do({|pluginArray|
 			var plugin;
 			plugin = BMPlugin(pluginArray[0], server, pluginArray[1]);
-			this.addPlugin(plugin);
-			pluginArray[2].keysValuesDo({|k, v| plugin.set(k, v)});
+			plugin.notNil.if({
+				this.addPlugin(plugin);
+				pluginArray[2].keysValuesDo({|k, v| plugin.set(k, v)});
+			});
 		});
 		this.changed;
 	}
@@ -226,12 +228,14 @@ BMTrimPluginsStrip {
 	}
 	
 	addPlugin {|plugin|
-		plugins.add(plugin);
-		server.makeBundle(nil, {
-			server.sync; // wait for the plugin's def to arrive...
-			plugin.makeSynth(input, group, \addToTail);
-			// added at end, no need to reset order on server
-			this.changed;
+		plugin.notNil.if({
+			plugins.add(plugin);
+			server.makeBundle(nil, {
+				server.sync; // wait for the plugin's def to arrive...
+				plugin.makeSynth(input, group, \addToTail);
+				// added at end, no need to reset order on server
+				this.changed;
+			});
 		});
 	}
 	

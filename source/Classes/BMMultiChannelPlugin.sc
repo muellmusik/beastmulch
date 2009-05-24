@@ -623,6 +623,10 @@ BMMultichannelPlugin {
 	
 	init { |argpluginSpecName, argins, argouts, argserver, argattributes|
 		spec = BMMultichannelPluginSpec.specs[argpluginSpecName.asSymbol];
+		spec.isNil.if({
+			("Plugin spec" + argpluginSpecName + "does not exist!").warn;
+			^nil;
+		});
 		inputs = argins;
 		outputs = argouts;
 		numInputs = inputs.size;
@@ -851,8 +855,10 @@ BMMultichannelPluginsRack : BMAbstractAudioChainElement {
 			var plugin;
 			plugin = BMMultichannelPlugin(pluginArray[0], pluginArray[1], pluginArray[2], server, 
 				pluginArray[3]);
-			this.addPlugin(plugin);
-			pluginArray[4].keysValuesDo({|k, v| plugin.set(k, v)});
+			plugin.notNil.if({
+				this.addPlugin(plugin);
+				pluginArray[4].keysValuesDo({|k, v| plugin.set(k, v)});
+			});
 		});
 		this.changed;
 	}
@@ -876,12 +882,14 @@ BMMultichannelPluginsRack : BMAbstractAudioChainElement {
 	}
 	
 	addPlugin {|plugin|
-		plugins.add(plugin);
-		server.makeBundle(nil, {
-			server.sync; // wait for the plugin's def to arrive...
-			plugin.makeSynth(group, \addToTail);
-			// added at end, no need to reset order on server
-			this.changed;
+		plugin.notNil.if({
+			plugins.add(plugin);
+			server.makeBundle(nil, {
+				server.sync; // wait for the plugin's def to arrive...
+				plugin.makeSynth(group, \addToTail);
+				// added at end, no need to reset order on server
+				this.changed;
+			});
 		});
 	}
 	

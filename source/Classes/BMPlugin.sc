@@ -234,6 +234,10 @@ BMPlugin {
 	
 	init { |argpluginSpecName, argserver, argattributes|
 		spec = BMPluginSpec.specs[argpluginSpecName.asSymbol];
+		spec.isNil.if({
+			("Plugin spec" + argpluginSpecName + "does not exist!").warn;
+			^nil;
+		});
 		server = argserver;
 		attributes = spec.defaultAttributes.copy;
 		argattributes.notNil.if({attributes.putAll(argattributes)}); // local settings override
