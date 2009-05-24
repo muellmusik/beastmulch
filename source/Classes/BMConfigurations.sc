@@ -146,7 +146,7 @@ BMConfigurationsGUI : BMAbstractGUI {
 		columns		= chain[0].size;
 		width 		= max(450, columns * 100);
 		
-		pseudoLevels 	= (1..rows).normalize * 0.8 + 0.1;
+		pseudoLevels 	= (1..rows).normalize * 0.8 + 0.075;
 		pseudoLevels 	= pseudoLevels.collect({|item, i| if(i == 0, {item ! columns}, {item})}).flat;
 		pseudoTimes 	= [(1..columns).normalize - 0.5 * 0.68 + 0.5, 0.5 ! (rows - 1)].flat;
 		
@@ -236,16 +236,16 @@ BMConfigurationsGUI : BMAbstractGUI {
 
 		chainView				= SCScrollView(window, 465 @ 435).hasBorder_(false);
 		if(width <= 465, { chainView.hasHorizontalScroller = false });
-		chainView 			= SCCompositeView(chainView, Rect(0, 0, width, max(450, rows * 60)));
+		chainView 			= SCCompositeView(chainView, Rect(0, 0, width, max(450, rows * 20)));
 		chainView.background 	= Color.white.alpha_(0.2);
-		chainView 			= SCUserView(chainView, Rect(0, 0, width, max(450, rows * 60)));
+		chainView 			= SCUserView(chainView, Rect(0, 0, width, max(450, rows * 20)));
 		
 		
 		pseudoLevels = pseudoLevels * chainView.bounds.height;
 		pseudoTimes = pseudoTimes * chainView.bounds.width;
 		
 		points = Array.fill(objects.size, {|i|  Point(pseudoTimes[i], pseudoLevels[i])});
-		rects = points.collect({|point| Rect.aboutPoint(point, 50, 20)});
+		rects = points.collect({|point| Rect.aboutPoint(point, 50, 15)});
 
 		chainView.drawFunc_({
 			// draw lines
@@ -255,7 +255,7 @@ BMConfigurationsGUI : BMAbstractGUI {
 			
 			// draw backgrounds, boxes and strings
 			rects.do({|rect, i|
-				selected[i].if({Color.grey.alpha_(0.5)}, {Color.grey}).set;
+				selected[i].if({Color.grey(0.75)}, {Color.grey}).set;
 				Pen.fillRect(rect);
 				Color.black.set;
 				Pen.strokeRect(rect);
