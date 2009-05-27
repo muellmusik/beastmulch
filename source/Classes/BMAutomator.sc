@@ -27,7 +27,7 @@ BMAbstractAutomator {
 
 // update rate of this and time ref are independent
 BMAbstractIndependentRateAutomator : BMAbstractAutomator {
-	var <>interval = 0.05; // update interval
+	var <>interval = 0.005; // update interval
 	var lastCurrentTime;
 	
 	startUpdateLoop {
