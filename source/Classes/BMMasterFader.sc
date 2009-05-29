@@ -42,7 +42,7 @@ BMMasterFader : BMAbstractAudioChainElement {
 	// a little hacky but has worked ;-)
 	addMasterFaderSynth {
 		masterFaderSynth = {
-			ReplaceOut.ar(0, In.ar(0, BMOptions.numOutputBusChannels) * In.kr(busIndex, 1));
+			ReplaceOut.ar(0, In.ar(0, server.options.numOutputBusChannels) * In.kr(busIndex, 1));
 		}.play(group, addAction: \addToTail);
 	}
 	
