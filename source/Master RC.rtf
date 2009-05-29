@@ -213,7 +213,7 @@ pinkNoiseFunc = \{\
 \cf3 var\cf2  cmdPeriodFunc;\
 s.options.numOutputBusChannels = 96;\
 s.waitForBoot(\{\
-\cf3 SynthDef\cf2 (\cf4 \\PinkTest\cf2 , \{\cf3 |out, amp|\cf2  \cf3 Out\cf2 .ar(out, \cf3 PinkNoise\cf2 .ar(amp) * \cf3 Decay2\cf2 .ar(\cf3 Impulse\cf2 .ar(1))); \}).send(s);\
+\cf3 SynthDef\cf2 (\cf4 \\PinkTest\cf2 , \{\cf3 |out, amp|\cf2  \cf3 Out\cf2 .ar(out, \cf3 PinkNoise\cf2 .ar(amp) * \cf3 Decay2\cf2 .ar(\cf3 Impulse\cf2 .ar(2), 0.1)); \}).send(s);\
 \
 \cf5 // make the window\cf2 \
 pinkWin = \cf3 SCWindow\cf2 (\cf6 "PinkNoise Tester"\cf2 , \cf3 Rect\cf2 (20, 600, 416, 100), \cf3 false\cf2 );\
