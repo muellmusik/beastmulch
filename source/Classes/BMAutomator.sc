@@ -1156,7 +1156,9 @@ BMSnapShotSliders : BMAbstractGUI {
 		labelWidth = snapshot.controlnames.collect({|name| 
 			name.asString.bounds(font).width
 		}).maxItem;
-		snapshot.controlnames.asArray.sort.do({|label, i|
+		snapshot.controlnames.asArray.sort({|a, b| 
+			b.asString.naturalCompare(a.asString) >= 0
+		}).do({|label, i|
 			var initVal, control, displaySpec, unitWidth = 20;
 			control = BMAbstractController.allControls[label];
 			displaySpec = control.displaySpec;
@@ -1256,7 +1258,9 @@ BMSnapShotSeqConfigGUI : BMAbstractGUI {
 		window.view.decorator = FlowLayout(window.view.bounds);
 		window.view.background = Color.rand.alpha_(0.3);
 		//sliders = IdentityDictionary.new;
-		allControls.keys.asArray.sort.do({|label, i|
+		allControls.keys.asArray.sort({|a, b| 
+			b.asString.naturalCompare(a.asString) >= 0
+		}).do({|label, i|
 			var control;
 			control = allControls[label];
 			//ToggleView(window, Rect(0, 0, toggleWidth, 20))
