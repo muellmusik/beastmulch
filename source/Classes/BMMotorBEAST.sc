@@ -4,7 +4,7 @@
 BMMotorBEAST : BMAbstractController {
 	//classvar <allControllers;
 	//var <name, <bus, <busIndex, valueArray, labelArray, <server, <numControls;
-	var <addr, responder;
+	var <addr, responder, calibrationRanges;
 	
 	// address should be with port 57120 (sclang)
 	*new { |addr, name, server|
@@ -35,14 +35,15 @@ BMMotorBEAST : BMAbstractController {
 		bus = Bus.control(server, numControls);
 		busIndex = bus.index;
 		//spec = Env([0, 1], [65536], \sine);
-		spec = Archive.global[name] ?? {this.initialSpecs};
+		calibrationRanges = Archive.global[name] ?? {this.initialCalibrations};
+		spec = [0, 1, 'cos', 0.0].asSpec;
 		this.startListening;
 		//this.updateAllFaders(valueArray);
 		allControllers[name] = this;
 	}
 	
-	initialSpecs {
-		^[0, 65535, 'cos', 0.0].asSpec ! 32;
+	initialCalibrations {
+		^([0, 65535, 0.0, 1.0] ! 32);
 	}
 	
 	calibrate {
@@ -60,7 +61,7 @@ BMMotorBEAST : BMAbstractController {
 		{	
 			("Calibrating" + name).postln;
 			tries.do({
-			spec = this.initialSpecs; // full range
+			calibrationRanges = this.initialCalibrations; // full range
 			// highs
 			envs = this.getAllValues.collect({|start| 
 				Env([start, 1.0, 1.0], transitionTime ! 2, 'sine').asStream;
@@ -89,7 +90,9 @@ BMMotorBEAST : BMAbstractController {
 			});
 			("Low Values: " ++ lows.collect({|val, i| spec[i].unmap(val); })).postln;
 			("\nHigh Values: " ++ highs.collect({|val, i| spec[i].unmap(val); })).postln;
-			spec = Array.fill(32, {|i| [lows[i] + lowError, highs[i] - hiError, 'cos', 0.0].asSpec });
+			calibrationRanges = Array.fill(32, {|i| 
+				[lows[i] + lowError, highs[i] - hiError, 0.0, 1.0] 
+			});
 			
 			// for now use Archive
 			Archive.global[name] = spec;
@@ -106,7 +109,8 @@ BMMotorBEAST : BMAbstractController {
 			var values;
 			values = msg.copyToEnd(1);
 			server.sendMsg("/c_setn", busIndex, 32, *(values.collect({|val, i| 
-				spec[i].unmap(val)})));
+				spec.map(val.linlin(*calibrationRanges[i]))
+			})));
 			valueArray= values;
 			this.changed(\faderVal);
 		}).add;
@@ -116,19 +120,21 @@ BMMotorBEAST : BMAbstractController {
 	
 	// assumes fader 1 = 1 not 0
 	// returns value between 0 and 1
-	getVal { |controlNum| ^spec[controlNum - 1].unmap(valueArray[controlNum -1]) }
+	getVal { |controlNum| ^spec.map(valueArray[controlNum -1].linlin(*calibrationRanges[controlNum - 1])) }
 	
 	// we set the local value on loopback, so we're always in sync
 	setVal { |controlNum, val| 
-		addr.sendMsg("/MF/" ++ (controlNum - 1), spec[controlNum - 1].map(val).asInteger) 
+		var cal;
+		cal = calibrationRanges[controlNum - 1];
+		addr.sendMsg("/MF/" ++ (controlNum - 1), spec.umap(val.linlin(*cal[[2, 3, 0, 1]])).asInteger) 
 		//addr.sendMsg("/MF", *(valueArray.copy[controlNum - 1] = spec.map(val).asInteger))
 	}
 	
-	getAllValues { ^valueArray.collect({|val, i| spec[i].unmap(val)}) }
+	getAllValues { ^valueArray.collect({|val, i| spec.map(val.linlin(*calibrationRanges[i]))}) }
 	
 	// 32 faders
 	setAllValues {|array|
-		addr.sendMsg("/MF", *(array.collect({|val, i| spec[i].map(val).asInteger})))
+		addr.sendMsg("/MF", *(array.collect({|val, i| spec.unmap(val.linlin(*calibrationRanges[i][[2, 3, 0, 1]])).asInteger})))
 	}
 	
 	// for faders
