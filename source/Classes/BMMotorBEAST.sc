@@ -35,7 +35,7 @@ BMMotorBEAST : BMAbstractController {
 		bus = Bus.control(server, numControls);
 		busIndex = bus.index;
 		//spec = Env([0, 1], [65536], \sine);
-		calibrationRanges = Archive.global[name] ?? {this.initialCalibrations};
+		calibrationRanges = Archive.global['MotorBEASTCal', name] ?? {this.initialCalibrations};
 		spec = [0, 1, 'cos', 0.0].asSpec;
 		this.startListening;
 		//this.updateAllFaders(valueArray);
@@ -95,12 +95,17 @@ BMMotorBEAST : BMAbstractController {
 			});
 			
 			// for now use Archive
-			Archive.global[name] = spec;
+			Archive.global['MotorBEASTCal', name] = calibrationRanges;
 			Archive.write;
 			("\nCalibration for" + name + "done").postln;
 		}.fork;
 		^(transitionTime * 4 + 1 * tries);
 		
+	}
+	
+	*clearCalibrations {
+		Archive.global['MotorBEASTCal'] = nil;
+		Archive.write;
 	}
 	
 	startListening { 
