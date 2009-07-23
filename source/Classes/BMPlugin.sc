@@ -17,6 +17,14 @@
 
 // attributes allows for arbitrary user data for constructing the synthdef and gui
 
+// setupFunc is a setup function that must be completed before the plugin is made
+// it will be passed the plugin instance
+// it can store any objects for further reference in attributes for use by the plugin or graphFunc
+// if needed you can wrap the plugin:new in a routine and sync before calling makeSynth
+
+// cleanupFunc allows for any heavy resources to be cleaned up after the plugin is removed.
+// e.g a Buffer, which would have been stored in attributes
+
 // description is human readable text (String)
 
 // For now at least plugins map to control busses
@@ -32,14 +40,15 @@
 BMPluginSpec {
 	classvar <specs, defaultGuiFunc;
 	var <name, <ugenGraphFunc, <specsDict, guiFunc, <>presets, <description, <defaultAttributes;
+	var <setupFunc, <cleanupFunc;
 	
-	*new {|name, ugenGraphFunc, specsDict, guiFunc, presets, description, defaultAttributes|
+	*new {|name, ugenGraphFunc, specsDict, guiFunc, presets, description, defaultAttributes, setupFunc, cleanupFunc|
 		^super.new.init(name, ugenGraphFunc, specsDict, guiFunc, presets, description, 
-			defaultAttributes);
+			defaultAttributes, setupFunc, cleanupFunc);
 	}
 	
 	init {|argname, argugenGraphFunc, argspecsDict, argguiFunc, argpresets, argdescription, 
-		argattributes|
+		argattributes, argsetupFunc, argcleanupfunc|
 		name = argname.asSymbol;
 		ugenGraphFunc = argugenGraphFunc;
 		specsDict = argspecsDict ? ();
@@ -51,6 +60,8 @@ BMPluginSpec {
 		defaultAttributes[\usesLinearAmp].isNil.if({
 			defaultAttributes[\usesLinearAmp] = true;
 		});
+		setupFunc = argsetupFunc;
+		cleanupFunc = argcleanupfunc;
 		this.class.specs[name] = this;
 	}
 	
@@ -242,6 +253,7 @@ BMPlugin {
 		server = argserver;
 		attributes = spec.defaultAttributes.copy;
 		argattributes.notNil.if({attributes.putAll(argattributes)}); // local settings override
+		spec.setupFunc.value(this);
 		this.makeDef;
 		def.send(server);
 		values = ();
