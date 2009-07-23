@@ -3,7 +3,7 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 	var strips;
 	
 	*new { |ins, target, addAction = \addToTail, name|
-		^super.new.init(ins, target, addAction, name);
+		^super.new.init(ins.asBMInOutArray, target, addAction, name);
 	}
 	
 	init {|argins, argtarget, argaddAction, argname|

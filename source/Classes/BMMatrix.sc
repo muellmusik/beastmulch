@@ -26,7 +26,7 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 	var <matrixArray, <mappings, defname; // defname is the def for a node
 	
 	*new { |ins, outs, target, addAction = \addToTail, name|
-		^super.new.init(ins, outs, target, addAction, name);
+		^super.new.init(ins.asBMInOutArray, outs.asBMInOutArray, target, addAction, name);
 		// default name is class
 	}
 	
@@ -34,15 +34,16 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 		this.initNameAndTarget(argTarget, argAddAction, argName);
 		ins = argins;
 		outs = argouts;
-		// allow for arrays as well as Dictionaries
-		// if array, offset by input channels
-		if(ins.isBMInOutArray.not, 
-			{ins = ins.collectAs({|item, i| item -> (i + server.options.numInputBusChannels)}, 
-				BMInOutArray);
-		});
-		//ins.postln;
-		if(outs.isBMInOutArray.not, 
-			{outs = outs.collectAs({|item, i| item -> i}, BMInOutArray)});
+		// replace below with server methods
+//		// allow for arrays as well as Dictionaries
+//		// if array, offset by input channels
+//		if(ins.isBMInOutArray.not, 
+//			{ins = ins.collectAs({|item, i| item -> (i + server.options.numInputBusChannels)}, 
+//				BMInOutArray);
+//		});
+//		//ins.postln;
+//		if(outs.isBMInOutArray.not, 
+//			{outs = outs.collectAs({|item, i| item -> i}, BMInOutArray)});
 		// used for indices for matrix lookup
 		inNames = ins.keys;
 		outNames = outs.keys;

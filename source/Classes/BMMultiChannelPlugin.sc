@@ -813,7 +813,7 @@ BMMultichannelPluginsRack : BMAbstractAudioChainElement {
 //	}
 	
 	*new { |ins, outs, target, addAction = \addToTail, name|
-		^super.new.init(ins, outs ? ins, target, addAction, name);
+		^super.new.init(ins.asBMInOutArray, (outs ? ins).asBMInOutArray, target, addAction, name);
 		// default name is class
 	}
 	
