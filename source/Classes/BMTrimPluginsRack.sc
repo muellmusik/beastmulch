@@ -76,22 +76,28 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 	
 	// add delays to eliminate precedence effect
 	// assumes distances are in meters
-	compensateDistance { 
+	compensateDistance { |bool = true|
 		var rads, diff, farthest, plugin;
 		
-		rads = ins.select({|in| in.value.isBMSpeaker})
-			.collectAs({|speaker| speaker.value.rad }, Array);
-		farthest = rads.maxItem;
-		ins.do({|speaker| 
-			speaker.value.isBMSpeaker.if({
-				diff = farthest - speaker.value.rad;
-				if(diff > 0, { // farthest uncompensated
-					// speed of sound 344 m/s at 21 degrees C in dry air
-					plugin = BMPlugin('Distance Compensate').set(\delayTime, diff / 344);
-					this[speaker.value.name].addPlugin(plugin); 
+		(bool && distanceCompPlugins.isNil).if({
+			rads = ins.select({|in| in.value.isBMSpeaker})
+				.collectAs({|speaker| speaker.value.rad }, Array);
+			farthest = rads.maxItem;
+			ins.do({|speaker| 
+				speaker.value.isBMSpeaker.if({
+					diff = farthest - speaker.value.rad;
+					if(diff > 0, { // farthest uncompensated
+						// speed of sound 344 m/s at 21 degrees C in dry air
+						plugin = BMPlugin('Distance Compensate').set(\delayTime, diff / 344);
+						this[speaker.value.name].addPlugin(plugin);
+						distanceCompPlugins = distanceCompPlugins.add((speaker.value.name) -> plugin); 
+					});
 				});
 			});
-		});
+		}, {
+			distanceCompPlugins.do({|plgin| this[plgin.key].removePlugin(plgin.value) });
+			distanceCompPlugins = nil;
+		});	
 	}
 	
 	// auto add plugins by speaker spec
@@ -377,9 +383,9 @@ BMTrimPluginsRackGUI : BMAbstractGUI {
 			.extrude_(false)
 			.canFocus_(false)
 			.radius_(5)
-			.states_([["dT", Color.black, Color.white.alpha_(0.2)]])
+			.states_([["dT", Color.black, Color.white.alpha_(0.2)], ["dT", Color.black, Color.white]])
 			.font_(Font("Helvetica-Bold", 12))
-			.action_({ trimPluginsRack.compensateDistance; });
+			.action_({|but| trimPluginsRack.compensateDistance(but.value.booleanValue) });
 
 		window.onClose = { 
 			trimPluginsStripGUIs.do({|tpisg|
