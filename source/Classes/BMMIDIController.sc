@@ -6,6 +6,7 @@ BMAbstractMIDIController : BMAbstractController {
 	var <midiport, <uid, <outPort, <outUid, <midiout;
 	var responder, <>loopBack = false;
 	var <>acceptsAutomation = false;
+	var inputSpec;
 	
 //	*new { |midiport, name, server|
 //		^super.new.init(uid, name, server ? Server.default).addControlsToIndex;
@@ -15,7 +16,7 @@ BMAbstractMIDIController : BMAbstractController {
 		this.subclassResponsibility(thisMethod);
 	}
 	
-	makeSpec { 
+	makeInputSpec { 
 		this.subclassResponsibility(thisMethod);
 	}
 	
@@ -33,8 +34,9 @@ BMAbstractMIDIController : BMAbstractController {
 		busIndex = bus.index;
 		this.startListening;
 		midiout = MIDIOut(outPort, outUid);
-		this.makeSpec;
-		this.updateAllValues(valueArray);
+		spec = [0, 1, 'cos', 0.0].asSpec;
+		this.makeInputSpec;
+		this.updateAllValues(valueArray.copy);
 		allControllers[name] = this;
 	}
 	
@@ -46,11 +48,13 @@ BMAbstractMIDIController : BMAbstractController {
 		this.subclassResponsibility(thisMethod);
 	}
 	
+	// val is native midi value
 	updateValue { |ind, val|
 		var value;
 		//server.sendMsg("/c_set", busIndex + ind, val);
 		//valueArray[ind] = value = spec.map(val).asInteger;
-		valueArray[ind] = value = spec.unmap(val).asInteger;
+		valueArray[ind] = val;
+		value = spec.map(inputSpec.unmap(val)); // convert from midi to 0..1 and then add curve
 		server.sendMsg("/c_set", busIndex + ind, value);
 		if(loopBack || acceptsAutomation, {this.loopback(ind, val)});
 	}
@@ -61,13 +65,17 @@ BMAbstractMIDIController : BMAbstractController {
 	
 	// assumes fader 1 = 1 not 0
 	// returns value between 0 and 1
-	getVal { |controlNum| ^spec.map(valueArray[controlNum -1]) }
+	getVal { |controlNum| ^spec.map(inputSpec.unmap(valueArray[controlNum -1])) }
 	
-	setVal { |controlNum, val| this.updateValue(controlNum -1, spec.map(val)) }
+	setVal { |controlNum, val| this.updateValue(controlNum -1, inputSpec.map(spec.unmap(val))) }
 	
-	getAllValues { ^valueArray.collect({|val| spec.unmap(val)}) }
+	getAllValues { ^valueArray.collect({|val| spec.map(inputSpec.unmap(val))}) }
 	
-	setAllValues {|array| array.do({|item, i| this.updateValue(i, item); });}
+	setAllValues {|array| 
+		array.do({|item, i| 
+			this.updateValue(i, inputSpec.map(spec.unmap(item)))
+		});
+	}
 	
 	// this has no labels
 	setLabel { |controlNum, name| this.shouldNotImplement(thisMethod) }
@@ -104,8 +112,8 @@ BMMIDIBendController : BMAbstractMIDIController {
 
 	setNumControls { numControls = 16;}
 	
-	makeSpec {
-		spec = [0, 16384, 'cos', 0.0].asSpec;
+	makeInputSpec {
+		inputSpec = [0, 16384].asSpec;
 	}
 	
 	startListening { 
@@ -161,8 +169,8 @@ BMMIDICCController : BMAbstractMIDIController {
 		ccArray = argccArray;
 	}
 
-	makeSpec {
-		spec = [0, 127, 'cos', 0.0].asSpec;
+	makeInputSpec {
+		inputSpec = [0, 127].asSpec;
 	}
 	
 	startListening { 

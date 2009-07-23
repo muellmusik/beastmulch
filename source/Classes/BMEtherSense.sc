@@ -39,7 +39,8 @@ BMEtherSense : BMAbstractController {
 		bus = Bus.control(server, numControls);
 		busIndex = bus.index;
 		busBoard2Index = busIndex + 16; // save an add every message
-		spec = [0, 65535, 'cos', 0.0].asSpec;
+		//spec = [0, 65535, 'cos', 0.0].asSpec;
+		spec = [0, 1, 'cos', 0.0].asSpec; // map from normalised to curve
 		this.startListening;
 		//this.updateAllFaders(valueArray);
 		allControllers[name] = this;
@@ -50,13 +51,17 @@ BMEtherSense : BMAbstractController {
 		responders[0] = OSCresponderNode(addr, '/Ethersense01/Card01', { arg time, resp, msg; 
 			var values;
 			values = msg.copyToEnd(1);
-			server.sendMsg("/c_setn", busIndex, 16, *(values.collect({|val| spec.at(val)})));
+			server.sendMsg("/c_setn", busIndex, 16, *(values.collect({|val, i| 
+				spec.map(val.linlin(0, 65535, 0.0, 1.0))
+			})));
 			valueArray[0] = values;
 			this.changed(\faderVal);
 		}).add;
 		responders[1] = OSCresponderNode(addr, '/Ethersense01/Card02', { arg time, resp, msg; 			var values;
 			values = msg.copyToEnd(1);
-			server.sendMsg("/c_setn", busBoard2Index, 16, *(values.collect({|val| spec.at(val)})));
+			server.sendMsg("/c_setn", busBoard2Index, 16, *(values.collect({|val, i| 
+				spec.map(val.linlin(0, 65535, 0.0, 1.0))
+			})));
 			valueArray[1] = values;
 			this.changed(\faderVal);
 		}).add;
@@ -66,11 +71,13 @@ BMEtherSense : BMAbstractController {
 	
 	// assumes fader 1 = 1 not 0
 	// returns value between 0 and 1
-	getVal { |controlNum| ^spec.unmap(valueArray[controlNum -1]) }
+	getVal { |controlNum| ^spec.map(valueArray[controlNum -1].linlin(0, 65535, 0.0, 1.0)) }
 	
 	setVal { this.shouldNotImplement(thisMethod) }
 	
-	getAllValues { ^valueArray.flat.collect({|val| spec.unmap(val)})  }
+	getAllValues { 
+		^valueArray.flat.collect({|val, i| spec.map(val.linlin(0, 65535, 0.0, 1.0))}) 
+	}
 	
 	setAllValues {|array| this.shouldNotImplement(thisMethod) }
 	
