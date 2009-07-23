@@ -1,6 +1,6 @@
 BMTrimPluginsRack : BMAbstractAudioChainElement {
 	
-	var strips;
+	var strips, autoPlugins, distanceCompPlugins;
 	
 	*new { |ins, target, addAction = \addToTail, name|
 		^super.new.init(ins.asBMInOutArray, target, addAction, name);
@@ -96,16 +96,25 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 	
 	// auto add plugins by speaker spec
 	// requires a plugin spec name and a preset
-	autoPlugins { 
+	autoPlugins { |bool = true|
 		var plugin;
-		ins.do({|speaker|
-			speaker.value.isBMSpeaker.if({
-				speaker.value.spec.plugins.do({|plgin| 
-					// name, preset
-					plugin = BMPlugin(plgin[0]).preset_(plgin[1]);
-					this[speaker.value.name].addPlugin(plugin); 
+		(bool && autoPlugins.isNil).if({
+			ins.do({|speaker|
+				speaker.value.isBMSpeaker.if({
+					speaker.value.spec.plugins.do({|plgin| 
+						// name, preset
+						plugin = BMPlugin(plgin[0]);
+						plugin.notNil.if({
+							plugin.preset_(plgin[1]);
+							this[speaker.value.name].addPlugin(plugin);
+							autoPlugins = autoPlugins.add((speaker.value.name) -> plugin);
+						}); 
+					});
 				});
 			});
+		}, {
+			autoPlugins.do({|plgin| this[plgin.key].removePlugin(plgin.value) });
+			autoPlugins = nil;
 		});
 	}
 	
@@ -239,12 +248,15 @@ BMTrimPluginsStrip {
 		});
 	}
 	
-	removePlugin {|index|
-		var toBeRemoved;
-		toBeRemoved = plugins.removeAt(index);
-		toBeRemoved.release; // free synth and resources
-		// just removed, no need to reset order on server
-		this.changed;
+	removePlugin {|indexOrPlugin|
+		var toBeRemoved, index;
+		index.isInteger.not.if({ index = plugins.indexOf(indexOrPlugin) });
+			(index.notNil && (index < plugins.size)).if({ 
+			toBeRemoved = plugins.removeAt(index);
+			toBeRemoved.release; // free synth and resources
+			// just removed, no need to reset order on server
+			this.changed;
+		});
 	}
 	
 	movePluginUp {|index|
@@ -349,9 +361,9 @@ BMTrimPluginsRackGUI : BMAbstractGUI {
 			.extrude_(false)
 			.canFocus_(false)
 			.radius_(5)
-			.states_([["APi", Color.black, Color.white.alpha_(0.2)]])
+			.states_([["APi", Color.black, Color.white.alpha_(0.2)], ["APi", Color.black, Color.white]])
 			.font_(Font("Helvetica-Bold", 8))
-			.action_({ trimPluginsRack.autoPlugins });
+			.action_({|but| trimPluginsRack.autoPlugins(but.value.booleanValue) });
 		RoundButton(buttons, Rect(0, 0, 20, 20))
 			.extrude_(false)
 			.canFocus_(false)
