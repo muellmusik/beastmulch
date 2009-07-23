@@ -131,7 +131,7 @@ BMMotorBEAST : BMAbstractController {
 	setVal { |controlNum, val| 
 		var cal;
 		cal = calibrationRanges[controlNum - 1];
-		addr.sendMsg("/MF/" ++ (controlNum - 1), spec.umap(val.linlin(*cal[[2, 3, 0, 1]])).asInteger) 
+		addr.sendMsg("/MF/" ++ (controlNum - 1), spec.unmap(val.linlin(*cal[[2, 3, 0, 1]])).asInteger) 
 		//addr.sendMsg("/MF", *(valueArray.copy[controlNum - 1] = spec.map(val).asInteger))
 	}
 	
