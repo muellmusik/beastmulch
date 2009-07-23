@@ -55,7 +55,7 @@ BMAbstractMackie : BMAbstractController {
 			++ nameString.collectAs({arg item; item.ascii}, Int8Array)).add(16rf7);
 		midiout.sysex(titleArray);
 		spec = [0, 16384, 'cos', 0.0].asSpec;
-		this.updateAllFaders(valueArray);
+		this.updateAllValues(valueArray);
 		allControllers[name] = this;
 	}
 	
@@ -88,7 +88,7 @@ BMAbstractMackie : BMAbstractController {
 		midiout.bend(chan, value); // loopback bend to fader
 	}
 		
-	updateAllFaders { |array|
+	updateAllValues { |array|
 		array.do({|item, i| this.updateValue(i, item)});
 	}
 	
