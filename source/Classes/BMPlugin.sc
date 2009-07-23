@@ -206,7 +206,7 @@ BMPluginSpec {
 					});
 				});
 			};
-			window.front;
+			window.front; // this value is stored in the plugin's gui var
 		}
 	}
 	
@@ -219,6 +219,7 @@ BMPlugin {
 	var <spec, <server, <attributes, <defName, <def;
 	var <synth, <values, defaultValues, <bus, numControls, controlNames, mappings;
 	var <preset;
+	var gui;
 	
 	*new {|pluginSpecName, server, attributes|
 		^super.new.init(pluginSpecName, server ? Server.default, attributes);
@@ -349,6 +350,8 @@ BMPlugin {
 		synth.set(\cfgate, 0); 
 		synth = nil; bus.free; 
 		bus = nil;
+		gui.notNil.if({ gui.close });
+		spec.cleanupFunc.value(this);
 		//CmdPeriod.remove(this);
 	} // I'm a lame duck...
 	
@@ -359,7 +362,12 @@ BMPlugin {
 //	}
 	
 	gui {
-		spec.guiFunc.value(this);
+		gui.isNil.if({
+			gui = spec.guiFunc.value(this);
+			gui.onClose = gui.onClose.addFunc({ gui = nil });
+		}, {
+			gui.front;
+		});
 	}
 
 }

@@ -616,6 +616,7 @@ BMMultichannelPlugin {
 	var <synth, <values, defaultValues, <bus, numControls, controlNames, mappings;
 	var <preset;
 	var <numInputs, <numOutputs, <inputs, <outputs;
+	var gui;
 	
 	*new {|pluginSpecName, inArray, outArray, server, attributes|
 		^super.new.init(pluginSpecName, inArray, outArray, server ? Server.default, attributes);
@@ -757,6 +758,7 @@ BMMultichannelPlugin {
 		synth.set(\cfgate, 0); 
 		synth = nil; bus.free; 
 		bus = nil;
+		gui.notNil.if({ gui.close });
 		spec.cleanupFunc.value(this);
 		//CmdPeriod.remove(this);
 	} // I'm a lame duck...
@@ -768,7 +770,12 @@ BMMultichannelPlugin {
 //	}
 	
 	gui {
-		spec.guiFunc.value(this);
+		gui.isNil.if({
+			gui = spec.guiFunc.value(this);
+			gui.onClose = gui.onClose.addFunc({ gui = nil });
+		}, {
+			gui.front;
+		});
 	}
 	
 	copy {
@@ -893,12 +900,17 @@ BMMultichannelPluginsRack : BMAbstractAudioChainElement {
 		});
 	}
 	
-	removePlugin {|index|
-		var toBeRemoved;
-		toBeRemoved = plugins.removeAt(index);
-		toBeRemoved.release; // free synth and resources
-		// just removed, no need to reset order on server
-		this.changed;
+	removePlugin {|indexOrPlugin|
+		var toBeRemoved, index;
+		indexOrPlugin.isInteger.not.if({ index = plugins.indexOf(indexOrPlugin) }, {
+			index = indexOrPlugin;
+		});
+		(index.notNil && (index < plugins.size)).if({ 
+			toBeRemoved = plugins.removeAt(index);
+			toBeRemoved.release; // free synth and resources
+			// just removed, no need to reset order on server
+			this.changed;
+		});
 	}
 	
 	movePluginUp {|index|
