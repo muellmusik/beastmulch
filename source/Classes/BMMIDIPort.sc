@@ -1,5 +1,5 @@
 BMMIDIPort {
-	classvar <ports;
+	classvar <ports, initialised = false;
 	var <name, <inuid, <outuid, <device, <outport;
 	
 	*initClass {
@@ -23,6 +23,7 @@ BMMIDIPort {
 				this.new(name, nil, dst.uid, dst.device, i);
 			});
 		}); 
+		initialised = true;
 	}
 	
 	*new {|name, inuid, outuid, device, outport|
@@ -32,5 +33,24 @@ BMMIDIPort {
 	init {
 		ports[name] = this;
 	}
+	
+	initFromArchive {
+		var port;
+		initialised.not.if({
+			"You must call BMMIDIPort:init before restoring instances from an archive. Initialising now.".warn;
+			this.class.init;
+		});
+		port = ports[name.asSymbol];
+		port.notNil.if({ ^this }, {
+			port = ports[MIDIClient.sources.first.name.asSymbol];
+			("MIDIPort" + name.asCompileString + "could not be found. Using" + port.name + "instead.").warn;
+			name = port.name;
+			inuid = port.inuid;
+			outuid = port.outuid;
+			device = port.device;
+			outport = port.outport;
+		});
+	}	
+
 
 }
