@@ -181,7 +181,6 @@ BMMIDICCController : BMAbstractMIDIController {
 	}
 	
 	startListening { 
-		this.dump;
 		responder = CCResponder({|src, chan, num, value|
 			[chan, num, value].postln;
 			this.updateValue(ccArray.indexOf(num), value);
