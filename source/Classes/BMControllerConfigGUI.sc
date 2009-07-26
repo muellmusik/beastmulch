@@ -26,6 +26,7 @@ BMControllerConfigGUI : BMAbstractGUI {
 		params.keys.asArray.sort.do({|argName|
 			var vals, widget, paramclass, lastValidInput;
 			var keys, string;
+			var existingPort;
 			vals = params[argName]; // argname->[class, spec, humanName];
 			paramclass = vals[0];
 
@@ -38,11 +39,16 @@ BMControllerConfigGUI : BMAbstractGUI {
 				}, 
 				{paramclass == BMMIDIPort }, {
 					keys = BMMIDIPort.ports.keys.asArray.sort;
+					existingPort = existingParams[argName];
 					SCStaticText(window, 100@20).string_(vals[2]).align_(\right);
 					widget = SCPopUpMenu(window, 188@20)
 						.background_(Color.white.alpha_(0.3))
 						.items_(keys) 
-						.value_(keys.indexOf(existingParams[argName]) ? 0); // maybe nil
+						.value_(
+							existingPort.notNil.if({
+								keys.indexOf(existingPort.name.asSymbol) ? 0; // maybe nil
+							}, {0});
+						)
 				},
 				{paramclass != String && paramclass.superclasses.includes(RawArray)}, {
 					SCStaticText(window, 100@20).string_(vals[2]).align_(\right);
