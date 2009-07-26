@@ -33,7 +33,14 @@ BMAbstractMIDIController : BMAbstractController {
 		bus = Bus.control(server, numControls);
 		busIndex = bus.index;
 		this.startListening;
-		midiout = MIDIOut(outPort, outUid);
+		// protect against one sided port
+		outPort.notNil.if({
+			midiout = MIDIOut(outPort, outUid);
+		}, {
+			acceptsAutomation = false;
+			loopBack = false;
+			warn(name.asString + "has no midi out port. Automation and output disabled.");
+		});
 		spec = [0, 1, 'cos', 0.0].asSpec;
 		this.makeInputSpec;
 		this.updateAllValues(valueArray.copy);
@@ -146,7 +153,7 @@ BMMIDICCController : BMAbstractMIDIController {
 	}
 	
 	*newFromParamDict {|dict, server| 
-		^this.new(dict[\midiport], dict[\name], dict[\chan], dict[\ccArray], server);
+		^this.new(dict[\midiport], dict[\name], dict[\chan] - 1, dict[\ccArray], server);
 	}
 	
 	*parameterList { 
@@ -155,7 +162,7 @@ BMMIDICCController : BMAbstractMIDIController {
 		^(
 			name: [Symbol, {class.makeName}, "Name"],
 			midiport: [BMMIDIPort, nil, "MIDI Port"],
-			chan: [Integer, [0, 15, \linear, 1, 0].asSpec, "MIDI Channel"],
+			chan: [Integer, [1, 16, \linear, 1, 0].asSpec, "MIDI Channel"],
 			ccArray: [Int8Array, "", "CC numbers"]
 		); 
 	}
@@ -165,7 +172,7 @@ BMMIDICCController : BMAbstractMIDIController {
 	setNumControls { numControls = ccArray.size}
 	
 	setCCParams { |argchan, argccArray|
-		chan = argchan;
+		chan = argchan.asInteger;
 		ccArray = argccArray;
 	}
 
@@ -174,7 +181,9 @@ BMMIDICCController : BMAbstractMIDIController {
 	}
 	
 	startListening { 
+		this.dump;
 		responder = CCResponder({|src, chan, num, value|
+			[chan, num, value].postln;
 			this.updateValue(ccArray.indexOf(num), value);
 		}, uid, chan, ccArray);
 	}
