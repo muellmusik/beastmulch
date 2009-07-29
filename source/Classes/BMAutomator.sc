@@ -654,7 +654,6 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		scrollView.canFocus_(false);
 		
 		backView = SCCompositeView(scrollView, Rect(0, 20,  width - 10, sfView.bounds.height)).background_(Color.clear);
-		backView.relativeOrigin = false;
 		
 		path.notNil.if({sfView.soundfile = sf;});
 		
@@ -674,7 +673,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			var width;
 			width = scrollView.bounds.width - 2 + (sf.duration * 160 * ([0.001, 1.001, \exp].asSpec.map(view.value) - 0.001));
 			sfView.bounds = Rect(0,20, width, 300);
-			envView.bounds = Rect(0,20, width, sfView.bounds.height);
+			envView.bounds = Rect(0,0, width, sfView.bounds.height);
 			backView.bounds = Rect(0, 20, width, sfView.bounds.height); 
 			timesView.bounds = Rect(0, 0, width, 20);
 			sfView.selections.size.do({|i| 
@@ -784,7 +783,6 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		timesView = SCUserView(scrollView, Rect(0, 0, sfView.bounds.width, 20));
 		timesView.background = Color.clear;
 		timesView.canFocus_(false);
-		timesView.relativeOrigin_(false);
 		
 		timesView.drawFunc = {
 			var tenSecs, thirtySecs, bounds;
@@ -835,14 +833,17 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		envView.notNil.if({envView.remove});
 		
 		
-		envView = SCEnvelopeView(backView, Rect(0, 20, sfView.bounds.width, sfView.bounds.height))
+		envView = SCEnvelopeView(backView, Rect(0, 0, sfView.bounds.width, sfView.bounds.height))
 			.thumbWidth_(19)
 			.thumbHeight_(19)
 			.drawLines_(true)
 			.drawRects_(true)
 			.selectionColor_(Color.grey)
 			.strokeColor_(Color.white)
+			.canFocus_(false)
 			.background_(Color.clear);
+			
+		currentEnvironment[\envV] = envView;
 			
 		//b.setStatic(0,true);
 		(ca.sequences.size > 0).if({
