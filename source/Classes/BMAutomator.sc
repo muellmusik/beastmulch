@@ -943,7 +943,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 					ca.timeReference.setTime(newTime);
 				});
 			}, {
-				if(activeSnapshot.notNil && activeSnapshot.isKnown, {
+				if(activeSnapshot.notNil and: { activeSnapshot.isKnown}, {
 					BMSnapShotSliders(activeSnapshot, window);
 				})
 			})
