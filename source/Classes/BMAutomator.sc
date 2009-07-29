@@ -135,7 +135,7 @@ sort out mappings
 */
 BMControllerAutomator : BMAbstractIndependentRateAutomator {
 	// interpolates between controller snapshots
-	var <controls; // an array of controlnames or a single one
+	var <controls; // an array of controlNames or a single one
 	var <sequences; // an dict of BMSnapShotSeqs
 	var oldSeqs; // the sequences that were active last time through the automate loop
 	var sinSmooth = true; // use sin curves for automation
@@ -505,7 +505,7 @@ BMSnapShotSequenceSeg {
 }
 
 BMAbstractSnapShot {
-	var <name, <time, <values, <controlnames;
+	var <name, <time, <values, <controlNames;
 	// these allow for customised behaviour upon entering a segment
 	
 	*new{|controls, time, name|
@@ -519,7 +519,7 @@ BMAbstractSnapShot {
 	
 	snap {|controls, argTime|  
 		time = argTime;
-		controlnames = controls;
+		controlNames = controls;
 		values = controls.collectAs({|ctrlname| 
 			ctrlname -> BMAbstractController.getValueByName(ctrlname);
 		}, IdentityDictionary);
@@ -1157,10 +1157,10 @@ BMSnapShotSliders : BMAbstractGUI {
 		window.view.decorator = FlowLayout(window.view.bounds);
 		window.view.background = Color.rand.alpha_(0.3);
 		sliders = IdentityDictionary.new;
-		labelWidth = snapshot.controlnames.collect({|name| 
+		labelWidth = snapshot.controlNames.collect({|name| 
 			name.asString.bounds(font).width
 		}).maxItem;
-		snapshot.controlnames.asArray.sort({|a, b| 
+		snapshot.controlNames.asArray.sort({|a, b| 
 			b.asString.naturalCompare(a.asString) >= 0
 		}).do({|label, i|
 			var initVal, control, displaySpec, unitWidth = 20;
