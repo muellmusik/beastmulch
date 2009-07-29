@@ -92,7 +92,8 @@ BMVirtualControllerSliders : BMAbstractGUI {
 	}
 	
 	makeWindow {|origin|
-		var numSliders, presetMenu;
+		var numSliders, font, presetMenu, labelWidth;
+		font = Font("Helvetica-Bold", 10);
 		numSliders = virtualCont.numControls;
 		window = SCWindow.new(name, 
 			Rect(300, 300, 652, (numSliders + 1) * 24), false); // 508
@@ -100,6 +101,9 @@ BMVirtualControllerSliders : BMAbstractGUI {
 		window.view.background = Color.rand.alpha_(0.3);
 		sliders = Array.newClear(numSliders);
 		specs = Array.newClear(numSliders);
+		labelWidth = virtualCont.controlNames.collect({|name| 
+			name.asString.bounds(font).width
+		}).maxItem;
 		virtualCont.controlNames.do({|controlName, i|
 			var initVal, control, label, displaySpec;
 			label = virtualCont.getLabel(i + 1);
@@ -117,9 +121,10 @@ BMVirtualControllerSliders : BMAbstractGUI {
 						virtualCont.setVal(i + 1, setVal);
 						//setVal.postln;
 					})
-				}, initVal, labelWidth: 100
+				}, initVal, labelWidth: labelWidth
 			);
 			sliders[i].numberView.background = Color.white.alpha_(0.4);
+			sliders[i].font = font;
 			specs[i] = displaySpec;
 		
 		});
