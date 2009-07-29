@@ -1146,10 +1146,13 @@ BMSnapShotSliders : BMAbstractGUI {
 	
 	makeWindow {|parent|
 		var numSliders, font, labelWidth;
+		var maxVisSliders = 10, widthOffset = 0;
 		font = Font("Helvetica-Bold", 10);
 		numSliders = snapshot.values.size;
+		if(numSliders >= maxVisSliders, {widthOffset = 10});
 		window = SCModalSheet.new(parent, 
-			Rect(0, 0, 652, (numSliders * 24) + 28)); // 508
+			Rect(0, 0, 652, (24 * min(numSliders, maxVisSliders)) + 28), // 508
+			scroll: numSliders >= maxVisSliders); 
 		window.view.decorator = FlowLayout(window.view.bounds);
 		window.view.background = Color.rand.alpha_(0.3);
 		sliders = IdentityDictionary.new;
@@ -1164,7 +1167,7 @@ BMSnapShotSliders : BMAbstractGUI {
 			displaySpec = control.displaySpec;
 			initVal = displaySpec.map(snapshot.values[label.postln].postln);
 			postf("init: %\n", initVal);
-			sliders[label] = EZSlider.new(window, 640@20, label.asString, displaySpec,
+			sliders[label] = EZSlider.new(window, (640 - widthOffset)@20, label.asString, displaySpec,
 				{|ez| 
 //					if(fromUpdate.not, {
 						// convert back to 0..1
@@ -1176,7 +1179,7 @@ BMSnapShotSliders : BMAbstractGUI {
 			sliders[label].font = font;
 		});
 		window.view.decorator.nextLine;
-		SCStaticText(window, Rect(0, 0, window.bounds.width - 132, 20))
+		SCStaticText(window, Rect(0, 0, window.bounds.width - 132 - widthOffset, 20))
 			.font_(font)
 			.align_(\right)
 			.string_("Adjust snapshot levels");
