@@ -370,14 +370,14 @@ BMSnapShotSeq {
 		// arb snapshot first, sort order correctly
 		snapshots = snapshots.sort({|a, b| a.time < b.time || (a === firstSnap)  });
 		//postf("snapshots(buildSegs): %\n", snapshots);
-		if(firstSnap.time > snapshots[1].time, {
+		if(firstSnap.time >= snapshots[1].time, {
 			\first.postln;
 			firstSnap.removeDependant(this);
 			firstSnap.time = max(snapshots[1].time - minSegSize, 0);
 			firstSnap.addDependant(this);
 		});
 		// second sort?
-		snapshots = snapshots.sort({|a, b| a.time < b.time });
+		snapshots = snapshots.sort({|a, b| a.time < b.time || (a === firstSnap)});
 		
 		//postf("snapshots(buildSegs): %\n", snapshots.collect(_.name));
 		snapshots.doAdjacentPairs({|a, b|
