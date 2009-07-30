@@ -787,7 +787,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		timesView.drawFunc = {
 			var tenSecs, thirtySecs, bounds;
 			bounds = timesView.bounds;
-			Pen.addRect(Rect(0, 0, sfView.bounds.width, 20));
+			Pen.addRect(Rect(0, 0, bounds.width, 20));
 			Pen.fillColor = Color.new255(0, 0, 238);
 			Pen.fill;
 //			Pen.fillRadialGradient(bounds.center, bounds.center, 0, bounds.width, 
@@ -810,7 +810,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			});
 			Pen.width = 1;
 			Pen.lineDash_(FloatArray[]);
-			thirtySecs = timesView.bounds.width * durInv * 30;
+			thirtySecs = bounds.width * durInv * 30;
 			(sf.duration / 30).floor.do({|i|
 				((i + 1) * 30).asTimeString.drawLeftJustIn(
 					Rect((i+1) * thirtySecs + 1, 0, 50, 20),
@@ -820,7 +820,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			});
 			Pen.strokeColor = Color.black;
 			Pen.lineDash_(FloatArray[3,3]);
-			Pen.line(0@20, timesView.bounds.width@20);
+			Pen.line(0@20, bounds.width@20);
 			Pen.stroke;
 			Pen.lineDash_(FloatArray[]);
 		};
