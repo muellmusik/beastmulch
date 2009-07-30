@@ -216,9 +216,9 @@ BMConcertGUI  {
 		buttonSection.decorator.shift(0, 20);
 				
 		loadButton				= RoundButton(buttonSection, 180 @ 20).extrude_(false).canFocus_(false);		loadButtonStates			= (noPieces: 		[[ "No Pieces Available", Color.black, Color.white.alpha_(0.8) ]],
-		 						   noSelection:	[[ "No Piece Selected", Color.black, Color.white.alpha_(0.8) ]],
+		 						   noSelection:	[[ "No Piece Active", Color.black, Color.white.alpha_(0.8) ]],
 		 						   loadSelected: 	[[ "Load Selected Piece", Color.black, Color.white.alpha_(0.8) ]],
-		 						   pieceLoaded: 	[[ "Piece Loaded", Color.black, Color.green.alpha_(0.2) ]]
+		 						   pieceLoaded: 	[[ "Piece Active", Color.black, Color.green.alpha_(0.2) ]]
 		 						  );
 								   
 		loadButton.states 			= if (concertManager.concert.pieces.size > 0)
