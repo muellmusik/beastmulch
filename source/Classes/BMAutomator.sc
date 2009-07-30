@@ -671,7 +671,10 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		SCStaticText(window, Rect(0, 0, 5, 10)).string_("-").font_(Font("Helvetica-Bold", 12));
 		zoomSlider = SmoothSlider(window, Rect(0, 5, 100, 10)).action_({|view| 
 			var width;
-			width = scrollView.bounds.width - 2 + (sf.duration * 160 * ([0.001, 1.001, \exp].asSpec.map(view.value) - 0.001));
+			//width = scrollView.bounds.width - 2 + (sf.duration * 160 * ([0.001, 1.001, \exp].asSpec.map(view.value) - 0.001));
+			// temp fix for userview with large width bug
+			width = scrollView.bounds.width - 2 + ((32768 - scrollView.bounds.width) * ([0.001, 1.001, \exp].asSpec.map(view.value) - 0.001));
+			width = width.round;
 			sfView.bounds = Rect(0,20, width, 300);
 			envView.bounds = Rect(0,0, width, sfView.bounds.height);
 			backView.bounds = Rect(0, 20, width, sfView.bounds.height); 
