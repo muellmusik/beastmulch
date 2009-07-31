@@ -22,7 +22,7 @@ BMControllerConfigGUI : BMAbstractGUI {
 		window = SCModalSheet(parent, Rect(30, 30, 300, params.size + 1 * 24 + 44));
 		window.addFlowLayout;
 		StaticText(window, Rect(10, 10, 200, 20)).font_(Font("Helvetica-Bold", 12))
-			.string_("Configure new" + class.humanName);
+			.string_("Configure" + class.humanName);
 		params.keys.asArray.sort.do({|argName|
 			var vals, widget, paramclass, lastValidInput;
 			var keys, string;
