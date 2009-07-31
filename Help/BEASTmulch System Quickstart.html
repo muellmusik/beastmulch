@@ -12,15 +12,12 @@ p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0p
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica; min-height: 17.0px}
-p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #c21d1c}
-p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
-p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Helvetica}
+p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 span.s1 {font: 12.0px Helvetica}
 span.s2 {vertical-align: -3.0px}
-span.s3 {text-decoration: underline ; color: #0017c2}
-span.s4 {color: #000000}
-span.s5 {color: #0017c2}
+span.s3 {font: 22.0px Helvetica}
 span.Apple-tab-span {white-space:pre}
 ul.ul1 {list-style-type: disc}
 </style>
@@ -32,7 +29,7 @@ ul.ul1 {list-style-type: disc}
 <p class="p2"><br></p>
 <p class="p4"><b>Configuring your System</b></p>
 <p class="p2"><br></p>
-<p class="p3">To begin, you should configure the software to match you setup. To do this look under the BEASTmulch menu and select Configuration-&gt;Configure System. You should see a window which looks something like this:</p>
+<p class="p3">To begin, you should configure the software to match your setup. To do this look under the BEASTmulch menu and select Configuration-&gt;Configure System. You should see a window which looks something like this:</p>
 <p class="p2"><br></p>
 <p class="p5"><span class="s1"><img src="attachments/BEASTmulch System Quickstart/Pasted Graphic 1.png" alt="attachments/BEASTmulch System Quickstart/Pasted Graphic 1.png"></span></p>
 <p class="p2"><br></p>
@@ -79,9 +76,8 @@ ul.ul1 {list-style-type: disc}
 <p class="p3">Before continuing, it is important to distinguish between two major entities in the software: <i>Configurations</i> and <i>Pieces</i>.</p>
 <p class="p2"><br></p>
 <ul class="ul1">
-<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica">A <i>Configuration</i> is a preset containing information about routing, controller assignments, pre- and post-processing, etc.</li>
-<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px"><br></li>
-<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica">A <i>Piece</i> is a combination of a Configuration with an optional soundfile and automation data.</li>
+<li style="margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Helvetica">A <i>Configuration</i> is a preset containing information about routing, controller assignments, pre- and post-processing, etc.</li>
+<li style="margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Helvetica">A <i>Piece</i> is a combination of a Configuration with an optional soundfile and automation data.</li>
 </ul>
 <p class="p2"><br></p>
 <p class="p3">It is thus possible to for many Pieces to share the same Configuration, which can be efficient in terms of simplifying editing. Note that while editing a Configuration you can load a soundfiles to test it, but this information will not be saved in the Configuration. To do that you must create a Piece based on the Configuration.</p>
@@ -101,25 +97,16 @@ ul.ul1 {list-style-type: disc}
 <p class="p3">At the right is a depiction of the audio routing and processing chain, with signal running from to to bottom.. At the top are sources: the soundfile player and hardware inputs. Below that are various stages which route and manipulate these channels.</p>
 <p class="p2"><br></p>
 <ul class="ul1">
-<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica"><b>Player/Hardware Inputs</b> - These are a soundfile player and the hardware inputs.</li>
-<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px"><br></li>
-<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica"><b>Virtual Inputs</b> - This stage allows you to make copies of input channels by routing them in parallel to the virtual input channels (the number of which was defined in the System Configuration window (see above)). This can be useful if you want to have both processed and unprocessed versions of a channel, for instance.</li>
-<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px"><br></li>
-<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica"><b>Pre-processing</b> - Allows you to apply a trim setting, and processing (e.g. EQ, delays, etc.) to any of the normal or virtual input channels. Since individual inputs may be routed to multiple outputs, it can be useful to do this here.</li>
-<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px"><br></li>
-<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica"><b>Input Levels</b> - Allows you to assign controllers (such as MIDI faders or GUI sliders) to scale the levels of the input channels. A single control can scale multiple channels. Since individual inputs may be routed to multiple outputs, it can be useful to do this here.</li>
-<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px"><br></li>
-<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica"><b>Audio Routing</b> - This is a matrix router which allows you to route signals from input channels to output channels. This includes routing signals from Virtual Inputs and to Virtual Outputs.</li>
-<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px"><br></li>
-<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica"><b>Output Levels</b> - As with input levels above, this allows you to assign controllers (such as MIDI faders or GUI sliders) to scale the levels of the output channels.</li>
-<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px"><br></li>
-<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica"><b>Post-processing</b> - Allows you to apply a trim setting, and processing (e.g. EQ, delays, etc.) to any of the normal or virtual output channels.</li>
-<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px"><br></li>
-<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica"><b>Multichannel</b> - A special stage which allows for multichannel processing, such as VBAP panning or ambisonics decoding.</li>
-<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px"><br></li>
-<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica"><b>Virtual Outputs</b> - This stage allows you to make copies of output channels by routing Virtual Outputs in parallel to physical outputs.</li>
-<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px"><br></li>
-<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica"><b>Master Fader</b> - A global level setting for the system.</li>
+<li style="margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Helvetica"><b>Player/Hardware Inputs</b> - These are a soundfile player and the hardware inputs.</li>
+<li style="margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Helvetica"><b>Virtual Inputs</b> - This stage allows you to make copies of input channels by routing them in parallel to the virtual input channels (the number of which was defined in the System Configuration window (see above)). This can be useful if you want to have both processed and unprocessed versions of a channel, for instance.</li>
+<li style="margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Helvetica"><b>Pre-processing</b> - Allows you to apply a trim setting, and processing (e.g. EQ, delays, etc.) to any of the normal or virtual input channels. Since individual inputs may be routed to multiple outputs, it can be useful to do this here.</li>
+<li style="margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Helvetica"><b>Input Levels</b> - Allows you to assign controllers (such as MIDI faders or GUI sliders) to scale the levels of the input channels. A single control can scale multiple channels. Since individual inputs may be routed to multiple outputs, it can be useful to do this here.</li>
+<li style="margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Helvetica"><b>Audio Routing</b> - This is a matrix router which allows you to route signals from input channels to output channels. This includes routing signals from Virtual Inputs and to Virtual Outputs.</li>
+<li style="margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Helvetica"><b>Output Levels</b> - As with input levels above, this allows you to assign controllers (such as MIDI faders or GUI sliders) to scale the levels of the output channels.</li>
+<li style="margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Helvetica"><b>Post-processing</b> - Allows you to apply a trim setting, and processing (e.g. EQ, delays, etc.) to any of the normal or virtual output channels.</li>
+<li style="margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Helvetica"><b>Multichannel</b> - A special stage which allows for multichannel processing, such as VBAP panning or ambisonics decoding.</li>
+<li style="margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Helvetica"><b>Virtual Outputs</b> - This stage allows you to make copies of output channels by routing Virtual Outputs in parallel to physical outputs.</li>
+<li style="margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Helvetica"><b>Master Fader</b> - A global level setting for the system.</li>
 </ul>
 <p class="p2"><br></p>
 <p class="p3">For all of these except Hardware Inputs clicking on the stage will open a window. We'll start in the centre of this, with the Audio Routing section.</p>
@@ -192,17 +179,22 @@ ul.ul1 {list-style-type: disc}
 <p class="p2"><b></b><br></p>
 <p class="p3">Clicking on this stage opens a large slider which scales the levels of all outputs.</p>
 <p class="p2"><b></b><br></p>
-<p class="p3"><b>See also: </b><a href="../ServerArchitecture/Buffer.html"><span class="s3">Buffer</span></a><b> </b>[other related help files]</p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<p class="p4"><b>Acknowledgements</b></p>
+<p class="p2"><b></b><br></p>
+<p class="p3">The BEASTmulch project received funding from the Arts and Humanities Research Council of the UK, and was sponsored by the University of Birmingham.</p>
 <p class="p2"><br></p>
-<p class="p4"><b>More detailed examples</b></p>
-<p class="p6"><br></p>
-<p class="p7"><span class="s4">b = </span><span class="s5">SomeClass</span><span class="s4">.new(s, 100, 2); <span class="Apple-tab-span">	</span></span>// explanation of this line</p>
-<p class="p7"><span class="s4">b.doSomething;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// explanation of this line</p>
-<p class="p8">b.cleanUp</p>
-<p class="p9"><br></p>
-<p class="p8">...</p>
-<p class="p9"><br></p>
-<p class="p9"><br></p>
-<p class="p5"><span class="s1"><img src="attachments/BEASTmulch System Quickstart/www.ahrc.ac.uk.png" alt="attachments/BEASTmulch System Quickstart/www.ahrc.ac.uk.png"></span></p>
+<p class="p8"><br></p>
+<p class="p3"><img src="attachments/BEASTmulch System Quickstart/www.ahrc.ac.uk.png" alt="attachments/BEASTmulch System Quickstart/www.ahrc.ac.uk.png"><span class="Apple-converted-space">  <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><a href="http://www.ahrc.ac.uk">http://www.ahrc.ac.uk</a></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p3"><img src="attachments/BEASTmulch System Quickstart/www.bham.ac.uk.png" alt="attachments/BEASTmulch System Quickstart/www.bham.ac.uk.png"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><a href="http://www.bham.ac.uk">http://www.bham.ac.uk</a></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p3"><span class="s3"><b>BEAST<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b><a href="http://www.beast.bham.ac.uk/research/mulch.shtml"><span class="s1">http://www.beast.bham.ac.uk/research/mulch.shtml</span></a></span></p>
+<p class="p2"><br></p>
 </body>
 </html>
