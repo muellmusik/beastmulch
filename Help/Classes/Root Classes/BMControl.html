@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="949.43">
+<meta name="CocoaVersion" content="949.46">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
@@ -15,17 +15,17 @@ p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco
 p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
 p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p8 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
-p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #c21d1c}
+p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #b22827}
 p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
 p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
 p.p12 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica; min-height: 17.0px}
-p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #c21d1c}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #b22827}
 p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0000ff}
-span.s3 {color: #0017c2}
+span.s2 {color: #001dfd}
+span.s3 {color: #0021c0}
 span.s4 {color: #000000}
-span.s5 {color: #c21d1c}
+span.s5 {color: #b22827}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -42,9 +42,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p1">The BEASTmulch provides two ways of dealing with a given control:</p>
 <p class="p2"><br></p>
-<p class="p1">1) as a collection of controls - this will be a subclass of <a href="BMAbstractController.html"><span class="s2">BMAbstractController</span></a> and will generally represent a single hardware device and all of its controls.</p>
+<p class="p1">1) as a collection of controls - this will be a subclass of <a href="BMAbstractController.html"><span class="s2">BMAbstractController</span></a> and will generally represent a single hardware device and all of its controls. Controls should be numbered, and be accessible through <b>getVal</b> and <b>setVal</b> by index, usually starting with 1 for human readability.</p>
 <p class="p2"><br></p>
-<p class="p1">2) as an individual control - an instance of BMControl.</p>
+<p class="p1">2) as an individual control - an instance of BMControl. These have a Symbol for a name, and can be accessed through the class methods <b>*getValueByName</b> and <b>*setValueByName</b>.</p>
 <p class="p2"><br></p>
 <p class="p1">It is sometimes useful to deal with one or the other representation depending on what one is trying to do. BMAbstractController has two classvars, <b>allControllers</b> and <b>allControls</b>, which contain dictionaries. These allow objects to query any individual control or controller by name, or to get global information about what controls or controllers currently exist.</p>
 <p class="p2"><br></p>
