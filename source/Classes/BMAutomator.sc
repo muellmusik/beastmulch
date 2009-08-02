@@ -726,8 +726,11 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			.font_(Font("Helvetica-Bold", 10))
 			.states_([["Add Snapshot"]])
 			.action_({
+				var newname;
 				if(activeSequence.notNil, {
-					ca.addSnapShot(activeSequence.name, time, UniqueID.next.asSymbol);
+					newname = UniqueID.next.asSymbol;
+					ca.addSnapShot(activeSequence.name, time, newname);
+					activeSnapshot = activeSequence.snapshotsDict[newname];
 					this.makeEnvView;
 				});
 			});
@@ -737,9 +740,17 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			.font_(Font("Helvetica-Bold", 10))
 			.states_([["Remove Snapshot"]])
 			.action_({
-				if(activeSnapshot.notNil, {
-					activeSequence.removeSnapShot(activeSnapshot.name);
-					this.makeEnvView;
+				if(activeSnapshot.notNil && activeSnapshot.isKnown, {
+					if(activeSequence.snapshots.size > 2, {
+						activeSequence.removeSnapShot(activeSnapshot.name);
+						activeSnapshot = activeSequence.snapshots.last;
+						this.makeEnvView;
+					}, {
+						ca.removeSequence(activeSequence);
+						activeSequence = nil;
+						this.makeEnvView;
+						this.drawSelections;
+					});
 				});
 			});
 		
