@@ -928,16 +928,21 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			});
 		};
 		envView.mouseDownAction = {|view, x, y, modifiers, buttonNumber, clickCount|
-			var newTime;
+			var newTime, clickedOnNode;
 			// deselects on click in midst
 			if(clickCount < 2, {
-				activeSequence = seqs[view.index];
-				activeSnapshot = snapshots[view.index];
+				if(view.index >=0, {
+					activeSequence = seqs[view.index];
+					activeSnapshot = snapshots[view.index];
+					clickedOnNode = true;
+				}, {
+					clickedOnNode = false;
+				});
 				this.setFillColors;
 				this.drawConnections;
 				this.drawSelections;
 				
-				if(activeSnapshot.notNil, {
+				if(clickedOnNode, {
 					curSSTime.string_("Selected Snapshot Time:" + activeSnapshot.time.asTimeString);
 				}, {
 					curSSTime.string_("Selected Snapshot Time:");
