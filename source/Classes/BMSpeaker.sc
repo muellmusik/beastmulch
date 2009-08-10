@@ -95,24 +95,26 @@ BMSpeaker {
 }
 
 // Wrapper class for managing specs for different speaker models
-// speakerspecs are pseudo-singletons: There can only be one of each name
+// speakerspecs are singletons: There can only be one of each name
+// creating a new one of an existing name overwrites
 
 // the only required field is 'name' so any use of these should deal appropriately with nil values
 BMSpeakerSpec {
 	
 	classvar <specs;
-	var <name;
+	var <name, vals;
 
 	*new { | name, vals | // vals is an event or other Dictionary subclass
-		^super.newCopyArgs(name.asSymbol).init((vals ? ()).as(Event));
+		specs[name].notNil.if({ ("Overwriting Speaker Spec " ++ name).warn; });
+		^super.newCopyArgs(name.asSymbol, (vals ? ()).as(Event)).init;
 	}
 	
-	*newNoInit { |name|
-		^super.newCopyArgs(name.asSymbol)
-	}
+//	*newNoInit { |name|
+//		^super.newCopyArgs(name.asSymbol)
+//	}
 	 
-	init { |vals|
-		this.class.specs[this.name] = vals;
+	init {
+		this.class.specs[this.name] = this;
 	}
 		
 	*initClass {
@@ -153,7 +155,7 @@ BMSpeakerSpec {
 //	}
 	
 	doesNotUnderstand { arg selector ... args;
-		^this.class.specs[name].perform(selector, *args); // so nil if not there, vals if setter
+		^vals.perform(selector, *args); // so nil if not there, vals if setter
 	}
 }
 
