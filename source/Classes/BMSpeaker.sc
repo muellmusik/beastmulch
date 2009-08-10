@@ -104,7 +104,7 @@ BMSpeakerSpec {
 	var <name;
 
 	*new { | name, vals | // vals is an event or other Dictionary subclass
-		^super.newCopyArgs(name.asSymbol).init(vals.as(Event));
+		^super.newCopyArgs(name.asSymbol).init((vals ? ()).as(Event));
 	}
 	
 	*newNoInit { |name|
@@ -114,36 +114,36 @@ BMSpeakerSpec {
 	init { |vals|
 		this.class.specs[this.name] = vals;
 	}
-	
+		
 	*initClass {
 		 StartUp.add{ 
 			 specs = ();
 			 
 			 // spl is continuous at 1m
 			 // plugins is [[specname, presetname], ...]
-			 BMSpeakerSpec('Generic', (brand: 'Unknown', minFreq: 20, maxFreq: 20000, spl: nil, powered: false));
-			 BMSpeakerSpec('Generic Sub', (brand: 'Unknown', minFreq: 20, maxFreq: 85, spl: nil, powered: false));
-			 BMSpeakerSpec('SCM50', (brand: 'ATC', minFreq: 38, maxFreq: 20000, spl: 112, powered: false, plugins: [[\Highpass, \atcs]]));
-			 BMSpeakerSpec('8030A', (brand: 'Genelec', minFreq: 58, maxFreq: 20000, spl: 97, powered: true));
-			 BMSpeakerSpec('8040A', (brand: 'Genelec', minFreq: 48, maxFreq: 20000, spl: 99, powered: true));
-			 BMSpeakerSpec('8050A', (brand: 'Genelec', minFreq: 38, maxFreq: 20000, spl: 101, powered: true));
-			 BMSpeakerSpec('1037C', (brand: 'Genelec', minFreq: 37, maxFreq: 21000, spl: 107, powered: true));
-			 BMSpeakerSpec('1038B', (brand: 'Genelec', minFreq: 35, maxFreq: 20000, spl: 120, powered: true));
-			 BMSpeakerSpec('1032A', (brand: 'Genelec', minFreq: 42, maxFreq: 21000, spl: 113, powered: true));
-			 BMSpeakerSpec('1037A', (brand: 'Genelec', minFreq: 39, maxFreq: 21000, spl: 106, powered: true));
-			 BMSpeakerSpec('1029A', (brand: 'Genelec', minFreq: 70, maxFreq: 18000, spl: 98, powered: true));
-			 BMSpeakerSpec('7070A', (brand: 'Genelec', minFreq: 19, maxFreq: 85, spl: nil, powered: true));
-			 BMSpeakerSpec('1094A', (brand: 'Genelec', minFreq: 29, maxFreq: 80, spl: nil, powered: true));
-			 BMSpeakerSpec('Circle5', (brand: 'HHb', minFreq: 48, maxFreq: 20000, spl: 87, powered: false));
-			 BMSpeakerSpec('Circle3', (brand: 'HHb', minFreq: 70, maxFreq: 20000, spl: 83, powered: false));
-			 BMSpeakerSpec('Volt', (brand: 'Wilmslow Audio', minFreq: 35, maxFreq: 30000, spl: 88, powered: false));
-			 BMSpeakerSpec('Lynx', (brand: 'Tannoy', minFreq: 50, maxFreq: 20000, spl: 95, powered: false)); // spl assumes two coupled... thanks Tannoy
-			 BMSpeakerSpec('MC24', (brand: 'APG', minFreq: 60, maxFreq: 20000, spl: 99, powered: false)); // spl @ 1W / 1 meter
+			 BMSpeakerSpec('Generic', (brand: 'Unknown', minFreq: 20, maxFreq: 20000, spl: nil, powered: false, fullRange: true));
+			 BMSpeakerSpec('Generic Sub', (brand: 'Unknown', minFreq: 20, maxFreq: 85, spl: nil, powered: false, fullRange: false));
+			 BMSpeakerSpec('SCM50', (brand: 'ATC', minFreq: 38, maxFreq: 20000, spl: 112, powered: false, plugins: [[\Highpass, \atcs]], fullRange: true));
+			 BMSpeakerSpec('8030A', (brand: 'Genelec', minFreq: 58, maxFreq: 20000, spl: 97, powered: true, fullRange: true));
+			 BMSpeakerSpec('8040A', (brand: 'Genelec', minFreq: 48, maxFreq: 20000, spl: 99, powered: true, fullRange: true));
+			 BMSpeakerSpec('8050A', (brand: 'Genelec', minFreq: 38, maxFreq: 20000, spl: 101, powered: true, fullRange: true));
+			 BMSpeakerSpec('1037C', (brand: 'Genelec', minFreq: 37, maxFreq: 21000, spl: 107, powered: true, fullRange: true));
+			 BMSpeakerSpec('1038B', (brand: 'Genelec', minFreq: 35, maxFreq: 20000, spl: 120, powered: true, fullRange: true));
+			 BMSpeakerSpec('1032A', (brand: 'Genelec', minFreq: 42, maxFreq: 21000, spl: 113, powered: true, fullRange: true));
+			 BMSpeakerSpec('1037A', (brand: 'Genelec', minFreq: 39, maxFreq: 21000, spl: 106, powered: true, fullRange: true));
+			 BMSpeakerSpec('1029A', (brand: 'Genelec', minFreq: 70, maxFreq: 18000, spl: 98, powered: true, fullRange: true));
+			 BMSpeakerSpec('7070A', (brand: 'Genelec', minFreq: 19, maxFreq: 85, spl: nil, powered: true, fullRange: false));
+			 BMSpeakerSpec('1094A', (brand: 'Genelec', minFreq: 29, maxFreq: 80, spl: nil, powered: true, fullRange: false));
+			 BMSpeakerSpec('Circle5', (brand: 'HHb', minFreq: 48, maxFreq: 20000, spl: 87, powered: false, fullRange: true));
+			 BMSpeakerSpec('Circle3', (brand: 'HHb', minFreq: 70, maxFreq: 20000, spl: 83, powered: false, fullRange: true));
+			 BMSpeakerSpec('Volt', (brand: 'Wilmslow Audio', minFreq: 35, maxFreq: 30000, spl: 88, powered: false, fullRange: true));
+			 BMSpeakerSpec('Lynx', (brand: 'Tannoy', minFreq: 50, maxFreq: 20000, spl: 95, powered: false, fullRange: true)); // spl assumes two coupled... thanks Tannoy
+			 BMSpeakerSpec('MC24', (brand: 'APG', minFreq: 60, maxFreq: 20000, spl: 99, powered: false, fullRange: true)); // spl @ 1W / 1 meter
 			 // KSN1005 nominal spl 95
-			 BMSpeakerSpec('Tweeters', (brand: 'Motorola', minFreq: 10000, maxFreq: 27000, spl: nil, powered: false, plugins: [[\Highpass, \tweeters]]));
-			 BMSpeakerSpec('Tannoy', (brand: 'Tannoy', minFreq: 40, maxFreq: 20000, spl: 96, powered: false));
-			 BMSpeakerSpec('UREI-809', (brand: 'Urei', minFreq: 50, maxFreq: 17500, spl: 93, powered: false));
-			 BMSpeakerSpec('Kef-C20', (brand: 'Kef', minFreq: 72, maxFreq: 20000, spl: 90, powered: false));
+			 BMSpeakerSpec('Tweeters', (brand: 'Motorola', minFreq: 10000, maxFreq: 27000, spl: nil, powered: false, plugins: [[\Highpass, \tweeters]], fullRange: false));
+			 BMSpeakerSpec('Tannoy', (brand: 'Tannoy', minFreq: 40, maxFreq: 20000, spl: 96, powered: false, fullRange: true));
+			 BMSpeakerSpec('UREI-809', (brand: 'Urei', minFreq: 50, maxFreq: 17500, spl: 93, powered: false, fullRange: true));
+			 BMSpeakerSpec('Kef-C20', (brand: 'Kef', minFreq: 72, maxFreq: 20000, spl: 90, powered: false, fullRange: true));
 		 }	
 	 }
 	 
