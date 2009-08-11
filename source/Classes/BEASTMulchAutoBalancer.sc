@@ -138,10 +138,13 @@ BMAutoBalancerGUI : BMAbstractGUI {
 			.extrude_(false)
 			.canFocus_(false)
 			.states_([
-				["Start", Color.black, Color.green.alpha_(0.2)]
+				["Start", Color.black, Color.green.alpha_(0.2)],
+				["Stop", Color.white, Color.red.alpha_(0.2)]
 			])
-			.action_({
-				BMAutoBalancer.run(speakerList, okayFunc, server, inChan.value - 1, onlyFull.value.booleanValue.not, normalize.value.booleanValue.not);
+			.action_({|butt|
+				if(butt.value == 1, {
+					BMAutoBalancer.run(speakerList, okayFunc, server, inChan.value - 1, onlyFull.value.booleanValue.not, normalize.value.booleanValue.not);
+				}, { BMAutoBalancer.stop });
 			});
 		
 		window.front;
