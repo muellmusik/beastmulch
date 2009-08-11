@@ -126,17 +126,9 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 	
 	// balance speakers
 	autoTrim { 
-		var powered, min, diff;
-		
-		min = ins.select({|in| in.value.isBMSpeaker})
-			.collectAs({|speaker| speaker.value.autoTrim }, Array)
-			.minItem; 
 		ins.do({|speaker| 
 			speaker.value.isBMSpeaker.if({
-				diff = min - speaker.value.autoTrim;
-				if(diff < 0, { 
-					this[speaker.value.name].trim_(diff); 
-				});
+				this[speaker.value.name].trim = speaker.value.autoTrim;
 			});
 		});
 	}
