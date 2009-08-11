@@ -92,6 +92,9 @@ BMSpeaker {
 	
 	// post pretty
 	printOn { arg stream; stream << this.class.name << "(" <<* [name, index, spec.name] << ")" }
+	
+	// update any changes in spec
+	initFromArchive { spec = BMSpeakerSpec.specs[spec.asSymbol] ?? BMSpeakerSpec.specs['Generic'] }
 }
 
 // Wrapper class for managing specs for different speaker models
@@ -101,7 +104,7 @@ BMSpeaker {
 // the only required field is 'name' so any use of these should deal appropriately with nil values
 BMSpeakerSpec {
 	
-	classvar <specs;
+	classvar <specs, protoVals;
 	var <name, vals;
 
 	*new { | name, vals | // vals is an event or other Dictionary subclass
@@ -114,11 +117,13 @@ BMSpeakerSpec {
 //	}
 	 
 	init {
+		vals.proto = protoVals;
 		this.class.specs[this.name] = this;
 	}
 		
 	*initClass {
-		 StartUp.add{ 
+		protoVals = (brand: 'Unknown', fullRange: true, foo: \test); // be careful with this
+		StartUp.add{ 
 			 specs = ();
 			 
 			 // spl is continuous at 1m

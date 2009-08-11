@@ -42,7 +42,7 @@ BMAutoBalancer {
 						1.wait;
 					});
 
-				}, {"Item % not a normal Speaker, skipping it...\n".postf(index + 1)});
+				}, {"% not a normal Speaker, skipping it...\n".postf(speaker.key)});
 				
 			});
 			1.wait;
@@ -59,7 +59,7 @@ BMAutoBalancer {
 					min = trimList.minItem; 
 					speakerList.do({|speaker| 
 						if(speaker.isBMSpeaker and: 
-							{speaker.spec.fullRange || onlyFullRange.not}, {
+							{speaker.spec.fullRange ? true || onlyFullRange.not}, {
 							diff = min - trimList[speaker.name];
 							if(diff <= 0, { 
 								trimList[speaker.name] = diff;
