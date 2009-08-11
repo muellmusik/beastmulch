@@ -1,7 +1,7 @@
 // operates on the Speakerlist directly
 BMAutoBalancer {
 
-	classvar <>running = false, rout;
+	classvar <>running = false, rout, trimList;
 
 	*run {|speakerList, okayFunc, server, in = 0, onlyFullRange = true, normalize = true|
 		var target, responders, min, diff;
@@ -9,6 +9,7 @@ BMAutoBalancer {
 			"Auto Level Balance already running; ignoring request".warn;
 			^this
 		});
+		trimList = ();
 		target = server.asTarget;
 		server = target.server;
 		responders = ();
@@ -16,9 +17,9 @@ BMAutoBalancer {
 			running = true;
 			this.sendDef(server);
 			server.sync;
-			"\\\\\\\\\\\\\\\ Auto Level Balance Starting\n".postln;
+			"\n\\\\\\\\\\\\\\\ Auto Level Balance Starting\n".postln;
 			speakerList.do({|speaker, index|
-				var synth, array, responder, count = 0;
+				var synth, array, responder, count = 0, trim;
 				if(speaker.isBMSpeaker and: {speaker.spec.fullRange || onlyFullRange.not}, {
 					array = Array.new(3);
 					responder = OSCresponderNode(server.addr, 'BM-AutoBalance', {|time, resp, msg|
@@ -26,8 +27,9 @@ BMAutoBalancer {
 							count = count + 1;
 							array.add(msg[3]);
 							if(count == 3, {
-								speaker.autoTrim = array.mean.ampdb;
-								"Level for %: % dBFS (RMS)\n".postf(speaker.name, speaker.autoTrim);
+								trim = array.mean.ampdb;
+								trimList[speaker.name] = trim;
+								"Level for %: % dBFS (RMS)\n".postf(speaker.name, trim);
 								responders[speaker.name] = nil;
 								resp.remove;
 							});
@@ -54,29 +56,31 @@ BMAutoBalancer {
 				"Results Complete\n".postln;
 				normalize.if({
 					"Normalizing".postln;
-					min = speakerList.select({|speaker| 
-						speaker.isBMSpeaker and: {speaker.spec.fullRange || onlyFullRange.not}
-					}).collectAs({|speaker| speaker.value.autoTrim }, Array).minItem; 
+					min = trimList.minItem; 
 					speakerList.do({|speaker| 
 						if(speaker.isBMSpeaker and: 
 							{speaker.spec.fullRange || onlyFullRange.not}, {
-							diff = min - speaker.autoTrim;
+							diff = min - trimList[speaker.name];
 							if(diff <= 0, { 
-								speaker.autoTrim = diff;
+								trimList[speaker.name] = diff;
 								"Normalized Autotrim for %: % dBFS\n".postf(speaker.name, diff);
 							});
 						});
 					});
 				});
+				trimList.keysValuesDo({|name, trim|
+					speakerList[name].autoTrim = trim;
+				});
+				running = false;
 				okayFunc.value(speakerList);
 			});
-			running = false;
 			"\n\\\\\\\\\\\\\\\ Auto Level Balance Done\n".postln;
 			
 		}.fork;
 	
 	}
 	
+	// trims only copied at the end, so we can abort safely
 	*stop {
 		running.if({
 			rout.stop;
@@ -116,7 +120,8 @@ BMAutoBalancerGUI : BMAbstractGUI {
 	}
 	
 	makeWindow {|origin|
-		var inChan, onlyFull, normalize;
+		var inChan, onlyFull, normalize, startButt;
+		okayFunc = okayFunc.addFunc({ {startButt.value = 0;}.defer});
 		window = Window.new(name ? "Autobalance Speakers", Rect(origin.x, origin.y, 300, 80), false);
 		window.addFlowLayout;
 		inChan = EZNumber(window, 290@20, "Microphone Input Channel ", [1, server.options.numInputBusChannels, \lin, 1, 1].asSpec, numberWidth: 40);
@@ -135,7 +140,7 @@ BMAutoBalancerGUI : BMAbstractGUI {
 				[ "Normalize", Color.black,  Color.clear ]
 			]);
 		SCStaticText(window, 205@20);
-		RoundButton(window, 80@20)
+		startButt = RoundButton(window, 80@20)
 			.extrude_(false)
 			.canFocus_(false)
 			.states_([
@@ -147,7 +152,7 @@ BMAutoBalancerGUI : BMAbstractGUI {
 					BMAutoBalancer.run(speakerList, okayFunc, server, inChan.value - 1, onlyFull.value.booleanValue.not, normalize.value.booleanValue.not);
 				}, { BMAutoBalancer.stop });
 			});
-		
+		window.onClose = onClose.addFunc({ BMAutoBalancer.stop });
 		window.front;
 	}
 
