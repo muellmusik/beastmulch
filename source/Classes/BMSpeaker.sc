@@ -91,7 +91,7 @@ BMSpeaker {
 	key {^name }
 	
 	// post pretty
-	printOn { arg stream; stream << this.class.name << "(" <<* [name, index] << ")" }
+	printOn { arg stream; stream << this.class.name << "(" <<* [name, index, spec.name] << ")" }
 }
 
 // Wrapper class for managing specs for different speaker models
