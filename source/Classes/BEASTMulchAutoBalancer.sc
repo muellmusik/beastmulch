@@ -109,7 +109,7 @@ BMAutoBalancerGUI : BMAbstractGUI {
 	
 	*new {| speakerList, okayFunc, server, name, origin |
 		  ^super.new.init(speakerList, okayFunc, server, name)
-		  	.makeWindow(origin ? (400@200));
+		  	.makeWindow(origin ? (400@600));
 	}
 	
 	init {|argspeakerList, argokayFunc, argserver, argname|
