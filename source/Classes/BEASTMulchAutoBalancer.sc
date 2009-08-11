@@ -1,12 +1,19 @@
 // operates on the Speakerlist directly
 BMAutoBalancer {
 
+	classvar <>running = false, rout;
+
 	*run {|speakerList, okayFunc, server, in = 0, onlyFullRange = true, normalize = true|
 		var target, responders, min, diff;
+		running.if({
+			"Auto Level Balance already running; ignoring request".warn;
+			^this
+		});
 		target = server.asTarget;
 		server = target.server;
 		responders = ();
-		{
+		rout = {
+			running = true;
 			this.sendDef(server);
 			server.sync;
 			"\\\\\\\\\\\\\\\ Auto Level Balance Starting\n".postln;
@@ -63,10 +70,19 @@ BMAutoBalancer {
 				});
 				okayFunc.value(speakerList);
 			});
+			running = false;
 			"\n\\\\\\\\\\\\\\\ Auto Level Balance Done\n".postln;
 			
 		}.fork;
 	
+	}
+	
+	*stop {
+		running.if({
+			rout.stop;
+			running = false;
+			"Auto Level Balance aborted".warn;
+		});
 	}
 	
 	*sendDef {|server|
@@ -83,17 +99,52 @@ BMAutoBalancer {
 
 }
 
-//BMAutoBalancerGUI : BMAbstractGUI {
-//	
-//	*new {| startArray, okayFunc, name, origin |
-//		  ^super.new.init(startArray.deepCopy ?? { BMInOutArray[]}, okayFunc, name)
-//		  	.makeWindow(origin ? (40@200));
-//	}
-//	
-//	init {|startArray, argokayFunc, argname|
-//		outputArray = startArray;
-//		okayFunc = argokayFunc;
-//		name = argname;
-//	}
-//
-//}
+BMAutoBalancerGUI : BMAbstractGUI {
+	
+	var speakerList, okayFunc, server;
+	
+	*new {| speakerList, okayFunc, server, name, origin |
+		  ^super.new.init(speakerList, okayFunc, server, name)
+		  	.makeWindow(origin ? (400@200));
+	}
+	
+	init {|argspeakerList, argokayFunc, argserver, argname|
+		speakerList = argspeakerList;
+		okayFunc = argokayFunc;
+		server = argserver ? Server.default;
+		name = argname;
+	}
+	
+	makeWindow {|origin|
+		var inChan, onlyFull, normalize;
+		window = Window.new(name ? "Autobalance Speakers", Rect(origin.x, origin.y, 300, 80), false);
+		window.addFlowLayout;
+		inChan = EZNumber(window, 290@20, "Microphone Input Channel ", [1, server.options.numInputBusChannels, \lin, 1, 1].asSpec, numberWidth: 40);
+		onlyFull = RoundButton(window, 140@20)
+			.extrude_(false)
+			.canFocus_(false)
+			.states_([
+				[ "Only Full Range", Color.black,  Color.white.alpha_(0.8) ],
+				[ "Only Full Range", Color.black,  Color.clear ]
+			]);
+		normalize = RoundButton(window, 140@20)
+			.extrude_(false)
+			.canFocus_(false)
+			.states_([
+				[ "Normalize", Color.black,  Color.white.alpha_(0.8) ],
+				[ "Normalize", Color.black,  Color.clear ]
+			]);
+		RoundButton(window, 80@20)
+			.extrude_(false)
+			.canFocus_(false)
+			.states_([
+				["Start", Color.black, Color.green.alpha_(0.2)]
+			])
+			.action_({
+				BMAutoBalancer.run(speakerList, okayFunc, server, inChan.value - 1, onlyFull.value.booleanValue.not, normalize.value.booleanValue.not);
+			});
+		
+		window.front;
+	}
+
+}
