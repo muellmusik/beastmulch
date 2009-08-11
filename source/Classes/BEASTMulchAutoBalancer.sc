@@ -120,20 +120,21 @@ BMAutoBalancerGUI : BMAbstractGUI {
 		window = Window.new(name ? "Autobalance Speakers", Rect(origin.x, origin.y, 300, 80), false);
 		window.addFlowLayout;
 		inChan = EZNumber(window, 290@20, "Microphone Input Channel ", [1, server.options.numInputBusChannels, \lin, 1, 1].asSpec, numberWidth: 40);
-		onlyFull = RoundButton(window, 140@20)
+		onlyFull = RoundButton(window, 142.5@20)
 			.extrude_(false)
 			.canFocus_(false)
 			.states_([
 				[ "Only Full Range", Color.black,  Color.white.alpha_(0.8) ],
 				[ "Only Full Range", Color.black,  Color.clear ]
 			]);
-		normalize = RoundButton(window, 140@20)
+		normalize = RoundButton(window, 142.5@20)
 			.extrude_(false)
 			.canFocus_(false)
 			.states_([
 				[ "Normalize", Color.black,  Color.white.alpha_(0.8) ],
 				[ "Normalize", Color.black,  Color.clear ]
 			]);
+		SCStaticText(window, 205@20);
 		RoundButton(window, 80@20)
 			.extrude_(false)
 			.canFocus_(false)
