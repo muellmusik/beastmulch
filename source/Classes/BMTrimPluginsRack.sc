@@ -76,7 +76,7 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 	
 	// add delays to eliminate precedence effect
 	// assumes distances are in meters
-	compensateDistance { |bool = true|
+	delayCompensateDistance { |bool = true|
 		var rads, diff, farthest, plugin;
 		
 		(bool && distanceCompPlugins.isNil).if({
@@ -132,24 +132,6 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 			});
 		});
 	}
-	
-	// balance powered speakers
-//	autoTrim { 
-//		var powered, min, diff;
-//		
-//		ins.isSpeakerArray.if({
-//			powered = ins.select({|speaker| 
-//				speaker.value.spec.powered &&  speaker.value.spec.spl.notNil;
-//			});
-//			min = powered.collect({|speaker| speaker.value.spec.spl }).minItem; 
-//			powered.do({|speaker| 
-//				diff = min - speaker.value.spec.spl;
-//				if(diff < 0, { 
-//					this[speaker.value.name].trim_(diff); 
-//				});
-//			});
-//		}, {"Not a BMSpeakerArray, can't auto trim".warn;}); 
-//	}
 }
 
 BMTrimPluginsStrip {
@@ -377,7 +359,7 @@ BMTrimPluginsRackGUI : BMAbstractGUI {
 			.radius_(5)
 			.states_([["dT", Color.black, Color.white.alpha_(0.2)], ["dT", Color.black, Color.white]])
 			.font_(Font("Helvetica-Bold", 12))
-			.action_({|but| trimPluginsRack.compensateDistance(but.value.booleanValue) });
+			.action_({|but| trimPluginsRack.delayCompensateDistance(but.value.booleanValue) });
 
 		window.onClose = { 
 			trimPluginsStripGUIs.do({|tpisg|

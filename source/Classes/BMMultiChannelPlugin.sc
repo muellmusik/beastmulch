@@ -1038,7 +1038,7 @@ BMMultichannelPluginsRackGUI : BMAbstractGUI {
 //			.string_("dT")
 //			.font_(Font("Helvetica-Bold", 12))
 //			.colorOn_(Color.white.alpha_(0.2))
-//			.action_({|v|v.value.if{trimPluginsRack.compensateDistance}});
+//			.action_({|v|v.value.if{trimPluginsRack.delayCompensateDistance}});
 
 		window.onClose = { 
 			trimPluginsStripGUIs.do({|tpisg|
