@@ -47,7 +47,7 @@ BMAbstractAudioChainElement {
 		target = argtarget.asTarget;
 		server = target.server;
 		addAction = argaddAction;
-		name = argname.asSymbol ?? {this.makeName};
+		name = (argname ?? {this.makeName}).asSymbol;
 		allChainElements[name] = this;
 		this.makeGroup;
 	}
