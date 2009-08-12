@@ -167,6 +167,71 @@ BMAudioMatrix : BMAbstractMatrix {
 //	}
 }
 
+// maps ins to outs with an optional amp scale
+BMAudioMixerMatrix : BMAbstractMatrix {
+	
+//	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
+//		^this.new(inAudioArray, outAudioArray, group, server, name);
+//	}
+	
+	sendDef {
+		SynthDef(defname, { arg in, out, amp = 1, gate = 1;
+			// short fade in and out
+			Out.ar(out, In.ar(in, 1) * Lag.kr(amp, BMOptions.crossfade)
+				* EnvGen.kr(Env.asr(BMOptions.crossfade, 1, BMOptions.crossfade), gate, doneAction: 2)
+			);
+		}).send(server);	
+	}
+	
+		// allows for multiple outs mapped at once
+	connect {  |input ... outputs| // outputs are [symbol, amp]
+		// not so efficient, but okay for our purposes
+		var inBus, outBus, inMatrixIndex, outMatrixIndex;
+		(inBus = ins[input]).notNil.if({
+			inMatrixIndex = inNames.indexOf(input);
+			outputs = outputs.unbubble;
+			outputs.do({ |out|
+				var outname;
+				if(out.size < 2, { out = [out, 1].flat}); // defalt amp is 1
+				outname = out.first;
+				(outBus = outs[outname]).notNil.if({
+					outMatrixIndex = outNames.indexOf(outname);
+					mappings[input].flat.includes(outname).not.if({
+						matrixArray[inMatrixIndex][outMatrixIndex] = 
+							Synth.new(defname, 
+								[\in, inBus, \out, outBus, \amp, out[1]], 
+								group
+							);
+						mappings[input].add(out);
+						this.changed;
+					}, {
+						// if we find it, set the level
+						matrixArray[inMatrixIndex][outMatrixIndex].set(\amp, out[1]);
+						mappings[input].detect({|item| item.first == out})[1] = out[1];
+					});
+				}, {error("Output:" + out + "is not defined.")});
+			});
+		}, {error("Input:" + input + "is not defined.")});
+	}
+	
+	disconnect { |input ... outputs| // Symbols
+		var inBus, outBus, inMatrixIndex, outMatrixIndex;
+		(inBus = ins[input]).notNil.if({
+			inMatrixIndex = inNames.indexOf(input);
+			outputs = outputs.flat;
+			outputs.do({|out|
+				(outBus = outs[out]).notNil.if({
+					outMatrixIndex = outNames.indexOf(out);
+					matrixArray[inMatrixIndex][outMatrixIndex].release(BMOptions.crossfade);
+					matrixArray[inMatrixIndex][outMatrixIndex] = nil;
+					mappings[input] = mappings[input].reject({|item| item.first == out});
+					this.changed;
+				}, {error("Output:" + out + "is not defined.")});
+			});
+		}, {error("Input:" + input + "is not defined.")});
+	}
+}
+
 // maps amp scales to control busses
 // roll your own curves etc. elsewhere
 // this only allows an output to be connected to a single input 
