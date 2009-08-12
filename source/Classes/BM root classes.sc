@@ -113,6 +113,8 @@ BMAbstractAudioSource : BMAbstractAudioChainElement {
 	
 	setTime { }
 	
+	asTarget { ^group }
+	
 }
 
 // valueArray holds the controller value in its native form
