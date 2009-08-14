@@ -3,6 +3,7 @@
 
 // class for storing some library wide and BEASTmulch System options
 BMOptions {
+	classvar <version = "1.0";
 	classvar <>crossfade = 0.1;
 	classvar <>numInputBusChannels = 8;
 	classvar <>numOutputBusChannels = 8;
