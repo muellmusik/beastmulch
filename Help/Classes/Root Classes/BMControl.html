@@ -15,17 +15,17 @@ p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco
 p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
 p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p8 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
-p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #b22827}
+p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #a4302f}
 p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
 p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
 p.p12 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica; min-height: 17.0px}
-p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #b22827}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #a4302f}
 p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #001dfd}
-span.s3 {color: #0021c0}
+span.s2 {color: #002afb}
+span.s3 {color: #0028be}
 span.s4 {color: #000000}
-span.s5 {color: #b22827}
+span.s5 {color: #a4302f}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -40,7 +40,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p4"><b>Controllers vs. Controls</b></p>
 <p class="p2"><br></p>
-<p class="p1">The BEASTmulch provides two ways of dealing with a given control:</p>
+<p class="p1">The BEASTmulch library provides two ways of dealing with a given control:</p>
 <p class="p2"><br></p>
 <p class="p1">1) as a collection of controls - this will be a subclass of <a href="BMAbstractController.html"><span class="s2">BMAbstractController</span></a> and will generally represent a single hardware device and all of its controls. Controls should be numbered, and be accessible through <b>getVal</b> and <b>setVal</b> by index, usually starting with 1 for human readability.</p>
 <p class="p2"><br></p>
@@ -48,7 +48,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p1">It is sometimes useful to deal with one or the other representation depending on what one is trying to do. BMAbstractController has two classvars, <b>allControllers</b> and <b>allControls</b>, which contain dictionaries. These allow objects to query any individual control or controller by name, or to get global information about what controls or controllers currently exist.</p>
 <p class="p2"><br></p>
-<p class="p1">Each controller allocates a multichannel control rate bus for its controls. Objects in the library map to controls by mapping synth Contols to the corresponding bus. Bus values are assumed to be between 0 and 1. On Cmd-. all mappings are cleared.</p>
+<p class="p1">Each controller allocates a multichannel control rate bus for its controls. Objects in the library map to controls by mapping synth Controls to the corresponding bus. Bus values are assumed to be between 0 and 1. On Cmd-. all mappings are cleared.</p>
 <p class="p2"><br></p>
 <p class="p4"><b>Creation / Class Methods</b></p>
 <p class="p5"><br></p>
