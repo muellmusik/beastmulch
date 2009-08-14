@@ -90,13 +90,10 @@ BMEtherSense : BMAbstractController {
 	
 	// perhaps this should be more generalised and named something else like 'preset'
 	mappings {
-		^IdentityDictionary[\faders->this.getAllValues];
+		^nil
 	}
 	
-	mappings_ {|mappings|
-		mappings = mappings ? ();
-		this.setAllValues(mappings[\faders]);
-	}
+	mappings_ {|mappings|	}
 	
 	// this has no labels
 	setLabel { |fader, name| this.shouldNotImplement(thisMethod) }
