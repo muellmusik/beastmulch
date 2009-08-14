@@ -75,7 +75,7 @@ BMBackup {
 
 		dict		= configManager.dict;
 		dict.removeAt('all off');
-		^(concert: concertManager.concert, configurations: (dict: dict, names: configManager.names))
+		^(concert: concertManager.concert, configurations: (dict: dict, names: configManager.names, libVersion: BMOptions.version))
 	}
 	
 	// this seems to be a backup of any type
