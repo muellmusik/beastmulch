@@ -159,12 +159,12 @@ BMMotorBEAST : BMAbstractController {
 	
 	// perhaps this should be more generalised and named something else like 'preset'
 	mappings {
-		^IdentityDictionary[\faders->this.getAllValues];
+		^IdentityDictionary[\ctrlVals->this.getAllValues];
 	}
 	
 	mappings_ {|mappings|
 		mappings = mappings ? ();
-		this.setAllValues(mappings[\faders]);
+		this.setAllValues(mappings[\ctrlVals]);
 	}
 	
 	// this has no labels

@@ -210,13 +210,13 @@ BMAbstractController {
 	
 	// perhaps this should be more generalised and named something else like 'preset'
 	mappings {
-		^IdentityDictionary[\labels->this.getAllLabels, \faders->this.getAllValues];
+		^IdentityDictionary[\labels->this.getAllLabels, \ctrlVals->this.getAllValues];
 	}
 	
 	mappings_ {|mappings|
 		mappings = mappings ? ();
 		this.setAllLabels(mappings[\labels]);
-		this.setAllValues(mappings[\faders]);
+		this.setAllValues(mappings[\ctrlVals]);
 	}
 	
 	acceptsAutomation { ^false }
