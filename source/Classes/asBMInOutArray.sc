@@ -16,14 +16,14 @@
 
 	insAsBMInOutArray {
 		^options.numInputBusChannels.collectAs({|i|
-			(name ++ "In" ++ i) -> (i + options.numOutputBusChannels)
-		}, BMInOutArray);
+			(name ++ "In-" ++ (i + 1)) -> (i + options.numOutputBusChannels)
+		}, BMHardwareInputsProxy);
 	
 	}
 	
 	outsAsBMInOutArray {
 		^options.numOutputBusChannels.collectAs({|i|
-			(name ++ "In" ++ i) -> i
+			(name ++ "Out-" ++ (i + 1)) -> i
 		}, BMInOutArray);
 	
 	}
