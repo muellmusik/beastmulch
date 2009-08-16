@@ -449,11 +449,10 @@ BMInOutArray : List {
 	
 	// iffy?
 	put { arg key, value;
-		var atKey;
-		var index;
+		var index, assoc;
 		value ?? { this.removeAt(key); ^this };
-		value = value.isBMSpeaker.if({value.name_(key)}, {key->value});
-		this.add(key->value);
+		assoc = value.isBMSpeaker.if({value.name_(key)}, {key->value});
+		this.add(assoc);
 	}
 	
 	putAll { arg ... dictionaries; 
