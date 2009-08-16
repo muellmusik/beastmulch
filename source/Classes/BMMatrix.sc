@@ -469,6 +469,12 @@ BMInOutArray : List {
 		});
 	} 
 	
+	keysDo { arg function;
+		this.do({|assoc, i|
+			function.value(assoc.key, i);
+		});
+	}
+	
 	species {^this.class } // just in case
 	
 	++ {|aBMInOutArray| 
