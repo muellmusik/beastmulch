@@ -420,13 +420,13 @@ BMInOutArray : List {
 		});
 	}
 	
-	insert { arg index, item; 
-		if(item.isValidBMInOutArrayMember.not, { 
+	insert { arg index, assoc; 
+		if(assoc.isValidBMInOutArrayMember.not, { 
 			MethodError("Attempted to add invalid type to BMInOutArray", this).throw;
 		}, {
-			this.keys.indexOf(item.key).isNil.if({
-				array = array.insert(index, item); 
-			}, {MethodError("Item with key % already exists.".format(item.key), this)});		});
+			this.keys.indexOf(assoc.key).isNil.if({
+				array = array.insert(index, assoc); 
+			}, {MethodError("Item with key % already exists.".format(assoc.key), this)});		});
 	}
 
 	removeAt {|key| 
@@ -462,6 +462,12 @@ BMInOutArray : List {
 			}
 		}
 	}
+	
+	keysValuesDo {|function|
+		this.do({|assoc, i|
+			function.value(assoc.key, assoc.value, i);
+		});
+	} 
 	
 	species {^this.class } // just in case
 	
