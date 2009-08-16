@@ -31,15 +31,15 @@ BMSpeakerListVisualiser : BMAbstractGUI {
 	//	(8..13).do({|i| var speak; speak = speakerList.at(i).value; speak.y = speak.y + 4 });
 		
 		
-		maxX = speakerList.collectAs({|assoc| assoc.value.x.abs }, Array).maxItem;
-		yvals = speakerList.collectAs({|assoc| assoc.value.y }, Array);
+		maxX = speakerList.collectAs({|spkr| spkr.x.abs }, Array).maxItem;
+		yvals = speakerList.collectAs({|spkr| spkr.y }, Array);
 		hiY = yvals.maxItem / maxX;
 		lowY = yvals.minItem / maxX;
 		ySIze = hiY - lowY;
 		window = SCWindow("Speakers", rect = Rect(100,200, 1020, 1000 / ([hiY, lowY].abs.maxItem) * 1.2)).front;
 		
-		hiZ = speakerList.collectAs({|assoc| assoc.value.z }, Array).maxItem / maxX;
-		lowZ = speakerList.collectAs({|assoc| assoc.value.z }, Array).minItem / maxX;
+		hiZ = speakerList.collectAs({|spkr| spkr.z }, Array).maxItem / maxX;
+		lowZ = speakerList.collectAs({|spkr| spkr.z }, Array).minItem / maxX;
 		//SCButton(w, Rect(0, 0, 150, 20))
 		//	.states_([["pick another QC file"]])
 		//	.action_({ File.openDialog("", { |path| m.path_(path) }) });
@@ -71,13 +71,13 @@ BMSpeakerListVisualiser : BMAbstractGUI {
 		
 		qcView.startY = hiY;
 		qcView.endY = lowY;
-//		floorZ = speakerList.collectAs({|assoc| assoc.value.z }, Array).minItem / maxX;
+//		floorZ = speakerList.collectAs({|spkr| spkr.z }, Array).minItem / maxX;
 //		qcView.floorZ = floorZ - 0.06;
 		
 		floorZ = -0.8 / maxX - 0.09;
 		qcView.floorZ = floorZ;
 		
-		viewSpeakers = speakerList.collectAs({|assoc| 
+		viewSpeakers = speakerList.associationsCollectAs({|assoc| 
 			var x, y, z, colour, tilt;
 			x = assoc.value.x / maxX;
 			y = assoc.value.y / maxX;

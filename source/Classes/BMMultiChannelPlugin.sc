@@ -89,11 +89,11 @@ BMMultichannelPluginSpec {
 				{|plugin| 
 					var speakers;
 					speakers = plugin.outputs.collectAs({|out|
-						out.value.isBMSpeaker.not.if({
+						out.isBMSpeaker.not.if({
 							"VBAP output not a speaker".error;
 							^false;
 						});
-						[out.value.azi, out.value.ele];
+						[out.azi, out.ele];
 					}, Array);
 					speakers = VBAPSpeakerArray(3, speakers);
 					plugin.attributes[\buffer] = 
@@ -129,11 +129,11 @@ BMMultichannelPluginSpec {
 				{|plugin| 
 					var speakers;
 					speakers = plugin.outputs.collectAs({|out|
-						out.value.isBMSpeaker.not.if({
+						out.isBMSpeaker.not.if({
 							"VBAP output not a speaker".error;
 							^false;
 						});
-						[out.value.azi, out.value.ele];
+						[out.azi, out.ele];
 					}, Array);
 					speakers = VBAPSpeakerArray(3, speakers);
 					plugin.attributes[\buffer] = 
@@ -162,11 +162,11 @@ BMMultichannelPluginSpec {
 					var speakers;
 					var atorad = (2 * pi / 360);
 					speakers = plugin.outputs.collectAs({|out|
-						out.value.isBMSpeaker.not.if({
+						out.isBMSpeaker.not.if({
 							"Ambisonics output not a speaker".error;
 							^false;
 						});
-						[out.value.azi * atorad, out.value.ele * atorad];
+						[out.azi * atorad, out.ele * atorad];
 					}, Array).flop.postln;
 					plugin.attributes[\speakersCoords] = speakers;
 				},								// setupFunc
@@ -194,11 +194,11 @@ BMMultichannelPluginSpec {
 					var speakers;
 					var atorad = (2 * pi / 360);
 					speakers = plugin.outputs.collectAs({|out|
-						out.value.isBMSpeaker.not.if({
+						out.isBMSpeaker.not.if({
 							"Ambisonics output not a speaker".error;
 							^false;
 						});
-						[out.value.azi * atorad, out.value.ele * atorad, out.value.rad];
+						[out.azi * atorad, out.ele * atorad, out.rad];
 					}, Array).flop;
 					plugin.attributes[\speakersCoords] = speakers;
 					plugin.attributes[\maxDist] = speakers[2].maxItem;
@@ -231,11 +231,11 @@ BMMultichannelPluginSpec {
 					var speakers;
 					var atorad = (2 * pi / 360);
 					speakers = plugin.outputs.collectAs({|out|
-						out.value.isBMSpeaker.not.if({
+						out.isBMSpeaker.not.if({
 							"Ambisonics output not a speaker".error;
 							^false;
 						});
-						[out.value.azi * atorad, out.value.ele * atorad];
+						[out.azi * atorad, out.ele * atorad];
 					}, Array).flop;
 					plugin.attributes[\speakersCoords] = speakers;
 				},								// setupFunc
@@ -269,11 +269,11 @@ BMMultichannelPluginSpec {
 					var speakers;
 					var atorad = (2 * pi / 360);
 					speakers = plugin.outputs.collectAs({|out|
-						out.value.isBMSpeaker.not.if({
+						out.isBMSpeaker.not.if({
 							"Ambisonics output not a speaker".error;
 							^false;
 						});
-						[out.value.azi * atorad, out.value.ele * atorad];
+						[out.azi * atorad, out.ele * atorad];
 					}, Array).flop;
 					plugin.attributes[\speakersCoords] = speakers;
 				},								// setupFunc
@@ -306,11 +306,11 @@ BMMultichannelPluginSpec {
 					var speakers;
 					var atorad = (2 * pi / 360);
 					speakers = plugin.outputs.collectAs({|out|
-						out.value.isBMSpeaker.not.if({
+						out.isBMSpeaker.not.if({
 							"Ambisonics output not a speaker".error;
 							^false;
 						});
-						[out.value.azi * atorad, out.value.ele * atorad];
+						[out.azi * atorad, out.ele * atorad];
 					}, Array).flop;
 					plugin.attributes[\speakersCoords] = speakers;
 				},								// setupFunc
@@ -336,11 +336,11 @@ BMMultichannelPluginSpec {
 				{|plugin| 
 					var speakers;
 					speakers = plugin.outputs.collectAs({|out|
-						out.value.isBMSpeaker.not.if({
+						out.isBMSpeaker.not.if({
 							"VBAP output not a speaker".error;
 							^false;
 						});
-						[out.value.azi, out.value.ele];
+						[out.azi, out.ele];
 					}, Array);
 					speakers = VBAPSpeakerArray(3, speakers);
 					plugin.attributes[\buffer] = 
@@ -378,11 +378,11 @@ BMMultichannelPluginSpec {
 				{|plugin| 
 					var speakers;
 					speakers = plugin.outputs.collectAs({|out|
-						out.value.isBMSpeaker.not.if({
+						out.isBMSpeaker.not.if({
 							"VBAP output not a speaker".error;
 							^false;
 						});
-						[out.value.azi, out.value.ele];
+						[out.azi, out.ele];
 					}, Array);
 					speakers = VBAPSpeakerArray(3, speakers);
 					plugin.attributes[\buffer] = 
@@ -420,11 +420,11 @@ BMMultichannelPluginSpec {
 					var speakers;
 					var atorad = (2 * pi / 360);
 					speakers = plugin.outputs.collectAs({|out|
-						out.value.isBMSpeaker.not.if({
+						out.isBMSpeaker.not.if({
 							"Ambisonics output not a speaker".error;
 							^false;
 						});
-						[out.value.azi * atorad, out.value.ele * atorad];
+						[out.azi * atorad, out.ele * atorad];
 					}, Array).flop;
 					plugin.attributes[\speakersCoords] = speakers;
 				},								// setupFunc
@@ -460,11 +460,11 @@ BMMultichannelPluginSpec {
 					var speakers;
 					var atorad = (2 * pi / 360);
 					speakers = plugin.outputs.collectAs({|out|
-						out.value.isBMSpeaker.not.if({
+						out.isBMSpeaker.not.if({
 							"Ambisonics output not a speaker".error;
 							^false;
 						});
-						[out.value.azi * atorad, out.value.ele * atorad];
+						[out.azi * atorad, out.ele * atorad];
 					}, Array).flop;
 					plugin.attributes[\speakersCoords] = speakers;
 				},								// setupFunc
@@ -500,11 +500,11 @@ BMMultichannelPluginSpec {
 					var speakers;
 					var atorad = (2 * pi / 360);
 					speakers = plugin.outputs.collectAs({|out|
-						out.value.isBMSpeaker.not.if({
+						out.isBMSpeaker.not.if({
 							"Ambisonics output not a speaker".error;
 							^false;
 						});
-						[out.value.azi * atorad, out.value.ele * atorad];
+						[out.azi * atorad, out.ele * atorad];
 					}, Array).flop;
 					plugin.attributes[\speakersCoords] = speakers;
 				},								// setupFunc
@@ -1107,8 +1107,8 @@ BMMultichannelPluginsStripGUI {
 			piName = SCView.currentDrag;
 			BMSelectInsOutsGUI(parent, trimPluginsStrip.ins, trimPluginsStrip.outs, {|ins, outs|
 				var plugin;
-				ins.postln;
-				outs.postln;
+				//ins.postln;
+				//outs.postln;
 				plugin = BMMultichannelPlugin(piName, ins, outs, 
 					trimPluginsStrip.server);
 				// protect against bad plugin inputs

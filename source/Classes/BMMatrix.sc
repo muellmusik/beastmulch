@@ -351,6 +351,9 @@ BMAmpControlMatrix : BMAbstractMatrix {
 // reworked to build keys on demand.
 // this is slow but much safer and simpler in terms of List compatibility
 // do we need subArraysKeys
+
+// items which call do expecting the list behaviour (associations rather than values only) should use super.do
+ 
 BMInOutArray : List {
 
 	var subArraysKeys;
@@ -375,10 +378,10 @@ BMInOutArray : List {
 	
 	// get these when we need them
 	keys {
-		^this.collectAs({|item| item.key }, Array);
+		^this.associationsCollectAs({|item| item.key }, Array);
 	}
 	
-	values { ^this.collectAs({|item| item.value }, Array); }
+	values { ^this.associationsCollectAs({|item| item.value }, Array); }
 	
 	*privateBusBlock {|name, size, server|
 		^this.new(size).addPrivateBusBlock(name, size, server);
@@ -389,7 +392,7 @@ BMInOutArray : List {
 		bus = Bus.audio(server, size);
 		busObjects = busObjects.add(bus);
 		block = BMInOutArray.fill(size, {|i| (name ++ "-" ++ (i + 1)).asSymbol->(bus.index + i) });
-		this.addAll(block);
+		this.putAll(block);
 		this.defineSubArray(name, block.keys);
 	}
 	
@@ -445,9 +448,6 @@ BMInOutArray : List {
 		index.notNil.if({^array.at(index).value}, {^nil});
 	}
 	
-	//atIndex { |index| ^array.at(index) }
-	
-	// iffy?
 	put { arg key, value;
 		var index, assoc;
 		value ?? { this.removeAt(key); ^this };
@@ -463,23 +463,61 @@ BMInOutArray : List {
 		}
 	}
 	
+	// iteration
+	
 	keysValuesDo {|function|
-		this.do({|assoc, i|
+		super.do({|assoc, i|
 			function.value(assoc.key, assoc.value, i);
 		});
 	} 
 	
 	keysDo { arg function;
-		this.do({|assoc, i|
+		super.do({|assoc, i|
 			function.value(assoc.key, i);
 		});
+	}
+	
+	associationsDo { arg function;
+		super.do(function);
+	}
+	
+	// iterate over values only
+	do {|function|
+		super.do({|assoc, i|
+			function.value(assoc.value, i);
+		});
+	}
+	
+	collect { arg function;
+		var res = this.class.new(this.size);
+		this.keysValuesDo { arg key, elem; res.put(key, function.value(elem, key)) }
+		^res;
+	}
+	
+	select { arg function;
+		var res = this.class.new(this.size);
+		this.keysValuesDo { arg key, elem; if(function.value(elem, key)) { res.put(key, elem) } }
+		^res;
+	}
+	
+	reject { arg function;
+		var res = this.class.new(this.size);
+		this.keysValuesDo { arg key, elem; if(function.value(elem, key).not) 
+			{ res.put(key, elem) } }
+		^res;
+	}
+	
+	associationsCollectAs { | function, class |
+		var res = class.new(this.size);
+		this.associationsDo {|elem, i| res.add(function.value(elem, i)) }
+		^res;
 	}
 	
 	species {^this.class } // just in case
 	
 	++ {|aBMInOutArray| 
 		var newlist = this.species.new(this.size + aBMInOutArray.size);
-		newlist = newlist.addAll(this).addAll(aBMInOutArray);
+		newlist = newlist.putAll(this, aBMInOutArray);
 		this.subArrays.do({|key| 
 			newlist.defineSubArray(key, this.getSubArrayKeys(key));
 		});
@@ -523,6 +561,15 @@ BMInOutArray : List {
 	asUGenInput { ^this.values.asUGenInput }
 	
 	asControlInput { ^this.values.asControlInput }
+	
+	printItemsOn { | stream |
+		var addComma = false;
+		this.associationsDo { | item |
+			if (stream.atLimit) { ^this };
+			if (addComma) { stream.comma.space; } { addComma = true };
+			item.printOn(stream);
+		};
+	}
 
 }
 

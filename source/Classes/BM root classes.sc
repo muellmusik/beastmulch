@@ -158,7 +158,7 @@ BMAbstractController {
 	}
 	
 	*masterInOutArray {
-		^allControllers.values.collect({|item| item.asBMInOutArray }).flat.as(BMInOutArray);
+		^BMInOutArray.new.putAll(*(allControllers.values.collect({|item| item.asBMInOutArray })));
 	}
 	
 	addControlsToIndex {

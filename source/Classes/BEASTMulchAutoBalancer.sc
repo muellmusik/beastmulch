@@ -18,7 +18,7 @@ BMAutoBalancer {
 			this.sendDef(server);
 			server.sync;
 			"\n\\\\\\\\\\\\\\\ Auto Level Balance Starting\n".postln;
-			speakerList.do({|speaker, index|
+			speakerList.associationsDo({|speaker, index|
 				var synth, array, responder, count = 0, trim;
 				if(speaker.isBMSpeaker and: {speaker.spec.fullRange || onlyFullRange.not}, {
 					array = Array.new(3);
