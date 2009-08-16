@@ -388,7 +388,7 @@ BMInOutArray : List {
 		var bus, block;
 		bus = Bus.audio(server, size);
 		busObjects = busObjects.add(bus);
-		block = BMInOutArray.fill(size, {|i| (name ++ " " ++ (i + 1)).asSymbol->(bus.index + i) });
+		block = BMInOutArray.fill(size, {|i| (name ++ "-" ++ (i + 1)).asSymbol->(bus.index + i) });
 		this.addAll(block);
 		this.defineSubArray(name, block.keys);
 	}
