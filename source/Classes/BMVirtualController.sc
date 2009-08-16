@@ -74,7 +74,7 @@ BMVirtualController : BMAbstractController {
 
 // simple onscreen slider GUI for a BMVirtualController
 BMVirtualControllerSliders : BMAbstractGUI {
-	var virtualCont, sliders, fromUpdate = false;
+	var virtualCont, sliders;
 	var needsRefresh = false;
 	var <>refreshInterval = 0.05;
 	var refreshLoopOn = false;
@@ -116,11 +116,8 @@ BMVirtualControllerSliders : BMAbstractGUI {
 				label, 
 				displaySpec,
 				{|ez| var setVal;
-					if(fromUpdate.not, {
-						setVal = displaySpec.unmap(ez.value);
-						virtualCont.setVal(i + 1, setVal);
-						//setVal.postln;
-					})
+					setVal = displaySpec.unmap(ez.value);
+					virtualCont.setVal(i + 1, setVal);
 				}, initVal, labelWidth: labelWidth
 			);
 			sliders[i].numberView.background = Color.white.alpha_(0.4);
@@ -139,11 +136,9 @@ BMVirtualControllerSliders : BMAbstractGUI {
 			AppClock.sched(refreshInterval, {
 				var resched;
 				needsRefresh.if({resched = refreshInterval}, {refreshLoopOn = false});
-				fromUpdate = true; // prevent a loop
 				virtualCont.getAllValues.do({|val, i| 
 					sliders[i].value_(specs[i].map(val));
 				});
-				fromUpdate = false;
 				needsRefresh = false;
 				resched;
 			});
