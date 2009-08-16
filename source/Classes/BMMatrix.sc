@@ -534,7 +534,7 @@ BMInOutArray : List {
 		if (index.isNil) { subArraysKeys = subArraysKeys.add(name) };	}
 	
 	getSubArray {|name| 
-		^subArrays[name].collectAs({|key| this[key] }, this.class); 
+		^subArrays[name].collectAs({|key| key->this[key] }, this.class); 
 	}
 	
 	getSubArrayKeys {|name | ^subArrays[name] }
