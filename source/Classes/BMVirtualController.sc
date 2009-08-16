@@ -21,7 +21,7 @@ BMVirtualController : BMAbstractController {
 		); 
 	}
 	
-	*humanName {  ^"GUI Faders"  }
+	*humanName {  ^"GUI Controller"  }
 	
 	init { |argname, argserver, argnumControls|
 		name = argname;

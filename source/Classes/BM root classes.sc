@@ -275,4 +275,6 @@ BMAbstractGUI {
 	}
 	
 	makeWindow { ^this.subclassResponsibility(thisMethod);  }
+	
+	close { window.close }
 }
