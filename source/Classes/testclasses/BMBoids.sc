@@ -73,7 +73,7 @@ BMGrainBoidSpace {
 	var <boids, boidStream, countRecip;
 	
 	*new {|dim = 3, numBoids, centre, limits, velMax, velScale, minDist, avoidD = false| 
-		// limits is an array of [[min * dim, [max * dim]]
+		// limits is an array of [[min * dim], [max * dim]]
 		^super.newCopyArgs(dim, numBoids, centre, limits, velMax, velScale ? 1.0, 
 			minDist, avoidD).init;
 	}
