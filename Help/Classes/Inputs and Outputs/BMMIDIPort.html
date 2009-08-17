@@ -17,15 +17,15 @@ p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helve
 p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p9 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
 p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
-p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #c21d1c}
-p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0017c2}
-p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
-p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
-p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #0000ff}
 span.s3 {color: #000000}
+span.s4 {color: #0000bf}
+span.s5 {color: #606060}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -101,10 +101,10 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><br></p>
 <p class="p11">// initialise</p>
 <p class="p12">BMMIDIPort<span class="s3">.init;</span></p>
-<p class="p3"><br></p>
-<p class="p13">// all ports</p>
-<p class="p14">p = BMMIDIPort<span class="s3">.ports;</span></p>
-<p class="p15"><br></p>
-<p class="p16">EZPopUpMenu.new(nil, items: p.keys.collectAs({|k| k-&gt;{|men| ("You selected " ++ p[men.widget.item]).postln }}, Array))</p>
+<p class="p13"><br></p>
+<p class="p11">// all ports</p>
+<p class="p14">p = <span class="s4">BMMIDIPort</span>.ports;</p>
+<p class="p13"><br></p>
+<p class="p14"><span class="s4">EZPopUpMenu</span>.new(<span class="s4">nil</span>, items: p.keys.collectAs({<span class="s4">|k|</span> k-&gt;{<span class="s4">|men|</span> (<span class="s5">"You selected "</span> ++ p[men.widget.item]).postln }}, <span class="s4">Array</span>))</p>
 </body>
 </html>
