@@ -2,7 +2,7 @@
 BMMasterFader : BMAbstractAudioChainElement {
 
 	
-	var masterFaderSynth, <level = -12, <minLevel = -inf, <maxLevel = 0, bus, <busIndex;
+	var masterFaderSynth, <level = -12, <>minLevel = -inf, <>maxLevel = 0, bus, <busIndex;
 	
 //use super
 //	*new {| group, server, name |
