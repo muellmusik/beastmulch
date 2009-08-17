@@ -1,7 +1,7 @@
 BMSpeakerListVisualiser : BMAbstractGUI {
 
 	var speakerList, radius = 12, lowerel = 0;
-	var maxX, yvals, hiY, lowY, ySIze, hiZ, lowZ, zoom, labels, qcView;
+	var maxXinv, lowX, hiX, hiY, lowY, hiZ, lowZ, zoom, labels, qcView;
 	var colours, floorZ, viewSpeakers;
 	
 	*new {|speakerList| ^super.new.init(speakerList).makeWindow }
@@ -31,15 +31,23 @@ BMSpeakerListVisualiser : BMAbstractGUI {
 	//	(8..13).do({|i| var speak; speak = speakerList.at(i).value; speak.y = speak.y + 4 });
 		
 		
-		maxX = speakerList.collectAs({|spkr| spkr.x.abs }, Array).maxItem;
-		yvals = speakerList.collectAs({|spkr| spkr.y }, Array);
-		hiY = yvals.maxItem / maxX;
-		lowY = yvals.minItem / maxX;
-		ySIze = hiY - lowY;
-		window = SCWindow("Speakers", rect = Rect(100,200, 1020, 1000 / ([hiY, lowY].abs.maxItem) * 1.2)).front;
+		#lowX, lowY, lowZ, hiX, hiY, hiZ = speakerList.boundaries.flat;
 		
-		hiZ = speakerList.collectAs({|spkr| spkr.z }, Array).maxItem / maxX;
-		lowZ = speakerList.collectAs({|spkr| spkr.z }, Array).minItem / maxX;
+		maxXinv = [lowX, hiX].abs.maxItem.reciprocal;
+		#hiY, lowY, hiZ, lowZ = [hiY, lowY, hiZ, lowZ] * maxXinv;
+		
+		
+		
+		//maxX = speakerList.collectAs({|spkr| spkr.x.abs }, Array).maxItem;
+//		yvals = speakerList.collectAs({|spkr| spkr.y }, Array);
+//		hiY = yvals.maxItem / maxX;
+//		lowY = yvals.minItem / maxX;
+//		
+//		
+//		hiZ = speakerList.collectAs({|spkr| spkr.z }, Array).maxItem / maxX;
+//		lowZ = speakerList.collectAs({|spkr| spkr.z }, Array).minItem / maxX;
+		
+		window = SCWindow("Speakers", rect = Rect(100,200, 1020, 1000 / ([hiY, lowY].abs.maxItem) * 1.2)).front;
 		//SCButton(w, Rect(0, 0, 150, 20))
 		//	.states_([["pick another QC file"]])
 		//	.action_({ File.openDialog("", { |path| m.path_(path) }) });
@@ -74,14 +82,14 @@ BMSpeakerListVisualiser : BMAbstractGUI {
 //		floorZ = speakerList.collectAs({|spkr| spkr.z }, Array).minItem / maxX;
 //		qcView.floorZ = floorZ - 0.06;
 		
-		floorZ = -0.8 / maxX - 0.09;
+		floorZ = -0.8  * maxXinv - 0.09;
 		qcView.floorZ = floorZ;
 		
 		viewSpeakers = speakerList.associationsCollectAs({|assoc| 
 			var x, y, z, colour, tilt;
-			x = assoc.value.x / maxX;
-			y = assoc.value.y / maxX;
-			z = assoc.value.z / maxX;
+			x = assoc.value.x  * maxXinv;
+			y = assoc.value.y  * maxXinv;
+			z = assoc.value.z  * maxXinv;
 			colour = speakerColours[assoc.key] ?? {colours.next};
 			tilt = atan2(z, hypot(x, y)) * 57.295779513082;
 			[x, y, z, colour, Point(x, y).theta * 57.295779513082, assoc.key.asString, cos(assoc.value.azi * 0.017453292519943) * tilt, sin(assoc.value.azi * 0.017453292519943).neg * tilt] 

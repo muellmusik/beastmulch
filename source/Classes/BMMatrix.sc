@@ -589,6 +589,20 @@ BMInOutArray : List {
 			item.printOn(stream);
 		};
 	}
+	
+	boundaries {
+		var lowX, hiX, lowY, hiY, lowZ, hiZ, xvals, yvals, zvals;
+		xvals = this.collectAs({|spkr| spkr.x }, Array);
+		yvals = this.collectAs({|spkr| spkr.y }, Array);
+		zvals = this.collectAs({|spkr| spkr.z }, Array);
+		hiX = xvals.maxItem;
+		lowX = xvals.minItem;
+		hiY = yvals.maxItem;
+		lowY = yvals.minItem;
+		hiZ = zvals.maxItem;
+		lowZ = zvals.minItem;
+		^[[lowX, lowY, lowZ], [hiX, hiY, hiZ]];
+	}
 
 }
 
