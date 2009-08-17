@@ -6,7 +6,7 @@ BMSpeakerArrayGUI : BMAbstractGUI {
 	
 	
 	*new {| startArray, okayFunc, name, origin |
-		  ^super.new.init(startArray.deepCopy ?? { BMInOutArray[]}, okayFunc, name)
+		  ^super.new.init(startArray.deepCopy ?? { BMInOutArray[]}, okayFunc, name ? "Define Speaker Array")
 		  	.makeWindow(origin ? (40@200));
 	}
 	
