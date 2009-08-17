@@ -28,6 +28,7 @@ BMMasterFader : BMAbstractAudioChainElement {
 	level_ {| x |
 	 	level = x.clip(minLevel, maxLevel);
 	 	server.sendMsg("/c_set", busIndex, level.dbamp);
+	 	this.changed(\level);
 	}
 
 	mappings { 
@@ -73,6 +74,7 @@ BMMasterFader : BMAbstractAudioChainElement {
 
 BMMasterFaderGUI : BMAbstractGUI {
 	var masterFader, spec;
+	var slider, numberBox;
 	
 	*new {| masterFader, name |
 		^super.new.init(masterFader, name ? masterFader.name)
@@ -88,9 +90,8 @@ BMMasterFaderGUI : BMAbstractGUI {
 	
 	makeWindow {
 		
-		var slider, numberBox;
 
-		window 	= SCWindow("MF", 
+		window 	= SCWindow(name, 
 						  Rect.new( 
 						  	SCWindow.screenBounds.width - 120, 0, 120, 
 						  	SCWindow.screenBounds.height - 150
@@ -121,5 +122,13 @@ BMMasterFaderGUI : BMAbstractGUI {
 						onClose.value(this) 
 					    }
 		
+	}
+	
+	update { |changed, what, args|
+		if(what == \level, {
+			slider.value = spec.unmap(masterFader.level);
+			numberBox.value 	= masterFader.level.round(0.1);
+		});
+	
 	}
 }
