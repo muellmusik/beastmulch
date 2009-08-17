@@ -562,6 +562,25 @@ BMInOutArray : List {
 	
 	asControlInput { ^this.values.asControlInput }
 	
+	asOSCArgBundle {
+		var oscarray = Array(100);		// allocate a bunch of space
+		this.do { | msg | oscarray = oscarray.add(msg.asOSCArgArray) };
+		^oscarray
+	}
+
+	asOSCArgArray {
+		var oscarray = Array(100);		// allocate a bunch of space
+		this.do { | e | oscarray = e.asOSCArgEmbeddedArray(oscarray) };
+		^oscarray
+	}
+	
+	asOSCArgEmbeddedArray { | oscarray|
+		oscarray = oscarray.add($[);
+		this.do{ | e | oscarray = e.asOSCArgEmbeddedArray(oscarray) };
+		oscarray.add($]);
+		^oscarray;
+	}
+	
 	printItemsOn { | stream |
 		var addComma = false;
 		this.associationsDo { | item |
