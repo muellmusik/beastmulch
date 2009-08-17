@@ -15,18 +15,22 @@ p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco
 p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
 p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p8 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
-p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #c21d1c}
-p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0017c2}
+p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #b22827}
+p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0021c0}
 p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
 p.p12 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
 p.p13 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica; min-height: 17.0px}
-p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #c21d1c}
-p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0017c2}
+p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #b22827}
+p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0021c0}
 p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0017c2}
-span.s3 {color: #000000}
-span.s4 {color: #c21d1c}
+span.s2 {color: #0021c0}
+span.s3 {font: 9.0px Monaco; color: #007300}
+span.s4 {font: 9.0px Monaco}
+span.s5 {font: 9.0px Monaco; color: #5e6331}
+span.s6 {color: #0000ff}
+span.s7 {color: #000000}
+span.s8 {color: #b22827}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -50,13 +54,18 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
 <p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>ins </b>- Explanation of ins. Default value is nil. Other information.</p>
 <p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>outs </b>- Explanation of outs. Default value is nil. Other information.</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>target </b>- Explanation of target. Default value is nil. Other information.</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>addAction </b>- Explanation of addAction. Default value is 'addToTail'. Other information.</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>name </b>- Explanation of name. Default value is nil. Other information.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>target </b>- Target for this object's Group. If target is not a Group or <b>Synth</b>, it will be converted as follows: If it is a <b>Server</b>, it will be converted to the <b>default_group</b> of that server. If it is nil, to the <b>default_group</b> of the default <b>Server</b>. <b>Note: </b>A Synth is not a valid target for <span class="s3">\addToHead</span> and <span class="s3">\addToTail</span>.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>addAction </b>- one of the following Symbols:<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s3">\addToHead</span><span class="s5"> <span class="Apple-tab-span">	</span></span>- add at the head of the group specified by <b>target</b></p>
+<p class="p6"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s3">\addToTail</span><span class="s5"> <span class="Apple-tab-span">	</span></span>- (the default) add at the tail of the group specified by <b>target</b></p>
+<p class="p6"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s3">\addAfter</span> <span class="Apple-tab-span">	</span>- add immediately after <b>target </b>in its server's node order</p>
+<p class="p6"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s3">\addBefore</span> <span class="Apple-tab-span">	</span>- add immediately before <b>target </b>in its server's node order</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">\addReplace</span> <span class="Apple-tab-span">	</span>- replace <b>target</b> and take its place in its server's node order</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>name </b>- A <a href="SC://Symbol"><span class="s6">Symbol</span></a> indicating the name of this object. If not supplied one will be generated.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s3">.new;</span></p>
-<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s4">// explanation</span></p>
+<p class="p9"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
+<p class="p10"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s7">.new;</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s8">// explanation</span></p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
@@ -81,9 +90,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>argaddAction </b>- Explanation of argaddAction. Default value is nil. Other information.</p>
 <p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>argname </b>- Explanation of argname. Default value is nil. Other information.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s3">.init;</span></p>
-<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s4">// explanation</span></p>
+<p class="p9"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
+<p class="p10"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s7">.init;</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s8">// explanation</span></p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
@@ -91,9 +100,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s3">.clear;</span></p>
-<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s4">// explanation</span></p>
+<p class="p9"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
+<p class="p10"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s7">.clear;</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s8">// explanation</span></p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
@@ -101,9 +110,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s3">.mappings;</span></p>
-<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s4">// explanation</span></p>
+<p class="p9"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
+<p class="p10"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s7">.mappings;</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s8">// explanation</span></p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
@@ -112,9 +121,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
 <p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>dict </b>- Explanation of dict. Default value is nil. Other information.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s3">.mappings_;</span></p>
-<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s4">// explanation</span></p>
+<p class="p9"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
+<p class="p10"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s7">.mappings_;</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s8">// explanation</span></p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
@@ -122,9 +131,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s3">.makeNodes;</span></p>
-<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s4">// explanation</span></p>
+<p class="p9"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
+<p class="p10"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s7">.makeNodes;</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s8">// explanation</span></p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
@@ -133,9 +142,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
 <p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>plugin </b>- Explanation of plugin. Default value is nil. Other information.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s3">.addPlugin;</span></p>
-<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s4">// explanation</span></p>
+<p class="p9"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
+<p class="p10"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s7">.addPlugin;</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s8">// explanation</span></p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
@@ -144,9 +153,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
 <p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>indexOrPlugin </b>- Explanation of index. Default value is nil. Other information.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s3">.removePlugin;</span></p>
-<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s4">// explanation</span></p>
+<p class="p9"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
+<p class="p10"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s7">.removePlugin;</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s8">// explanation</span></p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
@@ -155,9 +164,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
 <p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>index </b>- Explanation of index. Default value is nil. Other information.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s3">.movePluginUp;</span></p>
-<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s4">// explanation</span></p>
+<p class="p9"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
+<p class="p10"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s7">.movePluginUp;</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s8">// explanation</span></p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
@@ -166,9 +175,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
 <p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>index </b>- Explanation of index. Default value is nil. Other information.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s3">.movePluginDown;</span></p>
-<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s4">// explanation</span></p>
+<p class="p9"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
+<p class="p10"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s7">.movePluginDown;</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s8">// explanation</span></p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
@@ -176,9 +185,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s3">.resetOrder;</span></p>
-<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s4">// explanation</span></p>
+<p class="p9"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
+<p class="p10"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s7">.resetOrder;</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s8">// explanation</span></p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
@@ -186,9 +195,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s3">.free;</span></p>
-<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s4">// explanation</span></p>
+<p class="p9"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
+<p class="p10"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s7">.free;</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s8">// explanation</span></p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
@@ -196,16 +205,16 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s3">.gui;</span></p>
-<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s4">// explanation</span></p>
+<p class="p9"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
+<p class="p10"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMMultichannelPluginsRack<span class="s7">.gui;</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s8">// explanation</span></p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
 <p class="p12"><b>Examples</b></p>
 <p class="p3"><br></p>
 <p class="p14">// what this example does</p>
-<p class="p15"><span class="s3">e = </span>BMMultichannelPluginsRack<span class="s3">.new;</span></p>
+<p class="p15"><span class="s7">e = </span>BMMultichannelPluginsRack<span class="s7">.new;</span></p>
 <p class="p16">e.instanceMethod(someObject);</p>
 <p class="p16">e.cleanUp;</p>
 <p class="p3"><br></p>
