@@ -10,7 +10,7 @@ BMSpeakerListVisualiser : BMAbstractGUI {
 		speakerList = argspeakerList;
 	}
 	
-	speakerList_ {|list| }
+	//speakerList_ {|list| }
 	
 	showBoids_{|bool| qcView.showBoids = bool }
 	
