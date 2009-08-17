@@ -43,11 +43,11 @@ span.Apple-tab-span {white-space:pre}
 </style>
 </head>
 <body>
-<p class="p1"><span class="s1"><b>BMInOutArray<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>an ordered Dictionary of inputs or outputs</b><span class="s1"><b><span class="Apple-tab-span">	</span></b></span></p>
+<p class="p1"><span class="s1"><b>BMInOutArray<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>an ordered Dictionary of named inputs or outputs</b><span class="s1"><b><span class="Apple-tab-span">	</span></b></span></p>
 <p class="p2"><br></p>
 <p class="p3"><span class="s2"><b>Inherits from: </b><a href="SC://Object"><b>Object</b></a><b> : </b><a href="SC://Collection"><b>Collection</b></a><b> : </b><a href="SC://SequenceableCollection"><b>SequenceableCollection</b></a><b> : </b><a href="SC://List"><b>List</b></a></span></p>
 <p class="p4"><br></p>
-<p class="p1">BMInOutArray is an ordered Dictionary of inputs or outputs and is used to represent the input or output busses of objects in the BEASTmulch Library. Members of the collection should be either instances of <a href="SC://Association"><span class="s3">Association</span></a> in the form name-&gt;busIndex or instances of the <a href="BMSpeaker.html"><span class="s3">BMSpeaker</span></a> class, which mimics Association polymorphically.</p>
+<p class="p1">BMInOutArray is an ordered Dictionary of named inputs or outputs and is used to represent the input or output busses of objects in the BEASTmulch Library. Members of the collection should be either instances of <a href="SC://Association"><span class="s3">Association</span></a> in the form name-&gt;busIndex or instances of the <a href="BMSpeaker.html"><span class="s3">BMSpeaker</span></a> class, which mimics Association polymorphically.</p>
 <p class="p2"><br></p>
 <p class="p1">In most cases members can be accessed by either key or index. For this reason numbers are not valid keys for use in this class. (Symbols are the expected key class in most places in the library in any case.)</p>
 <p class="p2"><br></p>
@@ -66,7 +66,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><span class="Apple-tab-span">	</span>)</p>
 <p class="p7"><span class="Apple-tab-span">	</span>x.set(<span class="s5">\outs</span>, i);</p>
 <p class="p2"><br></p>
-<p class="p1">It also provides support for named subarrays, specified as lists of keys.</p>
+<p class="p1">BMInOutArray also provides support for named subarrays, specified as lists of keys.</p>
 <p class="p2"><br></p>
 <p class="p1">In the current implementation no distinction is made between audio and control busses, and it is assumed that users will distinguish appropriately.</p>
 <p class="p2"><br></p>
