@@ -26,6 +26,7 @@ BMMIDIPort {
 		initialised = true;
 	}
 	
+	//private
 	*new {|name, inuid, outuid, device, outport|
 		^super.newCopyArgs(name.asSymbol, inuid, outuid, device, outport).init;
 	}
@@ -51,6 +52,9 @@ BMMIDIPort {
 			outport = port.outport;
 		});
 	}	
+
+	// post pretty
+	printOn { arg stream; stream << this.class.name << "(" <<* [name, device] << ")" }
 
 
 }
