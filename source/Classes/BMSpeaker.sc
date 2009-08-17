@@ -84,8 +84,6 @@ BMSpeaker {
 	asUGenInput { ^index }
 	asControlInput { ^index }
 	
-	asAssociation {^(name->this) }
-	
 	isBMSpeaker { ^true }
 	
 	key {^name }
