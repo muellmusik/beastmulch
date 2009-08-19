@@ -5,12 +5,12 @@ BMGrainBoid {
 		^super.newCopyArgs(dim, pos ?? {{0.5.rand2} ! dim}, vel ?? {0.0 ! dim});
 	}
 	
-	move {|boids, centre, limits, velMax, velScale, minDist, avoidD, countRecip|
+	move {|boids, centre, boundaries, velMax, velScale, minDist, avoidD, countRecip|
 		vel = vel * 0.9 + 							// damp so less twitchy
 			this.cohere(boids, countRecip) +			// stick together
 			this.avoid(boids, minDist) +			// avoid other boids
 			this.matchVel(boids, countRecip) +		// match velocity with nearby boids
-			this.boundSpace(pos, limits, velMax);		// stay in the room, more or less
+			this.boundSpace(pos, boundaries, velMax);		// stay in the room, more or less
 		
 		avoidD.if({this.avoidDesk});				// avoid the desk
 		centre.notNil.if({vel = vel + (centre - pos * 0.01)}); // move towards centering point
@@ -52,12 +52,12 @@ BMGrainBoid {
 		^(vec - vel * 0.125)
 	}
 	
-	boundSpace{ |pos, limits, velMax|
+	boundSpace{ |pos, boundaries, velMax|
 		var vec;
 		vec = 0 ! dim;
 		pos.do({|dimension, i| 
-			if(dimension < limits[0][i],  {vec[i] = velMax * 0.25});
-			if(dimension > limits[1][i],  {vec[i] = velMax * -0.25});
+			if(dimension < boundaries[0][i],  {vec[i] = velMax * 0.25});
+			if(dimension > boundaries[1][i],  {vec[i] = velMax * -0.25});
 		})
 		^vec
 	}
@@ -69,12 +69,12 @@ BMGrainBoid {
 }
 
 BMGrainBoidSpace {
-	var <dim, <numBoids, <>centre, limits, <>velMax, <>velScale, <>minDist, <>avoidD = false;
+	var <dim, <numBoids, <>centre, boundaries, <>velMax, <>velScale, <>minDist, <>avoidD = false;
 	var <boids, boidStream, countRecip;
 	
-	*new {|dim = 3, numBoids, centre, limits, velMax, velScale, minDist, avoidD = false| 
-		// limits is an array of [[min * dim], [max * dim]]
-		^super.newCopyArgs(dim, numBoids, centre, limits, velMax, velScale ? 1.0, 
+	*new {|dim = 3, numBoids, centre, boundaries, velMax, velScale, minDist, avoidD = false| 
+		// boundaries is an array of [[min * dim], [max * dim]]
+		^super.newCopyArgs(dim, numBoids, centre, boundaries, velMax, velScale ? 1.0, 
 			minDist, avoidD).init;
 	}
 	
@@ -86,7 +86,7 @@ BMGrainBoidSpace {
 	
 	// move and return a boid
 	moveNext {
-		^boidStream.next.move(boids, centre, limits, velMax, velScale, minDist, avoidD, countRecip);
+		^boidStream.next.move(boids, centre, boundaries, velMax, velScale, minDist, avoidD, countRecip);
 	}
 	
 }
