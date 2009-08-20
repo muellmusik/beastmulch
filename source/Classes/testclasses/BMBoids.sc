@@ -72,7 +72,7 @@ BMBoid {
 // coords
 BMBoidSpace {
 	var <dim, <numBoids, <centre, boundaries, <velMax, <velScale, <minDist, <avoidD = false;
-	var <interval = 0.01, <lastMoved;
+	var <interval = 0.05, <lastMoved;
 	var <boids, boidStream, countRecip;
 	
 	*new {|dim = 3, numBoids, centre, boundaries, velMax, velScale, minDist, avoidD = false| 
@@ -83,7 +83,7 @@ BMBoidSpace {
 	
 	init {
 		var maxXinv;
-		boids = { BMGrainBoid(dim, minDist: minDist) } ! numBoids;
+		boids = { BMBoid(dim, minDist: minDist) } ! numBoids;
 		boidStream = Pseq(boids, inf).asStream;
 		countRecip = (numBoids - 1).reciprocal;
 		lastMoved = Main.elapsedTime;

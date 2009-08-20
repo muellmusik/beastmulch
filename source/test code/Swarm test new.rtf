@@ -1,0 +1,63 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
+{\fonttbl\f0\fnil\fcharset0 Monaco;}
+{\colortbl;\red255\green255\blue255;\red0\green22\blue189;\red191\green0\blue0;\red0\green0\blue0;
+\red0\green0\blue191;\red191\green0\blue0;\red0\green35\blue183;\red96\green96\blue96;}
+\deftab560
+\pard\pardeftab560\ql\qnatural
+
+\f0\fs18 \cf2 v = BMSpeakerListVisualiser\cf0 (l = \cf2 Object\cf0 .readArchive("../../Help/Classes/Inputs and Outputs/BigSpeakerArray".resolveRelative));\
+\
+s.options.numOutputBusChannels = l.collect(_.index).maxItem;\
+s.boot;\
+\
+b = BMBoidSpace(3, 10, nil, l, 1, 13, 0.1);\
+\
+\pard\pardeftab560\ql\qnatural
+\cf3 //b.next;\cf4 \
+\cf3 //\cf4 \
+\cf3 //b.interval = 0.05;\
+\
+\cf0 ~draw = \cf5 Task\cf0 (\{\
+\pard\pardeftab560\ql\qnatural
+\cf5 AppClock\cf0 .sched(0, \{\
+\pard\pardeftab560\ql\qnatural
+\cf6 //b.numBoids.do(\{b.moveNext\});\cf0 \
+v.boidPositions = b.moveBoids.boids.collect(\cf5 _\cf0 .pos);\
+0.05\
+\});\
+\});\
+~draw.start;\
+\
+~draw.stop\
+\
+b.minDist = 0.05;\
+b.centre = [0,0,0];\
+\
+b.centre = [1,0,0.5];\
+\
+b.centre = [-1,-1,-0.2];\
+\
+b.velScale = 13;\
+\
+b.centre = nil;\
+\
+b.velMax = 1;\
+\
+b.avoidDesk = true;\
+\
+b.minDist = 0.1;\
+\
+b.velScale = 25;\
+\
+b.velScale = 10;\
+\
+\cf6 c = \cf7 Buffer\cf0 .read(s, \cf8 "sounds/a11wlk01.wav"\cf0 );\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf0 g = \cf5 BMSwarmGranulator\cf0 .new(l, b, c); \cf6 //numChan for env only\
+\
+g.play(stretch: 20);\
+g.inspect\
+g.release\
+\
+}
