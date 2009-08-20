@@ -36,6 +36,7 @@ BMSpeakerListVisualiser : BMAbstractGUI {
 		maxXinv = [lowX, hiX].abs.maxItem.reciprocal;
 		#hiY, lowY, hiZ, lowZ = [hiY, lowY, hiZ, lowZ] * maxXinv;
 		
+		floorZ = -0.8  * maxXinv - 0.09;
 		
 		
 		//maxX = speakerList.collectAs({|spkr| spkr.x.abs }, Array).maxItem;
@@ -63,7 +64,7 @@ BMSpeakerListVisualiser : BMAbstractGUI {
 		qcView.resize_(5);
 		
 		//qcView.maxFPS_(20);
-		zoom.action = {qcView.zoom = zoom.value * 4 - 2;};
+		zoom.action = {qcView.zoom = zoom.value * (hiZ - floorZ) - (hiZ - floorZ);};
 		
 		zoom.doAction;
 		qcView.sphereScale = 0.02;
@@ -82,7 +83,7 @@ BMSpeakerListVisualiser : BMAbstractGUI {
 //		floorZ = speakerList.collectAs({|spkr| spkr.z }, Array).minItem / maxX;
 //		qcView.floorZ = floorZ - 0.06;
 		
-		floorZ = -0.8  * maxXinv - 0.09;
+		//floorZ = -0.8  * maxXinv - 0.09;
 		qcView.floorZ = floorZ;
 		
 		viewSpeakers = speakerList.associationsCollectAs({|assoc| 
