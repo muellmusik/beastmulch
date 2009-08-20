@@ -48,7 +48,7 @@ BMSpeakerListVisualiser : BMAbstractGUI {
 //		hiZ = speakerList.collectAs({|spkr| spkr.z }, Array).maxItem / maxX;
 //		lowZ = speakerList.collectAs({|spkr| spkr.z }, Array).minItem / maxX;
 		
-		window = SCWindow("Speakers", rect = Rect(100,200, 1020, 1000 / ([hiY, lowY].abs.maxItem) * 1.2)).front;
+		window = SCWindow("Speakers", rect = Rect(100,200, 800, 800 * [hiY, lowY].abs.maxItem)).front;
 		//SCButton(w, Rect(0, 0, 150, 20))
 		//	.states_([["pick another QC file"]])
 		//	.action_({ File.openDialog("", { |path| m.path_(path) }) });
