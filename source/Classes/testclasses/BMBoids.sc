@@ -68,8 +68,11 @@ BMBoid {
 	
 }
 
+// lazily updates positions when queried
+// coords
 BMBoidSpace {
-	var <dim, <numBoids, <>centre, boundaries, <>velMax, <>velScale, <>minDist, <>avoidD = false;
+	var <dim, <numBoids, <centre, boundaries, <velMax, <velScale, <minDist, <avoidD = false;
+	var <interval = 0.01, <lastMoved;
 	var <boids, boidStream, countRecip;
 	
 	*new {|dim = 3, numBoids, centre, boundaries, velMax, velScale, minDist, avoidD = false| 
@@ -83,6 +86,7 @@ BMBoidSpace {
 		boids = { BMGrainBoid(dim, minDist: minDist) } ! numBoids;
 		boidStream = Pseq(boids, inf).asStream;
 		countRecip = (numBoids - 1).reciprocal;
+		lastMoved = Main.elapsedTime;
 		if(boundaries.isBMInOutArray, { boundaries = boundaries.boundaries; });
 		
 		// normalise to maxX with 0 still centered
@@ -91,9 +95,37 @@ BMBoidSpace {
 			
 	}
 	
-	// move and return a boid
-	moveNext {
-		^boidStream.next.move(boids, centre, boundaries, velMax, velScale, minDist, avoidD, countRecip);
+	// setters must update position
+	centre_ {|val| this.moveBoids; centre = val; }
+	
+	velMax_ {|val| this.moveBoids; velMax = val; }
+	
+	velScale_ {|val| this.moveBoids; velScale = val; }
+	
+	minDist_ {|val| this.moveBoids; minDist = val; }
+	
+	avoidD_ {|val| this.moveBoids; avoidD = val; }
+	
+	interval_ {|val| this.moveBoids; interval = val; }
+	
+	// update positions if necessary and return a boid
+	next {
+		this.moveBoids;
+		^boidStream.next;	
+	}
+	
+	// lazy update based on number of intervals passed
+	moveBoids {
+		var timeSinceLastMoved, numMoves;
+		timeSinceLastMoved = Main.elapsedTime - lastMoved;
+		numMoves = (timeSinceLastMoved / interval).asInteger; // round down
+		numMoves.do({
+			boids.scramble.do({|boid|
+				boid.move(boids, centre, boundaries, velMax, velScale * interval, // time adjust
+					minDist, avoidD, countRecip);
+			});
+		});
+		lastMoved = lastMoved + (interval * numMoves);
 	}
 	
 }
