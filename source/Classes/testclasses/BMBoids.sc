@@ -1,4 +1,4 @@
-BMGrainBoid {
+BMBoid {
 	var <dim, <pos, <vel;
 
 	*new {|dim = 3, pos, vel, minDist|
@@ -68,20 +68,27 @@ BMGrainBoid {
 	
 }
 
-BMGrainBoidSpace {
+BMBoidSpace {
 	var <dim, <numBoids, <>centre, boundaries, <>velMax, <>velScale, <>minDist, <>avoidD = false;
 	var <boids, boidStream, countRecip;
 	
 	*new {|dim = 3, numBoids, centre, boundaries, velMax, velScale, minDist, avoidD = false| 
-		// boundaries is an array of [[min * dim], [max * dim]]
+		// boundaries is an array of [[min * dim], [max * dim]] or a speaker list
 		^super.newCopyArgs(dim, numBoids, centre, boundaries, velMax, velScale ? 1.0, 
 			minDist, avoidD).init;
 	}
 	
 	init {
+		var maxXinv;
 		boids = { BMGrainBoid(dim, minDist: minDist) } ! numBoids;
 		boidStream = Pseq(boids, inf).asStream;
 		countRecip = (numBoids - 1).reciprocal;
+		if(boundaries.isBMInOutArray, { boundaries = boundaries.boundaries; });
+		
+		// normalise to maxX with 0 still centered
+		maxXinv = [boundaries[0][0], boundaries[1][0]].abs.maxItem.reciprocal;
+		boundaries = boundaries * maxXinv;
+			
 	}
 	
 	// move and return a boid
