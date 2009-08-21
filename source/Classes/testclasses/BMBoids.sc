@@ -114,6 +114,13 @@ BMBoidSpace {
 		^boidStream.next;	
 	}
 	
+	// update positions if necessary and return an Array of Arrays with current positions
+	// (2 or 3 dimensions)
+	positions {
+		this.moveBoids;
+		^boids.collect(_.pos);
+	}
+	
 	// lazy update based on number of intervals passed
 	moveBoids {
 		var timeSinceLastMoved, numMoves;
