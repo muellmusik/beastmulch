@@ -17,18 +17,17 @@ p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helve
 p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p9 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
 p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
-p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
-p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ae1a19}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0016bd}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
-span.s3 {color: #002afb}
+span.s3 {color: #0034f9}
 span.s4 {text-decoration: underline}
 span.s5 {color: #606060}
-span.s6 {color: #0000bf}
-span.s7 {color: #bf0000}
-span.s8 {color: #007300}
+span.s6 {color: #0016bd}
+span.s7 {color: #ae1a19}
+span.s8 {color: #2b7000}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -77,8 +76,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p13"><span class="s2">}, </span>BMInOutArray<span class="s2">);</span></p>
 <p class="p12">)</p>
 <p class="p13"><span class="s2">v = </span>BMSpeakerListVisualiser<span class="s2">(l); </span><span class="s7">// let's look at it</span></p>
-<p class="p14"><br></p>
-<p class="p14"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
 <p class="p11">////// American style 8 Channel Ring</p>
 <p class="p12">(</p>
 <p class="p12">l = [[0, <span class="s5">"F"</span> ], [45, <span class="s5">"FR"</span>], [90, <span class="s5">"R"</span>], [135, <span class="s5">"BR"</span>], [180, <span class="s5">"B"</span>], [-135, <span class="s5">"BL"</span>], [-90, <span class="s5">"L"</span>], [-45, <span class="s5">"FL"</span>]].collectAs({<span class="s6">|el, i|</span></p>
@@ -86,18 +85,18 @@ span.Apple-tab-span {white-space:pre}
 <p class="p13"><span class="s2">}, </span>BMInOutArray<span class="s2">);</span></p>
 <p class="p12">)</p>
 <p class="p13">BMSpeakerListVisualiser<span class="s2">(l); </span><span class="s7">// let's look at it</span></p>
-<p class="p14"><br></p>
-<p class="p14"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
 <p class="p11">////// zig zag partial dome</p>
 <p class="p12">(</p>
 <p class="p12">l = [[-22.5, 40, <span class="s5">"Upper1"</span>], [22.5, 40, <span class="s5">"Upper2"</span>], [-67.5, 40, <span class="s5">"Upper3"</span>], [67.5, 40, <span class="s5">"Upper4"</span>], [-112.5, 40, <span class="s5">"Upper5"</span>], [112.5, 40, <span class="s5">"Upper6"</span>], [-157.5, 40, <span class="s5">"Upper7"</span>], [157.5, 40, <span class="s5">"Upper8"</span>], [-45, 0, <span class="s5">"Lower1"</span>], [45, 0, <span class="s5">"Lower2"</span>], [-90, 0, <span class="s5">"Lower3"</span>], [90, 0, <span class="s5">"Lower4"</span>], [-135, 0, <span class="s5">"Lower5"</span>], [135, 0, <span class="s5">"Lower6"</span>], [0, 0, <span class="s5">"Lower7"</span>], [180, 0, <span class="s5">"Lower8"</span>]].collectAs({<span class="s6">|el, i|</span></p>
 <p class="p12"><span class="Apple-tab-span">	</span><span class="s6">BMSpeaker</span>.newFromSpherical(el[2], i, el[0], el[1], 2);</p>
 <p class="p13"><span class="s2">}, </span>BMInOutArray<span class="s2">);</span></p>
-<p class="p12">l.defineSubArray(<span class="s8">\lower</span>, l.keys[(0..7)]);</p>
-<p class="p12">l.defineSubArray(<span class="s8">\upper</span>, l.keys[(8..15)]);</p>
+<p class="p12">l.defineSubArray(<span class="s8">\upper</span>, l.keys[(0..7)]);</p>
+<p class="p12">l.defineSubArray(<span class="s8">\lower</span>, l.keys[(8..15)]);</p>
 <p class="p12">)</p>
 <p class="p11"><span class="s6">BMSpeakerListVisualiser</span><span class="s2">(l); </span>// note subArray colour coding</p>
-<p class="p14"><br></p>
+<p class="p4"><br></p>
 <p class="p11">////// Big BEAST Array</p>
 <p class="p12"><span class="s6">BMSpeakerListVisualiser</span>(<span class="s6">Object</span>.readArchive(<span class="s5">"BigSpeakerArray"</span>.resolveRelative));</p>
 </body>
