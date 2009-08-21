@@ -9,34 +9,35 @@
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000ff}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001bec}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
 p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
 p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p9 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
-p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #b22827}
-p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0021c0}
+p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #a4302f}
+p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0028be}
 p.p12 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
 p.p13 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
 p.p14 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica; min-height: 17.0px}
-p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p17 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
-p.p18 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ae1a19}
+p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p17 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0016bd}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
-span.s3 {color: #0000ff}
-span.s4 {font: 9.0px Monaco; color: #2b7000}
-span.s5 {font: 9.0px Monaco}
-span.s6 {font: 9.0px Monaco; color: #606232}
-span.s7 {color: #001dfd}
-span.s8 {color: #b22827}
-span.s9 {color: #0021c0}
-span.s10 {color: #606060}
-span.s11 {color: #0000bf}
-span.s12 {color: #007300}
+span.s3 {text-decoration: underline}
+span.s4 {color: #0000ff}
+span.s5 {color: #001dfd}
+span.s6 {font: 9.0px Monaco; color: #3c6d00}
+span.s7 {font: 9.0px Monaco}
+span.s8 {font: 9.0px Monaco; color: #616133}
+span.s9 {color: #002afb}
+span.s10 {color: #a4302f}
+span.s11 {color: #0028be}
+span.s12 {color: #606060}
+span.s13 {color: #0016bd}
+span.s14 {color: #2b7000}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -49,27 +50,29 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p1">Matrices map inputs to outputs. In the case of audio matrices this means routing input busses to output busses. In the case of controller matrices this involves mapping controls to control an output, for example BMAmpControlMatrix maps controls to scale the amplitude of signals on audio busses.</p>
 <p class="p2"><br></p>
-<p class="p3"><span class="s2"><b>See also:</b> <a href="../Root Classes/BMAbstractAudioChainElement.html">BMAbstractAudioChainElement</a>, <a href="BMAudioMatrix.html">BMAudioMatrix</a>, <a href="BMAmpControlMatrix.html">BMAmpControlMatrix</a>, <a href="BMAudioMixerMatrix.html">BMAudioMixerMatrix</a></span></p>
+<p class="p1">All subclasses of BMAbstractMatrix fadein and fadeout when connections are made, using the time stored in BMOptions.crossfade. Thus making or breaking connections will not cause glitches.</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="s2"><b>See also:</b> <a href="../Root Classes/BMAbstractAudioChainElement.html"><span class="s3">BMAbstractAudioChainElement</span></a>, <a href="BMAudioMatrix.html"><span class="s3">BMAudioMatrix</span></a>, <a href="BMAmpControlMatrix.html"><span class="s3">BMAmpControlMatrix</span></a>, <a href="BMAudioMixerMatrix.html"><span class="s3">BMAudioMixerMatrix</span></a>, <a href="../Other/BMOptions.html"><span class="s4">BMOptions</span></a></span></p>
 <p class="p2"><br></p>
 <p class="p5"><b>Creation / Class Methods</b></p>
 <p class="p6"><br></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>*new (ins, outs, target, addAction, name)</b></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Create a new matrix.</p>
-<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>ins </b>- An instance of <a href="../Inputs and Outputs/BMInOutArray.html"><span class="s3">BMInOutArray</span></a>. If this is an audio matrix (e.g. BMAudioMatrix) this should contain objects with control rate buses, if it is a controller matrix (e.g. BMAmpControlMatrix) this should contain objects with control rate buses.</p>
-<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>outs </b>- An instance of <a href="../Inputs and Outputs/BMInOutArray.html"><span class="s3">BMInOutArray</span></a>.</p>
-<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>target </b>- Target for this object's Group. If target is not a Group or <b>Synth</b>, it will be converted as follows: If it is a <b>Server</b>, it will be converted to the <b>default_group</b> of that server. If it is nil, to the <b>default_group</b> of the default <b>Server</b>. <b>Note: </b>A Synth is not a valid target for <span class="s4">\addToHead</span> and <span class="s4">\addToTail</span>.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>ins </b>- An instance of <a href="../Inputs and Outputs/BMInOutArray.html"><span class="s5">BMInOutArray</span></a>. If this is an audio matrix (e.g. BMAudioMatrix) this should contain objects with control rate buses, if it is a controller matrix (e.g. BMAmpControlMatrix) this should contain objects with control rate buses.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>outs </b>- An instance of <a href="../Inputs and Outputs/BMInOutArray.html"><span class="s5">BMInOutArray</span></a>.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>target </b>- Target for this object's Group. If target is not a Group or <b>Synth</b>, it will be converted as follows: If it is a <b>Server</b>, it will be converted to the <b>default_group</b> of that server. If it is nil, to the <b>default_group</b> of the default <b>Server</b>. <b>Note: </b>A Synth is not a valid target for <span class="s6">\addToHead</span> and <span class="s6">\addToTail</span>.</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>addAction </b>- one of the following Symbols:<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s4">\addToHead</span><span class="s6"> <span class="Apple-tab-span">	</span></span>- add at the head of the group specified by <b>target</b></p>
-<p class="p7"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s4">\addToTail</span><span class="s6"> <span class="Apple-tab-span">	</span></span>- (the default) add at the tail of the group specified by <b>target</b></p>
-<p class="p7"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s4">\addAfter</span> <span class="Apple-tab-span">	</span>- add immediately after <b>target </b>in its server's node order</p>
-<p class="p7"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s4">\addBefore</span> <span class="Apple-tab-span">	</span>- add immediately before <b>target </b>in its server's node order</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">\addReplace</span> <span class="Apple-tab-span">	</span>- replace <b>target</b> and take its place in its server's node order</p>
-<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>name </b>- A <a href="SC://Symbol"><span class="s7">Symbol</span></a> indicating the name of this object. If not supplied one will be generated.</p>
+<p class="p9"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s6">\addToHead</span><span class="s8"> <span class="Apple-tab-span">	</span></span>- add at the head of the group specified by <b>target</b></p>
+<p class="p7"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s6">\addToTail</span><span class="s8"> <span class="Apple-tab-span">	</span></span>- (the default) add at the tail of the group specified by <b>target</b></p>
+<p class="p7"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s6">\addAfter</span> <span class="Apple-tab-span">	</span>- add immediately after <b>target </b>in its server's node order</p>
+<p class="p7"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s6">\addBefore</span> <span class="Apple-tab-span">	</span>- add immediately before <b>target </b>in its server's node order</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">\addReplace</span> <span class="Apple-tab-span">	</span>- replace <b>target</b> and take its place in its server's node order</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>name </b>- A <a href="SC://Symbol"><span class="s9">Symbol</span></a> indicating the name of this object. If not supplied one will be generated.</p>
 <p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p10"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
 <p class="p11"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMAbstractMatrix<span class="s2">.new;</span></p>
-<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s8">// explanation</span></p>
+<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s10">// explanation</span></p>
 <p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
 <p class="p6"><br></p>
 <p class="p6"><br></p>
@@ -78,15 +81,15 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><b><span class="Apple-tab-span">	</span>connect (input, outputs)</b></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Connect an input to one or more outputs.</p>
-<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>input </b>- A <a href="SC://Symbol"><span class="s3">Symbol</span></a> indicating the name of the input to connect.</p>
-<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>outputs </b>- An <a href="SC://Array"><span class="s3">Array</span></a> of Symbols indicating the names of the outputs to which the input will be connected.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>input </b>- A <a href="SC://Symbol"><span class="s5">Symbol</span></a> indicating the name of the input to connect.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>outputs </b>- An <a href="SC://Array"><span class="s5">Array</span></a> of Symbols indicating the names of the outputs to which the input will be connected.</p>
 <p class="p6"><br></p>
 <p class="p6"><br></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>disconnect (input, outputs)</b></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Disconnect an input from one or more outputs.</p>
-<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>input </b>- A <a href="SC://Symbol"><span class="s3">Symbol</span></a> indicating the name of the input to disconnect.</p>
-<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>outputs </b>- An <a href="SC://Array"><span class="s3">Array</span></a> of Symbols indicating the names of the outputs from which the input will be disconnected.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>input </b>- A <a href="SC://Symbol"><span class="s5">Symbol</span></a> indicating the name of the input to disconnect.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>outputs </b>- An <a href="SC://Array"><span class="s5">Array</span></a> of Symbols indicating the names of the outputs from which the input will be disconnected.</p>
 <p class="p6"><br></p>
 <p class="p6"><br></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>clear (time)</b></p>
@@ -102,7 +105,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><br></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>mappings</b></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Returns an <a href="SC://IdentityDictionary"><span class="s3">IdentityDictionary</span></a> containing the current values and labels for this controller, in the form IdentityDictionary[\input1-&gt;List[output1, ...], ...]. Subclasses may override this to include additional parameters.</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Returns an <a href="SC://IdentityDictionary"><span class="s5">IdentityDictionary</span></a> containing the current values and labels for this controller, in the form IdentityDictionary[\input1-&gt;List[output1, ...], ...]. Subclasses may override this to include additional parameters.</p>
 <p class="p8"><span class="Apple-tab-span">	</span></p>
 <p class="p8"><span class="Apple-tab-span">	</span></p>
 <p class="p7"><span class="Apple-tab-span">	</span><b>mappings_ (mappingsDict)</b></p>
@@ -111,8 +114,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>mappingsDict </b>- An IdentityDictionary containing the new values and labels for this controller, in the form IdentityDictionary[\input1-&gt;List[output1, ...], ...]. Subclasses may override this to include additional parameters.</p>
 <p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p10"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s9">BMAbstractMatrix</span>.mappings_;</p>
-<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s8">// explanation</span></p>
+<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s11">BMAbstractMatrix</span>.mappings_;</p>
+<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s10">// explanation</span></p>
 <p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
 <p class="p6"><br></p>
 <p class="p6"><br></p>
@@ -131,38 +134,38 @@ span.Apple-tab-span {white-space:pre}
 <p class="p15">// Audio matrix example</p>
 <p class="p16">(</p>
 <p class="p15">// make a speaker list</p>
-<p class="p16">l = [[-30, <span class="s10">"L"</span>], [30, <span class="s10">"R"</span>], [0, <span class="s10">"C"</span>], [-110, <span class="s10">"Ls"</span>], [110, <span class="s10">"Rs"</span>]].collectAs({<span class="s11">|el, i|</span></p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="s11">BMSpeaker</span>.newFromSpherical(el[1], i, el[0], 0, 2);</p>
+<p class="p16">l = [[-30, <span class="s12">"L"</span>], [30, <span class="s12">"R"</span>], [0, <span class="s12">"C"</span>], [-110, <span class="s12">"Ls"</span>], [110, <span class="s12">"Rs"</span>]].collectAs({<span class="s13">|el, i|</span></p>
+<p class="p16"><span class="Apple-tab-span">	</span><span class="s13">BMSpeaker</span>.newFromSpherical(el[1], i, el[0], 0, 2);</p>
 <p class="p17"><span class="s2">}, </span>BMInOutArray<span class="s2">);</span></p>
 <p class="p16">)</p>
-<p class="p18"><br></p>
+<p class="p4"><br></p>
 <p class="p15">// something to route</p>
 <p class="p16">(</p>
-<p class="p16">b = <span class="s11">Bus</span>.audio(s, 8);</p>
-<p class="p16">x = { <span class="s11">Out</span>.ar(b, {<span class="s11">|i|</span> <span class="s11">Ringz</span>.ar(<span class="s11">Dust</span>.ar(3, 0.1), 300 * (i + 1), 2)} ! 8) }.play;</p>
+<p class="p16">b = <span class="s13">Bus</span>.audio(s, 8);</p>
+<p class="p16">x = { <span class="s13">Out</span>.ar(b, {<span class="s13">|i|</span> <span class="s13">Ringz</span>.ar(<span class="s13">Dust</span>.ar(3, 0.1), 300 * (i + 1), 2)} ! 8) }.play;</p>
 <p class="p16">)</p>
-<p class="p18"><br></p>
+<p class="p4"><br></p>
 <p class="p15">// make a matrix</p>
-<p class="p16">m = <span class="s11">BMAudioMatrix</span>(b.asBMInOutArray(<span class="s12">\ringzes</span>), l);</p>
-<p class="p18"><br></p>
+<p class="p16">m = <span class="s13">BMAudioMatrix</span>(b.asBMInOutArray(<span class="s14">\ringzes</span>), l);</p>
+<p class="p4"><br></p>
 <p class="p15"><span class="s2">s.meter; </span>// so we can watch</p>
-<p class="p18"><br></p>
-<p class="p16">m.connect(<span class="s12">'ringzes-1'</span>, [<span class="s12">'L'</span>])</p>
-<p class="p18"><br></p>
-<p class="p16">m.connect(<span class="s12">'ringzes-2'</span>, [<span class="s12">'L'</span>])</p>
-<p class="p18"><br></p>
-<p class="p16">m.connect(<span class="s12">'ringzes-3'</span>, [<span class="s12">'Ls'</span>])</p>
-<p class="p18"><br></p>
-<p class="p16">m.disconnect(<span class="s12">'ringzes-1'</span>, [<span class="s12">'L'</span>])</p>
-<p class="p18"><br></p>
-<p class="p16">m.connect(<span class="s12">'ringzes-1'</span>, [<span class="s12">'R'</span>])</p>
-<p class="p18"><br></p>
+<p class="p4"><br></p>
+<p class="p16">m.connect(<span class="s14">'ringzes-1'</span>, [<span class="s14">'L'</span>])</p>
+<p class="p4"><br></p>
+<p class="p16">m.connect(<span class="s14">'ringzes-2'</span>, [<span class="s14">'L'</span>])</p>
+<p class="p4"><br></p>
+<p class="p16">m.connect(<span class="s14">'ringzes-3'</span>, [<span class="s14">'Ls'</span>])</p>
+<p class="p4"><br></p>
+<p class="p16">m.disconnect(<span class="s14">'ringzes-1'</span>, [<span class="s14">'L'</span>])</p>
+<p class="p4"><br></p>
+<p class="p16">m.connect(<span class="s14">'ringzes-1'</span>, [<span class="s14">'R'</span>])</p>
+<p class="p4"><br></p>
 <p class="p16">m.mappings;</p>
-<p class="p18"><br></p>
+<p class="p4"><br></p>
 <p class="p15"><span class="s2">m.gui; </span>// Use a GUI. Be sure to click 'View Matrix' for alternate view.</p>
-<p class="p18"><br></p>
+<p class="p4"><br></p>
 <p class="p15"><span class="s2">m.clear(3); </span>// fade out connections</p>
-<p class="p18"><br></p>
+<p class="p4"><br></p>
 <p class="p16">m.free; b.free; x.free;</p>
 </body>
 </html>
