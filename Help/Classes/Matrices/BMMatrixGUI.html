@@ -65,11 +65,11 @@ span.Apple-tab-span {white-space:pre}
 <p class="p11">)</p>
 <p class="p14"><br></p>
 <p class="p12">// make a matrix</p>
-<p class="p11">m = <span class="s6">BMAudioMatrix</span>(b.asBMInOutArray(<span class="s7">\ringzes</span>), l);</p>
+<p class="p11">m = <span class="s6">BMAudioMatrix</span>(b.asBMInOutArray(<span class="s7">\ringzes</span>), l, name: <span class="s7">'Routing'</span>);</p>
 <p class="p14"><br></p>
 <p class="p12"><span class="s2">s.meter; </span>// so we can watch</p>
 <p class="p14"><br></p>
-<p class="p11">m.connect(<span class="s7">'ringzes-1'</span>, <span class="s7">'L'</span>); // make one connection manually</p>
+<p class="p12"><span class="s2">m.connect(</span><span class="s7">'ringzes-1'</span><span class="s2">, </span><span class="s7">'L'</span><span class="s2">); </span>// make one connection manually</p>
 <p class="p14"><br></p>
 <p class="p12"><span class="s6">BMMatrixGUI</span><span class="s2">(m); </span>// now play with the GUI</p>
 </body>
