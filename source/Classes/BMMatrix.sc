@@ -691,7 +691,7 @@ BMMatrixMenuGUI : BMAbstractGUI {
 		assignButton.states = [["<", Color.black, Color.white.alpha_(0.8)]];
 		assignButton.action = { matrix.connect(inputView.item, outputView.item);};
 		outputView = SCListView(outputSection, Rect(0, 0, 200, 250)).canReceiveDragHandler = false;
-		outputView.beginDragAction = {|view| view.item };
+		outputView.beginDragAction = {|view| view.dragLabel = view.item.asString; view.item };
 		outputView.background = Color.white.alpha_(0.2);
 		
 		
