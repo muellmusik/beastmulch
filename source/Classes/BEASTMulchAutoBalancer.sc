@@ -3,7 +3,7 @@ BMAutoBalancer {
 
 	classvar <>running = false, rout, trimList;
 
-	*run {|speakerList, okayFunc, server, in = 0, onlyFullRange = true, normalize = true|
+	*run {|speakerList, okayFunc, server, in = 0, onlyFullRange = true|
 		var target, responders, min, diff;
 		running.if({
 			"Auto Level Balance already running; ignoring request".warn;
@@ -25,7 +25,7 @@ BMAutoBalancer {
 					responder = OSCresponderNode(server.addr, 'BM-AutoBalance', {|time, resp, msg|
 						if(msg[2] == index, {
 							count = count + 1;
-							array.add(msg[3]);
+							array.add(msg[3].sqrt);
 							if(count == 3, {
 								trim = array.mean.ampdb;
 								trimList[speaker.name] = trim;
@@ -54,17 +54,15 @@ BMAutoBalancer {
 			
 			(responders.size == 0).if({
 				"Results Complete\n".postln;
-				normalize.if({
-					"Normalizing".postln;
-					min = trimList.minItem; 
-					speakerList.do({|speaker| 
-						if(speaker.isBMSpeaker and: 
-							{speaker.spec.fullRange ? true || onlyFullRange.not}, {
-							diff = min - trimList[speaker.name];
-							if(diff <= 0, { 
-								trimList[speaker.name] = diff;
-								"Normalized Autotrim for %: % dBFS\n".postf(speaker.name, diff);
-							});
+				"Normalizing".postln;
+				min = trimList.minItem; 
+				speakerList.do({|speaker| 
+					if(speaker.isBMSpeaker and: 
+						{speaker.spec.fullRange ? true || onlyFullRange.not}, {
+						diff = min - trimList[speaker.name];
+						if(diff <= 0, { 
+							trimList[speaker.name] = diff;
+							"Normalized Autotrim for %: % dBFS\n".postf(speaker.name, diff);
 						});
 					});
 				});
@@ -120,11 +118,13 @@ BMAutoBalancerGUI : BMAbstractGUI {
 	}
 	
 	makeWindow {|origin|
-		var inChan, onlyFull, normalize, startButt;
+		var inChan, onlyFull, startButt;
 		okayFunc = okayFunc.addFunc({ {startButt.value = 0;}.defer});
-		window = Window.new(name ? "Autobalance Speakers", Rect(origin.x, origin.y, 300, 80), false);
+		window = Window.new(name ? "Autobalance Speakers", Rect(origin.x, origin.y, 300, 60), false);
 		window.addFlowLayout;
 		inChan = EZNumber(window, 290@20, "Microphone Input Channel ", [1, server.options.numInputBusChannels, \lin, 1, 1].asSpec, numberWidth: 40);
+		window.view.decorator.nextLine.nextLine;
+		SCStaticText(window, 60@20);
 		onlyFull = RoundButton(window, 142.5@20)
 			.extrude_(false)
 			.canFocus_(false)
@@ -132,14 +132,6 @@ BMAutoBalancerGUI : BMAbstractGUI {
 				[ "Only Full Range", Color.black,  Color.white.alpha_(0.8) ],
 				[ "Only Full Range", Color.black,  Color.clear ]
 			]);
-		normalize = RoundButton(window, 142.5@20)
-			.extrude_(false)
-			.canFocus_(false)
-			.states_([
-				[ "Normalize", Color.black,  Color.white.alpha_(0.8) ],
-				[ "Normalize", Color.black,  Color.clear ]
-			]);
-		SCStaticText(window, 205@20);
 		startButt = RoundButton(window, 80@20)
 			.extrude_(false)
 			.canFocus_(false)
@@ -149,7 +141,7 @@ BMAutoBalancerGUI : BMAbstractGUI {
 			])
 			.action_({|butt|
 				if(butt.value == 1, {
-					BMAutoBalancer.run(speakerList, okayFunc, server, inChan.value - 1, onlyFull.value.booleanValue.not, normalize.value.booleanValue.not);
+					BMAutoBalancer.run(speakerList, okayFunc, server, inChan.value - 1, onlyFull.value.booleanValue.not);
 				}, { BMAutoBalancer.stop });
 			});
 		window.onClose = onClose.addFunc({ BMAutoBalancer.stop });
