@@ -26,7 +26,7 @@ BMSpeaker {
 	}
 	
 	*newFromSpherical {|name, index, azi = 0, ele = 0, rad = 1, spec = 'Generic'|
-		^super.new.initFromSpherical(name, index, azi, ele, rad, BMSpeakerSpec.specs[spec.asSymbol]);
+		^super.new.initFromSpherical(name.asSymbol, index, azi, ele, rad, BMSpeakerSpec.specs[spec.asSymbol]);
 	}
 	
 	initFromSpherical{|argName, argInd, azimuth, elevation, radius, argSpec|
