@@ -41,7 +41,8 @@ span.s12 {font: 12.0px Helvetica; color: #000000}
 span.s13 {color: #734241}
 span.s14 {color: #606060}
 span.s15 {color: #743736}
-span.s16 {color: #0032b5}
+span.s16 {color: #0000ff}
+span.s17 {color: #0032b5}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -315,13 +316,13 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><br></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span>mappings</b></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Returns an IdentityDictionary containing the current values and labels for this controller, in the form IdentityDictionary[\labels-&gt;this.getAllLabels, \faders-&gt;this.getAllValues]. Subclasses may override this to include additional parameters.</p>
+<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Returns an <a href="SC://IdentityDictionary"><span class="s16">IdentityDictionary</span></a> containing the current values and labels for this controller, in the form IdentityDictionary[\labels-&gt;this.getAllLabels, \faders-&gt;this.getAllValues]. Subclasses may override this to include additional parameters.</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span>mappings_ (mappings)</b></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Set this controllers values and labels. Subclasses may override this to include additional parameters.</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>mappings </b>- An IdentityDictionary containing the new values and labels for this controller, in the form IdentityDictionary[\labels-&gt;[ordered array of Strings], \faders-&gt;[ordered array of values].</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>mappings </b>- An <a href="SC://IdentityDictionary"><span class="s16">IdentityDictionary</span></a> containing the new values and labels for this controller, in the form IdentityDictionary[\labels-&gt;[ordered array of Strings], \faders-&gt;[ordered array of values].</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span>acceptsAutomation</b></p>
@@ -339,7 +340,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>With motorised controllers it is sometimes useful to calibrate their range. This method provides a hook for this. Controllers which have a calibration procedure should return a calibration duration in seconds and post relevant information during the process. The default implementation posts a message saying that no calibration is necessary and returns 0. Durations can be used as a wait value.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p8"><span class="s12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// calibrate all controllers in turn</p>
-<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>{ <span class="s16">BMAbstractController</span>.allControllers.do({<span class="s16">|ctrlr|</span> ctrlr.calibrate.wait;}); }.fork;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>{ <span class="s17">BMAbstractController</span>.allControllers.do({<span class="s17">|ctrlr|</span> ctrlr.calibrate.wait;}); }.fork;</p>
 <p class="p5"><span class="Apple-tab-span">	</span></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span>free</b></p>
