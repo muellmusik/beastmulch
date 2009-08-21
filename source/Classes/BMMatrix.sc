@@ -300,9 +300,9 @@ BMAmpControlMatrix : BMAbstractMatrix {
 		});
 	}
 	
-	clear {
+	clear {|time|
 		this.clearControlMappings;
-		super.clear;
+		super.clear(time);
 	}
 	
 	clearControlMappings {
