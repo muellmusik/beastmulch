@@ -10,230 +10,171 @@
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
-p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
-p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p8 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
-p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #c21d1c}
-p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
-p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
-p.p12 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica; min-height: 17.0px}
-p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #c21d1c}
-p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0017c2}
-p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000ff}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
+p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
+p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p9 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
+p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
+p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica; min-height: 17.0px}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
+p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0017c2}
+span.s2 {color: #0000ff}
 span.s3 {color: #000000}
-span.s4 {color: #c21d1c}
+span.s4 {color: #0000bf}
+span.s5 {color: #bf0000}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
 <body>
-<p class="p1"><span class="s1"><b>BMBoidSpace<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>explanation of what BMBoidSpace is and/or does</b><span class="s1"><b><span class="Apple-tab-span">	</span></b></span></p>
+<p class="p1"><span class="s1"><b>BMBoidSpace<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>create an manage boids and their space</b><span class="s1"><b><span class="Apple-tab-span">	</span></b></span></p>
 <p class="p2"><br></p>
-<p class="p1"><b>Inherits from: Object</b></p>
+<p class="p1"><b>Inherits from: </b><a href="SC://Object"><span class="s2"><b>Object</b></span></a></p>
 <p class="p3"><br></p>
-<p class="p1">More detailed prose description of BMBoidSpace.</p>
+<p class="p1">BMBoidSpace encapsulates a swarm of boids and the space in which they move. It manages boid creation, and the application of movement rules. For a discussion of Craig Reynolds original boids algorithm see: http://<a href="http://www.red3d.com/cwr/boids/">http://www.red3d.com/cwr/boids/</a></p>
+<p class="p2"><br></p>
+<p class="p1">In the BEASTmulch library boids are used for Swarm Granulation, which is an idiosyncratic approach to multichannel spatialisation over large non-homogenous speaker arrays. It is particularly useful in cases where one might wish to utilise speakers at different distances. BMSpeakerListVisualiser provides facility for visualising boids in a space.</p>
+<p class="p2"><br></p>
+<p class="p1">BMBoidSpace implements rules for boid coherence, avoidance, velocity matching, attraction points, and space boundaries, as well as allowing for scaling and limiting boid velocity, and a special 'avoid desk' rule (see below).</p>
 <p class="p2"><br></p>
 <p class="p1"><b>N.B.</b> This implementation is still experimental and should be considered subject to change in future versions of the library.</p>
 <p class="p2"><br></p>
-<p class="p1"><b>See also:</b> <a href="../Core/Object.html"><span class="s2">Object</span></a> [some other help files]</p>
+<p class="p4"><span class="s3"><b>See also:</b> <a href="BMBoid.html">BMBoid</a>, <a href="BMSwarmGranulator.html">BMSwarmGranulator</a>, <a href="../../Inputs and Outputs/BMSpeakerListVisualiser.html">BMSpeakerListVisualiser</a></span></p>
 <p class="p2"><br></p>
-<p class="p4"><b>Some Important Issues Regarding BMBoidSpace (optional)</b></p>
+<p class="p5"><b>Coordinates and Position Updating</b></p>
 <p class="p2"><br></p>
-<p class="p1">Explanation of the issues. For more information see <a href="../Core/Nil.html"><span class="s2">Nil</span></a> and [some other help files].</p>
+<p class="p1">The boundaries of the space will be normalised as follows: The centre point (e.g {0,0,0} in three dimensions) remains the centre point. Minimum X and maximum X are scaled such that which ever has the largest absolute value will have an absolute value of 1 in the new coordinates. All other axes are scaled proportionally. The intention of this approach is to allow boid positions to be specified in a general way that can be easily adapted to different spaces, while maintaining some sense of the proportions of a space and avoiding distorting velocity by normalising each axis separately. (In the current implementation it is assumed that positions correspond to real-world spatial locations.) Note that by convention (and in keeping with assumptions used in <a href="../../Inputs and Outputs/BMSpeaker.html"><span class="s2">BMSpeaker</span></a>) it is generally assumed that in a three dimensional space {0,0,0} corresponds to head height at the centre of the listening area.</p>
 <p class="p2"><br></p>
-<p class="p4"><b>Creation / Class Methods</b></p>
-<p class="p5"><br></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>*new (dim, numBoids, centre, boundaries, velMax, velScale, minDist, avoidD)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>dim </b>- Explanation of dim. Default value is 3. Other information.</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>numBoids </b>- Explanation of numBoids. Default value is nil. Other information.</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>centre </b>- Explanation of centre. Default value is nil. Other information.</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>boundaries </b>- Explanation of boundaries. Default value is nil. Other information.</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>velMax </b>- Explanation of velMax. Default value is nil. Other information.</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>velScale </b>- Explanation of velScale. Default value is nil. Other information.</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>minDist </b>- Explanation of minDist. Default value is nil. Other information.</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>avoidD </b>- Explanation of avoidD. Default value is false. Other information.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s2">BMBoidSpace</span>.new;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s4">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
-<p class="p5"><br></p>
-<p class="p11"><b>Accessing Instance and Class Variables</b></p>
-<p class="p7"><span class="Apple-tab-span">	</span></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>velMax</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Explanation including the type of <b>velMax </b>and a link to its help file.</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Default value is nil.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>minDist</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Explanation including the type of <b>minDist </b>and a link to its help file.</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Default value is nil.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>boids</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Explanation including the type of <b>boids </b>and a link to its help file.</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Default value is nil.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>centre</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Explanation including the type of <b>centre </b>and a link to its help file.</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Default value is nil.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>interval</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Explanation including the type of <b>interval </b>and a link to its help file.</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Default value is nil.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>dim</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Explanation including the type of <b>dim </b>and a link to its help file.</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Default value is nil.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>numBoids</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Explanation including the type of <b>numBoids </b>and a link to its help file.</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Default value is nil.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>velScale</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Explanation including the type of <b>velScale </b>and a link to its help file.</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Default value is nil.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>lastMoved</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Explanation including the type of <b>lastMoved </b>and a link to its help file.</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Default value is nil.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>avoidD</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Explanation including the type of <b>avoidD </b>and a link to its help file.</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Default value is nil.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p11"><b>Doing Some Task (optional)</b></p>
-<p class="p12"><br></p>
-<p class="p6">A short bit of prose explaining something about the task.</p>
-<p class="p7"><span class="Apple-tab-span">	</span></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>init</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s2">BMBoidSpace</span>.init;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s4">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
-<p class="p5"><br></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>centre_ (val)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>val </b>- Explanation of val. Default value is nil. Other information.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s2">BMBoidSpace</span>.centre_;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s4">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
-<p class="p5"><br></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>velMax_ (val)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>val </b>- Explanation of val. Default value is nil. Other information.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s2">BMBoidSpace</span>.velMax_;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s4">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
-<p class="p5"><br></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>velScale_ (val)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>val </b>- Explanation of val. Default value is nil. Other information.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s2">BMBoidSpace</span>.velScale_;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s4">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
-<p class="p5"><br></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>minDist_ (val)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>val </b>- Explanation of val. Default value is nil. Other information.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s2">BMBoidSpace</span>.minDist_;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s4">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
-<p class="p5"><br></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>avoidD_ (val)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>val </b>- Explanation of val. Default value is nil. Other information.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s2">BMBoidSpace</span>.avoidD_;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s4">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
-<p class="p5"><br></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>interval_ (val)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>val </b>- Explanation of val. Default value is nil. Other information.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s2">BMBoidSpace</span>.interval_;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s4">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
-<p class="p5"><br></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>next</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s2">BMBoidSpace</span>.next;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s4">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
-<p class="p5"><br></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>positions</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s2">BMBoidSpace</span>.positions;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s4">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
-<p class="p5"><br></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>moveBoids</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s2">BMBoidSpace</span>.moveBoids;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s4">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
-<p class="p5"><br></p>
-<p class="p11"><b>Examples</b></p>
+<p class="p1">BMBoidSpace updates boid positions based on every <b>interval</b> in seconds which passes. In the current implementation this is done lazily, i.e. only when the object is queried for boid positions or altered in some way. If long periods of time are likely to pass between queries this could result in hangs while numerous updates are calculated. In such cases it may be useful to create a thread which periodically calls <b>moveBoids</b> so that updating does not have to be done all at once.</p>
+<p class="p2"><br></p>
+<p class="p5"><b>Creation / Class Methods</b></p>
+<p class="p6"><br></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>*new (dim, numBoids, centre, boundaries, velMax, velScale, minDist, avoidD)</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Create a new BMBoidSpace.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>dim </b>- The number of dimensions in the space. Default value is 3.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>numBoids </b>- The number of boids to create.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>centre </b>- An optional initial centre point around which the boids will swarm. This should be an Array in<span class="Apple-converted-space">  </span>the form [x, y, z, ...], sized to match <b>dim</b>. If nil the boids will roam freely.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>boundaries </b>- A boundary specification. This can be either an Array of two Arrays, each sized to match dim (e.g. for 3 dimensions [[minX, minY, minZ], [maxX, maxY, maxZ]]), or a <a href="../../Inputs and Outputs/BMInOutArray.html"><span class="s2">BMInOutArray</span></a> containing instances of <a href="../../Inputs and Outputs/BMSpeaker.html"><span class="s2">BMSpeaker</span></a>. If the latter, the speaker positions will be used to determine the dimensions of the smallest rectangular cuboid (aligned with the axes) which can contain them.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>velMax </b>- A maximum velocity in units/second.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>velScale </b>- A value by which boid velocity will be scaled.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>minDist </b>- The minimum distance between boids before the avoidance rule comes into effect.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>avoidD </b>- A <a href="SC://Boolean"><span class="s2">Boolean</span></a> indicating whether boids will avoid the 'desk area', i.e. {0,0,0}. This can be useful in Swarm Granulation as many speaker array layouts have no speakers in the centre of the listening area.</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p10"><b>Accessing Instance and Class Variables</b></p>
+<p class="p8"><span class="Apple-tab-span">	</span></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>velMax_</b></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>velMax</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Set or get the maximum boid velocity in units/second. Setting this lower may help prevent 'outliers'.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>minDist_</b></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>minDist</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Get or set the minimum distance between boids before the avoidance rule comes into effect.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>boids</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Returns an Array containing this boid space's <a href="BMBoid.html"><span class="s2">BMBoid</span></a> objects.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>centre_</b></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>centre</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Set or get the centring point to which boids will be attracted. This can be used to cause the swarm to move to a particular location. This should be an Array in the form [x, y, z, ...], sized to match <b>dim</b>. If nil the boids will roam freely.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>interval_</b></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>interval</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Set or get the interval in seconds at which this boid space updates boid positions. The default is 0.05.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>dim</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Returns the number of dimensions in this boid space.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>numBoids</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Returns the number of boids in this boid space.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>velScale_</b></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>velScale</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Set or get the value by which boid velocity will be scaled.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>lastMoved</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Returns the last time at which boid positions were changed, expressed as seconds since SuperCollider started (i.e. Main.elapsedTime). In combination with <b>interval</b> and <b>Main.elapsedTime</b> this can be used to check if boid positions have changed since a particular point in the past.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>avoidD_</b></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>avoidD</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Set or get a <a href="SC://Boolean"><span class="s2">Boolean</span></a> indicating whether boids will avoid the 'desk area', i.e. {0,0,0}. This can be useful in Swarm Granulation as many speaker array layouts have no speakers in the centre of the listening area. The default is false.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p10"><b>Instance Methods</b></p>
+<p class="p11"><br></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>next</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Calls to this method cycle through each <a href="BMBoid.html"><span class="s2">BMBoid</span></a> in turn. This can be useful if you wish to check their positions one at a time.</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>positions</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Returns an <a href="SC://Array"><span class="s2">Array</span></a> of Arrays of size dim, corresponding to the position of each boid, e.g. [[boid1x, boid1y, boid1z], [boid2x, boid2y, boid2z], ...].</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>moveBoids</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>If <b>interval</b> in seconds has passed since the boids were last moved, update the positions of all boids in this space.</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p10"><b>Examples</b></p>
 <p class="p3"><br></p>
-<p class="p13">// what this example does</p>
-<p class="p14"><span class="s3">e = </span>BMBoidSpace<span class="s3">.new;</span></p>
-<p class="p15">e.instanceMethod(someObject);</p>
-<p class="p15">e.cleanUp;</p>
-<p class="p3"><br></p>
-<p class="p15">...</p>
+<p class="p12">// some speakers</p>
+<p class="p13"><span class="s3">l = </span><span class="s4">Object</span><span class="s3">.readArchive(</span>"../../Inputs and Outputs/BigSpeakerArray"<span class="s3">.resolveRelative)</span></p>
+<p class="p12"><span class="s3">v = </span><span class="s4">BMSpeakerListVisualiser</span><span class="s3">(l); </span>// a gui to see the boids</p>
+<p class="p14"><br></p>
+<p class="p15">(</p>
+<p class="p15">b = <span class="s4">BMBoidSpace</span>(3, 20, <span class="s4">nil</span>, l, 1, 13, 0.1);</p>
+<p class="p14"><br></p>
+<p class="p12">// this updates their positions in the GUI</p>
+<p class="p15">d = <span class="s4">Task</span>({</p>
+<p class="p15"><span class="Apple-tab-span">	</span>loop({</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>v.boidPositions = b.positions;</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>0.05.wait;</p>
+<p class="p15"><span class="Apple-tab-span">	</span>})</p>
+<p class="p16"><span class="s3">}, </span>AppClock<span class="s3">);</span></p>
+<p class="p15">d.start;</p>
+<p class="p15">)</p>
+<p class="p14"><br></p>
+<p class="p15">b.minDist = 0.05; <span class="s5">// cluster closer</span></p>
+<p class="p14"><br></p>
+<p class="p15">b.centre = [0,0,0]; <span class="s5">// go to the middle</span></p>
+<p class="p14"><br></p>
+<p class="p15">b.centre = [1,0,0.5];<span class="Apple-converted-space"> </span></p>
+<p class="p14"><br></p>
+<p class="p15">b.centre = [-1,-1,-0.2];</p>
+<p class="p14"><br></p>
+<p class="p12"><span class="s3">b.centre = </span><span class="s4">nil</span><span class="s3">; </span>// wander freely</p>
+<p class="p14"><br></p>
+<p class="p15">b.velScale = 5; <span class="s5">// slow down</span></p>
+<p class="p14"><br></p>
+<p class="p15">b.velScale = 135; <span class="s5">// really fast</span></p>
+<p class="p14"><br></p>
+<p class="p12"><span class="s3">b.velMax = 0.02; </span>// don't flit too far</p>
+<p class="p14"><br></p>
+<p class="p12"><span class="s3">b.avoidD = </span><span class="s4">true</span><span class="s3">; </span>// don't go to the middle</p>
+<p class="p14"><br></p>
+<p class="p12"><span class="s3">b.minDist = 0.1; </span>// spread a little more</p>
+<p class="p14"><br></p>
+<p class="p12"><span class="s3">b.velMax = 0.5; </span>// wild and crazy</p>
+<p class="p14"><br></p>
+<p class="p15">d.stop;</p>
+<p class="p14"><br></p>
 </body>
 </html>
