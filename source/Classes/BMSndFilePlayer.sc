@@ -7,7 +7,7 @@
 BMSoundFilePlayer : BMAbstractAudioSource {
 	
 	var maxNumChannels, <>bus;
-	var <buffer, <synth, <>releaseTime = 0.1, watcher, <rate = 1;
+	var <buffer, <synth, watcher, <rate = 1;
 	var <sampleDur = 2.2675736961451e-05;
 	var blockPlay = false;
 	var resp, trigID;
@@ -46,7 +46,7 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 			// create a condition variable to control execution of the Routine
 			condition = Condition.new;
 			this.stop;
-			releaseTime.wait;
+			BMOptions.crossfade.wait;
 			
 			bundle = server.makeBundle(false, { buffer.free });
 			server.sync(condition, bundle);
@@ -100,7 +100,7 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 				updateRate.reciprocal, 
 				trigID);
 			FreeSelfWhenDone.kr(player);
-			freeEnv = Linen.kr(gate, 0, releaseTime: releaseTime, doneAction:2);
+			freeEnv = Linen.kr(gate, 0, releaseTime: BMOptions.crossfade, doneAction:2);
 			// avoid DC offset by fading in and out
 			pauseEnv = Linen.kr(rate, releaseTime: 0.01, doneAction:0);
 			player = player * freeEnv * pauseEnv; 
@@ -150,7 +150,7 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 	
 	pause { synth.isNil.not.if({ this.rate = 0; this.changed(\pause);}) } // this will continue to ping time vals
 	
-	free { this.stop;  server.makeBundle(releaseTime, {buffer.free;}); buffer = nil;
+	free { this.stop;  server.makeBundle(BMOptions.crossfade, {buffer.free;}); buffer = nil;
 		this.changed(\bufferFreed);
 	} // free bus somewhere? remove from allPlayers list?
 	

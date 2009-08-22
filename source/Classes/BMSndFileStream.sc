@@ -47,7 +47,7 @@ BMSoundFileStream : BMSoundFilePlayer {
 			// create a condition variable to control execution of the Routine
 			condition = Condition.new;
 			this.stop;
-			releaseTime.wait;
+			BMOptions.crossfade.wait;
 			
 			bundle = server.makeBundle(false, { buffer.free });
 			server.sync(condition, bundle);
@@ -105,7 +105,7 @@ BMSoundFileStream : BMSoundFilePlayer {
 			player = VDiskIn.ar(info.numChannels, buffer.bufnum,
 				BufRateScale.kr(buffer.bufnum) * rate, loop, trigID);
 			//FreeSelfWhenDone.kr(player);
-			freeEnv = Linen.kr(gate, 0, releaseTime: releaseTime, doneAction:2);
+			freeEnv = Linen.kr(gate, 0, releaseTime: BMOptions.crossfade, doneAction:2);
 			// avoid DC offset by fading in and out
 			pauseEnv = Linen.kr(rate, releaseTime: 0.01, doneAction:0);
 			player = player * freeEnv * pauseEnv; 
@@ -167,7 +167,7 @@ BMSoundFileStream : BMSoundFilePlayer {
 	
 	pause { synth.isNil.not.if({ this.rate = 0; this.changed(\pause);}) } // this will continue to ping time vals
 	
-	free { this.stop;  server.makeBundle(releaseTime, {buffer.close; buffer.free;}); buffer = nil;
+	free { this.stop;  server.makeBundle(BMOptions.crossfade, {buffer.close; buffer.free;}); buffer = nil;
 		this.changed(\bufferFreed);
 	} // free bus somewhere? remove from allPlayers list?
 	
