@@ -1,165 +1,80 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
- <hmtl>
- 
+<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="Content-Style-Type" content="text/css">
-<title>SuperCollider Help -BMTimeReferences</title>
+<title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="824.42">
+<meta name="CocoaVersion" content="949.54">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
-p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
-p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p8 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
-p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #d40000}
-p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
-p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
-p.p12 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica; min-height: 17.0px}
-p.p13 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #d40000}
-p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000ff}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
+p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
+p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p9 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
+p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #bf0000}
+p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #000000}
+p.p12 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0000bf}
+p.p13 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #606060}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #1200c4}
-span.s3 {color: #1200c4}
-span.s4 {color: #000000}
-span.s5 {color: #1200c4}
-span.s6 {color: #d40000}
-span.s7 {font: 12.0px Helvetica; color: #000000}
-span.s8 {color: #1200c4}
-span.s9 {color: #1200c4}
+span.s2 {color: #0000ff}
+span.s3 {color: #000000}
+span.s4 {color: #0000bf}
+span.s5 {color: #007300}
+span.s6 {color: #bf0000}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
- <body>
- 
-<p class="p1"><span class="s1"><b>BMTimeReferences<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>explanation of what BMTimeReferences is and/or does</b><span class="s1"><b><span class="Apple-tab-span">	</span></b></span></p>
+<body>
+<p class="p1"><span class="s1"><b>BMTimeReferences<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>library-wide registry for time references</b><span class="s1"><b><span class="Apple-tab-span">	</span></b></span></p>
 <p class="p2"><br></p>
-<p class="p1"><b>Inherits from: </b><b> Object </b></p>
+<p class="p1"><b>Inherits from: </b><a href="SC://Object"><span class="s2"><b>Object</b></span></a></p>
 <p class="p3"><br></p>
-<p class="p1">More detailed prose description of BMTimeReferences.</p>
+<p class="p1">BMTimeReferences provides a central registry and some utility functions for Time References in the BEASTmulch library. Time References are objects which can supply a current time for use with automation, etc.</p>
 <p class="p2"><br></p>
-<p class="p1"><b>See also:</b> <a href="../Core/Object.html"><span class="s2">Object</span></a> [some other help files]</p>
+<p class="p4"><span class="s3"><b>See also:</b> <a href="../../Time References and Automation.html">Time References and Automation</a></span></p>
 <p class="p2"><br></p>
-<p class="p4"><b>Some Important Issues Regarding BMTimeReferences (optional)</b></p>
-<p class="p2"><br></p>
-<p class="p1">Explanation of the issues. For more information see <a href="../Core/Nil.html"><span class="s3">Nil</span></a> and [some other help files].</p>
-<p class="p2"><br></p>
- 
-<p class="p4"><b>Creation / Class Methods</b></p>
-<p class="p5"><br></p>
-  
-<p class="p6"><b><span class="Apple-tab-span">	</span>*initClass</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMTimeReferences</span>.initClass;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>*addReference (ref)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>ref </b>- Explanation of ref. Default value is nil. Other information.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMTimeReferences</span>.addReference;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>*removeReference (ref)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>ref </b>- Explanation of ref. Default value is nil. Other information.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMTimeReferences</span>.removeReference;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>*timeReferences</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMTimeReferences</span>.timeReferences;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>*currentTime (ref)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>ref </b>- Explanation of ref. Default value is nil. Other information.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMTimeReferences</span>.currentTime;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p6"><b><span class="Apple-tab-span">	</span>*update (changed, what, args)</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>changed </b>- Explanation of changed. Default value is nil. Other information.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>what </b>- Explanation of what. Default value is nil. Other information.</p>
- 
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>args </b>- Explanation of args. Default value is  [  ]. Other information.</p>
- 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMTimeReferences</span>.update;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s6">// explanation</span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
-<p class="p5"><br></p>
- <p class="p5"><br></p>
- 
-<p class="p11"><b>Accessing Instance and Class Variables</b></p>
-<p class="p7"><span class="Apple-tab-span">	</span></p>
- 	
-<p class="p6"><b><span class="Apple-tab-span">	</span>timeReferences</b></p>
- 
-<p class="p7"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Explanation including the type of <b>timeReferences </b>and a link to its help file.</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Default value is defaultValue.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-  
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
- <p class="p11"><b>Doing Some Task (optional)</b></p>
-<p class="p12"><br></p>
-<p class="p6">A short bit of prose explaining something about the task.</p>
-<p class="p7"><span class="Apple-tab-span">	</span></p>
-  
-<p class="p11"><b>Examples</b></p>
-<p class="p3"><br></p>
-<p class="p14">// what this example does</p>
-<p class="p15">e = <span class="s9">BMTimeReferences</span>.new;</p>
-<p class="p15">e.instanceMethod(someObject);</p>
-<p class="p15">e.cleanUp;</p>
-<p class="p3"><br></p>
-<p class="p15">...</p>
- </body> </html>
+<p class="p5"><b>Class Methods</b></p>
+<p class="p6"><br></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>*addReference (ref)</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Classes which can serve as time references should call this in their initialisation code (passing themselves as <b>ref</b>) in order to register themselves as an available time references.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>ref </b>- The object to be added as a Time Reference.</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>*removeReference (ref)</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Classes which can serve as time references should call this in their cleanup code (passing themselves as <b>ref</b>) in order to unregister themselves as an available time references.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>ref </b>- The Time Reference object to be removed.</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>*timeReferences</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Returns a <a href="SC://Set"><span class="s2">Set</span></a> containing the names of all available time References as Symbols.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>p = </span><span class="s4">BMSoundFilePlayer</span><span class="s3">(name:</span><span class="s5">\foo</span><span class="s3">); </span>// this calls *addReference in its init code</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">BMTimeReferences</span>.timeReferences; <span class="s6">// contains foo</span></p>
+<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>p.free; </span>// free p's resources, calls *removeReference</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">BMTimeReferences</span>.timeReferences; <span class="s6">// foo who?</span></p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>*currentTime (ref)</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Calculate the current time in seconds for the Time Reference named <b>ref</b>. This will be based on the last available <i>reference time</i> and <i>rate</i> of change. This method can be used by classes which may need to update at a different rate than the time reference itself, such as automators.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>ref </b>- The object whose time should be calculated.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p12"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>p = </span>BMSoundFilePlayer<span class="s3">(name:</span><span class="s5">\foo</span><span class="s3">);</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">BMTimeReferences</span>.currentTime(p); <span class="s6">// 0</span></p>
+<p class="p13"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>p.read(</span>"sounds/a11wlk01.wav"<span class="s3">);</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>p.play(0, 0).rate_(0.1); </span>// play at 1/10 normal speed</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">SystemClock</span>.sched(1, { <span class="s4">BMTimeReferences</span>.currentTime(p).postln; 1}); <span class="s6">// changes slower than normal</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>p.free;</p>
+<p class="p6"><br></p>
+</body>
+</html>
