@@ -939,7 +939,7 @@ BMMultichannelPluginsRack : BMAbstractAudioChainElement {
 	
 	free {
 		plugins.do{| plugin, i | this.removePlugin(i) };
-		SystemClock.sched(BMOptions.crossfade, { group.free; group = plugins = nil });
+		SystemClock.sched(BMOptions.crossfade, { group.free; group = plugins = nil; allChainElements[name] = nil; });
 		//CmdPeriod.remove(this)
 	}
 	

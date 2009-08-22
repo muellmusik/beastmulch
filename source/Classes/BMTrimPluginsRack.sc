@@ -66,7 +66,7 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 				pluginsStrip.removePlugin(i) 
 			} 
 		};
-		SystemClock.sched(BMOptions.crossfade, { group.free; group = strips = nil });
+		SystemClock.sched(BMOptions.crossfade, { group.free; group = strips = nil; allChainElements[name] = nil; });
 		//CmdPeriod.remove(this)
 		
 	}

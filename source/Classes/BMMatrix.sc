@@ -109,7 +109,7 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 	// then we're a lame duck
 	free {
 		this.clear;
-		SystemClock.sched(0.1, {group.free; group = nil;});
+		SystemClock.sched(0.1, {group.free; group = nil; allChainElements[name] = nil;});
 		//CmdPeriod.remove(this);
 	}
 	

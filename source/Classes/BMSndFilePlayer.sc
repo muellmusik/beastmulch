@@ -56,7 +56,7 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 			loading = false;
 			this.changed(\loaded);
 			this.changed(\base);
-			this.sendDef; action.value });
+			this.sendDef; action.value(this) });
 		};
 
 		
@@ -150,9 +150,20 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 	
 	pause { synth.isNil.not.if({ this.rate = 0; this.changed(\pause);}) } // this will continue to ping time vals
 	
-	free { this.stop;  server.makeBundle(BMOptions.crossfade, {buffer.free;}); buffer = nil;
+	freeBuffer { this.stop;  server.makeBundle(BMOptions.crossfade, {buffer.free;}); buffer = nil;
 		this.changed(\bufferFreed);
-	} // free bus somewhere? remove from allPlayers list?
+	}
+	
+	free { // after this I'm dead
+		this.stop;  
+		server.makeBundle(BMOptions.crossfade, {buffer.free; group.free;}); 
+		buffer = nil;
+		group = nil;
+		bus.free;
+		BMTimeReferences.removeReference(this);
+		allChainElements[name] = nil;
+		this.changed(\bufferFreed);
+	}
 	
 	// maybe a controller better?
 	update { arg changed, what; 
@@ -282,7 +293,7 @@ BMSoundFilePlayerGUI : BMAbstractGUI {
 		};
 		clearButton = RoundButton.new(clust2, Rect(10,10,200,20)).extrude_(false).canFocus_(false);
 		clearButton.states = [[\x, Color.black,Color.clear]];
-		clearButton.action = { player.stop; player.free; }; // stopwatch stopped by dependancy
+		clearButton.action = { player.stop; player.freeBuffer; }; // stopwatch stopped by dependancy
 		
 		window.view.decorator.nextLine;
 		

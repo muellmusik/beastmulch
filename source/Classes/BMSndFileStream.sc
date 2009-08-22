@@ -64,7 +64,7 @@ BMSoundFileStream : BMSoundFilePlayer {
 			this.changed(\loaded);
 			this.changed(\base);
 			this.sendDef; 
-			action.value;
+			action.value(this);
 		};
 
 		
@@ -167,9 +167,16 @@ BMSoundFileStream : BMSoundFilePlayer {
 	
 	pause { synth.isNil.not.if({ this.rate = 0; this.changed(\pause);}) } // this will continue to ping time vals
 	
-	free { this.stop;  server.makeBundle(BMOptions.crossfade, {buffer.close; buffer.free;}); buffer = nil;
+	freeBuffer { this.stop;  server.makeBundle(BMOptions.crossfade, {buffer.close; buffer.free;}); buffer = nil;
 		this.changed(\bufferFreed);
-	} // free bus somewhere? remove from allPlayers list?
+	}
+	
+	free { this.stop;  server.makeBundle(BMOptions.crossfade, {buffer.close; buffer.free;}); buffer = nil;
+		bus.free;
+		BMTimeReferences.removeReference(this);
+		allChainElements[name] = nil;
+		this.changed(\bufferFreed);
+	}
 	
 	// maybe a controller better?
 	update { arg changed, what; 

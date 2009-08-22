@@ -65,8 +65,9 @@ BMMasterFader : BMAbstractAudioChainElement {
 	
 	free { 
 		group.release(BMOptions.crossfade);
+		allChainElements[name] = nil;
 		SystemClock.sched(BMOptions.crossfade, { group.free; bus.free; group = bus = nil;  });
-		CmdPeriod.remove(this)
+		//CmdPeriod.remove(this)
 	}
 	
 }
