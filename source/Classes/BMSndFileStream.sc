@@ -13,15 +13,14 @@ BMSoundFileStream : BMSoundFilePlayer {
 //	var <loading = false;
 	var timeOffset = 0, info;
 	
-	*new {|maxNumChannels = 2, latency = 0.1, target, addAction = \addToHead, name|
-		^super.new.init(maxNumChannels, latency, target, addAction, name);
+	*new {|maxNumChannels = 2, target, addAction = \addToHead, name|
+		^super.new.init(maxNumChannels, target, addAction, name);
 	}
 	
-	init { |argMaxNumChannels, argLatency, argTarget, argAddAction, argName|
+	init { |argMaxNumChannels, argTarget, argAddAction, argName|
 		
 		this.initNameAndTarget(argTarget, argAddAction, argName);
 		maxNumChannels = argMaxNumChannels;
-		latency = argLatency;
 		bus = Bus.audio(server, maxNumChannels);
 		BMTimeReferences.addReference(this);
 		// we check by node ID but this should be good enough to avoid conflicts with others
@@ -131,12 +130,12 @@ BMSoundFileStream : BMSoundFilePlayer {
 				timeOffset = startTime;
 				this.startListening;
 				blockPlay = true;
-	//			server.makeBundle(latency, {
+				server.makeBundle(nil, {
 					synth = Synth.head(group, this.hash.asString, 
 						[\out, out ? bus, \rate, rate.clip(0, inf)]);
 					watcher = NodeWatcher.register(synth);
 					synth.addDependant(this);
-				//});
+				});
 				
 				SystemClock.sched(0.1, {blockPlay = false;});
 			}

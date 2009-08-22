@@ -6,22 +6,21 @@
 
 BMSoundFilePlayer : BMAbstractAudioSource {
 	
-	var maxNumChannels, <latency, <>bus;
+	var maxNumChannels, <>bus;
 	var <buffer, <synth, <>releaseTime = 0.1, watcher, <rate = 1;
 	var <sampleDur = 2.2675736961451e-05;
 	var blockPlay = false;
 	var resp, trigID;
 	var <loading = false;
 	
-	*new {|maxNumChannels = 2, latency = 0.1, target, addAction = \addToHead, name|
-		^super.new.init(maxNumChannels, latency, target, addAction, name);
+	*new {|maxNumChannels = 2, target, addAction = \addToHead, name|
+		^super.new.init(maxNumChannels, target, addAction, name);
 	}
 	
-	init { |argMaxNumChannels, argLatency, argTarget, argAddAction, argName|
+	init { |argMaxNumChannels, argTarget, argAddAction, argName|
 		
 		this.initNameAndTarget(argTarget, argAddAction, argName);
 		maxNumChannels = argMaxNumChannels;
-		latency = argLatency;
 		bus = Bus.audio(server, maxNumChannels);
 		BMTimeReferences.addReference(this);
 		// we check by node ID but this should be good enough to avoid conflicts with others
@@ -115,13 +114,13 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 		(synth.isPlaying.not && blockPlay.not && synth.isNil && buffer.notNil).if({
 			this.startListening;
 			blockPlay = true;
-//			server.makeBundle(latency, {
+			server.makeBundle(nil, { // bundle guarantees node watcher registered
 				synth = Synth.head(group, this.hash.asString, 
 					[\out, out ? bus, \rate, rate, 
 					\startPos, startTime * buffer.sampleRate]);
 				watcher = NodeWatcher.register(synth);
 				synth.addDependant(this);
-			//});
+			});
 			
 			SystemClock.sched(0.1, {blockPlay = false;});
 		}, {buffer.isNil.if({this.changed(\playFailed); ^this})});
