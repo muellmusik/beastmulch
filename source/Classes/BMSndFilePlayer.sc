@@ -23,7 +23,7 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 		maxNumChannels = argMaxNumChannels;
 		latency = argLatency;
 		bus = Bus.audio(server, maxNumChannels);
-		BMTimeSources.addReference(this);
+		BMTimeReferences.addReference(this);
 		// we check by node ID but this should be good enough to avoid conflicts with others
 		// if they don't
 		trigID = this.hash & 65535; // need 16 bit

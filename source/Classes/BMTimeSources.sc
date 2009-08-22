@@ -1,7 +1,7 @@
 // registry and convenience methods for time sources
 
 // may wish to reconsider use of names here
-BMTimeSources {
+BMTimeReferences {
 	classvar timeReferences;
 	
 	*initClass {

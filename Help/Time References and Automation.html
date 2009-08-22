@@ -65,9 +65,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p8"><span class="s6"><span class="Apple-tab-span">	</span></span><span class="s1">this</span>.changed(<span class="s2">\base</span>);</p>
 <p class="p2"><br></p>
-<p class="p3">4. It must register itself with BMTimeSources as a reference.</p>
+<p class="p3">4. It must register itself with BMTimeReferences as a reference.</p>
 <p class="p5"><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s7"><span class="Apple-tab-span">	</span></span>BMTimeSources<span class="s7">.addReference(</span>this<span class="s7">);</span></p>
+<p class="p9"><span class="s7"><span class="Apple-tab-span">	</span></span>BMTimeReferences<span class="s7">.addReference(</span>this<span class="s7">);</span></p>
 <p class="p2"><br></p>
 <p class="p3">5. It must respond to the message 'path' with either nil or a String. Time References which derive from files (such as sound file players) should return the file's path in response to this message. Those which don't, should return nil. This functionality allows dependants to access the source for things such as GUI representations.<span class="Apple-converted-space"> </span></p>
 <p class="p2"><br></p>
@@ -77,11 +77,11 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p3">Generally speaking time references should update reasonably frequently (say 10 times a second or faster). Note that what is done with the updated data is up to the dependant object to determine.</p>
 <p class="p2"><br></p>
-<p class="p4"><b>BMTimeSources</b></p>
+<p class="p4"><b>BMTimeReferences</b></p>
 <p class="p2"><span class="Apple-converted-space"> </span></p>
-<p class="p3">The class BMTimeSources provides a framework for accurate updating and interpolation of data from Time References. It serves as a centralised registry of time sources, and provides utility functions for updating time based on the current logical time. To obtain the current time for a reference, one can simple call</p>
+<p class="p3">The class BMTimeReferences provides a framework for accurate updating and interpolation of data from Time References. It serves as a centralised registry of time sources, and provides utility functions for updating time based on the current logical time. To obtain the current time for a reference, one can simple call</p>
 <p class="p2"><br></p>
-<p class="p8"><span class="s6"><span class="Apple-tab-span">	</span></span><span class="s1">BMTimeSources</span>.currentTime(<span class="s1">ref</span>);</p>
+<p class="p8"><span class="s6"><span class="Apple-tab-span">	</span></span><span class="s1">BMTimeReferences</span>.currentTime(<span class="s1">ref</span>);</p>
 <p class="p2"><br></p>
 <p class="p3">for an updated time.</p>
 <p class="p2"><br></p>

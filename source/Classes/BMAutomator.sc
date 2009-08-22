@@ -192,7 +192,7 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 	addSnapShot {|seqName, ssTime, ssName| 
 		ssTime = ssTime ?? {
 			if(this.timeInitialised, {
-				BMTimeSources.currentTime(timeReference);
+				BMTimeReferences.currentTime(timeReference);
 			}, {0});
 		};
 		sequences[seqName].addSnapShot(ssTime, ssName);
@@ -224,7 +224,7 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 	// how to deal with bundling?
 	automate {
 		var currentTime, values, control;
-		currentTime = BMTimeSources.currentTime(timeReference);
+		currentTime = BMTimeReferences.currentTime(timeReference);
 		//currentTime.postln;
 		sequences.do({|seq|
 			seq.containsTime(currentTime).if({
@@ -759,7 +759,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		refTime = SCStaticText(window, Rect(0, 0, 200, 25))
 			.string_("Source Time:") // initialise
 			.font_(Font("Helvetica-Bold", 16));
-		time = BMTimeSources.currentTime(ca.timeReference);
+		time = BMTimeReferences.currentTime(ca.timeReference);
 		sfView.timeCursorPosition = time * sf.sampleRate;
 		refTime.string_("Source Time:" + time.getTimeString);
 					
@@ -1093,7 +1093,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			
 			\time, {
 				{
-					time = BMTimeSources.currentTime(ca.timeReference);
+					time = BMTimeReferences.currentTime(ca.timeReference);
 					sfView.timeCursorPosition = time * sf.sampleRate;
 					refTime.string_("Source Time:" + time.asTimeString);
 					cursorLoc = time * durInv * sfView.bounds.width;
