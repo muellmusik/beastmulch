@@ -189,7 +189,7 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 //	}
 	
 	asBMInOutArray {
-		^BMInOutArray.fill(maxNumChannels, {|i| (name.asString + (i + 1)).asSymbol -> (bus.index + i)});
+		^BMInOutArray.fill(maxNumChannels, {|i| (name.asString ++ "-" ++ (i + 1)).asSymbol -> (bus.index + i)});
 	}
 	
 	path { ^buffer.notNil.if({buffer.path}, {nil}) }
@@ -209,6 +209,7 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 	
 	// this provides a hook for multiple players by first checking by name
 	// but then loading plain old path for simple case
+	// undocumented
 	loadPiece {|pieceEvent|
 		var playerSpecificInfo;
 		if(pieceEvent.soundFilePlayers.notNil, {
@@ -236,7 +237,7 @@ BMSoundFilePlayerGUI : BMAbstractGUI {
 	
 	init { |argplayer, argname|
 		player = argplayer;
-		name = argname ? "Sound File Player";
+		name = argname ? player.name;
 		player.addDependant(this);
 	}
 	

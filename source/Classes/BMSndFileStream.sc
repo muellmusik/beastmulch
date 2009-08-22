@@ -206,7 +206,7 @@ BMSoundFileStream : BMSoundFilePlayer {
 //	}
 	
 	asBMInOutArray {
-		^BMInOutArray.fill(maxNumChannels, {|i| (name.asString + (i + 1)).asSymbol -> (bus.index + i)});
+		^BMInOutArray.fill(maxNumChannels, {|i| (name.asString ++ "-" ++ (i + 1)).asSymbol -> (bus.index + i)});
 	}
 	
 	path { ^info.notNil.if({info.path}, {nil}) }
