@@ -7,13 +7,13 @@
 BMSwarmGranulator {
 	classvar <>latency = 0.05;
 	var speakerList, boidSpace;
-	var <>buffer, bufnum, server, <granGroup, sRate, playing = false, freed = false, clock;
-	var <>intarget, <>inaddAction, envDefName, env, numChan, granBus;
+	var <buffer, bufnum, server, <granGroup, sRate, playing = false, freed = false, clock;
+	var intarget, inaddAction, envDefName, env, numChan, granBus;
 	var decayTime, <targetDef;
-	var <curEnvir;
+	var curEnvir;
 	var kdTree;
 	
-	*new { arg speakerList, boidSpace, buffer, target = nil, addAction = \addToHead, targetDef = "PodGrain" ;
+	*new { arg speakerList, boidSpace, buffer, target = nil, addAction = \addToHead, targetDef = "BMSwarmPodGrain" ;
 		^super.new.init(speakerList, boidSpace, buffer, target, addAction, targetDef);
 	}
 	
@@ -22,8 +22,8 @@ BMSwarmGranulator {
 //	}
 	
 	*initClass {
-		SynthDef.writeOnce("PodGrain",{ arg i_out=0, i_sampbufnum, pitchScale = 1.0, dur = 0.05, 
-			pointer, offset = 0.0, level = 1.0, loop;
+		SynthDef.writeOnce("BMSwarmPodGrain",{ arg i_out=0, i_sampbufnum, pitchScale = 1.0, 
+			dur = 0.05, pointer, offset = 0.0, level = 1.0, loop;
 			var thisStart, thisDur, grain;
 			thisStart = pointer + IRand(0, offset);
 			grain = EnvGen.ar(Env.sine, 1.0, level, 0.0, dur, 2) 
@@ -54,7 +54,7 @@ BMSwarmGranulator {
 			output = input * EnvGen.kr(Env.asr(attack, 1.0, decay), gate, amp, 0, 1.0, 7);
 			// free the nodes in the group when released
 			speakerList.do({|spkr, i|
-				Out.ar(spkr.index.postln, input[i].postln);
+				Out.ar(spkr.index, input[i]);
 			});
 		}).send(server);
 		this.initKDTree;
