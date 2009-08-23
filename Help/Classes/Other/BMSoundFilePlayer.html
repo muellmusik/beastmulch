@@ -21,23 +21,21 @@ p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helv
 p.p12 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica; min-height: 17.0px}
 p.p13 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0000bf}
 p.p14 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #606060}
-p.p15 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #000000}
+p.p15 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
 p.p16 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #bf0000}
 p.p17 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-p.p18 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p19 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
-p.p20 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
-p.p21 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
+p.p18 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p19 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
 span.s1 {font: 12.0px Helvetica}
 span.s2 {color: #000000}
-span.s3 {color: #001dfd}
+span.s3 {color: #002afb}
 span.s4 {text-decoration: underline}
 span.s5 {font: 9.0px Monaco; color: #007300}
 span.s6 {font: 9.0px Monaco}
 span.s7 {font: 9.0px Monaco; color: #000000}
-span.s8 {font: 9.0px Monaco; color: #626034}
-span.s9 {font: 9.0px Monaco; color: #476b00}
-span.s10 {color: #0034f9}
+span.s8 {font: 9.0px Monaco; color: #625f35}
+span.s9 {font: 9.0px Monaco; color: #4f6900}
+span.s10 {color: #003cf7}
 span.s11 {color: #007300}
 span.s12 {color: #0000bf}
 span.s13 {color: #bf0000}
@@ -201,24 +199,24 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><br></p>
 <p class="p17">// example with a matrix for routing</p>
 <p class="p18">s.boot;</p>
-<p class="p19"><br></p>
+<p class="p7"><br></p>
 <p class="p13"><span class="s2">p = </span>BMSoundFilePlayer<span class="s2">(name:</span><span class="s11">\foo</span><span class="s2">);</span></p>
 <p class="p16"><span class="s2">p.read(</span><span class="s15">"sounds/a11wlk01.wav"</span><span class="s2">); </span>// mono, so only out foo-1</p>
-<p class="p20"><br></p>
+<p class="p4"><br></p>
 <p class="p17">// make a speaker list</p>
 <p class="p18">(</p>
 <p class="p18">l = [[-30, <span class="s15">"L"</span>], [30, <span class="s15">"R"</span>], [0, <span class="s15">"C"</span>], [-110, <span class="s15">"Ls"</span>], [110, <span class="s15">"Rs"</span>]].collectAs({<span class="s12">|el, i|</span></p>
 <p class="p18"><span class="Apple-tab-span">	</span><span class="s12">BMSpeaker</span>.newFromSpherical(el[1], i, el[0], 0, 2);</p>
-<p class="p21"><span class="s2">}, </span>BMInOutArray<span class="s2">);</span></p>
+<p class="p19"><span class="s2">}, </span>BMInOutArray<span class="s2">);</span></p>
 <p class="p18">)</p>
-<p class="p20"><br></p>
+<p class="p4"><br></p>
 <p class="p17">// make a matrix for connections</p>
 <p class="p18">m = <span class="s12">BMAudioMatrix</span>(p, l, name:<span class="s11">'Router'</span>);</p>
-<p class="p20"><br></p>
+<p class="p4"><br></p>
 <p class="p18">m.connect(<span class="s11">'foo-1'</span>, <span class="s11">'L'</span>);</p>
-<p class="p20"><br></p>
+<p class="p4"><br></p>
 <p class="p17"><span class="s2">m.gui; p.gui; </span>// play with the GUIs</p>
 <p class="p15">p.free;</p>
-<p class="p19"><br></p>
+<p class="p7"><br></p>
 </body>
 </html>

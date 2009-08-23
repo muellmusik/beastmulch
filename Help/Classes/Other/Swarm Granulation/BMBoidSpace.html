@@ -10,7 +10,7 @@
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000ff}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001bec}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
 p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
@@ -18,16 +18,18 @@ p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helve
 p.p9 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
 p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
 p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica; min-height: 17.0px}
-p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
-p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
 p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
 p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0000ff}
-span.s3 {color: #000000}
-span.s4 {color: #0000bf}
-span.s5 {color: #bf0000}
+span.s2 {color: #001dfd}
+span.s3 {text-decoration: underline ; color: #001bec}
+span.s4 {color: #000000}
+span.s5 {text-decoration: underline}
+span.s6 {color: #0000bf}
+span.s7 {color: #bf0000}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -36,7 +38,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p1"><b>Inherits from: </b><a href="SC://Object"><span class="s2"><b>Object</b></span></a></p>
 <p class="p3"><br></p>
-<p class="p1">BMBoidSpace encapsulates a swarm of boids and the space in which they move. It manages boid creation, and the application of movement rules. For a discussion of Craig Reynolds original boids algorithm see: http://<a href="http://www.red3d.com/cwr/boids/">http://www.red3d.com/cwr/boids/</a></p>
+<p class="p1">BMBoidSpace encapsulates a swarm of boids and the space in which they move. It manages boid creation, and the application of movement rules. For a discussion of Craig Reynolds original boids algorithm see: http://<a href="http://www.red3d.com/cwr/boids/"><span class="s3">http://www.red3d.com/cwr/boids/</span></a></p>
 <p class="p2"><br></p>
 <p class="p1">In the BEASTmulch library boids are used for Swarm Granulation, which is an idiosyncratic approach to multichannel spatialisation over large non-homogenous speaker arrays. It is particularly useful in cases where one might wish to utilise speakers at different distances. BMSpeakerListVisualiser provides facility for visualising boids in a space.</p>
 <p class="p2"><br></p>
@@ -44,7 +46,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p1"><b>N.B.</b> This implementation is still experimental and should be considered subject to change in future versions of the library.</p>
 <p class="p2"><br></p>
-<p class="p4"><span class="s3"><b>See also:</b> <a href="BMBoid.html">BMBoid</a>, <a href="BMSwarmGranulator.html">BMSwarmGranulator</a>, <a href="../../Inputs and Outputs/BMSpeakerListVisualiser.html">BMSpeakerListVisualiser</a></span></p>
+<p class="p4"><span class="s4"><b>See also:</b> <a href="BMBoid.html"><span class="s5">BMBoid</span></a>, <a href="BMSwarmGranulator.html"><span class="s5">BMSwarmGranulator</span></a>, <a href="../../Inputs and Outputs/BMSpeakerListVisualiser.html"><span class="s5">BMSpeakerListVisualiser</span></a></span></p>
 <p class="p2"><br></p>
 <p class="p5"><b>Coordinates and Position Updating</b></p>
 <p class="p2"><br></p>
@@ -134,47 +136,47 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><br></p>
 <p class="p6"><br></p>
 <p class="p10"><b>Examples</b></p>
-<p class="p3"><br></p>
-<p class="p12">// some speakers</p>
-<p class="p13"><span class="s3">l = </span><span class="s4">Object</span><span class="s3">.readArchive(</span>"../../Inputs and Outputs/BigSpeakerArray"<span class="s3">.resolveRelative)</span></p>
-<p class="p12"><span class="s3">v = </span><span class="s4">BMSpeakerListVisualiser</span><span class="s3">(l); </span>// a gui to see the boids</p>
-<p class="p14"><br></p>
+<p class="p12"><br></p>
+<p class="p13">// some speakers</p>
+<p class="p14"><span class="s4">l = </span><span class="s6">Object</span><span class="s4">.readArchive(</span>"../../Inputs and Outputs/BigSpeakerArray"<span class="s4">.resolveRelative);</span></p>
+<p class="p13"><span class="s4">v = </span><span class="s6">BMSpeakerListVisualiser</span><span class="s4">(l); </span>// a gui to see the boids</p>
+<p class="p12"><br></p>
 <p class="p15">(</p>
-<p class="p15">b = <span class="s4">BMBoidSpace</span>(3, 20, <span class="s4">nil</span>, l, 1, 13, 0.1);</p>
-<p class="p14"><br></p>
-<p class="p12">// this updates their positions in the GUI</p>
-<p class="p15">d = <span class="s4">Task</span>({</p>
+<p class="p15">b = <span class="s6">BMBoidSpace</span>(3, 20, <span class="s6">nil</span>, l, 1, 13, 0.1);</p>
+<p class="p12"><br></p>
+<p class="p13">// this updates their positions in the GUI</p>
+<p class="p15">d = <span class="s6">Task</span>({</p>
 <p class="p15"><span class="Apple-tab-span">	</span>loop({</p>
 <p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>v.boidPositions = b.positions;</p>
 <p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>0.05.wait;</p>
 <p class="p15"><span class="Apple-tab-span">	</span>})</p>
-<p class="p16"><span class="s3">}, </span>AppClock<span class="s3">);</span></p>
+<p class="p16"><span class="s4">}, </span>AppClock<span class="s4">);</span></p>
 <p class="p15">d.start;</p>
 <p class="p15">)</p>
-<p class="p14"><br></p>
-<p class="p15">b.minDist = 0.05; <span class="s5">// cluster closer</span></p>
-<p class="p14"><br></p>
-<p class="p15">b.centre = [0,0,0]; <span class="s5">// go to the middle</span></p>
-<p class="p14"><br></p>
+<p class="p12"><br></p>
+<p class="p15">b.minDist = 0.05; <span class="s7">// cluster closer</span></p>
+<p class="p12"><br></p>
+<p class="p15">b.centre = [0,0,0]; <span class="s7">// go to the middle</span></p>
+<p class="p12"><br></p>
 <p class="p15">b.centre = [1,0,0.5];<span class="Apple-converted-space"> </span></p>
-<p class="p14"><br></p>
+<p class="p12"><br></p>
 <p class="p15">b.centre = [-1,-1,-0.2];</p>
-<p class="p14"><br></p>
-<p class="p12"><span class="s3">b.centre = </span><span class="s4">nil</span><span class="s3">; </span>// wander freely</p>
-<p class="p14"><br></p>
-<p class="p15">b.velScale = 5; <span class="s5">// slow down</span></p>
-<p class="p14"><br></p>
-<p class="p15">b.velScale = 135; <span class="s5">// really fast</span></p>
-<p class="p14"><br></p>
-<p class="p12"><span class="s3">b.velMax = 0.02; </span>// don't flit too far</p>
-<p class="p14"><br></p>
-<p class="p12"><span class="s3">b.avoidD = </span><span class="s4">true</span><span class="s3">; </span>// don't go to the middle</p>
-<p class="p14"><br></p>
-<p class="p12"><span class="s3">b.minDist = 0.1; </span>// spread a little more</p>
-<p class="p14"><br></p>
-<p class="p12"><span class="s3">b.velMax = 0.5; </span>// wild and crazy</p>
-<p class="p14"><br></p>
+<p class="p12"><br></p>
+<p class="p13"><span class="s4">b.centre = </span><span class="s6">nil</span><span class="s4">; </span>// wander freely</p>
+<p class="p12"><br></p>
+<p class="p15">b.velScale = 5; <span class="s7">// slow down</span></p>
+<p class="p12"><br></p>
+<p class="p15">b.velScale = 135; <span class="s7">// really fast</span></p>
+<p class="p12"><br></p>
+<p class="p13"><span class="s4">b.velMax = 0.02; </span>// don't flit too far</p>
+<p class="p12"><br></p>
+<p class="p13"><span class="s4">b.avoidD = </span><span class="s6">true</span><span class="s4">; </span>// don't go to the middle</p>
+<p class="p12"><br></p>
+<p class="p13"><span class="s4">b.minDist = 0.1; </span>// spread a little more</p>
+<p class="p12"><br></p>
+<p class="p13"><span class="s4">b.velMax = 0.5; </span>// wild and crazy</p>
+<p class="p12"><br></p>
 <p class="p15">d.stop;</p>
-<p class="p14"><br></p>
+<p class="p12"><br></p>
 </body>
 </html>
