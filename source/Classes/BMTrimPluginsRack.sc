@@ -12,7 +12,7 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 		outs = argins;
 		inNames = ins.keys;
 		outNames = outs.keys;
-		strips = ();
+		strips = IdentityDictionary.new;
 		inNames.do({|chanName|
 			strips[chanName] = BMTrimPluginsStrip(group, ins[chanName]);
 		});
