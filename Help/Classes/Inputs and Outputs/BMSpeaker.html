@@ -13,8 +13,8 @@ p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001bec}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
 p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
-p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #9f2423}
-p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0020bb}
+p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #922b2a}
+p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0027b9}
 p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
 p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
@@ -26,15 +26,17 @@ p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
 p.p17 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 p.p18 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #001dfd}
+span.s2 {color: #002afb}
 span.s3 {color: #000000}
 span.s4 {text-decoration: underline}
-span.s5 {color: #0020bb}
-span.s6 {color: #3c6d00}
+span.s5 {color: #0027b9}
+span.s6 {color: #476b00}
 span.s7 {color: #0000bf}
 span.s8 {color: #007300}
 span.s9 {color: #bf0000}
-span.s10 {color: #606060}
+span.s10 {color: #007300}
+span.s11 {color: #0000bf}
+span.s12 {color: #bf0000}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -191,26 +193,26 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><br></p>
 <p class="p16">// 5.1 Array</p>
 <p class="p17">(</p>
-<p class="p17">l = [[-30, <span class="s10">"L"</span>], [30, <span class="s10">"R"</span>], [0, <span class="s10">"C"</span>], [-110, <span class="s10">"Ls"</span>], [110, <span class="s10">"Rs"</span>]].collectAs({<span class="s7">|el, i|</span></p>
-<p class="p17"><span class="Apple-tab-span">	</span><span class="s7">BMSpeaker</span>.newFromSpherical(el[1], i, el[0], 0, 2);</p>
+<p class="p17">l = [[-30, <span class="s10">'L'</span>], [30, <span class="s10">'R'</span>], [0, <span class="s10">'C'</span>], [-110, <span class="s10">'Ls'</span>], [110, <span class="s10">'Rs'</span>]].collectAs({<span class="s11">|el, i|</span></p>
+<p class="p17"><span class="Apple-tab-span">	</span><span class="s11">BMSpeaker</span>.newFromSpherical(el[1], i, el[0], 0, 2);</p>
 <p class="p18"><span class="s3">}, </span>BMInOutArray<span class="s3">);</span></p>
 <p class="p17">)</p>
-<p class="p18">BMSpeakerListVisualiser<span class="s3">(l); </span><span class="s9">// let's look at it</span></p>
+<p class="p18">BMSpeakerListVisualiser<span class="s3">(l); </span><span class="s12">// let's look at it</span></p>
 <p class="p3"><br></p>
 <p class="p16">// 8 Channel Ring</p>
 <p class="p17">(</p>
-<p class="p17">l = [[0, <span class="s10">"C"</span> ], [45, <span class="s10">"FR"</span>], [90, <span class="s10">"R"</span>], [135, <span class="s10">"BR"</span>], [180, <span class="s10">"B"</span>], [-135, <span class="s10">"BL"</span>], [-90, <span class="s10">"L"</span>], [-45, <span class="s10">"FL"</span>]].collectAs({<span class="s7">|el, i|</span></p>
-<p class="p17"><span class="Apple-tab-span">	</span><span class="s7">BMSpeaker</span>.newFromSpherical(el[1], i, el[0], 0, 2);</p>
+<p class="p17">l = [[0, <span class="s10">'C'</span> ], [45, <span class="s10">'FR'</span>], [90, <span class="s10">'R'</span>], [135, <span class="s10">'BR'</span>], [180, <span class="s10">'B'</span>], [-135, <span class="s10">'BL'</span>], [-90, <span class="s10">'L'</span>], [-45, <span class="s10">'FL'</span>]].collectAs({<span class="s11">|el, i|</span></p>
+<p class="p17"><span class="Apple-tab-span">	</span><span class="s11">BMSpeaker</span>.newFromSpherical(el[1], i, el[0], 0, 2);</p>
 <p class="p18"><span class="s3">}, </span>BMInOutArray<span class="s3">);</span></p>
 <p class="p17">)</p>
-<p class="p18">BMSpeakerListVisualiser<span class="s3">(l); </span><span class="s9">// let's look at it</span></p>
+<p class="p18">BMSpeakerListVisualiser<span class="s3">(l); </span><span class="s12">// let's look at it</span></p>
 <p class="p3"><br></p>
 <p class="p16">// zig zag partial dome</p>
 <p class="p17">(</p>
-<p class="p17">l = [[-22.5, 40, <span class="s10">"Upper1"</span>], [22.5, 40, <span class="s10">"Upper2"</span>], [-67.5, 40, <span class="s10">"Upper3"</span>], [67.5, 40, <span class="s10">"Upper4"</span>], [-112.5, 40, <span class="s10">"Upper5"</span>], [112.5, 40, <span class="s10">"Upper6"</span>], [-157.5, 40, <span class="s10">"Upper7"</span>], [157.5, 40, <span class="s10">"Upper8"</span>], [-45, 0, <span class="s10">"Lower1"</span>], [45, 0, <span class="s10">"Lower2"</span>], [-90, 0, <span class="s10">"Lower3"</span>], [90, 0, <span class="s10">"Lower4"</span>], [-135, 0, <span class="s10">"Lower5"</span>], [135, 0, <span class="s10">"Lower6"</span>], [0, 0, <span class="s10">"Lower7"</span>], [180, 0, <span class="s10">"Lower8"</span>]].collectAs({<span class="s7">|el, i|</span></p>
-<p class="p17"><span class="Apple-tab-span">	</span><span class="s7">BMSpeaker</span>.newFromSpherical(el[2], i, el[0], el[1], 2);</p>
+<p class="p17">l = [[-22.5, 40, <span class="s10">'Upper1'</span>], [22.5, 40, <span class="s10">'Upper2'</span>], [-67.5, 40, <span class="s10">'Upper3'</span>], [67.5, 40, <span class="s10">'Upper4'</span>], [-112.5, 40, <span class="s10">'Upper5'</span>], [112.5, 40, <span class="s10">'Upper6'</span>], [-157.5, 40, <span class="s10">'Upper7'</span>], [157.5, 40, <span class="s10">'Upper8'</span>], [-45, 0, <span class="s10">'Lower1'</span>], [45, 0, <span class="s10">'Lower2'</span>], [-90, 0, <span class="s10">'Lower3'</span>], [90, 0, <span class="s10">'Lower4'</span>], [-135, 0, <span class="s10">'Lower5'</span>], [135, 0, <span class="s10">'Lower6'</span>], [0, 0, <span class="s10">'Lower7'</span>], [180, 0, <span class="s10">'Lower8'</span>]].collectAs({<span class="s11">|el, i|</span></p>
+<p class="p17"><span class="Apple-tab-span">	</span><span class="s11">BMSpeaker</span>.newFromSpherical(el[2], i, el[0], el[1], 2);</p>
 <p class="p18"><span class="s3">}, </span>BMInOutArray<span class="s3">);</span></p>
 <p class="p17">)</p>
-<p class="p18">BMSpeakerListVisualiser<span class="s3">(l); </span><span class="s9">// let's look at it</span></p>
+<p class="p18">BMSpeakerListVisualiser<span class="s3">(l); </span><span class="s12">// let's look at it</span></p>
 </body>
 </html>
