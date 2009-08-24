@@ -1,9 +1,8 @@
 // Classes for implementing 'Plugins' for processing audio
-// Plugins can be mono or output multichannel
-// Their outputs need not match their inputs
+// Plugins must be mono
 
 // synthdefFunc is a function suitable for use with SynthDef:wrap
-// which is passed args |plugin, numChannels, in| and returns a ugen for output
+// which is passed args |plugin, in| and returns a ugen for output
 // Multichannel output plugins should send the output to a private bus
 // and mute or passthrough the source as appropriate.
 
@@ -68,7 +67,7 @@ BMPluginSpec {
 	*initClass {
 		// define some plugin specs
 		StartUp.add({ 
-			specs = ();
+			specs = IdentityDictionary.new;
 			BMPluginSpec('Highpass', 				// name
 				{|plugin, input, freq| 	// ugenGraphFunc
 					HPF.ar(input, freq);
@@ -217,7 +216,7 @@ BMPluginSpec {
 					});
 				});
 			};
-			window.front; // this value is stored in the plugin's gui var
+			window.front; // this return value is stored in the plugin's gui var
 		}
 	}
 	
