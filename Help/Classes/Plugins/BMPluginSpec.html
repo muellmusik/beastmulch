@@ -11,7 +11,7 @@ p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000ff}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001bec}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
 p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
@@ -21,19 +21,20 @@ p.p11 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 9.0px Monac
 p.p12 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
 p.p13 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0000bf}
 p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
-p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p17 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #007300}
-p.p18 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
+p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #007300}
+p.p17 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0000ff}
-span.s3 {color: #000000}
-span.s4 {font: 12.0px Helvetica}
-span.s5 {font: 12.0px Helvetica; color: #000000}
-span.s6 {color: #007300}
-span.s7 {color: #0000bf}
-span.s8 {color: #bf0000}
-span.s9 {color: #606060}
+span.s2 {color: #002afb}
+span.s3 {color: #001dfd}
+span.s4 {color: #000000}
+span.s5 {font: 12.0px Helvetica}
+span.s6 {color: #0000ff}
+span.s7 {font: 12.0px Helvetica; color: #000000}
+span.s8 {color: #007300}
+span.s9 {color: #0000bf}
+span.s10 {color: #bf0000}
+span.s11 {color: #606060}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -42,13 +43,17 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p1"><b>Inherits from: </b><a href="SC://Object"><span class="s2"><b>Object</b></span></a></p>
 <p class="p3"><br></p>
-<p class="p1">Instances of <a href="BMPluginSpec.html"><span class="s2">BMPluginSpec</span></a> serve as templates for creating a monophonic BMPlugin of a particular type, e.g. a high pass filter, a reverb, a 3 band EQ, etc. They provide functions for such things as <a href="SC://SynthDef"><span class="s2">SynthDef</span></a> and GUI creation, standard presets, etc. Plugin specs allow for user customisation at plugin creation time through the use of attributes (see below).</p>
+<p class="p1">Instances of <a href="BMPluginSpec.html"><span class="s2">BMPluginSpec</span></a> serve as templates for creating a <a href="BMPlugin.html"><span class="s3">BMPlugin</span></a> of a particular type, e.g. a high pass filter, a reverb, a 3 band EQ, etc. They provide functions for such things as <a href="SC://SynthDef"><span class="s2">SynthDef</span></a> and GUI creation, standard presets, etc. Plugin specs allow for user customisation at plugin creation time through the use of attributes (see below).</p>
 <p class="p2"><br></p>
 <p class="p1">You can see a list of all available specs as follows:</p>
 <p class="p2"><br></p>
-<p class="p4"><span class="Apple-tab-span">	</span>BMPluginSpec<span class="s3">.specs.keys;</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>BMPluginSpec<span class="s4">.specs.keys;</span></p>
 <p class="p2"><br></p>
-<p class="p5"><span class="s3"><b>See also:</b> <a href="BMPlugin.html"><span class="s4">BMPlugin</span></a>, <a href="BMTrimPluginsRack.html"><span class="s4">BMTrimPluginsRack</span></a>, <a href="BMMultichannelPluginSpec.html"><span class="s4">BMMultichannelPluginSpec</span></a>, <a href="../Inputs and Outputs/BMSpeakerSpec.html"><span class="s4">BMSpeakerSpec</span></a></span></p>
+<p class="p5"><span class="s4"><b>See also:</b> <a href="BMPlugin.html"><span class="s5">BMPlugin</span></a>, <a href="BMTrimPluginsRack.html"><span class="s5">BMTrimPluginsRack</span></a>, <a href="BMMultichannelPluginSpec.html"><span class="s5">BMMultichannelPluginSpec</span></a>, <a href="../Inputs and Outputs/BMSpeakerSpec.html"><span class="s5">BMSpeakerSpec</span></a></span></p>
+<p class="p2"><br></p>
+<p class="p6"><b>BMPlugin vs. BMMultichannelPlugin</b></p>
+<p class="p2"><br></p>
+<p class="p1">BMPlugin is monophonic, i.e. it has a single input and output, which are in fact the same bus. BMMultichannelPlugins can have variable numbers of inputs and outputs, which need not match. The exact number and configuration of inputs and outputs expected varies according to the multichannel plugin's spec.</p>
 <p class="p2"><br></p>
 <p class="p6"><b>Creation / Class Methods</b></p>
 <p class="p7"><br></p>
@@ -61,8 +66,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>guiFunc </b>- An optional <a href="SC://Function"><span class="s2">Function</span></a> which will be used to create GUIs for plugin instances using this spec. This Function will be passed the plugin instance as an argument, and should return the GUI's window. If nil is passed here, a default GUI Function will be used.</p>
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>presets </b>- An optional <a href="SC://Dictionary"><span class="s2">Dictionary</span></a> or subclass providing parameter presets. Keys are Symbols indicating preset names, values are Dictionaries or subclasses matching Control names to values.</p>
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>description </b>- A <a href="SC://String"><span class="s2">String</span></a> to serve as human readable description of this spec.</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>defaultAttributes </b>- Plugin specs can optionally provide a set of overridable attributes which will can serve as settings to their <b>ugenGraphFunc</b>, <b>guiFunc</b>, <b>setupFunc</b>, and <b>cleanupFunc</b>. This should be a <a href="SC://Dictionary"><span class="s2">Dictionary</span></a> or subclass containing key value pairs. Users can over ride these defaults by passing a Dictionary or subclass as the <b>attributes </b>argument to <b>BMPlugin:new</b>.<span class="Apple-converted-space"> </span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>setupFunc </b>- An optional <a href="SC://Function"><span class="s2">Function</span></a> that will be evaluated when a plugin instance is made. It will be passed the plugin instance as an argument. It can store any objects for further reference in <b>attributes</b> for use by the <b>ugenGraphFunc</b>, <b>guiFunc</b>, or <b>cleanUpFunc</b>.</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>defaultAttributes </b>- Plugin specs can optionally provide a set of overridable attributes which will can serve as settings or inputs to their <b>ugenGraphFunc</b>, <b>guiFunc</b>, <b>setupFunc</b>, and <b>cleanupFunc</b>. This should be a <a href="SC://Dictionary"><span class="s2">Dictionary</span></a> or subclass containing key value pairs. Users can override these defaults by passing a Dictionary or subclass as the <b>attributes </b>argument to <b>BMPlugin:new</b>.<span class="Apple-converted-space"> </span></p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>setupFunc </b>- An optional <a href="SC://Function"><span class="s2">Function</span></a> that will be evaluated when a plugin instance is made. It will be passed the plugin instance as an argument. It can store any objects created in <b>attributes</b> for use by the <b>ugenGraphFunc</b>, <b>guiFunc</b>, or <b>cleanUpFunc</b>.</p>
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>cleanupFunc </b>- An optional <a href="SC://Function"><span class="s2">Function</span></a> that will be evaluated when a plugin instance is released. It will be passed the plugin instance as an argument.</p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p7"><br></p>
@@ -70,9 +75,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p9"><span class="Apple-tab-span">	</span></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span>*specs</b></p>
 <p class="p9"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Returns an IdentityDictionary containing all currently existing specs. This use the names of specs as Symbols for keys.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Returns an <a href="SC://IdentityDictionary"><span class="s6">IdentityDictionary</span></a> containing all currently existing specs. This use the names of specs as Symbols for keys.</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p13"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>BMPluginSpec<span class="s3">.specs[</span><span class="s6">'Highpass'</span><span class="s3">];</span></p>
+<p class="p13"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>BMPluginSpec<span class="s4">.specs[</span><span class="s8">'Highpass'</span><span class="s4">];</span></p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span>description</b></p>
 <p class="p9"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
@@ -114,111 +119,111 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><br></p>
 <p class="p12"><b>Examples</b></p>
 <p class="p3"><br></p>
-<p class="p14">////// some plugin spec examples (see the *initClass method for more examples</p>
-<p class="p15"><br></p>
-<p class="p14">// a simple highpass filter</p>
-<p class="p16">(</p>
-<p class="p17"><span class="s7">BMPluginSpec</span><span class="s3">(</span>'Help-Highpass'<span class="s3">, <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s8">// name</span></p>
-<p class="p14"><span class="s3"><span class="Apple-tab-span">	</span>{</span><span class="s7">|plugin, input, freq|</span><span class="s3"> <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// ugenGraphFunc, freq becomes a Control</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">HPF</span>.ar(input, freq);</p>
-<p class="p16"><span class="Apple-tab-span">	</span>},<span class="Apple-converted-space"> <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span></p>
-<p class="p16"><span class="Apple-tab-span">	</span>(freq: <span class="s6">\freq</span>.asSpec),<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s8">// specsDict</span></p>
-<p class="p14"><span class="s3"><span class="Apple-tab-span">	</span></span><span class="s7">nil</span><span class="s3">, <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// use the default GUI</p>
-<p class="p16"><span class="Apple-tab-span">	</span>(atcs: (freq: 80), tweeters: (freq: 10000)), <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s8">// presets for use with some speakers</span></p>
-<p class="p18"><span class="s3"><span class="Apple-tab-span">	</span></span>"2nd Order Butterworth Highpass Filter -12db/Oct"<span class="s3"><span class="Apple-tab-span">	</span></span><span class="s8">// description</span></p>
-<p class="p16">);</p>
-<p class="p16">)</p>
-<p class="p15"><br></p>
-<p class="p17"><span class="s3">p = </span><span class="s7">BMPlugin</span><span class="s3">(</span>'Help-Highpass'<span class="s3">);</span></p>
-<p class="p16">x = {<span class="s7">Out</span>.ar(1, <span class="s7">PinkNoise</span>.ar(0.2))}.play;</p>
-<p class="p16">p.makeSynth(1, x, <span class="s6">\addAfter</span>);</p>
-<p class="p14"><span class="s3">p.gui; </span>// default GUI looks like this</p>
-<p class="p16">x.free; p.release;</p>
+<p class="p14">////// some plugin spec examples (see the *initClass method for more)</p>
 <p class="p3"><br></p>
-<p class="p15"><br></p>
+<p class="p14">// a simple highpass filter</p>
+<p class="p15">(</p>
+<p class="p16"><span class="s9">BMPluginSpec</span><span class="s4">(</span>'Help-Highpass'<span class="s4">, <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s10">// name</span></p>
+<p class="p14"><span class="s4"><span class="Apple-tab-span">	</span>{</span><span class="s9">|plugin, input, freq|</span><span class="s4"> <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// ugenGraphFunc, freq becomes a Control</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">HPF</span>.ar(input, freq);</p>
+<p class="p15"><span class="Apple-tab-span">	</span>},<span class="Apple-converted-space"> <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span></p>
+<p class="p15"><span class="Apple-tab-span">	</span>(freq: <span class="s8">\freq</span>.asSpec),<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s10">// specsDict</span></p>
+<p class="p14"><span class="s4"><span class="Apple-tab-span">	</span></span><span class="s9">nil</span><span class="s4">, <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// use the default GUI</p>
+<p class="p15"><span class="Apple-tab-span">	</span>(atcs: (freq: 80), tweeters: (freq: 10000)), <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s10">// presets for use with some speakers</span></p>
+<p class="p17"><span class="s4"><span class="Apple-tab-span">	</span></span>"2nd Order Butterworth Highpass Filter -12db/Oct"<span class="s4"><span class="Apple-tab-span">	</span></span><span class="s10">// description</span></p>
+<p class="p15">);</p>
+<p class="p15">)</p>
+<p class="p3"><br></p>
+<p class="p16"><span class="s4">p = </span><span class="s9">BMPlugin</span><span class="s4">(</span>'Help-Highpass'<span class="s4">);</span></p>
+<p class="p15">x = {<span class="s9">Out</span>.ar(1, <span class="s9">PinkNoise</span>.ar(0.2))}.play;</p>
+<p class="p15">p.makeSynth(1, x, <span class="s8">\addAfter</span>);</p>
+<p class="p14"><span class="s4">p.gui; </span>// default GUI looks like this</p>
+<p class="p15">x.free; p.release;</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
 <p class="p14">// a plugin with setup and cleanup functions, and defaultAttributes<span class="Apple-converted-space"> </span></p>
 <p class="p14">// (could actually do this simpler, but ...)</p>
-<p class="p16">(</p>
-<p class="p17"><span class="s7">BMPluginSpec</span><span class="s3">(</span>'Help-Buffer-Delay'<span class="s3">, <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s8">// name</span></p>
-<p class="p4"><span class="s3"><span class="Apple-tab-span">	</span>{</span>|plugin, input, delayTime|<span class="s3"> <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s8">// ugenGraphFunc</span></p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">var</span> buffer;</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>buffer = plugin.attributes.buffer;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s8">// get the buffer from the attributes</span></p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">BufDelayC</span>.ar(buffer, input, delayTime) + input;</p>
-<p class="p16"><span class="Apple-tab-span">	</span>},</p>
-<p class="p16"><span class="Apple-tab-span">	</span>(delayTime: <span class="s7">ControlSpec</span>(0.0001, 1, <span class="s6">\linear</span>, 0, 0.5, units: <span class="s9">" secs"</span>)), <span class="Apple-tab-span">	</span><span class="s8">// specsDict</span></p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="s7">nil</span>, <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s8">// default GUI</span></p>
-<p class="p16"><span class="Apple-tab-span">	</span>(oneSecond: (delayTime: 1)),<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s8">// presets</span></p>
-<p class="p18"><span class="s3"><span class="Apple-tab-span">	</span></span>"Automatically added Delay with Cubic Interpolation; 1 second maximum"<span class="s3">,<span class="Apple-tab-span">	</span></span><span class="s8">// description</span></p>
-<p class="p16"><span class="Apple-tab-span">	</span>(maximumDelay: 2),</p>
-<p class="p15"><span class="Apple-tab-span">	</span></p>
-<p class="p16"><span class="Apple-tab-span">	</span>{<span class="s7">|plugin|</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s8">// setupFunc</span></p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">var</span> attr, server;</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>attr = plugin.attributes;</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>server = plugin.server;</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>attr.buffer = <span class="s7">Buffer</span>.alloc(plugin.server, attr.maximumDelay * server.sampleRate, 1);</p>
-<p class="p16"><span class="Apple-tab-span">	</span>},</p>
-<p class="p14"><span class="s3"><span class="Apple-tab-span">	</span>{</span><span class="s7">|plugin|</span><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// cleanupFunc</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>plugin.attributes.buffer.free;</p>
-<p class="p16"><span class="Apple-tab-span">	</span>}</p>
-<p class="p16">);</p>
-<p class="p16">)</p>
-<p class="p15"><br></p>
-<p class="p17"><span class="s3">p = </span><span class="s7">BMPlugin</span><span class="s3">(</span>'Help-Buffer-Delay'<span class="s3">);</span></p>
-<p class="p16">x = {<span class="s7">Out</span>.ar(1, <span class="s7">Decay2</span>.ar(<span class="s7">Impulse</span>.ar(0.5), 0.001, 0.01, <span class="s7">PinkNoise</span>.ar(0.2)))}.play;</p>
-<p class="p16">p.makeSynth(1, x, <span class="s6">\addAfter</span>);</p>
-<p class="p14"><span class="s3">p.gui; </span>// default GUI looks like this</p>
-<p class="p16">x.free; p.release;</p>
-<p class="p15"><br></p>
-<p class="p15"><br></p>
+<p class="p15">(</p>
+<p class="p16"><span class="s9">BMPluginSpec</span><span class="s4">(</span>'Help-Buffer-Delay'<span class="s4">, <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s10">// name</span></p>
+<p class="p4"><span class="s4"><span class="Apple-tab-span">	</span>{</span>|plugin, input, delayTime|<span class="s4"> <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s10">// ugenGraphFunc</span></p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">var</span> buffer;</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>buffer = plugin.attributes.buffer;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s10">// get the buffer from the attributes</span></p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">BufDelayC</span>.ar(buffer, input, delayTime) + input;</p>
+<p class="p15"><span class="Apple-tab-span">	</span>},</p>
+<p class="p15"><span class="Apple-tab-span">	</span>(delayTime: <span class="s9">ControlSpec</span>(0.0001, 1, <span class="s8">\linear</span>, 0, 0.5, units: <span class="s11">" secs"</span>)), <span class="Apple-tab-span">	</span><span class="s10">// specsDict</span></p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="s9">nil</span>, <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s10">// default GUI</span></p>
+<p class="p15"><span class="Apple-tab-span">	</span>(oneSecond: (delayTime: 1)),<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s10">// presets</span></p>
+<p class="p17"><span class="s4"><span class="Apple-tab-span">	</span></span>"Automatically added Delay with Cubic Interpolation; 1 second maximum"<span class="s4">,<span class="Apple-tab-span">	</span></span><span class="s10">// description</span></p>
+<p class="p15"><span class="Apple-tab-span">	</span>(maximumDelay: 2),</p>
+<p class="p3"><span class="Apple-tab-span">	</span></p>
+<p class="p15"><span class="Apple-tab-span">	</span>{<span class="s9">|plugin|</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s10">// setupFunc</span></p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">var</span> attr, server;</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>attr = plugin.attributes;</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>server = plugin.server;</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>attr.buffer = <span class="s9">Buffer</span>.alloc(plugin.server, attr.maximumDelay * server.sampleRate, 1);</p>
+<p class="p15"><span class="Apple-tab-span">	</span>},</p>
+<p class="p14"><span class="s4"><span class="Apple-tab-span">	</span>{</span><span class="s9">|plugin|</span><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// cleanupFunc</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>plugin.attributes.buffer.free;</p>
+<p class="p15"><span class="Apple-tab-span">	</span>}</p>
+<p class="p15">);</p>
+<p class="p15">)</p>
+<p class="p3"><br></p>
+<p class="p16"><span class="s4">p = </span><span class="s9">BMPlugin</span><span class="s4">(</span>'Help-Buffer-Delay'<span class="s4">);</span></p>
+<p class="p15">x = {<span class="s9">Out</span>.ar(1, <span class="s9">Decay2</span>.ar(<span class="s9">Impulse</span>.ar(0.5), 0.001, 0.01, <span class="s9">PinkNoise</span>.ar(0.2)))}.play;</p>
+<p class="p15">p.makeSynth(1, x, <span class="s8">\addAfter</span>);</p>
+<p class="p14"><span class="s4">p.gui; </span>// default GUI looks like this</p>
+<p class="p15">x.free; p.release;</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
 <p class="p14">// GUI Functions</p>
 <p class="p14">// in principle GUI functions of arbitrary complexity are possible</p>
 <p class="p14">// the default GUI Function is outlined below, and can serve as an example of how to go about this</p>
-<p class="p4"><span class="s3">{</span>|plugin|</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="s7">var</span> numSliders, spec, window, presetMenu, sliders;</p>
-<p class="p16"><span class="Apple-tab-span">	</span>spec = plugin.spec;</p>
-<p class="p16"><span class="Apple-tab-span">	</span>numSliders = spec.specsDict.size;</p>
-<p class="p16"><span class="Apple-tab-span">	</span>window = <span class="s7">SCWindow</span>.new(<span class="s9">"Plugin:"</span> + spec.name,<span class="Apple-converted-space"> </span></p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">Rect</span>(300, 300, 552, (numSliders + 1) * 24 + 24), <span class="s7">false</span>); <span class="s8">// 508</span></p>
-<p class="p16"><span class="Apple-tab-span">	</span>window.view.decorator = <span class="s7">FlowLayout</span>(window.view.bounds);</p>
-<p class="p16"><span class="Apple-tab-span">	</span>window.view.background = <span class="s7">Color</span>.rand.alpha_(0.3);</p>
-<p class="p16"><span class="Apple-tab-span">	</span>sliders = ();</p>
-<p class="p16"><span class="Apple-tab-span">	</span>spec.specsDict.sortedKeysValuesDo({<span class="s7">|key, cspec|</span></p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">var</span> initVal;</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>initVal = plugin.get(key);</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(cspec.units == <span class="s9">" dB"</span> &amp;&amp; plugin.attributes[<span class="s6">\usesLinearAmp</span>]).if({<span class="Apple-converted-space"> </span></p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>initVal = initVal.ampdb;</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>sliders[key] = <span class="s7">EZSlider</span>.new(window, 500@20, key.asString, cspec,</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>{<span class="s7">|ez|</span> <span class="s7">var</span> setVal;</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>setVal = ez.value;</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(cspec.units == <span class="s9">" dB"</span> &amp;&amp; plugin.attributes[<span class="s6">\usesLinearAmp</span>]).if({<span class="Apple-converted-space"> </span></p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>setVal = setVal.dbamp;</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>plugin.set(key, setVal);</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}, initVal, labelWidth: 70</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>);</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>sliders[key].numberView.background = <span class="s7">Color</span>.white.alpha_(0.4);</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">SCStaticText</span>(window, <span class="s7">Rect</span>(0,0,40,20)).string_(cspec.units);</p>
-<p class="p15"><span class="Apple-tab-span">	</span></p>
-<p class="p16"><span class="Apple-tab-span">	</span>});</p>
-<p class="p16"><span class="Apple-tab-span">	</span>window.view.decorator.nextLine.shift(10, 10);</p>
-<p class="p16"><span class="Apple-tab-span">	</span>presetMenu = <span class="s7">SCPopUpMenu</span>(window, <span class="s7">Rect</span>(0, 0, 100, 20));</p>
-<p class="p16"><span class="Apple-tab-span">	</span>presetMenu.items = [<span class="s9">"presets"</span>, <span class="s9">"-"</span>] ++ spec.presets.keys;</p>
-<p class="p16"><span class="Apple-tab-span">	</span>presetMenu.action = {</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(presetMenu.value &gt; 1, {</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>plugin.preset_(presetMenu.items[presetMenu.value].asSymbol);</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>sliders.keysValuesDo({<span class="s7">|key, slid|</span><span class="Apple-converted-space"> </span></p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">var</span> newVal;</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>newVal = plugin.get(key);</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(slid.controlSpec.units == <span class="s9">" dB"</span><span class="Apple-converted-space"> </span></p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>&amp;&amp; plugin.attributes[<span class="s6">\usesLinearAmp</span>]).if({<span class="Apple-converted-space"> </span></p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>newVal = newVal.ampdb;</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>slid.value = newVal;</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
-<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
-<p class="p16"><span class="Apple-tab-span">	</span>};</p>
-<p class="p14"><span class="s3"><span class="Apple-tab-span">	</span>window.front; </span>// this return value is stored in the plugin's gui var</p>
-<p class="p16">}</p>
+<p class="p4"><span class="s4">{</span>|plugin|</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="s9">var</span> numSliders, spec, window, presetMenu, sliders;</p>
+<p class="p15"><span class="Apple-tab-span">	</span>spec = plugin.spec;</p>
+<p class="p15"><span class="Apple-tab-span">	</span>numSliders = spec.specsDict.size;</p>
+<p class="p15"><span class="Apple-tab-span">	</span>window = <span class="s9">SCWindow</span>.new(<span class="s11">"Plugin:"</span> + spec.name,<span class="Apple-converted-space"> </span></p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">Rect</span>(300, 300, 552, (numSliders + 1) * 24 + 24), <span class="s9">false</span>); <span class="s10">// 508</span></p>
+<p class="p15"><span class="Apple-tab-span">	</span>window.view.decorator = <span class="s9">FlowLayout</span>(window.view.bounds);</p>
+<p class="p15"><span class="Apple-tab-span">	</span>window.view.background = <span class="s9">Color</span>.rand.alpha_(0.3);</p>
+<p class="p15"><span class="Apple-tab-span">	</span>sliders = ();</p>
+<p class="p15"><span class="Apple-tab-span">	</span>spec.specsDict.sortedKeysValuesDo({<span class="s9">|key, cspec|</span></p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">var</span> initVal;</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>initVal = plugin.get(key);</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(cspec.units == <span class="s11">" dB"</span> &amp;&amp; plugin.attributes[<span class="s8">\usesLinearAmp</span>]).if({<span class="Apple-converted-space"> </span></p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>initVal = initVal.ampdb;</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>sliders[key] = <span class="s9">EZSlider</span>.new(window, 500@20, key.asString, cspec,</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>{<span class="s9">|ez|</span> <span class="s9">var</span> setVal;</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>setVal = ez.value;</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(cspec.units == <span class="s11">" dB"</span> &amp;&amp; plugin.attributes[<span class="s8">\usesLinearAmp</span>]).if({<span class="Apple-converted-space"> </span></p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>setVal = setVal.dbamp;</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>plugin.set(key, setVal);</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}, initVal, labelWidth: 70</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>);</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>sliders[key].numberView.background = <span class="s9">Color</span>.white.alpha_(0.4);</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">SCStaticText</span>(window, <span class="s9">Rect</span>(0,0,40,20)).string_(cspec.units);</p>
+<p class="p3"><span class="Apple-tab-span">	</span></p>
+<p class="p15"><span class="Apple-tab-span">	</span>});</p>
+<p class="p15"><span class="Apple-tab-span">	</span>window.view.decorator.nextLine.shift(10, 10);</p>
+<p class="p15"><span class="Apple-tab-span">	</span>presetMenu = <span class="s9">SCPopUpMenu</span>(window, <span class="s9">Rect</span>(0, 0, 100, 20));</p>
+<p class="p15"><span class="Apple-tab-span">	</span>presetMenu.items = [<span class="s11">"presets"</span>, <span class="s11">"-"</span>] ++ spec.presets.keys;</p>
+<p class="p15"><span class="Apple-tab-span">	</span>presetMenu.action = {</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(presetMenu.value &gt; 1, {</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>plugin.preset_(presetMenu.items[presetMenu.value].asSymbol);</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>sliders.keysValuesDo({<span class="s9">|key, slid|</span><span class="Apple-converted-space"> </span></p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">var</span> newVal;</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>newVal = plugin.get(key);</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(slid.controlSpec.units == <span class="s11">" dB"</span><span class="Apple-converted-space"> </span></p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>&amp;&amp; plugin.attributes[<span class="s8">\usesLinearAmp</span>]).if({<span class="Apple-converted-space"> </span></p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>newVal = newVal.ampdb;</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>slid.value = newVal;</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p15"><span class="Apple-tab-span">	</span>};</p>
+<p class="p14"><span class="s4"><span class="Apple-tab-span">	</span>window.front; </span>// this return value is stored in the plugin's gui var</p>
+<p class="p15">}</p>
 </body>
 </html>
