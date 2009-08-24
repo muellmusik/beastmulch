@@ -380,5 +380,9 @@ BMPlugin {
 			gui.front;
 		});
 	}
+	
+	// post pretty
+	printOn { arg stream; stream << this.class.name << "(" <<* [spec.name] << ")" }
+
 
 }
