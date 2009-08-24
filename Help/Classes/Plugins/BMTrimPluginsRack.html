@@ -19,8 +19,9 @@ p.p9 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helve
 p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
 p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica; min-height: 17.0px}
 p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
 p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
+p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
 span.s3 {color: #0000ff}
@@ -114,26 +115,26 @@ span.Apple-tab-span {white-space:pre}
 <p class="p13"><span class="Apple-tab-span">	</span><span class="s11">BMSpeaker</span>.newFromSpherical(el[1], i, el[0], 0, 2);</p>
 <p class="p14"><span class="s2">}, </span>BMInOutArray<span class="s2">);</span></p>
 <p class="p13">)</p>
-<p class="p4"><br></p>
+<p class="p15"><br></p>
 <p class="p14"><span class="s2">r = </span>BMTrimPluginsRack<span class="s2">(l, name: </span><span class="s10">'Plug em In'</span><span class="s2">);</span></p>
-<p class="p4"><br></p>
-<p class="p13">// plugins are added at the end of the chain</p>
+<p class="p15"><br></p>
+<p class="p12">// plugins are added at the end of the chain</p>
 <p class="p13">r[<span class="s10">\L</span>].addPlugin(<span class="s11">BMPlugin</span>(<span class="s10">'3 Band EQ'</span>));</p>
 <p class="p13">r[<span class="s10">\L</span>].addPlugin(<span class="s11">BMPlugin</span>(<span class="s10">\Highpass</span>));</p>
 <p class="p13">r[<span class="s10">\L</span>].addPlugin(<span class="s11">BMPlugin</span>(<span class="s10">\Lowpass</span>));</p>
-<p class="p13">r[<span class="s10">\L</span>].plugins; // check order</p>
-<p class="p4"><br></p>
-<p class="p13">// but you can move them</p>
+<p class="p12"><span class="s2">r[</span><span class="s10">\L</span><span class="s2">].plugins; </span>// check order</p>
+<p class="p15"><br></p>
+<p class="p12">// but you can move them</p>
 <p class="p13">r[<span class="s10">\L</span>].movePluginUp(2);</p>
 <p class="p13">r[<span class="s10">\L</span>].movePluginDown(0);</p>
-<p class="p13">r[<span class="s10">\L</span>].plugins; // check order</p>
-<p class="p4"><br></p>
-<p class="p13">// remove by index</p>
+<p class="p12"><span class="s2">r[</span><span class="s10">\L</span><span class="s2">].plugins; </span>// check order</p>
+<p class="p15"><br></p>
+<p class="p12">// remove by index</p>
 <p class="p13">r[<span class="s10">\L</span>].removePlugin(0);</p>
 <p class="p13">r[<span class="s10">\L</span>].plugins;</p>
-<p class="p4"><br></p>
+<p class="p15"><br></p>
 <p class="p12"><span class="s2">r.gui; </span>// play with the GUI</p>
-<p class="p4"><br></p>
+<p class="p15"><br></p>
 <p class="p13">r.free;</p>
 </body>
 </html>

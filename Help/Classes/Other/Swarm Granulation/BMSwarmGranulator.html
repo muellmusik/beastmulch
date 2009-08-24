@@ -30,9 +30,10 @@ span.s5 {color: #0000ff}
 span.s6 {font: 9.0px Monaco; color: #007300}
 span.s7 {font: 9.0px Monaco}
 span.s8 {font: 9.0px Monaco; color: #625d38}
-span.s9 {font: 9.0px Monaco; color: #5c640b}
-span.s10 {color: #0000bf}
-span.s11 {color: #bf0000}
+span.s9 {font: 9.0px Monaco; color: #007300}
+span.s10 {font: 9.0px Monaco; color: #000000}
+span.s11 {color: #0000bf}
+span.s12 {color: #bf0000}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -62,10 +63,10 @@ span.Apple-tab-span {white-space:pre}
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>target </b>- Target for this object's <a href="SC://Group"><span class="s5">Group</span></a>. If target is not a Group or <a href="SC://Synth"><span class="s5">Synth</span></a>, it will be converted as follows: If it is a <a href="SC://Server"><span class="s5">Server</span></a>, it will be converted to the <a href="SC://default_group"><span class="s5">default_group</span></a> of that server. If it is nil, to the default_group of the default Server. <b>Note: </b>A Synth is not a valid target for <span class="s6">\addToHead</span> and <span class="s6">\addToTail</span>.</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>addAction </b>- one of the following Symbols:<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p9"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s6">\addToHead</span><span class="s7"> </span><span class="s8"><span class="Apple-tab-span">	</span></span>- (the default) add at the head of the group specified by <b>target</b></p>
-<p class="p7"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s9">\addToTail</span><span class="s8"> <span class="Apple-tab-span">	</span></span>- add at the tail of the group specified by <b>target</b></p>
+<p class="p7"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s9">\addToTail</span><span class="s10"> </span><span class="s8"><span class="Apple-tab-span">	</span></span>- add at the tail of the group specified by <b>target</b></p>
 <p class="p7"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s9">\addAfter</span> <span class="Apple-tab-span">	</span>- add immediately after <b>target </b>in its server's node order</p>
 <p class="p7"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s9">\addBefore</span> <span class="Apple-tab-span">	</span>- add immediately before <b>target </b>in its server's node order</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">\addReplace</span> <span class="Apple-tab-span">	</span>- replace <b>target</b> and take its place in its server's node order</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">\addReplace</span><span class="s3"> </span><span class="Apple-tab-span">	</span>- replace <b>target</b> and take its place in its server's node order</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>targetDef </b>- The <a href="SC://SynthDef"><span class="s2">SynthDef</span></a> to use for grains. Default value is "BMSwarmPodGrain". It is possible to customise behaviour by using a different def. The standard one (defined in <b>*initClass</b>) can be used as a template.</p>
 <p class="p6"><br></p>
 <p class="p6"><br></p>
@@ -139,16 +140,16 @@ span.Apple-tab-span {white-space:pre}
 <p class="p10"><b>Examples</b></p>
 <p class="p3"><br></p>
 <p class="p12">// some speakers</p>
-<p class="p13"><span class="s3">l = </span><span class="s10">Object</span><span class="s3">.readArchive(</span>"../../Inputs and Outputs/BigSpeakerArray"<span class="s3">.resolveRelative);</span></p>
-<p class="p12"><span class="s3">v = </span><span class="s10">BMSpeakerListVisualiser</span><span class="s3">(l); </span>// a gui to see the boids</p>
+<p class="p13"><span class="s3">l = </span><span class="s11">Object</span><span class="s3">.readArchive(</span>"../../Inputs and Outputs/BigSpeakerArray"<span class="s3">.resolveRelative);</span></p>
+<p class="p12"><span class="s3">v = </span><span class="s11">BMSpeakerListVisualiser</span><span class="s3">(l); </span>// a gui to see the boids</p>
 <p class="p3"><br></p>
-<p class="p13"><span class="s3">c = </span><span class="s10">Buffer</span><span class="s3">.read(s, </span>"sounds/a11wlk01.wav"<span class="s3">);</span></p>
+<p class="p13"><span class="s3">c = </span><span class="s11">Buffer</span><span class="s3">.read(s, </span>"sounds/a11wlk01.wav"<span class="s3">);</span></p>
 <p class="p3"><br></p>
 <p class="p14">(</p>
-<p class="p14">b = <span class="s10">BMBoidSpace</span>(3, 20, <span class="s10">nil</span>, l, 1, 13, 0.1);</p>
+<p class="p14">b = <span class="s11">BMBoidSpace</span>(3, 20, <span class="s11">nil</span>, l, 1, 13, 0.1);</p>
 <p class="p3"><br></p>
 <p class="p12">// this updates their positions in the GUI</p>
-<p class="p14">d = <span class="s10">Task</span>({</p>
+<p class="p14">d = <span class="s11">Task</span>({</p>
 <p class="p14"><span class="Apple-tab-span">	</span>loop({</p>
 <p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>v.boidPositions = b.positions;</p>
 <p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>0.05.wait;</p>
@@ -156,34 +157,34 @@ span.Apple-tab-span {white-space:pre}
 <p class="p15"><span class="s3">}, </span>AppClock<span class="s3">);</span></p>
 <p class="p14">d.start;</p>
 <p class="p14">)</p>
-<p class="p14">g = <span class="s10">BMSwarmGranulator</span>.new(l, b, c);</p>
+<p class="p14">g = <span class="s11">BMSwarmGranulator</span>.new(l, b, c);</p>
 <p class="p14">g.play;</p>
 <p class="p3"><br></p>
-<p class="p14">b.minDist = 0.05; <span class="s11">// cluster closer</span></p>
+<p class="p14">b.minDist = 0.05; <span class="s12">// cluster closer</span></p>
 <p class="p3"><br></p>
-<p class="p14">b.centre = [0,0,0]; <span class="s11">// go to the middle</span></p>
+<p class="p14">b.centre = [0,0,0]; <span class="s12">// go to the middle</span></p>
 <p class="p3"><br></p>
 <p class="p14">b.centre = [1,0,0.5];<span class="Apple-converted-space"> </span></p>
 <p class="p3"><br></p>
 <p class="p14">b.centre = [-1,-1,-0.2];</p>
 <p class="p3"><br></p>
-<p class="p12"><span class="s3">b.centre = </span><span class="s10">nil</span><span class="s3">; </span>// wander freely</p>
+<p class="p12"><span class="s3">b.centre = </span><span class="s11">nil</span><span class="s3">; </span>// wander freely</p>
 <p class="p3"><br></p>
-<p class="p14">b.velScale = 5; <span class="s11">// slow down</span></p>
+<p class="p14">b.velScale = 5; <span class="s12">// slow down</span></p>
 <p class="p3"><br></p>
-<p class="p14">b.velScale = 135; <span class="s11">// really fast</span></p>
+<p class="p14">b.velScale = 135; <span class="s12">// really fast</span></p>
 <p class="p3"><br></p>
 <p class="p12"><span class="s3">b.velMax = 0.02; </span>// don't flit too far</p>
 <p class="p3"><br></p>
-<p class="p12"><span class="s3">b.avoidD = </span><span class="s10">true</span><span class="s3">; </span>// don't go to the middle</p>
+<p class="p12"><span class="s3">b.avoidD = </span><span class="s11">true</span><span class="s3">; </span>// don't go to the middle</p>
 <p class="p3"><br></p>
 <p class="p12"><span class="s3">b.minDist = 0.1; </span>// spread a little more</p>
 <p class="p3"><br></p>
 <p class="p12"><span class="s3">b.velMax = 0.5; </span>// wild and crazy</p>
 <p class="p3"><br></p>
-<p class="p14">g.pitch = 0.5; <span class="s11">// half pitch</span></p>
+<p class="p14">g.pitch = 0.5; <span class="s12">// half pitch</span></p>
 <p class="p3"><br></p>
-<p class="p14">g.stretch = 2; <span class="s11">// time stretch</span></p>
+<p class="p14">g.stretch = 2; <span class="s12">// time stretch</span></p>
 <p class="p3"><br></p>
 <p class="p14">d.stop; g.release(2);</p>
 </body>
