@@ -14,35 +14,27 @@ p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
 p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
 p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #6d3938}
-p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #003ab1}
+p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #bf0000}
+p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0000bf}
 p.p10 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
 p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
-p.p12 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #734241}
-p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p14 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0036b3}
-p.p15 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #734241; min-height: 12.0px}
-p.p16 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #743736}
-p.p17 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
-p.p18 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #734241}
-p.p19 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #053eb4}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p13 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #634645; min-height: 12.0px}
+p.p14 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
+p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #634645}
+p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #1446ae}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #004ef1}
+span.s2 {color: #135aeb}
 span.s3 {color: #000000}
-span.s4 {color: #5c640b}
-span.s5 {color: #003ab1}
-span.s6 {color: #0049f3}
-span.s7 {color: #053eb4}
-span.s8 {color: #001dfd}
-span.s9 {color: #0036b3}
-span.s10 {color: #596508}
-span.s11 {font: 9.0px Monaco}
-span.s12 {font: 12.0px Helvetica; color: #000000}
-span.s13 {color: #734241}
-span.s14 {color: #606060}
-span.s15 {color: #743736}
-span.s16 {color: #0000ff}
-span.s17 {color: #0032b5}
+span.s4 {color: #007300}
+span.s5 {color: #0000bf}
+span.s6 {color: #0d56ed}
+span.s7 {color: #003cf7}
+span.s8 {font: 9.0px Monaco}
+span.s9 {font: 12.0px Helvetica; color: #000000}
+span.s10 {color: #606060}
+span.s11 {color: #bf0000}
+span.s12 {color: #0034f9}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -63,7 +55,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p1">2) as an individual control - an instance of <a href="BMControl.html"><span class="s2">BMControl</span></a>. These have a Symbol for a name, and can be accessed through the class methods <b>*getValueByName</b> and <b>*setValueByName</b>.</p>
 <p class="p2"><br></p>
-<p class="p1">It is sometimes useful to deal with one or the other representation depending on what one is trying to do. BMAbstractController has two classvars, <b>allControllers</b> and <b>allControls</b>, which contain dictionaries. These allow objects to query any individual control or controller by name, or to get global information about what controls or controllers currently exist.</p>
+<p class="p1">It is sometimes useful to deal with one or the other representation depending on what one is trying to do, but in normal usage it is more common to deal with the controller instance. BMAbstractController has two classvars, <b>allControllers</b> and <b>allControls</b>, which contain dictionaries. These allow objects to query any individual control or controller by <b>name</b>, or to get global information about what controls or controllers currently exist.</p>
 <p class="p2"><br></p>
 <p class="p1">Each controller allocates a multichannel control rate bus for its controls. Objects in the library map to controls by mapping synth Controls to the corresponding bus. Bus values are assumed to be between 0 and 1. On Cmd-. all mappings are cleared.</p>
 <p class="p2"><br></p>
@@ -111,8 +103,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p8"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// make a controller</p>
 <p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a = </span>BMVirtualController<span class="s3">(</span><span class="s4">\bar</span><span class="s3">);</span></p>
-<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s7">BMAbstractController</span>.masterInOutArray;</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">BMAbstractController</span>.masterInOutArray;</p>
 <p class="p8"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.free </span>// release its resources</p>
+<p class="p5"><br></p>
 <p class="p5"><br></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span>*makeName</b></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
@@ -120,13 +113,14 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><br></p>
 <p class="p4"><b>Subclassing</b></p>
 <p class="p5"><br></p>
-<p class="p6">See existing subclasses such as <a href="../Controllers/BMEtherSense.html"><span class="s8">BMEtherSense</span></a>, for useful examples. Subclasses of BMAbstractController must implement the following methods:</p>
+<p class="p6">See existing subclasses such as <a href="../Controllers/BMEtherSense.html"><span class="s7">BMEtherSense</span></a>, for useful examples. Subclasses of BMAbstractController must implement the following methods:</p>
 <p class="p7"><br></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span>*parameterList</b></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Returns a dictionary of arguments to this class' <b>*new</b> method (excluding server) in the form argname-&gt;[class, spec, humanName], indicating the argument's class, a <a href="SC://Spec"><span class="s6">Spec</span></a>, and <a href="SC://String"><span class="s6">String</span></a> containing a human readable name for the argument. This is useful for constructing GUIs to make new controllers. For an example see the implementation of <b>BMControllerConfigGUI</b> class (used in the BEASTmulch System application).</p>
 <p class="p5"><br></p>
 <p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>BMVirtualController<span class="s3">.parameterList;</span></p>
+<p class="p5"><br></p>
 <p class="p5"><br></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span>*humanName</b></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
@@ -141,37 +135,37 @@ span.Apple-tab-span {white-space:pre}
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>dict </b>- The <a href="SC://Dictionary"><span class="s6">Dictionary</span></a> of parameters.</p>
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>server </b>- The <a href="SC://Server"><span class="s6">Server</span></a> on which to allocate this controller's busses. The default value is the default Server.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p12"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// example implementation from BMVirtualController</p>
-<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>*newFromParamDict {<span class="s9">|dict, server|</span><span class="Apple-converted-space"> </span></p>
-<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>^<span class="s9">this</span>.new(dict[<span class="s10">\name</span>], server, dict[<span class="s10">\numControls</span>]);</p>
-<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}</p>
+<p class="p8"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// example implementation from BMVirtualController</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>*newFromParamDict {<span class="s5">|dict, server|</span><span class="Apple-converted-space"> </span></p>
+<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>^<span class="s5">this</span>.new(dict[<span class="s4">\name</span>], server, dict[<span class="s4">\numControls</span>]);</p>
+<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}</p>
 <p class="p3"><span class="Apple-tab-span">	</span></p>
 <p class="p3"><span class="Apple-tab-span">	</span></p>
-<p class="p1"><span class="s11"><span class="Apple-tab-span">	</span></span><b>*new (...)</b></p>
+<p class="p1"><span class="s8"><span class="Apple-tab-span">	</span></span><b>*new (...)</b></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>This method should call <b>init</b> and then <b>addControlsToIndex</b>.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p12"><span class="s12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// example implementation from BMVirtualController</p>
-<p class="p14"><span class="s13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s3">*new { </span>|name, server, numControls = 8|</p>
-<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>^<span class="s9">super</span>.new.init(name, server ? <span class="s9">Server</span>.default, numControls).addControlsToIndex;</p>
-<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}</p>
+<p class="p8"><span class="s9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// example implementation from BMVirtualController</p>
+<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>*new { </span>|name, server, numControls = 8|</p>
+<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>^<span class="s5">super</span>.new.init(name, server ? <span class="s5">Server</span>.default, numControls).addControlsToIndex;</p>
+<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}</p>
 <p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3"><span class="Apple-tab-span">	</span></span></p>
-<p class="p1"><span class="s11"><span class="Apple-tab-span">	</span></span><b>init (...)</b></p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3"><span class="Apple-tab-span">	</span></span></p>
+<p class="p1"><span class="s8"><span class="Apple-tab-span">	</span></span><b>init (...)</b></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>This method should set the <b>numControls</b> instance var, allocate the controller's bus, populate its valueArray, and add this controller to <b>allControllers</b>.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p12"><span class="s12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// example implementation from BMVirtualController</p>
-<p class="p14"><span class="s12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s3">init { </span>|argname, argserver, argnumControls|</p>
-<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>name = argname;</p>
-<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>server = argserver.postln;</p>
-<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>numControls = argnumControls;</p>
-<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>valueArray = <span class="s9">Array</span>.fill(numControls, {0});</p>
-<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>labelArray = <span class="s9">Array</span>.fill(numControls, {<span class="s14">""</span>});</p>
-<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>bus = <span class="s9">Bus</span>.control(server, numControls);</p>
-<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>busIndex = bus.index;</p>
-<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>allControllers[name] = <span class="s9">this</span>;</p>
-<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}</p>
+<p class="p8"><span class="s9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// example implementation from BMVirtualController</p>
+<p class="p9"><span class="s9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s3">init { </span>|argname, argserver, argnumControls|</p>
+<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>name = argname;</p>
+<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>server = argserver.postln;</p>
+<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>numControls = argnumControls;</p>
+<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>valueArray = <span class="s5">Array</span>.fill(numControls, {0});</p>
+<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>labelArray = <span class="s5">Array</span>.fill(numControls, {<span class="s10">""</span>});</p>
+<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>bus = <span class="s5">Bus</span>.control(server, numControls);</p>
+<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>busIndex = bus.index;</p>
+<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>allControllers[name] = <span class="s5">this</span>;</p>
+<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span>getVal (controlNum)</b></p>
@@ -180,8 +174,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>controlNum </b>- The number of the control to poll. These start from 1, not 0.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p8"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// make a controller</p>
-<p class="p14"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a = </span>BMVirtualController<span class="s3">(</span><span class="s10">\bar</span><span class="s3">);</span></p>
-<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.setVal(3, 0.5); <span class="s15">// 'bar-3'</span></p>
+<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a = </span>BMVirtualController<span class="s3">(</span><span class="s4">\bar</span><span class="s3">);</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.setVal(3, 0.5); <span class="s11">// 'bar-3'</span></p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.getVal(3);</p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.free;</p>
 <p class="p5"><br></p>
@@ -193,8 +187,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>val </b>- The value to set. This should be between 0 and 1.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p8"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// make a controller</p>
-<p class="p14"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a = </span>BMVirtualController<span class="s3">(</span><span class="s10">\bar</span><span class="s3">);</span></p>
-<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.setVal(3, 0.5); <span class="s15">// 'bar-3'</span></p>
+<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a = </span>BMVirtualController<span class="s3">(</span><span class="s4">\bar</span><span class="s3">);</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.setVal(3, 0.5); <span class="s11">// 'bar-3'</span></p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.getVal(3);</p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.free;</p>
 <p class="p5"><br></p>
@@ -204,8 +198,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Returns an <a href="SC://Array"><span class="s6">Array</span></a> containing the values of all this controller's controls, in order. Values will be between 0 and 1.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p8"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// make a controller</p>
-<p class="p14"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a = </span>BMVirtualController<span class="s3">(</span><span class="s10">\bar</span><span class="s3">);</span></p>
-<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.setVal(3, 0.5); <span class="s15">// 'bar-3'</span></p>
+<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a = </span>BMVirtualController<span class="s3">(</span><span class="s4">\bar</span><span class="s3">);</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.setVal(3, 0.5); <span class="s11">// 'bar-3'</span></p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.getAllValues;</p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.free;</p>
 <p class="p5"><br></p>
@@ -216,7 +210,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>array </b>- An <a href="SC://Array"><span class="s6">Array</span></a> containing the new values for this controller's controls, in order. Values should be between 0 and 1.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p8"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// make a controller</p>
-<p class="p14"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a = </span>BMVirtualController<span class="s3">(</span><span class="s10">\bar, s, 4</span><span class="s3">);</span></p>
+<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a = </span>BMVirtualController<span class="s3">(</span><span class="s4">\bar</span><span class="s3">, s, 4);</span></p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.setAllValues([0, 1, 0.25, 0.75]);</p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.getAllValues;</p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.free;</p>
@@ -230,10 +224,10 @@ span.Apple-tab-span {white-space:pre}
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>controlNum </b>- The number of the control to set. These start from 1, not 0.</p>
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>name </b>- A <a href="SC://String"><span class="s6">String</span></a> containing the new label.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p16"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// make a controller</p>
-<p class="p14"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a = </span>BMVirtualController<span class="s3">(</span><span class="s10">\bar</span><span class="s3">, s, 4);</span></p>
-<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.setLabel(1, <span class="s14">"Fader-1!!"</span>);</p>
-<p class="p14"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMVirtualControllerSliders<span class="s3">(a);</span></p>
+<p class="p8"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// make a controller</p>
+<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a = </span>BMVirtualController<span class="s3">(</span><span class="s4">\bar</span><span class="s3">, s, 4);</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.setLabel(1, <span class="s10">"Fader-1!!"</span>);</p>
+<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMVirtualControllerSliders<span class="s3">(a);</span></p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.free;</p>
 <p class="p5"><br></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span>getLabel (controlNum)</b></p>
@@ -253,7 +247,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>array </b>- An <a href="SC://Array"><span class="s6">Array</span></a> of Strings containing new labels for this controller's controls in order.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p5"><br></p>
-<p class="p17"><b>Accessing Instance and Class Variables</b></p>
+<p class="p14"><b>Accessing Instance and Class Variables</b></p>
 <p class="p7"><span class="Apple-tab-span">	</span></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span>*allControllers</b></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
@@ -284,7 +278,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Returns a <a href="SC://Symbol"><span class="s6">Symbol</span></a> indicating this controller's name.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p17"><b>Instance Methods</b></p>
+<p class="p14"><b>Instance Methods</b></p>
 <p class="p7"><span class="Apple-tab-span">	</span></p>
 <p class="p6">Subclasses may need to override these.</p>
 <p class="p7"><br></p>
@@ -298,8 +292,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Returns an Array of Symbols corresponding to this controller's control names. These will generally be in the form name-controlNum.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p8"><span class="s12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// make a controller</p>
-<p class="p14"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a = </span>BMVirtualController<span class="s3">(</span><span class="s10">\bar, s, 4</span><span class="s3">);</span></p>
+<p class="p8"><span class="s9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// make a controller</p>
+<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a = </span>BMVirtualController<span class="s3">(</span><span class="s4">\bar</span><span class="s3">, s, 4);</span></p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.controlNames;</p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.free;</p>
 <p class="p5"><br></p>
@@ -309,20 +303,20 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Returns a <a href="../Inputs and Outputs/BMInOutArray.html"><span class="s6">BMInOutArray</span></a> in the form of controlName-&gt;controlBusIndex. This is suitable for use as an input to other objects, for example <a href="../Matrices/BMAmpControlMatrix.html"><span class="s6">BMAmpControlMatrix</span></a>.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p8"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// make a controller</p>
-<p class="p14"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a = </span>BMVirtualController<span class="s3">(</span><span class="s10">\bar, s, 4</span><span class="s3">);</span></p>
+<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a = </span>BMVirtualController<span class="s3">(</span><span class="s4">\bar</span><span class="s3">, s, 4);</span></p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.asBMInOutArray;</p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.free;</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span>mappings</b></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Returns an <a href="SC://IdentityDictionary"><span class="s16">IdentityDictionary</span></a> containing the current values and labels for this controller, in the form IdentityDictionary[\labels-&gt;this.getAllLabels, \faders-&gt;this.getAllValues]. Subclasses may override this to include additional parameters.</p>
+<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Returns an <a href="SC://IdentityDictionary"><span class="s12">IdentityDictionary</span></a> containing the current values and labels for this controller, in the form IdentityDictionary[\labels-&gt;this.getAllLabels, \faders-&gt;this.getAllValues]. Subclasses may override this to include additional parameters.</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span>mappings_ (mappings)</b></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Set this controllers values and labels. Subclasses may override this to include additional parameters.</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>mappings </b>- An <a href="SC://IdentityDictionary"><span class="s16">IdentityDictionary</span></a> containing the new values and labels for this controller, in the form IdentityDictionary[\labels-&gt;[ordered array of Strings], \faders-&gt;[ordered array of values].</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>mappings </b>- An <a href="SC://IdentityDictionary"><span class="s12">IdentityDictionary</span></a> containing the new values and labels for this controller, in the form IdentityDictionary[\labels-&gt;[ordered array of Strings], \faders-&gt;[ordered array of values].</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span>acceptsAutomation</b></p>
@@ -339,8 +333,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>With motorised controllers it is sometimes useful to calibrate their range. This method provides a hook for this. Controllers which have a calibration procedure should return a calibration duration in seconds and post relevant information during the process. The default implementation posts a message saying that no calibration is necessary and returns 0. Durations can be used as a wait value.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p8"><span class="s12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// calibrate all controllers in turn</p>
-<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>{ <span class="s17">BMAbstractController</span>.allControllers.do({<span class="s17">|ctrlr|</span> ctrlr.calibrate.wait;}); }.fork;</p>
+<p class="p8"><span class="s9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// calibrate all controllers in turn</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>{ <span class="s5">BMAbstractController</span>.allControllers.do({<span class="s5">|ctrlr|</span> ctrlr.calibrate.wait;}); }.fork;</p>
 <p class="p5"><span class="Apple-tab-span">	</span></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span>free</b></p>
@@ -348,13 +342,13 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Clean up this controller's resources. After calling this the object is unusable.</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
-<p class="p17"><b>Examples</b></p>
+<p class="p14"><b>Examples</b></p>
 <p class="p3"><br></p>
-<p class="p18">// what this example does</p>
-<p class="p19"><span class="s3">e = </span>BMAbstractController<span class="s3">.new;</span></p>
-<p class="p13">e.instanceMethod(someObject);</p>
-<p class="p13">e.cleanUp;</p>
+<p class="p15">// what this example does</p>
+<p class="p16"><span class="s3">e = </span>BMAbstractController<span class="s3">.new;</span></p>
+<p class="p12">e.instanceMethod(someObject);</p>
+<p class="p12">e.cleanUp;</p>
 <p class="p3"><br></p>
-<p class="p13">...</p>
+<p class="p12">...</p>
 </body>
 </html>
