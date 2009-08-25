@@ -19,7 +19,7 @@ BMTimeReferences {
 		ref.removeDependant(this);
 	}
 	
-	*timeReferences { ^timeReferences.keys }
+	*timeReferences { ^timeReferences.collect({|v, k| v[0] }); }
 	
 	*currentTime { |ref|
 		var dict;
