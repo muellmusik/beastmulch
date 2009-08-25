@@ -103,6 +103,37 @@ BMMultichannelPluginSpec {
 					plugin.attributes[\buffer].free;
 				}								// cleanupFunc
 			);
+			BMMultichannelPluginSpec('2D VBAP Panner', 				// name
+				{|plugin, numInputs, numOutputs, inputs, azimuth, spread, azimuthLag| 	// ugenGraphFunc
+					VBAP.ar(numOutputs, inputs, plugin.attributes[\buffer], azimuth.circleRamp(azimuthLag), 0, spread);
+				}, 								
+				(azimuth: [-180, 180, 'lin', 0.0,  0, " deg"].asSpec,
+				spread: [0, 100, 'lin', 0.0, 2, " %"].asSpec,
+				azimuthLag: [0, 1, 'lin', 0.0, 0.1, " sec"].asSpec
+				),				// specsDict
+				nil, 							// default GUI
+				('dead ahead': (azimuth: 0)), // presets
+				"Mono input 2D Vector Base Amplitude Panner",
+				nil, 							// defaultAttributes
+				nil,								// inRange
+				nil,								// outRange
+				{|plugin| 
+					var speakers;
+					speakers = plugin.outputs.collectAs({|out|
+						out.isBMSpeaker.not.if({
+							"VBAP output not a speaker".error;
+							^false;
+						});
+						out.azi;
+					}, Array);
+					speakers = VBAPSpeakerArray(2, speakers);
+					plugin.attributes[\buffer] = 
+						Buffer.loadCollection(plugin.server, speakers.getSetsAndMatrices);
+				},								// setupFunc
+				{|plugin|
+					plugin.attributes[\buffer].free;
+				}								// cleanupFunc
+			);
 			BMMultichannelPluginSpec('Stereo 3D VBAP Panner', 				// name
 				{|plugin, numInputs, numOutputs, inputs, azimuth, elevation, spread, azimuthLag, 
 					azimuthWidth, elevationWidth| 	// ugenGraphFunc
@@ -351,7 +382,40 @@ BMMultichannelPluginSpec {
 				}								// cleanupFunc
 			);
 			
-			BMMultichannelPluginSpec('Stereo Auto 3D VBAP Panner', 				// name
+			BMMultichannelPluginSpec('2D VBAP Auto Panner', 				// name
+				{|plugin, numInputs, numOutputs, inputs, spread, speed| 	// ugenGraphFunc
+					var azimuth;
+					azimuth = LFSaw.kr(speed.reciprocal).range(-180, 180);
+					VBAP.ar(numOutputs, inputs, plugin.attributes[\buffer], azimuth, 0, spread);
+				}, 								
+				(speed: [0.1, 20, 'lin', 0.0,  5, " sec"].asSpec, 
+				spread: [0, 100, 'lin', 0.0, 2, " %"].asSpec
+				),				// specsDict
+				nil, 							// default GUI
+				nil, // presets
+				"Mono input 2D Vector Base Amplitude Auto Panner",
+				nil, 							// defaultAttributes
+				nil,								// inRange
+				nil,								// outRange
+				{|plugin| 
+					var speakers;
+					speakers = plugin.outputs.collectAs({|out|
+						out.isBMSpeaker.not.if({
+							"VBAP output not a speaker".error;
+							^false;
+						});
+						out.azi;
+					}, Array);
+					speakers = VBAPSpeakerArray(2, speakers);
+					plugin.attributes[\buffer] = 
+						Buffer.loadCollection(plugin.server, speakers.getSetsAndMatrices);
+				},								// setupFunc
+				{|plugin|
+					plugin.attributes[\buffer].free;
+				}								// cleanupFunc
+			);
+			
+			BMMultichannelPluginSpec('Stereo 3D VBAP Auto Panner', 				// name
 				{|plugin, numInputs, numOutputs, inputs, elevation, spread, speed, 
 					azimuthWidth, elevationWidth| 	// ugenGraphFunc
 					var azdev, eldev;
@@ -619,7 +683,7 @@ BMMultichannelPlugin {
 	var gui;
 	
 	*new {|pluginSpecName, inArray, outArray, server, attributes|
-		^super.new.init(pluginSpecName, inArray, outArray, server ? Server.default, attributes);
+		^super.new.init(pluginSpecName, inArray.asBMInOutArray, outArray.asBMInOutArray, server ? Server.default, attributes);
 	}
 	
 	init { |argpluginSpecName, argins, argouts, argserver, argattributes|
