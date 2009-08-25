@@ -89,8 +89,6 @@ BMAbstractAudioChainElement {
 
 }
 
-// should all audio sources be timeReferences?
-// should they support a rudimentary clock here?
 BMAbstractAudioSource : BMAbstractAudioChainElement {
 
 //	// sources are not instantiated by the chain manager
