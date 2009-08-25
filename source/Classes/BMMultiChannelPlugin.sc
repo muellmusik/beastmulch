@@ -1016,24 +1016,24 @@ BMMultichannelPluginsRack : BMAbstractAudioChainElement {
 // Quickly hacked from BMTrimPluginRackGUI and stripGUI
 
 BMMultichannelPluginsRackGUI : BMAbstractGUI {
-	var trimPluginsRack, trimPluginsStripGUIs, defaultHelpString, descriptionHelpText;
+	var pluginsRack, pluginsStripGUIs, defaultHelpString, descriptionHelpText;
 	
-	*new {|trimPluginsRack, name, origin|
-		^super.new.init(trimPluginsRack, name ? trimPluginsRack.name)
+	*new {|pluginsRack, name, origin|
+		^super.new.init(pluginsRack, name ? pluginsRack.name)
 			.makeWindow(origin ? (40@200));
 	}
 	
-	init {|argtrimPluginsRack, argname|
-		trimPluginsRack = argtrimPluginsRack;
+	init {|argpluginsRack, argname|
+		pluginsRack = argpluginsRack;
 		name = argname;
-		trimPluginsStripGUIs = List.new;
+		pluginsStripGUIs = List.new;
 	}
 	
 	makeWindow {|origin|
 		var x, y, width, pluglist, numTypes, numStrips, stripGUIs, buttons;
 		x = origin.x;
 		y = origin.y;
-		//width = 4 + 210 + 4 + min(104 * trimPluginsRack.ins.size, 1078); // max 7 visible
+		//width = 4 + 210 + 4 + min(104 * pluginsRack.ins.size, 1078); // max 7 visible
 		width = 4 + 210 + 300;
 		window = SCWindow(name, Rect.new(x, y, width, 618), false);
 		window.view.decorator = FlowLayout(window.view.bounds);
@@ -1057,8 +1057,8 @@ BMMultichannelPluginsRackGUI : BMAbstractGUI {
 				});
 		});
 
-		trimPluginsStripGUIs.add(
-			BMMultichannelPluginsStripGUI(trimPluginsRack, window, trimPluginsRack.name)
+		pluginsStripGUIs.add(
+			BMMultichannelPluginsStripGUI(pluginsRack, window, pluginsRack.name)
 		);
 //		stripGUIs = SCScrollView(window, Rect(0, 0, width - 216, 508))
 //			.hasVerticalScroller_(false)
@@ -1067,9 +1067,9 @@ BMMultichannelPluginsRackGUI : BMAbstractGUI {
 //		//stripGUIs = SCHLayoutView(stripGUIs, Rect(4, 4, 104 * numStrips + 4, 500));
 //		stripGUIs = SCCompositeView(stripGUIs, Rect(4, 4, 104 * numStrips + 4, 500));
 //		stripGUIs.decorator = FlowLayout(stripGUIs.bounds, 0@0);
-//		//trimPluginsRack.inNames.do({|chanName|
-//			trimPluginsStripGUIs.add(
-//				BMMultichannelPluginsStripGUI(trimPluginsRack, stripGUIs, trimPluginsRack.name)
+//		//pluginsRack.inNames.do({|chanName|
+//			pluginsStripGUIs.add(
+//				BMMultichannelPluginsStripGUI(pluginsRack, stripGUIs, pluginsRack.name)
 //			);
 		//});
 		defaultHelpString = "Click names at left for description.\nDrag from left to add plugins.\nDouble-click or select and press enter to edit plugin settings.\nCmd down and up arrows to change order.\nCmd drag to copy trim or a plugin and its settings to another channel.";
@@ -1092,21 +1092,21 @@ BMMultichannelPluginsRackGUI : BMAbstractGUI {
 //			.string_("APi")
 //			.font_(Font("Helvetica-Bold", 8))
 //			.colorOn_(Color.white.alpha_(0.2))
-//			.action_({|v|v.value.if{trimPluginsRack.autoPlugins}});
+//			.action_({|v|v.value.if{pluginsRack.autoPlugins}});
 //		TriggerView(buttons, Rect(0, 0, 20, 20))
 //			.string_("ATr")
 //			.font_(Font("Helvetica-Bold", 8))
 //			.colorOn_(Color.white.alpha_(0.2))
-//			.action_({|v| v.value.if{trimPluginsRack.autoTrim}});
+//			.action_({|v| v.value.if{pluginsRack.autoTrim}});
 //		TriggerView(buttons, Rect(0, 0, 20, 20))
 //			.string_("dT")
 //			.font_(Font("Helvetica-Bold", 12))
 //			.colorOn_(Color.white.alpha_(0.2))
-//			.action_({|v|v.value.if{trimPluginsRack.delayCompensateDistance}});
+//			.action_({|v|v.value.if{pluginsRack.delayCompensateDistance}});
 
 		window.onClose = { 
-			trimPluginsStripGUIs.do({|tpisg|
-				tpisg.trimPluginsStrip.removeDependant(tpisg);
+			pluginsStripGUIs.do({|tpisg|
+				tpisg.pluginsStrip.removeDependant(tpisg);
 			});	
 			onClose.value(this);
 		};
@@ -1116,15 +1116,15 @@ BMMultichannelPluginsRackGUI : BMAbstractGUI {
 
 // only in a larger GUI
 BMMultichannelPluginsStripGUI {
-	var <trimPluginsStrip, containerView, ezKnob, labelView, listView;
+	var <pluginsStrip, containerView, ezKnob, labelView, listView;
 	
-	*new { |trimPluginsStrip, parent, name, origin|
-		^super.new.init(trimPluginsStrip, parent).makeGUI(parent, name, origin ? 0@0);
+	*new { |pluginsStrip, parent, name, origin|
+		^super.new.init(pluginsStrip, parent).makeGUI(parent, name, origin ? 0@0);
 	 }
 	 
-	 init {|argtrimPluginsStrip|
-	 	trimPluginsStrip = argtrimPluginsStrip;
-	 	trimPluginsStrip.addDependant(this);
+	 init {|argpluginsStrip|
+	 	pluginsStrip = argpluginsStrip;
+	 	pluginsStrip.addDependant(this);
 	 }
 	 
 	 makeGUI{|parent, name, origin|
@@ -1136,27 +1136,27 @@ BMMultichannelPluginsStripGUI {
 //	 		.background_(Color.grey.alpha_(0.3))
 //	 		.string_(" " ++ name);
 //	 	ezKnob = EZKnob(containerView, 50@20, " Trim (dBFS)", \db.asSpec, 
-//	 		{|ez| trimPluginsStrip.trim_(ez.value);}, trimPluginsStrip.trim, false, 96, 70);
+//	 		{|ez| pluginsStrip.trim_(ez.value);}, pluginsStrip.trim, false, 96, 70);
 //	 	ezKnob.labelView.align_(\left).font_(Font("Helvetica-Bold", 12));
 //	 	ezKnob.numberView.background_(Color.white.alpha_(0.3));
 	 	listView = SCListView(containerView, Rect(0, 0, 300, 508))
-	 		.items_(trimPluginsStrip.plugins.collect({|plugin| plugin.spec.name}));
+	 		.items_(pluginsStrip.plugins.collect({|plugin| plugin.spec.name}));
 	 	listView.enterKeyAction = {
 	 		var plgin;
-	 		plgin = trimPluginsStrip.plugins[listView.value];
+	 		plgin = pluginsStrip.plugins[listView.value];
 	 		plgin.notNil.if({plgin.gui}); 
 	 	}; // can duplicate
 	 	listView.keyDownAction = { arg view,char,modifiers,unicode,keycode;
 	 		block { |break|
 				if((modifiers == 11534600) && (unicode == 63233), {
-					trimPluginsStrip.movePluginDown(listView.value);
+					pluginsStrip.movePluginDown(listView.value);
 					break.value;
 				});
 				if((modifiers == 11534600) && (unicode == 63232), {
-					trimPluginsStrip.movePluginUp(listView.value);
+					pluginsStrip.movePluginUp(listView.value);
 					break.value;
 				});
-				if(unicode == 127, {trimPluginsStrip.removePlugin(listView.value)});
+				if(unicode == 127, {pluginsStrip.removePlugin(listView.value)});
 				listView.defaultKeyDownAction(char,modifiers,unicode);
 			}
 		};
@@ -1169,22 +1169,22 @@ BMMultichannelPluginsStripGUI {
 		listView.receiveDragHandler = {
 			var piName;
 			piName = SCView.currentDrag;
-			BMSelectInsOutsGUI(parent, trimPluginsStrip.ins, trimPluginsStrip.outs, {|ins, outs|
+			BMSelectInsOutsGUI(parent, pluginsStrip.ins, pluginsStrip.outs, {|ins, outs|
 				var plugin;
 				//ins.postln;
 				//outs.postln;
 				plugin = BMMultichannelPlugin(piName, ins, outs, 
-					trimPluginsStrip.server);
+					pluginsStrip.server);
 				// protect against bad plugin inputs
-				plugin.notNil.if({trimPluginsStrip.addPlugin(plugin)});
+				plugin.notNil.if({pluginsStrip.addPlugin(plugin)});
 			});
 		};
-		listView.beginDragAction = { trimPluginsStrip.plugins[listView.value].copy };
+		listView.beginDragAction = { pluginsStrip.plugins[listView.value].copy };
 	 }
 	 
 	 update {|tpv, what|
-	 	//if(what == \trim, {ezKnob.value = trimPluginsStrip.trim;});
-	 	listView.items_(trimPluginsStrip.plugins.collect({|plugin| plugin.spec.name}));
+	 	//if(what == \trim, {ezKnob.value = pluginsStrip.trim;});
+	 	listView.items_(pluginsStrip.plugins.collect({|plugin| plugin.spec.name}));
 	 	switch(what,
 	 		\moveDown, {listView.value = listView.value + 1},
 	 		\moveUp, {listView.value = listView.value - 1}
