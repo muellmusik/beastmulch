@@ -261,6 +261,7 @@ BMControl {
 	
 	controllerSpec { ^controller.spec }
 	
+	// experimental
 	displaySpec { ^mappedTo.asSpec }
 }
 
