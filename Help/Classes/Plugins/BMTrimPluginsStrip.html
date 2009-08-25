@@ -10,7 +10,7 @@
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000ff}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001bec}
 p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
 p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
@@ -18,14 +18,16 @@ p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helve
 p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p10 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
 p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
-p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0000ff}
-span.s3 {color: #000000}
-span.s4 {color: #007300}
-span.s5 {color: #0000bf}
+span.s2 {text-decoration: underline ; color: #001bec}
+span.s3 {color: #001dfd}
+span.s4 {color: #000000}
+span.s5 {text-decoration: underline}
+span.s6 {color: #0000ff}
+span.s7 {color: #007300}
+span.s8 {color: #0000bf}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -34,11 +36,11 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p1"><b>Inherits from: Object</b></p>
 <p class="p3"><br></p>
-<p class="p1"><span class="s2"><a href="BMTrimPluginsStrip.html">BMTrimPluginsStrip</a></span> manages trim and plugin settings for an individual channel of a <a href="BMTrimPluginsRack.html"><span class="s2">BMTrimPluginsRack</span></a>. Trim settings are applied to the input signal first, and then each plugin in the specified order.</p>
+<p class="p1"><span class="s2"><a href="BMTrimPluginsStrip.html">BMTrimPluginsStrip</a></span> manages trim and plugin settings for an individual channel of a <a href="BMTrimPluginsRack.html"><span class="s3">BMTrimPluginsRack</span></a>. Trim settings are applied to the input signal first, and then each plugin in the specified order.</p>
 <p class="p2"><br></p>
 <p class="p1"><b>N.B.</b> Under normal circumstances you would not create instances of these directly, rather they would be created for you by a BMTrimPluginsRack, and you would access them using its <b>at</b> method. (See examples below). Thus only user relevant methods are documented here.</p>
 <p class="p2"><br></p>
-<p class="p4"><span class="s3"><b>See also:</b> <a href="BMTrimPluginsRack.html">BMTrimPluginsRack</a>, <a href="BMPlugin.html">BMPlugin</a>, <a href="BMTrimPluginsStripGUI.html">BMTrimPluginsStripGUI</a></span></p>
+<p class="p4"><span class="s4"><b>See also:</b> <a href="BMTrimPluginsRack.html"><span class="s5">BMTrimPluginsRack</span></a>, <a href="BMPlugin.html"><span class="s5">BMPlugin</span></a>, <a href="BMTrimPluginsStripGUI.html"><span class="s5">BMTrimPluginsStripGUI</span></a></span></p>
 <p class="p2"><br></p>
 <p class="p5"><b>Accessing Instance and Class Variables</b></p>
 <p class="p6"><span class="Apple-tab-span">	</span></p>
@@ -49,26 +51,26 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>plugins</b></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Returns a List of this strips BMPlugin instances in the order in which they are applied to the signal.</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Returns a List of this strip's <a href="BMPlugin.html"><span class="s6">BMPlugin</span></a> instances in the order in which they are applied to the signal.</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p5"><b>Instance methods</b></p>
 <p class="p8"><br></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>clear</b></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Remove all plugins for this strip.</p>
+<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Remove all plugins from this strip.</p>
 <p class="p9"><br></p>
 <p class="p9"><br></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>addPlugin (plugin)</b></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span></b></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Add a plugin to this strip, at the end of its chain of plugins.</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>plugin </b>- A <a href="BMPlugin.html"><span class="s2">BMPlugin</span></a>.</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>plugin </b>- A <a href="BMPlugin.html"><span class="s3">BMPlugin</span></a>.</p>
 <p class="p9"><br></p>
 <p class="p9"><br></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>removePlugin (indexOrPlugin)</b></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span></b></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Remove a plugin from this strip's chain of plugins.</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>indexOrPlugin </b>- Either the index of the plugin to remove or the <a href="BMPlugin.html"><span class="s2">BMPlugin</span></a> itself.</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>indexOrPlugin </b>- Either the index of the plugin to remove or the <a href="BMPlugin.html"><span class="s3">BMPlugin</span></a> itself.</p>
 <p class="p9"><br></p>
 <p class="p9"><br></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>movePluginUp (index)</b></p>
@@ -87,32 +89,32 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><br></p>
 <p class="p11">// 5.1 Array</p>
 <p class="p12">(</p>
-<p class="p12">l = [[-30, <span class="s4">'L'</span>], [30, <span class="s4">'R'</span>], [0, <span class="s4">'C'</span>], [-110, <span class="s4">'Ls'</span>], [110, <span class="s4">'Rs'</span>]].collectAs({<span class="s5">|el, i|</span></p>
-<p class="p12"><span class="Apple-tab-span">	</span><span class="s5">BMSpeaker</span>.newFromSpherical(el[1], i, el[0], 0, 2);</p>
-<p class="p13"><span class="s3">}, </span>BMInOutArray<span class="s3">);</span></p>
+<p class="p12">l = [[-30, <span class="s7">'L'</span>], [30, <span class="s7">'R'</span>], [0, <span class="s7">'C'</span>], [-110, <span class="s7">'Ls'</span>], [110, <span class="s7">'Rs'</span>]].collectAs({<span class="s8">|el, i|</span></p>
+<p class="p12"><span class="Apple-tab-span">	</span><span class="s8">BMSpeaker</span>.newFromSpherical(el[1], i, el[0], 0, 2);</p>
+<p class="p13"><span class="s4">}, </span>BMInOutArray<span class="s4">);</span></p>
 <p class="p12">)</p>
-<p class="p14"><br></p>
-<p class="p13"><span class="s3">r = </span>BMTrimPluginsRack<span class="s3">(l, name: </span><span class="s4">'Plug em In'</span><span class="s3">);</span></p>
-<p class="p14"><br></p>
-<p class="p11"><span class="s3">r[</span><span class="s4">\L</span><span class="s3">]; </span>// get the BMTrimPluginsStrip for 'L'</p>
-<p class="p14"><br></p>
+<p class="p3"><br></p>
+<p class="p13"><span class="s4">r = </span>BMTrimPluginsRack<span class="s4">(l, name: </span><span class="s7">'Plug em In'</span><span class="s4">);</span></p>
+<p class="p3"><br></p>
+<p class="p11"><span class="s4">r[</span><span class="s7">\L</span><span class="s4">]; </span>// get the BMTrimPluginsStrip for 'L'</p>
+<p class="p3"><br></p>
 <p class="p11">// plugins are added at the end of the chain</p>
-<p class="p12">r[<span class="s4">\L</span>].addPlugin(<span class="s5">BMPlugin</span>(<span class="s4">'3 Band EQ'</span>));</p>
-<p class="p12">r[<span class="s4">\L</span>].addPlugin(<span class="s5">BMPlugin</span>(<span class="s4">\Highpass</span>));</p>
-<p class="p12">r[<span class="s4">\L</span>].addPlugin(<span class="s5">BMPlugin</span>(<span class="s4">\Lowpass</span>));</p>
-<p class="p11"><span class="s3">r[</span><span class="s4">\L</span><span class="s3">].plugins; </span>// check order</p>
-<p class="p14"><br></p>
+<p class="p12">r[<span class="s7">\L</span>].addPlugin(<span class="s8">BMPlugin</span>(<span class="s7">'3 Band EQ'</span>));</p>
+<p class="p12">r[<span class="s7">\L</span>].addPlugin(<span class="s8">BMPlugin</span>(<span class="s7">\Highpass</span>));</p>
+<p class="p12">r[<span class="s7">\L</span>].addPlugin(<span class="s8">BMPlugin</span>(<span class="s7">\Lowpass</span>));</p>
+<p class="p11"><span class="s4">r[</span><span class="s7">\L</span><span class="s4">].plugins; </span>// check order</p>
+<p class="p3"><br></p>
 <p class="p11">// but you can move them</p>
-<p class="p12">r[<span class="s4">\L</span>].movePluginUp(2);</p>
-<p class="p12">r[<span class="s4">\L</span>].movePluginDown(0);</p>
-<p class="p11"><span class="s3">r[</span><span class="s4">\L</span><span class="s3">].plugins; </span>// check order</p>
-<p class="p14"><br></p>
+<p class="p12">r[<span class="s7">\L</span>].movePluginUp(2);</p>
+<p class="p12">r[<span class="s7">\L</span>].movePluginDown(0);</p>
+<p class="p11"><span class="s4">r[</span><span class="s7">\L</span><span class="s4">].plugins; </span>// check order</p>
+<p class="p3"><br></p>
 <p class="p11">// remove by index</p>
-<p class="p12">r[<span class="s4">\L</span>].removePlugin(0);</p>
-<p class="p12">r[<span class="s4">\L</span>].plugins;</p>
-<p class="p14"><br></p>
-<p class="p11"><span class="s3">r.gui; </span>// play with the GUI</p>
-<p class="p14"><br></p>
+<p class="p12">r[<span class="s7">\L</span>].removePlugin(0);</p>
+<p class="p12">r[<span class="s7">\L</span>].plugins;</p>
+<p class="p3"><br></p>
+<p class="p11"><span class="s4">r.gui; </span>// play with the GUI</p>
+<p class="p3"><br></p>
 <p class="p12">r.free;</p>
 </body>
 </html>
