@@ -54,8 +54,18 @@ BMAbstractAudioChainElement {
 	}
 	
 	*initClass {
-		allChainElements = ();
+		allChainElements = IdentityDictionary.new;
 	}
+	
+	mappings {
+		
+	}
+	
+	mappings_ {|mappings|
+		
+	}
+	
+	asBMInOutArray { ^outs }
 	
 	// this should return an instance of our default GUI class
 	// which builds the window itself
@@ -73,7 +83,7 @@ BMAbstractAudioChainElement {
 	
 	makeName { ^(this.class.name ++ UniqueID.next).asSymbol} 
 	
-	release { allChainElements[name] = nil}
+	free { group.notNil.if({group.free}); allChainElements[name] = nil}
 	
 	loadPiece { } // do nothing by default
 
@@ -92,16 +102,6 @@ BMAbstractAudioSource : BMAbstractAudioChainElement {
 ////	*new { |target, addAction = \addToHead, name| 
 ////		^super.new.init(target, addAction, name);
 ////	}
-	
-	asBMInOutArray { ^this.subclassResponsibility(thisMethod);}
-	
-	mappings {
-		
-	}
-	
-	mappings_ {|mappings|
-		
-	}
 	
 	// experimental time ref support
 	play { ^nil }
