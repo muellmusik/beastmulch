@@ -92,7 +92,7 @@ BMSpeaker {
 	printOn { arg stream; stream << this.class.name << "(" <<* [name, index, spec.name] << ")" }
 	
 	// update any changes in spec
-	initFromArchive { spec = BMSpeakerSpec.specs[spec.asSymbol] ?? BMSpeakerSpec.specs['Generic'] }
+	initFromArchive { spec = BMSpeakerSpec.specs[spec.name] ?? BMSpeakerSpec.specs['Generic'] }
 }
 
 // Wrapper class for managing specs for different speaker models
