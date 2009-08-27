@@ -1,7 +1,7 @@
 BMSpeakerArrayGUI : BMAbstractGUI {
 
 	var outputArray, okayFunc;
-	var speakerListCompView, speakerList, instanceVarsBoxes, subarraysWindow;
+	var speakerListCompView, speakerList, instanceVarsBoxes, specText, subarraysWindow;
 	var speakerButtonsView, deleteButton, upButton, downButton, importPopUpMenu, okButton;
 	
 	
@@ -55,6 +55,7 @@ BMSpeakerArrayGUI : BMAbstractGUI {
 			 						 	value = speaker.perform(key);
 			 						 	if (key == \index) { value = value + 1  };
 			 						 	instanceVarsBoxes[key].value = value };
+			 						 specText.string_(speaker.spec.name.asString);
 			 					   }
 			 					   {  
 			 					     instanceVarsBoxes
@@ -63,6 +64,7 @@ BMSpeakerArrayGUI : BMAbstractGUI {
 			 						 		{ instanceVarsBoxes[key].value = view.item }
 			 						 		{ instanceVarsBoxes[key].value = "" }
 			 						 };
+			 						 specText.string_("");
 			 					   }
 			 				   }
 			 					 						       				   { instanceVarsBoxes
@@ -185,8 +187,14 @@ BMSpeakerArrayGUI : BMAbstractGUI {
 						   Event
 						   );
 		
+		SCStaticText(speakerVarsView, 54 @ 20)
+			.string_("Spec:")
+			.font_(Font("Helvetica", 12));
+		specText = SCStaticText(speakerVarsView, 82 @ 20)
+			.font_(Font("Helvetica", 12));
+			
 		speakerList.doAction;
-		speakerVarsView.decorator.shift(0, 86); 
+		speakerVarsView.decorator.shift(0, 62); 
 		RoundButton(speakerVarsView, 140 @ 20)
 			   .extrude_(false).canFocus_(false) 
 			   .states_([[ "Subarrays", Color.black, Color.white.alpha_(0.8) ]])
