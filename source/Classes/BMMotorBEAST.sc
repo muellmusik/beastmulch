@@ -52,8 +52,8 @@ BMMotorBEAST : BMAbstractController {
 		var lowError = 0.003, hiError = 0.02;
 		
 		
-		lowError = spec[0].map(lowError).asInteger;
-		hiError = spec[0].map(hiError).asInteger;
+		lowError = spec.map(lowError).asInteger;
+		hiError = spec.map(hiError).asInteger;
 		
 		// take worst of 4 tries
 		lows = 1 ! 32;
@@ -88,8 +88,11 @@ BMMotorBEAST : BMAbstractController {
 			
 			
 			});
-			("Low Values: " ++ lows.collect({|val, i| spec[i].unmap(val); })).postln;
-			("\nHigh Values: " ++ highs.collect({|val, i| spec[i].unmap(val); })).postln;
+			("Low Values: " ++ lows.collect({|val, i| 
+				spec.map(val.linlin(*calibrationRanges[i])) 
+			})).postln;
+			("\nHigh Values: " ++ highs.collect({|val, i| 				spec.map(val.linlin(*calibrationRanges[i])) 
+			})).postln;
 			calibrationRanges = Array.fill(32, {|i| 
 				[lows[i] + lowError, highs[i] - hiError, 0.0, 1.0] 
 			});
@@ -131,7 +134,7 @@ BMMotorBEAST : BMAbstractController {
 	setVal { |controlNum, val| 
 		var cal;
 		cal = calibrationRanges[controlNum - 1];
-		addr.sendMsg("/MF/" ++ (controlNum - 1), spec.unmap(val.linlin(*cal[[2, 3, 0, 1]])).asInteger) 
+		addr.sendMsg("/MF/" ++ (controlNum - 1), spec.unmap(val).linlin(*cal[[2, 3, 0, 1]]).asInteger) 
 		//addr.sendMsg("/MF", *(valueArray.copy[controlNum - 1] = spec.map(val).asInteger))
 	}
 	
@@ -139,7 +142,7 @@ BMMotorBEAST : BMAbstractController {
 	
 	// 32 faders
 	setAllValues {|array|
-		addr.sendMsg("/MF", *(array.collect({|val, i| spec.unmap(val.linlin(*calibrationRanges[i][[2, 3, 0, 1]])).asInteger})))
+		addr.sendMsg("/MF", *(array.collect({|val, i| spec.unmap(val).linlin(*calibrationRanges[i][[2, 3, 0, 1]]).asInteger})))
 	}
 	
 	// for faders
