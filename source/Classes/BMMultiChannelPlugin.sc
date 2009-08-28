@@ -26,10 +26,7 @@
 
 // ---------
 
-// To do:
-// Does default gui work? Yes
-// Copy specsDict in plugin so that they can be adjusted according to inputs, etc.?
-// 	- eg in VBAP clip elevation based on available speakers
+
 
 BMMultichannelPluginSpec {
 	classvar <specs, defaultGuiFunc;
@@ -71,19 +68,29 @@ BMMultichannelPluginSpec {
 		// define some plugin specs
 		StartUp.add({ 
 			specs = IdentityDictionary.new;
-			BMMultichannelPluginSpec('Equal-power Crossfade Sequence', // name
+			BMMultichannelPluginSpec('Equal-power Xfade Seq', // name
 				{|plugin, numInputs, numOutputs, inputs, position, width| // ugenGraphFunc
-					PanAz.ar(numOutputs, inputs[0], position * 2.0, 1, width, 0.0);
+					PanAz.ar(
+						numOutputs, 
+						inputs, 
+						position * 2.0, 
+						1, 
+						width, 
+						0.0
+					);
 				}, 								
 				(position: [0.0, 1.0, 'lin', 0.0, 0.0].asSpec, // specsDict
-				width: [1.0, 2.0, 'lin', 0.0,  0.0].asSpec
+				width: nil // placeholder
 				),				
 				nil, 							// use default GUI
 				nil, 							// presets
-				"Spread input channels across stereo", // description
+				"Crossfade a signal through a looped sequence of channels\nOrder corresponds with order of outputs\nPosition cycles between 0 and 1\nWidth is number of channels simultaneously active, i.e. 2 = stereo", // description
 				nil, 							// use defaultAttributes
 				[1, 1],						// inRange
-				[2, inf]						// outRange						
+				[2, inf],						// outRange
+				{|plugin|						// setup
+					plugin.specsDict[\width] = [2.0, plugin.numOutputs, 'lin', 0.0,  2.0].asSpec;
+				}		
 			);
 			
 			BMMultichannelPluginSpec('Splay Stereo', // name
