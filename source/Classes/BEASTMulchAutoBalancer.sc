@@ -91,7 +91,8 @@ BMAutoBalancer {
 		SynthDef("BMAutoBalance", {|out, in = 0, amp = 0.3, id|
 			var max, trig;
 			trig = Impulse.ar(0);
-			Out.ar(out, PinkNoise.ar(amp) * EnvGen.kr(Env.linen, timeScale: 0.3));
+			// Pink noise from 100 - 4000 Hz
+			Out.ar(out, BPF.ar(PinkNoise.ar(amp), 1950, 2) * EnvGen.kr(Env.linen, timeScale: 0.3));
 			max = RunningMax.ar(RunningSum.ar(SoundIn.ar(in).squared));
 			SendReply.ar(DelayN.ar(trig, 0.3, 0.3), 'BM-AutoBalance', [max], id);
 			FreeSelf.kr(DelayN.ar(trig, 0.35, 0.35)); // slightly later
