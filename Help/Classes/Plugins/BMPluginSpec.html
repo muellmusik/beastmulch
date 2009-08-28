@@ -25,11 +25,11 @@ p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #007300}
 p.p17 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #002afb}
-span.s3 {color: #001dfd}
+span.s2 {color: #0034f9}
+span.s3 {color: #002afb}
 span.s4 {color: #000000}
 span.s5 {font: 12.0px Helvetica}
-span.s6 {color: #0000ff}
+span.s6 {color: #001dfd}
 span.s7 {font: 12.0px Helvetica; color: #000000}
 span.s8 {color: #007300}
 span.s9 {color: #0000bf}
@@ -62,12 +62,12 @@ span.Apple-tab-span {white-space:pre}
 <p class="p8"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Create a new BMPluginSpec and add it to <b>*specs</b>. If a spec with this <b>name</b> already exists it will be replaced.</p>
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>name </b>- A <a href="SC://Symbol"><span class="s2">Symbol</span></a> indicating the name of this plugin spec, e.g. 'Hipass' or 'Freeverb'.</p>
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>ugenGraphFunc </b>- A <a href="SC://Function"><span class="s2">Function</span></a> detailing this spec's processing chain. This will be passed the BMPlugin instance and the input signal as its first two arguments. Additional arguments will result in instances of <a href="SC://Control"><span class="s2">Control</span></a> being created.</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>specsDict </b>- A <a href="SC://Dictionary"><span class="s2">Dictionary</span></a> or subclass matching <a href="SC://Control"><span class="s2">Control</span></a> names as keys with instances of <a href="SC://ControlSpec"><span class="s2">ControlSpec</span></a>. These will be used in GUI construction.</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>specsDict </b>- A <a href="SC://Dictionary"><span class="s2">Dictionary</span></a> or subclass matching <a href="SC://Control"><span class="s2">Control</span></a> names as keys with instances of <a href="SC://ControlSpec"><span class="s2">ControlSpec</span></a>. Plugins will make a copy of this which can be modified in their <b>setupFunc (</b>see below). These will be used in GUI construction.</p>
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>guiFunc </b>- An optional <a href="SC://Function"><span class="s2">Function</span></a> which will be used to create GUIs for plugin instances using this spec. This Function will be passed the plugin instance as an argument, and should return the GUI's window. If nil is passed here, a default GUI Function will be used.</p>
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>presets </b>- An optional <a href="SC://Dictionary"><span class="s2">Dictionary</span></a> or subclass providing parameter presets. Keys are Symbols indicating preset names, values are Dictionaries or subclasses matching Control names to values.</p>
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>description </b>- A <a href="SC://String"><span class="s2">String</span></a> to serve as human readable description of this spec.</p>
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>defaultAttributes </b>- Plugin specs can optionally provide a set of overridable attributes which will can serve as settings or inputs to their <b>ugenGraphFunc</b>, <b>guiFunc</b>, <b>setupFunc</b>, and <b>cleanupFunc</b>. This should be a <a href="SC://Dictionary"><span class="s2">Dictionary</span></a> or subclass containing key value pairs. Users can override these defaults by passing a Dictionary or subclass as the <b>attributes </b>argument to <b>BMPlugin:new</b>.<span class="Apple-converted-space"> </span></p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>setupFunc </b>- An optional <a href="SC://Function"><span class="s2">Function</span></a> that will be evaluated when a plugin instance is made. It will be passed the plugin instance as an argument. It can store any objects created in <b>attributes</b> for use by the <b>ugenGraphFunc</b>, <b>guiFunc</b>, or <b>cleanUpFunc</b>.</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>setupFunc </b>- An optional <a href="SC://Function"><span class="s2">Function</span></a> that will be evaluated when a plugin instance is made. It will be passed the plugin instance as an argument. It can store any objects created in <b>attributes</b> for use by the <b>ugenGraphFunc</b>, <b>guiFunc</b>, or <b>cleanUpFunc</b>. It can also do things like modify the plugin's local copy of the <b>specsDict</b>.</p>
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>cleanupFunc </b>- An optional <a href="SC://Function"><span class="s2">Function</span></a> that will be evaluated when a plugin instance is released. It will be passed the plugin instance as an argument.</p>
 <p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p7"><br></p>
@@ -110,7 +110,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span>specsDict</b></p>
 <p class="p9"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Returns this spec's <b>specsDict</b> (see above).</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Returns this spec's <b>specsDict</b> (see above). Plugins may customize specDicts in their <b>setupFunc</b>, so when working with a plugin, use its <b>specsDict</b> getter method rather than this.</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span>guiFunc</b></p>
 <p class="p9"><b><span class="Apple-tab-span">	</span></b></p>

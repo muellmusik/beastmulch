@@ -172,15 +172,16 @@ BMPluginSpec {
 		// or maybe in app
 		});
 		defaultGuiFunc = {|plugin|
-			var numSliders, spec, window, presetMenu, sliders;
+			var numSliders, spec, specsDict, window, presetMenu, sliders;
 			spec = plugin.spec;
-			numSliders = spec.specsDict.size;
+			specsDict = plugin.specsDict;
+			numSliders = specsDict.size;
 			window = SCWindow.new("Plugin:" + spec.name, 
 				Rect(300, 300, 552, (numSliders + 1) * 24 + 24), false); // 508
 			window.view.decorator = FlowLayout(window.view.bounds);
 			window.view.background = Color.rand.alpha_(0.3);
 			sliders = ();
-			spec.specsDict.sortedKeysValuesDo({|key, cspec|
+			specsDict.sortedKeysValuesDo({|key, cspec|
 				var initVal;
 				initVal = plugin.get(key);
 				(cspec.units == " dB" && plugin.attributes[\usesLinearAmp]).if({ 
@@ -226,7 +227,7 @@ BMPluginSpec {
 
 // Class which manages resources for a plugin instance
 BMPlugin {
-	var <spec, <server, <attributes, <defName, <def;
+	var <spec, <server, <attributes, <defName, <def, <specsDict;
 	var <synth, <values, defaultValues, <bus, numControls, controlNames, mappings;
 	var <preset;
 	var gui;
@@ -249,6 +250,7 @@ BMPlugin {
 			("Plugin spec" + argpluginSpecName + "does not exist!").warn;
 			^nil;
 		});
+		specsDict = spec.specsDict.deepCopy;
 		server = argserver;
 		attributes = spec.defaultAttributes.copy;
 		argattributes.notNil.if({attributes.putAll(argattributes)}); // local settings override
@@ -260,7 +262,7 @@ BMPlugin {
 		def.allControlNames.reject({|cn| (cn.name == \i_in) || (cn.name == \cfgate)}).do({|cn| 
 			var size, startVal, controlspec;
 			size = cn.defaultValue.size;
-			controlspec = spec.specsDict[cn.name];
+			controlspec = specsDict[cn.name];
 			// take defaults from the control name if no spec supplied. Hmm... maybe not?
 			controlspec.isNil.if({Error("No spec for Control:" + cn.name).throw; });
 			startVal = controlspec.default;

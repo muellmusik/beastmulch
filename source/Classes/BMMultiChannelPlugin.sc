@@ -70,7 +70,73 @@ BMMultichannelPluginSpec {
 	*initClass {
 		// define some plugin specs
 		StartUp.add({ 
-			specs = ();
+			specs = IdentityDictionary.new;
+			BMMultichannelPluginSpec('Equal-power Crossfade Sequence', // name
+				{|plugin, numInputs, numOutputs, inputs, position, width| // ugenGraphFunc
+					PanAz.ar(numOutputs, inputs[0], position * 2.0, 1, width, 0.0);
+				}, 								
+				(position: [0.0, 1.0, 'lin', 0.0, 0.0].asSpec, // specsDict
+				width: [1.0, 2.0, 'lin', 0.0,  0.0].asSpec
+				),				
+				nil, 							// use default GUI
+				nil, 							// presets
+				"Spread input channels across stereo", // description
+				nil, 							// use defaultAttributes
+				[1, 1],						// inRange
+				[2, inf]						// outRange						
+			);
+			
+			BMMultichannelPluginSpec('Splay Stereo', // name
+				{|plugin, numInputs, numOutputs, inputs, spread, center| // ugenGraphFunc
+					Splay.ar(inputs, spread, 1, center);
+				}, 								
+				(spread: [0.0, 1.0, 'lin', 0.0, 1].asSpec,		// specsDict
+				center: [-1.0, 1.0, 'lin', 0.0,  0.0].asSpec
+				),				
+				nil, 												// use default GUI
+				nil, 							// presets
+				"Spread input channels across stereo", // description
+				nil, 								// use defaultAttributes
+				[2, inf],						// inRange
+				[2, 2]						// outRange						
+			);
+			BMMultichannelPluginSpec('Splay Ring', // name
+				{|plugin, numInputs, numOutputs, inputs, spread, center, orientation| // ugenGraphFunc
+					SplayAz.ar(numOutputs, inputs, spread, 1,2, center, orientation);
+				}, 								
+				(spread: [0.0, 1.0, 'lin', 0.0, 1].asSpec,		// specsDict
+				center: [-1.0, 1.0, 'lin', 0.0,  0.0].asSpec,
+				orientation: [0.0, 1.0, 'lin', 0.0,  0.5].asSpec
+				),				
+				nil, 												// use default GUI
+				nil, 							// presets
+				"Spread input channels around a ring\nOutputs should be in clockwise order\nOrientation 0 means centre is output 1, 1 means centre is output 2", // description
+				nil, 								// use defaultAttributes
+				[2, inf],						// inRange
+				[2, 2]						// outRange						
+			);
+			BMMultichannelPluginSpec('FreeVerb Ring', // name
+				{|plugin, numInputs, numOutputs, inputs, mix, room, damp, blend| // ugenGraphFunc
+					inputs.collect({|chan, i|
+						FreeVerb.ar(chan + (inputs.wrapAt(i + [1, -1]) * blend), 
+							mix, 
+							room, 
+							damp
+						);
+					});
+				}, 								
+				(mix: [0.0, 1.0, 'lin', 0.0,  0.33].asSpec,		// specsDict
+				room: [0.0, 1.0, 'lin', 0.0,  0.5].asSpec,
+				damp: [0.0, 1.0, 'lin', 0.0,  0.5].asSpec,
+				blend: [0.0, 1.0, 'lin', 0.0,  0.25].asSpec
+				),				
+				nil, 												// use default GUI
+				nil, 							// presets
+				"A very simple ring reverb using FreeVerb\n Inputs and outputs should be in clockwise order and the same size\nMixes in blend of adjacent channels",	// description
+				nil, 								// use defaultAttributes
+				[3, inf],								// inRange
+				[3, inf]								// outRange						
+			);
 			BMMultichannelPluginSpec('3D VBAP Panner', 				// name
 				{|plugin, numInputs, numOutputs, inputs, azimuth, elevation, spread, azimuthLag| 	// ugenGraphFunc
 					VBAP.ar(numOutputs, inputs, plugin.attributes[\buffer], azimuth.circleRamp(azimuthLag), elevation, spread);
@@ -613,15 +679,16 @@ BMMultichannelPluginSpec {
 		// or maybe in app
 		});
 		defaultGuiFunc = {|plugin|
-			var numSliders, spec, window, presetMenu, sliders;
+			var numSliders, spec, specsDict, window, presetMenu, sliders;
 			spec = plugin.spec;
-			numSliders = spec.specsDict.size;
+			specsDict = plugin.specsDict;
+			numSliders = specsDict.size;
 			window = SCWindow.new("Plugin:" + spec.name, 
 				Rect(300, 300, 552, (numSliders + 1) * 24 + 24), false); // 508
 			window.view.decorator = FlowLayout(window.view.bounds);
 			window.view.background = Color.rand.alpha_(0.3);
 			sliders = ();
-			spec.specsDict.sortedKeysValuesDo({|key, cspec|
+			specsDict.sortedKeysValuesDo({|key, cspec|
 				var initVal;
 				initVal = plugin.get(key);
 				(cspec.units == " dB" && plugin.attributes[\usesLinearAmp]).if({ 
@@ -676,7 +743,7 @@ BMMultichannelPluginSpec {
 
 // Class which manages resources for a plugin instance
 BMMultichannelPlugin {
-	var <spec, <server, <attributes, <defName, <def;
+	var <spec, <specsDict, <server, <attributes, <defName, <def;
 	var <synth, <values, defaultValues, <bus, numControls, controlNames, mappings;
 	var <preset;
 	var <numInputs, <numOutputs, <inputs, <outputs;
@@ -692,6 +759,7 @@ BMMultichannelPlugin {
 			("Plugin spec" + argpluginSpecName + "does not exist!").warn;
 			^nil;
 		});
+		specsDict = spec.specsDict.deepCopy;
 		inputs = argins;
 		outputs = argouts;
 		numInputs = inputs.size;
@@ -715,7 +783,7 @@ BMMultichannelPlugin {
 		def.allControlNames.reject({|cn| (cn.name == \i_in) || (cn.name == \cfgate)}).do({|cn| 
 			var size, startVal, controlspec;
 			size = cn.defaultValue.size;
-			controlspec = spec.specsDict[cn.name];
+			controlspec = specsDict[cn.name];
 			// take defaults from the control name if no spec supplied. Hmm... maybe not?
 			controlspec.isNil.if({Error("No spec for Control:" + cn.name).throw; });
 			startVal = controlspec.default;
