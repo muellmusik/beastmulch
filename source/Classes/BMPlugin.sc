@@ -256,7 +256,6 @@ BMPlugin {
 		argattributes.notNil.if({attributes.putAll(argattributes)}); // local settings override
 		spec.setupFunc.value(this);
 		this.makeDef;
-		def.send(server);
 		values = ();
 		controlNames = ();
 		def.allControlNames.reject({|cn| (cn.name == \i_in) || (cn.name == \cfgate)}).do({|cn| 
