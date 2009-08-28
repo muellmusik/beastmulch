@@ -219,12 +219,9 @@ BMTrimPluginsStrip {
 	addPlugin {|plugin|
 		plugin.notNil.if({
 			plugins.add(plugin);
-			server.makeBundle(nil, {
-				server.sync; // wait for the plugin's def to arrive...
-				plugin.makeSynth(input, group, \addToTail);
-				// added at end, no need to reset order on server
-				this.changed;
-			});
+			plugin.makeSynth(input, group, \addToTail);
+			// added at end, no need to reset order on server
+			this.changed;
 		});
 	}
 	

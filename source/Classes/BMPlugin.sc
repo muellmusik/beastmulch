@@ -356,7 +356,7 @@ BMPlugin {
 			Error("Target server does not match Plugin server.").throw;
 		});
 		synth.notNil.if({ synth.set(\cfgate, 0); });
-		synth = Synth(defName, [i_in: in] ++ mappings, target, addAction);
+		synth = def.play(target, [i_in: in] ++ mappings, addAction);
 	}
 	
 	release { 

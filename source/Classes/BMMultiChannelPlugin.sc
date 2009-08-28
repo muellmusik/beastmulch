@@ -784,7 +784,7 @@ BMMultichannelPlugin {
 		
 		spec.setupFunc.value(this);
 		this.makeDef;
-		def.send(server);
+		//def.send(server);
 		values = ();
 		controlNames = ();
 		def.allControlNames.reject({|cn| (cn.name == \i_in) || (cn.name == \cfgate)}).do({|cn| 
@@ -890,7 +890,7 @@ BMMultichannelPlugin {
 			Error("Target server does not match Plugin server.").throw;
 		});
 		synth.notNil.if({ synth.set(\cfgate, 0); });
-		synth = Synth(defName, mappings, target, addAction);
+		synth = def.play(target, mappings, addAction);
 	}
 	
 	release { 
@@ -1030,12 +1030,9 @@ BMMultichannelPluginsRack : BMAbstractAudioChainElement {
 	addPlugin {|plugin|
 		plugin.notNil.if({
 			plugins.add(plugin);
-			server.makeBundle(nil, {
-				server.sync; // wait for the plugin's def to arrive...
-				plugin.makeSynth(group, \addToTail);
-				// added at end, no need to reset order on server
-				this.changed;
-			});
+			plugin.makeSynth(group, \addToTail);
+			// added at end, no need to reset order on server
+			this.changed;
 		});
 	}
 	
