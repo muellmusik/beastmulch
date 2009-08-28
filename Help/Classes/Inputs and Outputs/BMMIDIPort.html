@@ -5,12 +5,12 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="949.46">
+<meta name="CocoaVersion" content="949.54">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000ff}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001bec}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
 p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
@@ -20,12 +20,14 @@ p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helv
 p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
 p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
 p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
-p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0000ff}
+span.s2 {color: #001dfd}
 span.s3 {color: #000000}
-span.s4 {color: #0000bf}
-span.s5 {color: #606060}
+span.s4 {text-decoration: underline}
+span.s5 {color: #0000bf}
+span.s6 {color: #606060}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -36,7 +38,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><br></p>
 <p class="p1">BMMIDIPort represents a single MIDI connection.</p>
 <p class="p2"><br></p>
-<p class="p4"><span class="s3"><b>See also:</b> <a href="../Controllers/BMAbstractMIDIController.html">BMAbstractMIDIController</a>, <a href="SC://MIDI">MIDI</a>, <a href="SC://MIDIIn">MIDIIn</a>, <a href="SC://MIDIOut">MIDIOut</a></span></p>
+<p class="p4"><span class="s3"><b>See also:</b> <a href="../Controllers/BMAbstractMIDIController.html"><span class="s4">BMAbstractMIDIController</span></a>, <a href="SC://MIDI"><span class="s4">MIDI</span></a>, <a href="SC://MIDIIn"><span class="s4">MIDIIn</span></a>, <a href="SC://MIDIOut"><span class="s4">MIDIOut</span></a></span></p>
 <p class="p2"><br></p>
 <p class="p5"><b>Double-sided vs. Single-sided Ports</b></p>
 <p class="p2"><br></p>
@@ -102,9 +104,14 @@ span.Apple-tab-span {white-space:pre}
 <p class="p11">// initialise</p>
 <p class="p12">BMMIDIPort<span class="s3">.init;</span></p>
 <p class="p13"><br></p>
-<p class="p11">// all ports</p>
-<p class="p14">p = <span class="s4">BMMIDIPort</span>.ports;</p>
+<p class="p14">// all ports</p>
+<p class="p15">p = <span class="s5">BMMIDIPort</span>.ports;</p>
 <p class="p13"><br></p>
-<p class="p14"><span class="s4">EZPopUpMenu</span>.new(<span class="s4">nil</span>, items: p.keys.collectAs({<span class="s4">|k|</span> k-&gt;{<span class="s4">|men|</span> (<span class="s5">"You selected "</span> ++ p[men.widget.item]).postln }}, <span class="s4">Array</span>))</p>
+<p class="p15"><span class="s5">EZPopUpMenu</span>.new(<span class="s5">nil</span>, items: p.keys.collectAs({<span class="s5">|k|</span> k-&gt;{<span class="s5">|men|</span><span class="Apple-converted-space"> </span></p>
+<p class="p15"><span class="Apple-tab-span">	</span>(<span class="s6">"You selected "</span> ++ p[men.widget.item]).postln<span class="Apple-converted-space"> </span></p>
+<p class="p12"><span class="s3"><span class="Apple-tab-span">	</span></span>NoteOnResponder<span class="s3">({ </span>|src,chan,note,vel|</p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[src,chan,note,vel].postln;</p>
+<p class="p15"><span class="Apple-tab-span">	</span>}, p[men.widget.item].inuid)<span class="Apple-tab-span">	</span></p>
+<p class="p15">}}, <span class="s5">Array</span>))</p>
 </body>
 </html>
