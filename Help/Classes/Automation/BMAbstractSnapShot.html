@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="949.46">
+<meta name="CocoaVersion" content="949.54">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
@@ -18,10 +18,11 @@ p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helve
 p.p9 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
 p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #001dfd}
+span.s2 {color: #002afb}
 span.s3 {color: #000000}
 span.s4 {text-decoration: underline}
 span.s5 {color: #0000ff}
+span.s6 {color: #001dfd}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -30,7 +31,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p1"><b>Inherits from: </b><a href="SC://Object"><span class="s2"><b>Object</b></span></a></p>
 <p class="p3"><br></p>
-<p class="p1">This is the abstract superclass of automation snapshots. Snapshots represent the momentary state of something to be automated.</p>
+<p class="p1">This is the abstract superclass of automation snapshots. Snapshots represent the momentary state of something being automated.</p>
 <p class="p2"><br></p>
 <p class="p4"><span class="s3"><b>See also: </b><a href="BMSnapShot.html"><span class="s4">BMSnapShot</span></a>, <a href="BMArbitraryStartSnapShot.html"><span class="s4">BMArbitraryStartSnapShot</span></a>, <a href="BMSnapShotSeq.html"><span class="s4">BMSnapShotSeq</span></a>, <a href="BMAbstractAutomator.html"><span class="s4">BMAbstractAutomator</span></a>, <a href="../Root Classes/BMControl.html"><span class="s4">BMControl</span></a>, <a href="../Root Classes/BMAbstractController.html"><span class="s4">BMAbstractController</span></a>, <a href="../../Time References and Automation.html"><span class="s4">Time References and Automation</span></a></span></p>
 <p class="p2"><br></p>
@@ -73,7 +74,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><br></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>isKnown</b></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>The default implementation returns true since most snapshots are not arbitrary. Arbitrary snapshots are those whose state can only be determined when they become active in an interpolation segment. Subclasses can override this to return false if need be. See <a href="BMArbitraryStartSnapShot.html"><span class="s5">BMArbitraryStartSnapShot</span></a> for more information.</p>
+<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Returns a <a href="SC://Boolean"><span class="s5">Boolean</span></a> indicating if this snapshot is arbitrary. Arbitrary snapshots are those whose state can only be determined when they become active in an interpolation segment. The default implementation returns true since most snapshots are not arbitrary. Subclasses can override this to return false if need be. See <a href="BMArbitraryStartSnapShot.html"><span class="s6">BMArbitraryStartSnapShot</span></a> for more information.</p>
 <p class="p6"><br></p>
 <p class="p6"><br></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>setValue (ctrl, value)</b></p>

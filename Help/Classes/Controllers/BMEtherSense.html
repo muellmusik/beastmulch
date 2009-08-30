@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="949.46">
+<meta name="CocoaVersion" content="949.54">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
@@ -16,24 +16,26 @@ p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco
 p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
 p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p9 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
-p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0000bf}
-p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
-p.p12 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #bf0000}
-p.p13 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
-p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
-p.p16 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
-p.p17 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica; min-height: 17.0px}
-p.p18 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #c21d1c}
-p.p19 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0017c2}
+p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
+p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #bf0000}
+p.p12 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #000000}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
+p.p15 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
+p.p16 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica; min-height: 17.0px}
+p.p17 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #b22827}
+p.p18 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0021c0}
+p.p19 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0000ff}
+span.s2 {color: #001dfd}
 span.s3 {color: #000000}
 span.s4 {text-decoration: underline}
-span.s5 {color: #606060}
-span.s6 {color: #007300}
-span.s7 {text-decoration: underline ; color: #001bec}
-span.s8 {color: #0000bf}
+span.s5 {color: #0000bf}
+span.s6 {color: #606060}
+span.s7 {color: #007300}
+span.s8 {text-decoration: underline ; color: #0027ea}
+span.s9 {color: #0000bf}
+span.s10 {color: #0000ff}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -50,43 +52,43 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p5"><b>Setting up your EtherSense</b></p>
 <p class="p2"><br></p>
-<p class="p1">SuperCollider listens by default on port 57120. The EtherSense expresses things as negative ports, so you will need to set its UDP port as -8416. You will also need to configure the address of the EtherSense, and your network and firewall settings.</p>
+<p class="p1">SuperCollider listens by default on port 57120. The EtherSense expresses this as a negative port number, so you will need to set its UDP port as -8416. You will also need to configure the address of the EtherSense, and your network and firewall settings.</p>
 <p class="p2"><br></p>
 <p class="p5"><b>Creation / Class Methods</b></p>
 <p class="p6"><br></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>*new (addr, name, server)</b></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Create a new BMEtherSense object.</p>
-<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>addr </b>- An instance of <a href="SC://NetAddr"><span class="s2">NetAddr</span></a>. Its address should be set to the address of your EtherSense and port to 57120.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>addr </b>- An instance of <a href="SC://NetAddr"><span class="s2">NetAddr</span></a>. Its address should be set to the address of your EtherSense and its port to 57120.</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>name </b>- A <a href="SC://Symbol"><span class="s2">Symbol</span></a> indicating the name of this controller.</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>server </b>- An instance of <a href="SC://Server"><span class="s2">Server</span></a>. If you pass nil this will indicate the default Server.</p>
 <p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>b = </span>BMEtherSense<span class="s3">(</span>NetAddr<span class="s3">(</span><span class="s5">"10.0.0.2"</span><span class="s3">, 57120), </span><span class="s6">\etherSense</span><span class="s3">));</span></p>
-<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p12"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>b.free; </span>// free my resources</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>b = <span class="s5">BMEtherSense</span>(<span class="s5">NetAddr</span>(<span class="s6">"10.0.0.2"</span>, 57120), <span class="s7">\etherSense</span>));</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>b.free; </span>// free my resources</p>
 <p class="p6"><br></p>
 <p class="p6"><br></p>
 <p class="p7">The following three methods are useful when creating instances from GUIs.</p>
-<p class="p8"><b></b><br></p>
+<p class="p8"><br></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>*newFromParamDict (dict, server)</b></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Create a new instance using a parameter dictionary. (See <a href="../Root Classes/BMAbstractController.html"><span class="s7">BMAbstractController</span></a> for more information.)</p>
+<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Create a new instance using a parameter dictionary. (See <a href="../Root Classes/BMAbstractController.html"><span class="s8">BMAbstractController</span></a> for more information.)</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>dict </b>- A Dictionary or subclass with values for the following keys: \addr -&gt; a String indicating the IP address of this EtherSense, \name -&gt; A <a href="SC://Symbol"><span class="s2">Symbol</span></a> indicating the name of this controller.</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>server </b>- An instance of <a href="SC://Server"><span class="s2">Server</span></a>. If you pass nil this will indicate the default Server.</p>
 <p class="p6"><br></p>
 <p class="p6"><br></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>*parameterList</b></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>See <a href="../Root Classes/BMAbstractController.html"><span class="s7">BMAbstractController</span></a> for a discussion of this method. This is the implementation for BMEtherSense:</p>
+<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>See <a href="../Root Classes/BMAbstractController.html"><span class="s8">BMAbstractController</span></a> for a discussion of this method. This is the implementation for BMEtherSense:</p>
 <p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>*parameterList {<span class="Apple-converted-space"> </span></p>
-<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s8">var</span> class;</p>
-<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>class = <span class="s8">this</span>;</p>
-<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>^(</p>
-<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>name: [<span class="s8">Symbol</span>, {class.makeName}, <span class="s5">"Name"</span>],</p>
-<p class="p15"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>addr: [</span><span class="s8">NetAddr</span><span class="s3">, </span>"0.0.0.0"<span class="s3">, </span>"IP Address"<span class="s3">]</span></p>
-<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>);<span class="Apple-converted-space"> </span></p>
-<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}</p>
+<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>*parameterList {<span class="Apple-converted-space"> </span></p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">var</span> class;</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>class = <span class="s9">this</span>;</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>^(</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>name: [<span class="s9">Symbol</span>, {class.makeName}, <span class="s6">"Name"</span>],</p>
+<p class="p14"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>addr: [</span><span class="s9">NetAddr</span><span class="s3">, </span>"0.0.0.0"<span class="s3">, </span>"IP Address"<span class="s3">]</span></p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>);<span class="Apple-converted-space"> </span></p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}</p>
 <p class="p6"><br></p>
 <p class="p6"><br></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>*humanName</b></p>
@@ -94,25 +96,25 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Returns the String "EtherSense".</p>
 <p class="p6"><br></p>
 <p class="p6"><br></p>
-<p class="p16"><b>Accessing Instance and Class Variables</b></p>
+<p class="p15"><b>Accessing Instance and Class Variables</b></p>
 <p class="p8"><span class="Apple-tab-span">	</span></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>addr</b></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Returns this EtherSense's <a href="SC://NetAddr"><span class="s2">NetAddr</span></a>.</p>
 <p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p16"><b>Implementation notes</b></p>
-<p class="p17"><br></p>
-<p class="p7">Many of<span class="Apple-converted-space"> </span></p>
+<p class="p15"><b>Implementation notes</b></p>
+<p class="p16"><br></p>
+<p class="p1">Below is a discussion of BMEthersense's methods which may be of use in writing a class for other OSC controllers. No new 'public' methods are defined beyond those already described in the <a href="../Root Classes/BMAbstractController.html"><span class="s10">BMAbstractController</span></a> help file.</p>
 <p class="p8"><span class="Apple-tab-span">	</span></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>init (argaddr, argname, argserver)</b></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>This performs the standard initialisation, allocates instance variable objects where necessary, and calls startListening.</p>
+<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>This performs the standard initialisation, allocates instance variable objects where necessary, and calls <b>startListening</b>.</p>
 <p class="p6"><br></p>
 <p class="p6"><br></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>startListening</b></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>This creates and adds the OSCresponders. Note that since the EtherSense divides its controllers into two banks of 16, which each send a distinct OSC message, two responders are created here. For many OSC controllers only one would be needed. The responders scale incoming values linearly from 16 bit integers to floats between 0 and 1, and then use <b>spec</b> to map to a curve before updating this objects control busses on the server.</p>
+<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>This creates and adds the OSCresponders. Note that since the EtherSense divides its controllers into two banks of 16, which each send a distinct OSC message, two responders are created here. For many OSC controllers only one would be needed. The responders scale incoming values linearly from 16 bit integers to floats between 0 and 1, and then use <b>spec</b> to map to a curve before updating this object's control busses on the server.</p>
 <p class="p6"><br></p>
 <p class="p6"><br></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>stopListening</b></p>
@@ -123,7 +125,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><b><span class="Apple-tab-span">	</span>getVal (controlNum)</b></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>getAllValues</b></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>valueArray</b> stores values in 16 bit (native EtherSense) form, so these scale and map to give correct floats between 0 and 1.</p>
+<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>valueArray</b> stores values in 16 bit (native EtherSense) form, so these methods scale and map to give correct floats between 0 and 1.</p>
 <p class="p6"><br></p>
 <p class="p6"><br></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>setAllValues (array)</b></p>
@@ -149,16 +151,16 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><b><span class="Apple-tab-span">	</span>asTextArchive</b></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>initFromArchive</b></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>The OSCresponders use open Functions, and thus throw an error when they are archived. For this reason these methods are overriden to temporarily <b>stopListening</b> while archiving is happening (removing the responders), and to <b>startListening</b> when an instance is created from an archive.</p>
+<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>The OSCresponders use open Functions, and thus cause a warning when they are archived. For this reason these methods are overriden to temporarily <b>stopListening</b> while archiving is happening (removing the responders), and to <b>startListening</b> when an instance is created from an archive.</p>
 <p class="p6"><br></p>
 <p class="p6"><br></p>
-<p class="p16"><b>Examples</b></p>
+<p class="p15"><b>Examples</b></p>
 <p class="p3"><br></p>
-<p class="p18">// what this example does</p>
-<p class="p19"><span class="s3">e = </span>BMEtherSense<span class="s3">.new;</span></p>
-<p class="p14">e.instanceMethod(someObject);</p>
-<p class="p14">e.cleanUp;</p>
+<p class="p17">// what this example does</p>
+<p class="p18"><span class="s3">e = </span>BMEtherSense<span class="s3">.new;</span></p>
+<p class="p19">e.instanceMethod(someObject);</p>
+<p class="p19">e.cleanUp;</p>
 <p class="p3"><br></p>
-<p class="p14">...</p>
+<p class="p19">...</p>
 </body>
 </html>

@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="949.46">
+<meta name="CocoaVersion" content="949.54">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
@@ -17,7 +17,7 @@ p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helve
 p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica; min-height: 17.0px}
 p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #001dfd}
+span.s2 {color: #002afb}
 span.s3 {color: #000000}
 span.s4 {text-decoration: underline}
 span.s5 {font: 9.0px Monaco; color: #007300}
@@ -29,7 +29,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p1"><b>Inherits from: </b><a href="SC://Object"><span class="s2"><b>Object</b></span></a></p>
 <p class="p3"><br></p>
-<p class="p1">This is the abstract superclass of all automators within the BEASTmulch library. All automators are dependants of a <i>time reference </i>(i.e. a clock source), which updates the automator through a <b>changed</b> message with arguments for the updated time, a rate of change, and a reference time indicating at what moment the updated time was accurate.</p>
+<p class="p1">This is the abstract superclass of all automators within the BEASTmulch library. All automators are dependants of a <i>time reference </i>(i.e. a clock source), which updates the automator through a <b>changed</b> message which includes arguments for the updated time, a rate of change, and a reference time indicating at what moment the updated time was accurate.</p>
 <p class="p2"><br></p>
 <p class="p1">Automators should respond without failing to variable rates of time change (including backwards), and to time values of nil, &lt; 0, and +/- infinity.</p>
 <p class="p2"><br></p>
@@ -54,7 +54,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p9"><br></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>automate</b></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>This method will be called in some sort of loop everytime automation needs to be updated. When and how often this occurs can be subclass dependent. This is where the actual updates to whatever is being automated should occur.</p>
+<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>This method will be called in some sort of loop every time automation needs to be updated. When and how often this occurs can be subclass dependent. This is where the actual updates to whatever is being automated should occur.</p>
 <p class="p9"><br></p>
 <p class="p9"><br></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>mappings</b></p>

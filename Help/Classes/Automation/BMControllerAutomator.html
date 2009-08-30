@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="949.46">
+<meta name="CocoaVersion" content="949.54">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
@@ -19,18 +19,14 @@ p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helve
 p.p10 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
 p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
 p.p12 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica; min-height: 17.0px}
-p.p13 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #b22827}
-p.p14 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0021c0}
-p.p15 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
-p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #b22827}
-p.p17 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0021c0}
-p.p18 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #a4302f}
+p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0028be}
+p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 span.s1 {font: 12.0px Helvetica}
 span.s2 {color: #000000}
-span.s3 {color: #001dfd}
+span.s3 {color: #002afb}
 span.s4 {text-decoration: underline}
-span.s5 {color: #b22827}
-span.s6 {color: #0000ff}
+span.s5 {color: #001dfd}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -39,7 +35,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p3"><span class="s2"><b>Inherits from: </b><a href="SC://Object"><b>Object</b></a><b> : </b><a href="BMAbstractAutomator.html"><b>BMAbstractAutomator</b></a><b> : </b><a href="BMAbstractIndependentRateAutomator.html"><b>BMAbstractIndependentRateAutomator</b></a></span></p>
 <p class="p4"><br></p>
-<p class="p5">BMControllerAutomator is used to automate controls such as motorised faders or GUI sliders. For this to work the subclass instance of BMAbstractController representing any of its automated controls must respond to <b>acceptsAutomation</b> with true.</p>
+<p class="p5">BMControllerAutomator is used to automate controls such as motorised faders or GUI sliders. For this to work any BMAbstractController subclass instance representing any of its automated controls must respond to <b>acceptsAutomation</b> with true.</p>
 <p class="p2"><br></p>
 <p class="p5">BMControllerAutomator may have any number of automation sequences (instances of <a href="BMSnapShotSeq.html"><span class="s3">BMSnapShotSeq</span></a>), each consisting of a number of <a href="BMSnapShot.html"><span class="s3">BMSnapShot</span></a>s and beginning with a <a href="BMArbitraryStartSnapShot.html"><span class="s3">BMArbitraryStartSnapShot</span></a>. (This allows one to combine realtime performance with automation, by accounting for the fact that the state of controllers at the start of a sequence may not be known.)<span class="Apple-converted-space"> </span></p>
 <p class="p2"><br></p>
@@ -47,7 +43,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><span class="Apple-converted-space"> </span></p>
 <p class="p5">Sequences can overlap in time, and can automate any desired subgroup of controls. <b>N.B.</b> If more than one sequence attempts to automate the same control within a given automation cycle, all but the first processed will be ignored.</p>
 <p class="p2"><br></p>
-<p class="p5">Since the times and orderings of sequences and snapshots might change, they are referred to by their name, which is represented by a <a href="SC://Symbol"><span class="s3">Symbol</span></a>.</p>
+<p class="p5">Since the times and orderings of sequences and snapshots might change, they are referred to by <b>name</b>, which is represented by a <a href="SC://Symbol"><span class="s3">Symbol</span></a>.</p>
 <p class="p2"><br></p>
 <p class="p3"><span class="s2"><b>See also:</b> <a href="../Root Classes/BMControl.html"><span class="s4">BMControl</span></a>, <a href="../Root Classes/BMAbstractController.html"><span class="s4">BMAbstractController</span></a>, <a href="BMAbstractAutomator.html"><span class="s4">BMAbstractAutomator</span></a>, <a href="BMAbstractIndependentRateAutomator.html"><span class="s4">BMAbstractIndependentRateAutomator</span></a>, <a href="../../Time References and Automation.html"><span class="s4">Time References and Automation</span></a>, <a href="BMAbstractSnapShot.html"><span class="s4">BMAbstractSnapShot</span></a>, <a href="BMSnapShotSeq.html"><span class="s4">BMSnapShotSeq</span></a></span></p>
 <p class="p2"><br></p>
@@ -57,7 +53,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p9"><b><span class="Apple-tab-span">	</span></b></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Create a new BMControllerAutomator.</p>
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>controls </b>- An <a href="SC://Array"><span class="s3">Array</span></a> of Symbols corresponding the names of the <a href="../Root Classes/BMControl.html"><span class="s3">BMControl</span></a> instances to be automated.</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>timeref </b>- The object to serve as this automator's time reference. This might be any object which complies with the guidelines set out in <a href="../../Time References and Automation.html"><span class="s3">Time References and Automation</span></a>.</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>timeref </b>- The object to serve as this automator's time reference. This can be any object which complies with the guidelines set out in <a href="../../Time References and Automation.html"><span class="s3">Time References and Automation</span></a>.</p>
 <p class="p7"><br></p>
 <p class="p7"><br></p>
 <p class="p11"><b>Accessing Instance and Class Variables</b></p>
@@ -97,11 +93,6 @@ span.Apple-tab-span {white-space:pre}
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>seqName </b>- A <a href="SC://Symbol"><span class="s3">Symbol</span></a> indicating the name of the sequence to add the snapshot to.</p>
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>ssTime </b>- The time in seconds at which to add the snapshot.</p>
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>ssName </b>- A <a href="SC://Symbol"><span class="s3">Symbol</span></a> indicating the name of this snapshot.</p>
-<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p13"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
-<p class="p14"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMControllerAutomator<span class="s2">.addSnapShot;</span></p>
-<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.doSomething; <span class="s5">// explanation</span></p>
-<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.cleanUpMethod;</p>
 <p class="p7"><br></p>
 <p class="p7"><br></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span>addIndividualSequences (seqName, startTime)</b></p>
@@ -120,7 +111,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p8"><b><span class="Apple-tab-span">	</span>sequence (name)</b></p>
 <p class="p9"><b><span class="Apple-tab-span">	</span></b></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Return a particular sequence.</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>name </b>- A <a href="SC://Symbol"><span class="s6">Symbol</span></a> indicating the name of the sequence to return.</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>name </b>- A <a href="SC://Symbol"><span class="s5">Symbol</span></a> indicating the name of the sequence to return.</p>
 <p class="p7"><br></p>
 <p class="p7"><br></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span>reset</b></p>
@@ -140,11 +131,11 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><br></p>
 <p class="p11"><b>Examples</b></p>
 <p class="p4"><br></p>
-<p class="p16">// what this example does</p>
-<p class="p17"><span class="s2">e = </span>BMControllerAutomator<span class="s2">.new;</span></p>
-<p class="p18">e.instanceMethod(someObject);</p>
-<p class="p18">e.cleanUp;</p>
+<p class="p13">// what this example does</p>
+<p class="p14"><span class="s2">e = </span>BMControllerAutomator<span class="s2">.new;</span></p>
+<p class="p15">e.instanceMethod(someObject);</p>
+<p class="p15">e.cleanUp;</p>
 <p class="p4"><br></p>
-<p class="p18">...</p>
+<p class="p15">...</p>
 </body>
 </html>
