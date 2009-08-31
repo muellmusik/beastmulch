@@ -10,7 +10,7 @@ BMSpeaker {
 	var <>spec; // instance of SpeakerSpec, contains shared info like freq range, etc.
 	
 	var <>description; // human readable text
-	var <>directivity; // symbol, either 'direct' or 'reflected'
+	var <>directivity = 'direct'; // symbol, either 'direct' or 'reflected'
 	
 	// VBAP style spherical coords, angles (probably in degrees) from a central point
 	var <azi; // from median plane +/- 180 deg 
