@@ -20,10 +20,10 @@ p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helv
 p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
 p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
 p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
-p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #001dfd}
+span.s2 {color: #002afb}
 span.s3 {color: #000000}
 span.s4 {text-decoration: underline}
 span.s5 {color: #0000bf}
@@ -42,7 +42,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p5"><b>Double-sided vs. Single-sided Ports</b></p>
 <p class="p2"><br></p>
-<p class="p1">When <b>*init</b> is called it constructs an <a href="SC://IdentityDictionary"><span class="s2">IdentityDictionary</span></a> of all available ports. If a source has a matching destination this method will combine them into a single port, otherwise you can have ports with only a source or only a destination (i.e. only input or output.</p>
+<p class="p1">When <b>*init</b> is called it constructs an <a href="SC://IdentityDictionary"><span class="s2">IdentityDictionary</span></a> of all available ports. If a source has a matching destination this method will combine them into a single port, otherwise you can have ports with only a source or only a destination (i.e. only input or output).</p>
 <p class="p2"><br></p>
 <p class="p5"><b>Creation / Class Methods</b></p>
 <p class="p6"><br></p>
@@ -104,14 +104,15 @@ span.Apple-tab-span {white-space:pre}
 <p class="p11">// initialise</p>
 <p class="p12">BMMIDIPort<span class="s3">.init;</span></p>
 <p class="p13"><br></p>
-<p class="p14">// all ports</p>
-<p class="p15">p = <span class="s5">BMMIDIPort</span>.ports;</p>
-<p class="p13"><br></p>
-<p class="p15"><span class="s5">EZPopUpMenu</span>.new(<span class="s5">nil</span>, items: p.keys.collectAs({<span class="s5">|k|</span> k-&gt;{<span class="s5">|men|</span><span class="Apple-converted-space"> </span></p>
-<p class="p15"><span class="Apple-tab-span">	</span>(<span class="s6">"You selected "</span> ++ p[men.widget.item]).postln<span class="Apple-converted-space"> </span></p>
+<p class="p11">// all ports</p>
+<p class="p14">p = <span class="s5">BMMIDIPort</span>.ports;</p>
+<p class="p14">(</p>
+<p class="p14"><span class="s5">EZPopUpMenu</span>.new(<span class="s5">nil</span>, items: p.keys.collectAs({<span class="s5">|k|</span> k-&gt;{<span class="s5">|men|</span><span class="Apple-converted-space"> </span></p>
+<p class="p14"><span class="Apple-tab-span">	</span>(<span class="s6">"You selected "</span> ++ p[men.widget.item]).postln;<span class="Apple-converted-space"> </span></p>
 <p class="p12"><span class="s3"><span class="Apple-tab-span">	</span></span>NoteOnResponder<span class="s3">({ </span>|src,chan,note,vel|</p>
-<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[src,chan,note,vel].postln;</p>
-<p class="p15"><span class="Apple-tab-span">	</span>}, p[men.widget.item].inuid)<span class="Apple-tab-span">	</span></p>
-<p class="p15">}}, <span class="s5">Array</span>))</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[src,chan,note,vel].postln;</p>
+<p class="p14"><span class="Apple-tab-span">	</span>}, p[men.widget.item].inuid)<span class="Apple-tab-span">	</span></p>
+<p class="p14">}}, <span class="s5">Array</span>))</p>
+<p class="p15">)</p>
 </body>
 </html>

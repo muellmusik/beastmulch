@@ -12,7 +12,7 @@ p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0p
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001bec}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica; min-height: 17.0px}
 p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
 p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
@@ -20,20 +20,21 @@ p.p10 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helv
 p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p12 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p13 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
-p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #922b2a}
-p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0027b9}
+p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
+p.p17 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
-span.s3 {color: #0034f9}
+span.s3 {color: #003cf7}
 span.s4 {text-decoration: underline}
-span.s5 {color: #002afb}
+span.s5 {color: #0034f9}
 span.s6 {color: #0000bf}
-span.s7 {color: #0043f5}
+span.s7 {color: #0049f3}
 span.s8 {color: #606060}
-span.s9 {color: #0027b9}
-span.s10 {color: #476b00}
-span.s11 {color: #922b2a}
+span.s9 {color: #0000bf}
+span.s10 {color: #007300}
+span.s11 {color: #bf0000}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -42,9 +43,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p3"><span class="s2"><b>Inherits from: </b><a href="SC://Object"><b>Object</b></a><b> : </b><a href="../Root Classes/BMAbstractAudioChainElement.html"><b>BMAbstractAudioChainElement</b></a><b> : </b><a href="BMAbstractMatrix.html"><b>BMAbstractMatrix</b></a></span></p>
 <p class="p4"><br></p>
-<p class="p1">BMAmpControlMatrix assigns controls to scale the amplitude of signals on audio busses. At this point in the node tree the bus's signal is read and replaced with a scaled version. Signals on unassigned busses are passed through unaltered.</p>
+<p class="p1">BMAmpControlMatrix assigns controls (its inputs) to scale the amplitude of signals on audio busses (its outputs). At this object's point in the node tree the bus's signal is read and replaced with a scaled version. Signals on unassigned busses are passed through unaltered.</p>
 <p class="p2"><br></p>
-<p class="p1">Instances of <a href="../Root Classes/BMControl.html"><span class="s3">BMControl</span></a> mapped here will have their <b>mappedTo</b> var set to this object when connections are made. <b>BMAbstractController.masterInOutArray</b> can be used to get a BMInOutArray containing all available controls.</p>
+<p class="p1">Instances of <a href="../Root Classes/BMControl.html"><span class="s3">BMControl</span></a> corresponding to this object's inputs will have their <b>mappedTo</b> var set to this object when connections are made. <b>BMAbstractController.masterInOutArray</b> can be used to get a BMInOutArray containing all available controls.</p>
 <p class="p2"><br></p>
 <p class="p1">Note that this is intended for active control. For simple static level scaling a <a href="../Plugins/BMTrimPluginsRack.html"><span class="s3">BMTrimPluginsRack</span></a> may be better.</p>
 <p class="p2"><br></p>
@@ -54,19 +55,19 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p5"><b>Exclusivity of Mapping</b></p>
 <p class="p2"><br></p>
-<p class="p1">Although a single input can be scaled to many outputs, a single output can only be connected to one input in this matrix type.</p>
+<p class="p1">Although a single input (control) can be assigned to scale many outputs (busses), a single output can only be connected to one input in this matrix type.</p>
 <p class="p2"><br></p>
 <p class="p1">By default a control can be mapped in only a single object at a time, so mapping it in a BMAmpControlMatrix will prevent it from being mapped elsewhere. You can override this behaviour by executing:</p>
 <p class="p2"><br></p>
-<p class="p6"><span class="s2"><span class="Apple-tab-span">	</span></span><span class="s6">BMOptions</span>.allowMultipleControlMappings = <span class="s6">true</span>;</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s6">BMOptions</span>.allowMultipleControlMappings = <span class="s6">true</span>;</p>
 <p class="p2"><br></p>
 <p class="p5"><b>Instance Methods</b></p>
 <p class="p7"><br></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span>connect (input, outputs)</b></p>
 <p class="p9"><b><span class="Apple-tab-span">	</span></b></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Map a control to scale the amplitude of signals on one or more audio rate busses.</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>input </b>- A <a href="SC://Symbol"><span class="s7">Symbol</span></a> indicating the name of the input to connect.</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>outputs </b>- One or more Symbols indicating the names of the outputs to which the input will be connected and whose signals will be scaled.</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>input </b>- A <a href="SC://Symbol"><span class="s7">Symbol</span></a> indicating the name of the control to map.</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>outputs </b>- One or more Symbols indicating the names of the outputs whose signals will be scaled according to the level of the <b>input</b>.</p>
 <p class="p11"><br></p>
 <p class="p11"><br></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span>disconnect (input, outputs)</b></p>
@@ -89,30 +90,30 @@ span.Apple-tab-span {white-space:pre}
 <p class="p14"><span class="Apple-tab-span">	</span><span class="s9">BMSpeaker</span>.newFromSpherical(el[1], i, el[0], 0, 2);</p>
 <p class="p16"><span class="s2">}, </span>BMInOutArray<span class="s2">);</span></p>
 <p class="p14">)</p>
-<p class="p4"><br></p>
+<p class="p17"><br></p>
 <p class="p15">// something to scale</p>
 <p class="p14">x = { l.do({<span class="s9">|spkr, i|</span> <span class="s9">Out</span>.ar(spkr, <span class="s9">Ringz</span>.ar(<span class="s9">Dust</span>.ar(3, 0.1), 300 * (i + 1), 2))}) }.play;</p>
-<p class="p4"><br></p>
+<p class="p17"><br></p>
 <p class="p16"><span class="s2">c = </span>BMVirtualController<span class="s2">(</span><span class="s10">\sliders</span><span class="s2">, s, 5);</span></p>
-<p class="p4"><br></p>
+<p class="p17"><br></p>
 <p class="p16">BMAbstractController<span class="s2">.masterInOutArray; </span><span class="s11">// now it's there</span></p>
-<p class="p4"><br></p>
+<p class="p17"><br></p>
 <p class="p15">// make a matrix</p>
 <p class="p16"><span class="s2">m = </span>BMAmpControlMatrix<span class="s2">(c, l);</span></p>
-<p class="p4"><br></p>
+<p class="p17"><br></p>
 <p class="p15"><span class="s2">s.meter; </span>// so we can watch</p>
-<p class="p4"><br></p>
+<p class="p17"><br></p>
 <p class="p14">m.connect(<span class="s10">'sliders-1'</span>, <span class="s10">'L'</span>);</p>
 <p class="p14">m.connect(<span class="s10">'sliders-2'</span>, <span class="s10">'R'</span>);</p>
-<p class="p4"><br></p>
+<p class="p17"><br></p>
 <p class="p16">BMVirtualControllerSliders<span class="s2">(c); </span><span class="s11">// now try it out</span></p>
-<p class="p4"><br></p>
+<p class="p17"><br></p>
 <p class="p14">m.mappings;</p>
-<p class="p4"><br></p>
+<p class="p17"><br></p>
 <p class="p15"><span class="s2">m.gui; </span>// Use a GUI. Be sure to click 'View Matrix' for alternate view.</p>
-<p class="p4"><br></p>
+<p class="p17"><br></p>
 <p class="p15"><span class="s2">m.clear(3); </span>// fade out connections</p>
-<p class="p4"><br></p>
+<p class="p17"><br></p>
 <p class="p14">m.free; x.free;</p>
 </body>
 </html>

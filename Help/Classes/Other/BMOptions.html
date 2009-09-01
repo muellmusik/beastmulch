@@ -15,14 +15,13 @@ p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco
 p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
 p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0000ff}
+span.s2 {color: #001dfd}
 span.s3 {font: 11.0px Helvetica}
-span.s4 {color: #b22827}
-span.s5 {color: #0000bf}
-span.s6 {color: #000000}
+span.s4 {color: #0000bf}
+span.s5 {color: #000000}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -49,7 +48,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><b><span class="Apple-tab-span">	</span>*crossfade</b><span class="s3"><b>_</b></span></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span>*crossfade</b></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Set or get the default crossfade time used throughout the library, for example whan adding or removing connections in matrix classes. Default value is 0.1.</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Set or get the default crossfade time in seconds used throughout the library, for example whan adding or removing connections in matrix classes. Default value is 0.1.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span>*allowMultipleControlMappings</b><span class="s3"><b>_</b></span></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span>*allowMultipleControlMappings</b></p>
@@ -88,11 +87,11 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><span class="Apple-tab-span">	</span></p>
 <p class="p8"><b>Examples</b></p>
 <p class="p3"><br></p>
-<p class="p9"><span class="s4">/</span>/ using defaultServerOptions</p>
-<p class="p9">o = <span class="s5">BMOptions</span>.defaultServerOptions;</p>
-<p class="p10"><span class="s6">o.blockSize = 128; </span>// vary one of the options</p>
-<p class="p9">s.options = o;</p>
-<p class="p9">s.boot;</p>
+<p class="p9">// using defaultServerOptions</p>
+<p class="p10">o = <span class="s4">BMOptions</span>.defaultServerOptions;</p>
+<p class="p9"><span class="s5">o.blockSize = 128; </span>// vary one of the options</p>
+<p class="p10">s.options = o;</p>
+<p class="p10">s.boot;</p>
 <p class="p3"><br></p>
 </body>
 </html>
