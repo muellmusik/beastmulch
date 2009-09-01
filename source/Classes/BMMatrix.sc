@@ -192,7 +192,7 @@ BMAudioMixerMatrix : BMAbstractMatrix {
 			if(outputs.rank == 3, {outputs = outputs.unbubble});
 			outputs.do({ |out|
 				var outname;
-				if(out.size < 2, { out = [out, 1].flat}); // defalt amp is 1
+				if(out.size < 2, { out = [out, 1].flat}); // default amp is 1
 				outname = out.first;
 				(outBus = outs[outname]).notNil.if({
 					outMatrixIndex = outNames.indexOf(outname);
@@ -206,9 +206,7 @@ BMAudioMixerMatrix : BMAbstractMatrix {
 						this.changed;
 					}, {
 						// if we find it, set the level
-						\foo.postln;
 						matrixArray[inMatrixIndex][outMatrixIndex].set(\amp, out[1]);
-						\bar.postln;
 						mappings[input].detect({|item| item.first == out.first})[1] = out[1];
 					});
 				}, {error("Output:" + out + "is not defined.")});
