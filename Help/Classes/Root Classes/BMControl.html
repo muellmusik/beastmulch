@@ -10,7 +10,7 @@
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000ff}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001bec}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
 p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
 p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
@@ -19,9 +19,10 @@ p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helve
 p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p11 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0034f9}
-span.s3 {color: #0000ff}
+span.s2 {color: #003cf7}
+span.s3 {color: #001dfd}
 span.s4 {color: #000000}
+span.s5 {text-decoration: underline}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -32,7 +33,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><br></p>
 <p class="p1">BMControl represents a single control, such as a hardware fader or knob. You should not create these directly; rather they are created for you by instances of <a href="BMAbstractController.html"><span class="s3">BMAbstractController</span></a>.</p>
 <p class="p2"><br></p>
-<p class="p4"><span class="s4"><b>See also:</b> <a href="BMAbstractController.html">BMAbstractController</a></span></p>
+<p class="p4"><span class="s4"><b>See also:</b> <a href="BMAbstractController.html"><span class="s5">BMAbstractController</span></a></span></p>
 <p class="p2"><br></p>
 <p class="p5"><b>Controllers vs. Controls</b></p>
 <p class="p2"><br></p>
@@ -60,7 +61,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p8"><b><span class="Apple-tab-span">	</span>lastAutomated_</b></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span>lastAutomated</b></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Set or get the last time at which this control was automated. This can be used to check if this control has already been automated in this automation interval.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Set or get the last time (generally the logical time of a Time Reference) at which this control was automated. This can be used to check if this control has already been automated in this automation interval.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span>automator_</b></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span>automator</b></p>
