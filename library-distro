@@ -1,0 +1,9 @@
+#!/bin/bash
+
+mkdir ./BEASTmulchLib
+#cp -r build/SuperCollider.app build/plugins build/scsynth ../SuperCollider_f
+#mkdir -p ~/Library/Application\ Support/SuperCollider/Extensions
+
+svn export --force source/Classes ./BEASTmulchLib/Classes
+svn export --force Help ./BEASTmulchLib/Help
+cp source/license.txt ./BEASTmulchLib/
