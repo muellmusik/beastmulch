@@ -1,7 +1,7 @@
 {\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf430
 {\fonttbl\f0\fnil\fcharset0 Monaco;}
 {\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red96\green96\blue96;\red0\green115\blue0;
-\red191\green0\blue0;\red191\green0\blue0;\red0\green0\blue0;}
+\red191\green0\blue0;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
 \f0\fs18 \cf0 s.boot;\
@@ -15,7 +15,6 @@ x.buffer;\
 (\
 x.play(0,0);\
 x.hash;\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf2 OSCresponder\cf0 (s.addr,\cf3 '/tr'\cf0 ,\{ \cf2 arg\cf0  time,responder,msg;\
 	(msg.last * x.buffer.sampleRate.reciprocal).asTimeString.postln\
 \}).add;\
@@ -39,6 +38,7 @@ x.play(10,0);\
 \
 x.free\
 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf5 /////////\cf0 \
 \
 s.boot;\
@@ -57,26 +57,25 @@ x.rate = 1;\
 y.window.refresh\
 \
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf6 /////////////// Streamer\cf7 \
-\cf6 //\cf7 \
-\cf6 //s.boot;\cf7 \
-\cf6 //\cf7 \
-\cf6 //x = SoundFileMultiStreamer.new;\cf7 \
-\cf6 //\cf7 \
-\cf6 //x.read(["sounds/a11wlk01.wav"], \{\\foo.postln\});\cf7 \
-\cf6 //\cf7 \
-\cf6 //y = BMSoundFileMultiStreamerGUI(x);\cf7 \
-\cf6 //x.buffer;\cf7 \
-\cf6 //\cf7 \
-\cf6 //x.play(0,0);\cf7 \
-\cf6 //x.stop\cf0 \
+\cf5 /////////////// Streamer\cf0 \
+\cf5 //\cf0 \
+\cf5 //s.boot;\cf0 \
+\cf5 //\cf0 \
+\cf5 //x = SoundFileMultiStreamer.new;\cf0 \
+\cf5 //\cf0 \
+\cf5 //x.read(["sounds/a11wlk01.wav"], \{\\foo.postln\});\cf0 \
+\cf5 //\cf0 \
+\cf5 //y = BMSoundFileMultiStreamerGUI(x);\cf0 \
+\cf5 //x.buffer;\cf0 \
+\cf5 //\cf0 \
+\cf5 //x.play(0,0);\cf0 \
+\cf5 //x.stop\cf0 \
 \
 ///////////// Streamer\
 \
 s.boot;\
 \
-x = \cf2 BMSoundFileStream\cf0 .new;\
+x = \cf2 BMSoundFileStream\cf0 .new(24);\
 \
 x.read(\cf3 "sounds/a11wlk01.wav"\cf0 , \{\cf4 \\foo\cf0 .postln\});\
 \

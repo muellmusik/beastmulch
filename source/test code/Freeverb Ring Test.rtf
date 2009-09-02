@@ -1,0 +1,28 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
+{\fonttbl\f0\fnil\fcharset0 Monaco;}
+{\colortbl;\red255\green255\blue255;\red96\green96\blue96;\red0\green22\blue189;\red0\green0\blue191;
+\red0\green43\blue176;\red174\green26\blue25;\red43\green112\blue0;}
+\deftab560
+\pard\pardeftab560\ql\qnatural
+
+\f0\fs18 \cf0 (\
+l = [[-22.5, \cf2 "ML"\cf0  ], [22.5, \cf2 "MR"\cf0 ], [-67.5, \cf2 "WL"\cf0 ], [67.5, \cf2 "WR"\cf0 ], [-112.5, \cf2 "SL"\cf0 ], [112.5, \cf2 "SR"\cf0 ], [-157.5, \cf2 "RL"\cf0 ], [157.5, \cf2 "RR"\cf0 ]].collectAs(\{\cf3 |el, i|\cf0 \
+	\cf3 BMSpeaker\cf0 .newFromSpherical(el[1], i + 2, el[0], 0, 2);\
+\}, \cf3 BMInOutArray\cf0 );\cf3 \
+\cf0 )\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf0 l = l.select(\{\cf4 |item, i|\cf0  l.indexOf(item).even\}) ++ l.select(\{\cf4 |item, i|\cf0  l.indexOf(item).odd\}).reverse;\
+\pard\pardeftab560\ql\qnatural
+\cf0 \
+b = \cf3 Bus\cf0 .audio(s, 8);\
+\
+x = \{\cf3 Out\cf0 .ar(b, \cf3 \{\cf5 Ringz\cf0 .ar(\cf5 Dust\cf0 .ar(0.3, 0.3), rrand(400, 2000), 2)\cf3 \} ! 8\cf0 )\}.play; \cf6 // something to pan\cf0 \
+\
+i = b.asBMInOutArray(\cf7 \\noiseBus\cf0 );\
+\
+r = \cf3 BMMultichannelPluginsRack\cf0 (i, l, x, \cf7 \\addAfter\cf0 , \cf7 'Plug em In'\cf0 );\
+\
+r.addPlugin(\cf3 BMMultichannelPlugin\cf0 (\cf7 'FreeVerb Ring'\cf0 , i, l));\
+\
+r.gui;}
