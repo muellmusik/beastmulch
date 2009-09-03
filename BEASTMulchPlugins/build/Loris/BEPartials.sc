@@ -83,9 +83,6 @@ BEPartials {
 			});
 			phases = phases.add(item[1].last);
 			
-			[phases.size, amps.size].postln;
-			//phases = item[1];
-			//times = item[2];
 			// freq, amp, bw
 			theseEnvs = [Env(item[4], times), Env(item[3], times), Env(item[5], times)];
 			
