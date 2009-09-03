@@ -1,8 +1,6 @@
-RBE_SDIF_File : File {
-
-	*new {|path| ^super.new(path, "rb");}
-	
-	readFramesToPartials {
++ RBE_SDIF_File {
+	// before phase envs added
+	readFramesToPartialsOld {
 		var size, string, streamID, numMatrices, matrixName, time; 
 		var matrixDataType, numRows, numColumns, getItemSelector;
 		var partialIndex, dict, list;
@@ -69,6 +67,8 @@ RBE_SDIF_File : File {
 				
 				// it's possible that there would be padding bytes here, 
 				// but for the moment that doesn't seem to be the case
+				//(keys == oldKeys).postln;
+				//oldKeys = keys;
 			},
 			{
 				// ignore other types for now, including RBEL and RBEM; just bypass the frame
@@ -82,9 +82,9 @@ RBE_SDIF_File : File {
 		list = dict.values.collectAs({|item| // a list of Lists, one for each partial
 			var oldTime = 0.0;
 			item = item.flop;
-			// start-time, phases, times, amps, freqs, bw
+			// start-time, iphase, times, amps, freqs, bw
 			
-			[item.first.first, item[3], item[0].differentiate.drop(1), item[2], item[1], 
+			[item.first.first, item[3].first, item[0].differentiate.drop(1), item[2], item[1], 
 				item[4]];
 		}, Array);
 		^list;

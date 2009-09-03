@@ -57,6 +57,14 @@ struct BEOsc : public TableLookup
 	float m_x1, m_x2, m_x3; // for 4 pt avg
 };
 
+struct LorisPhaseGen : public Unit
+{
+	double m_a1, m_a2, m_b1, m_y1, m_y2, m_grow, m_level, m_endLevel;
+	int m_counter, m_stage, m_shape, m_releaseNode;
+	float m_prevGate;
+	bool m_released;
+};
+
 //struct BERingz : public Unit
 //{
 //	float m_y1, m_y2, m_b1, m_b2, m_freq, m_decayTime;
@@ -103,6 +111,11 @@ extern "C"
 	void BEOsc_next_iaaa(BEOsc *unit, int inNumSamples);
 	void BEOsc_Ctor(BEOsc* unit);
 	
+	void LorisPhaseGen_next_aa(LorisPhaseGen *unit, int inNumSamples);
+	void LorisPhaseGen_next_ak(LorisPhaseGen *unit, int inNumSamples);
+	void LorisPhaseGen_next_k(LorisPhaseGen *unit, int inNumSamples);
+	void LorisPhaseGen_Ctor(LorisPhaseGen *unit);
+	
 //	void BERingz_next(BERingz *unit, int inNumSamples);
 //	void BERingz_Ctor(BERingz* unit);
 	
@@ -138,6 +151,8 @@ void BEOsc_Ctor(BEOsc* unit)
 	
 	int tableSize2 = ft->mSineSize;
 	unit->m_phasein = ZIN0(1);
+	
+	if(unit->m_phasein == -INFINITY) unit->m_phasein = 0; // ignore special value
 	unit->m_radtoinc = tableSize2 * (rtwopi * 65536.); 
 	unit->m_cpstoinc = tableSize2 * SAMPLEDUR * 65536.; 
 	unit->m_lomask = (tableSize2 - 1) << 3; 
@@ -209,11 +224,15 @@ void BEOsc_Ctor(BEOsc* unit)
 // The calculation function executes once per control period 
 // which is typically 64 samples.
 
-void BEOsc_next_ikk(BEOsc *unit, int inNumSamples)
+void BEOsc_next_ikk(BEOsc *unit, int inNumSamples) // freq and phase control or scalar
 {
 	float *out = ZOUT(0);
 	float freqin = ZIN0(0);
 	float phasein = ZIN0(1);
+	
+	if(phasein == -INFINITY){ // ignore special phase value
+		phasein = unit->m_phasein;
+	}
 	
 	float *table0 = ft->mSineWavetable;
 	float *table1 = table0 + 1;
@@ -235,12 +254,17 @@ void BEOsc_next_ikk(BEOsc *unit, int inNumSamples)
 
 #if __VEC__
 
-void vBEOsc_next_ikk(BEOsc *unit, int inNumSamples)
+void vBEOsc_next_ikk(BEOsc *unit, int inNumSamples) // freq and phase control or scalar use vec
 {
 	define_vzero
 	vfloat32 *vout = (vfloat32*)OUT(0);
 	float freqin = ZIN0(0);
 	float phasein = ZIN0(1);
+	
+	if(phasein == -INFINITY){ // ignore special phase value
+		phasein = unit->m_phasein;
+	}
+	
 	float bwin = ZIN0(2);
 	
 	float *table0 = ft->mSineWavetable;
@@ -328,7 +352,7 @@ void vBEOsc_next_ikk(BEOsc *unit, int inNumSamples)
 
 #endif
 
-void BEOsc_next_ikaa(BEOsc *unit, int inNumSamples)
+void BEOsc_next_ikaa(BEOsc *unit, int inNumSamples) // freq control or scalar phase and bw audio
 {
 	
 	float *out = ZOUT(0);
@@ -354,11 +378,25 @@ void BEOsc_next_ikaa(BEOsc *unit, int inNumSamples)
 	//float mod = unit->mLevel; //old noise val
 	float mod;
 	float bw;
+	float thisPhaseIn;
+	float oldPhaseIn = unit->m_phasein;
+	
+	int32 phaseoffset;
 	
 	//Print("BEOsc_next_ika %d %g %d\n", inNumSamples, radtoinc, phase);
 	// unroll by 4
 	LOOP(inNumSamples >> 2,
-		 int32 phaseoffset = phase + (int32)(radtoinc * ZXP(phasein));
+		 
+		 thisPhaseIn = ZXP(phasein);
+		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+			phaseoffset = phase; 
+		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+			phaseoffset = phase = thisPhaseIn;
+		 } else {	// in this plain ar phase
+			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+		 }
+		 oldPhaseIn = thisPhaseIn;
+		 
 		 //noise
 		 x0 = frand2(s1, s2, s3);
 		 mod = 0.25f * (x0 + x1 + x2 + x3);
@@ -367,7 +405,17 @@ void BEOsc_next_ikaa(BEOsc *unit, int inNumSamples)
 		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (FastScalarSqrt( 1.f - bw ) + ( mod * FastScalarSqrt( 2.f * bw ) ));
 		 phase += freq;
 		 
-		 phaseoffset = phase + (int32)(radtoinc * ZXP(phasein));
+		 ////
+		 thisPhaseIn = ZXP(phasein);
+		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+			phaseoffset = phase; 
+		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+			phaseoffset = phase = thisPhaseIn;
+		 } else {	// in this plain ar phase
+			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+		 }
+		 oldPhaseIn = thisPhaseIn;
+		 
 		 //noise
 		 x3 = frand2(s1, s2, s3);
 		 mod = 0.25f * (x0 + x1 + x2 + x3);
@@ -376,7 +424,17 @@ void BEOsc_next_ikaa(BEOsc *unit, int inNumSamples)
 		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (FastScalarSqrt( 1.f - bw ) + ( mod * FastScalarSqrt( 2.f * bw ) ));
 		 phase += freq;
 		 
-		 phaseoffset = phase + (int32)(radtoinc * ZXP(phasein));
+		 ////
+		 thisPhaseIn = ZXP(phasein);
+		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+			phaseoffset = phase; 
+		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+			phaseoffset = phase = thisPhaseIn;
+		 } else {	// in this plain ar phase
+			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+		 }
+		 oldPhaseIn = thisPhaseIn;
+		 
 		 //noise
 		 x2 = frand2(s1, s2, s3);
 		 mod = 0.25f * (x0 + x1 + x2 + x3);
@@ -385,7 +443,17 @@ void BEOsc_next_ikaa(BEOsc *unit, int inNumSamples)
 		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (FastScalarSqrt( 1.f - bw ) + ( mod * FastScalarSqrt( 2.f * bw ) ));
 		 phase += freq;
 		 
-		 phaseoffset = phase + (int32)(radtoinc * ZXP(phasein));
+		 ////
+		 thisPhaseIn = ZXP(phasein);
+		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+			phaseoffset = phase; 
+		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+			phaseoffset = phase = thisPhaseIn;
+		 } else {	// in this plain ar phase
+			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+		 }
+		 oldPhaseIn = thisPhaseIn;
+		 
 		 //noise
 		 x1 = frand2(s1, s2, s3);
 		 mod = 0.25f * (x0 + x1 + x2 + x3);
@@ -398,7 +466,17 @@ void BEOsc_next_ikaa(BEOsc *unit, int inNumSamples)
 	
 	// in case of remainder
 	LOOP(inNumSamples & 3, 
-		 int32 phaseoffset = phase + (int32)(radtoinc * ZXP(phasein));
+
+		 thisPhaseIn = ZXP(phasein);
+		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+			phaseoffset = phase; 
+		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+			phaseoffset = phase = thisPhaseIn;
+		 } else {	// in this plain ar phase
+			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+		 }
+		 oldPhaseIn = thisPhaseIn;
+		 
 		 //noise
 		 x0 = frand2(s1, s2, s3);
 		 mod = 0.25f * (x0 + x1 + x2 + x3);
@@ -413,7 +491,7 @@ void BEOsc_next_ikaa(BEOsc *unit, int inNumSamples)
 		 )
 		
 	unit->m_phase = phase;
-	//unit->m_phasein = phasein;
+	unit->m_phasein = thisPhaseIn;
 	//unit->mLevel = mod;
 	
 	unit->m_x1 = x1;
@@ -424,7 +502,7 @@ void BEOsc_next_ikaa(BEOsc *unit, int inNumSamples)
 	
 }
 
-void BEOsc_next_ikak(BEOsc *unit, int inNumSamples)
+void BEOsc_next_ikak(BEOsc *unit, int inNumSamples) // freq control or scalar, phase audio, bw control or scalar
 {
 	
 	float *out = ZOUT(0);
@@ -444,6 +522,10 @@ void BEOsc_next_ikak(BEOsc *unit, int inNumSamples)
 	float x1 = unit->m_x1;
 	float x2 = unit->m_x2;
 	float x3 = unit->m_x3;
+	
+	float thisPhaseIn;
+	float oldPhaseIn = unit->m_phasein;
+	int32 phaseoffset;
 	
 	float bw1, bw2; 
 	
@@ -468,28 +550,62 @@ void BEOsc_next_ikak(BEOsc *unit, int inNumSamples)
 //		 );
 	// unroll by 4
 	LOOP(inNumSamples >> 2,
-		 int32 phaseoffset = phase + (int32)(radtoinc * ZXP(phasein));
+		 thisPhaseIn = ZXP(phasein);
+		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+			phaseoffset = phase; 
+		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+			phaseoffset = phase = thisPhaseIn;
+		 } else {	// in this plain ar phase
+			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+		 }
+		 oldPhaseIn = thisPhaseIn;
+		 
 		 //noise
 		 x0 = frand2(s1, s2, s3);
 		 mod = 0.25f * (x0 + x1 + x2 + x3);
 		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (bw1 + ( mod * bw2 ));
 		 phase += freq;
 		 
-		 phaseoffset = phase + (int32)(radtoinc * ZXP(phasein));
+		 thisPhaseIn = ZXP(phasein);
+		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+			phaseoffset = phase; 
+		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+			phaseoffset = phase = thisPhaseIn;
+		 } else {	// in this plain ar phase
+			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+		 }
+		 oldPhaseIn = thisPhaseIn;
 		 //noise
 		 x3 = frand2(s1, s2, s3);
 		 mod = 0.25f * (x0 + x1 + x2 + x3);
 		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (bw1 + ( mod * bw2 ));
 		 phase += freq;
 		 
-		 phaseoffset = phase + (int32)(radtoinc * ZXP(phasein));
+		 thisPhaseIn = ZXP(phasein);
+		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+			phaseoffset = phase; 
+		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+			phaseoffset = phase = thisPhaseIn;
+		 } else {	// in this plain ar phase
+			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+		 }
+		 oldPhaseIn = thisPhaseIn;
+		 
 		 //noise
 		 x2 = frand2(s1, s2, s3);
 		 mod = 0.25f * (x0 + x1 + x2 + x3);
 		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (bw1 + ( mod * bw2 ));
 		 phase += freq;
 		 
-		 phaseoffset = phase + (int32)(radtoinc * ZXP(phasein));
+		 thisPhaseIn = ZXP(phasein);
+		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+			phaseoffset = phase; 
+		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+			phaseoffset = phase = thisPhaseIn;
+		 } else {	// in this plain ar phase
+			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+		 }
+		 oldPhaseIn = thisPhaseIn;
 		 //noise
 		 x1 = frand2(s1, s2, s3);
 		 mod = 0.25f * (x0 + x1 + x2 + x3);
@@ -498,7 +614,15 @@ void BEOsc_next_ikak(BEOsc *unit, int inNumSamples)
 		 );
 	// in case of remainder
 	LOOP(inNumSamples & 3, 
-		 int32 phaseoffset = phase + (int32)(radtoinc * ZXP(phasein));
+		 thisPhaseIn = ZXP(phasein);
+		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+			phaseoffset = phase; 
+		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+			phaseoffset = phase = thisPhaseIn;
+		 } else {	// in this plain ar phase
+			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+		 }
+		 oldPhaseIn = thisPhaseIn;
 		 //noise
 		 x0 = frand2(s1, s2, s3);
 		 mod = 0.25f * (x0 + x1 + x2 + x3);
@@ -510,7 +634,7 @@ void BEOsc_next_ikak(BEOsc *unit, int inNumSamples)
 		 x1 = x0;
 		 )
 	unit->m_phase = phase;
-	//unit->m_phasein = phasein;
+	unit->m_phasein = thisPhaseIn;
 	//unit->mLevel = mod;
 	
 	unit->m_x1 = x1;
@@ -521,7 +645,7 @@ void BEOsc_next_ikak(BEOsc *unit, int inNumSamples)
 		
 }
 
-void BEOsc_next_iaaa(BEOsc *unit, int inNumSamples)
+void BEOsc_next_iaaa(BEOsc *unit, int inNumSamples) // freq, phase, bw audio
 {
 	float *out = ZOUT(0);
 	float *freqin = ZIN(0);
@@ -542,6 +666,10 @@ void BEOsc_next_iaaa(BEOsc *unit, int inNumSamples)
 	float x2 = unit->m_x2;
 	float x3 = unit->m_x3;
 	
+	float thisPhaseIn;
+	float oldPhaseIn = unit->m_phasein;
+	int32 phaseoffset;
+	
 	RGET
 	//float mod = unit->mLevel; //old noise val
 	float mod;
@@ -550,7 +678,15 @@ void BEOsc_next_iaaa(BEOsc *unit, int inNumSamples)
 	
 	// unroll by 4
 	LOOP(inNumSamples >> 2,
-		 int32 phaseoffset = phase + (int32)(radtoinc * ZXP(phasein));
+		 thisPhaseIn = ZXP(phasein);
+		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+			phaseoffset = phase; 
+		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+			phaseoffset = phase = thisPhaseIn;
+		 } else {	// in this plain ar phase
+			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+		 }
+		 oldPhaseIn = thisPhaseIn;
 		 //noise
 		 x0 = frand2(s1, s2, s3);
 		 mod = 0.25f * (x0 + x1 + x2 + x3);
@@ -560,7 +696,16 @@ void BEOsc_next_iaaa(BEOsc *unit, int inNumSamples)
 		 phase += (int32)(cpstoinc * ZXP(freqin));
 		 ZXP(out) = z;
 		 
-		 phaseoffset = phase + (int32)(radtoinc * ZXP(phasein));
+		 ////
+		 thisPhaseIn = ZXP(phasein);
+		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+			phaseoffset = phase; 
+		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+			phaseoffset = phase = thisPhaseIn;
+		 } else {	// in this plain ar phase
+			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+		 }
+		 oldPhaseIn = thisPhaseIn;
 		 //noise
 		 x3 = frand2(s1, s2, s3);
 		 mod = 0.25f * (x0 + x1 + x2 + x3);
@@ -570,7 +715,16 @@ void BEOsc_next_iaaa(BEOsc *unit, int inNumSamples)
 		 phase += (int32)(cpstoinc * ZXP(freqin));
 		 ZXP(out) = z;
 		 
-		 phaseoffset = phase + (int32)(radtoinc * ZXP(phasein));
+		 ////
+		 thisPhaseIn = ZXP(phasein);
+		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+			phaseoffset = phase; 
+		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+			phaseoffset = phase = thisPhaseIn;
+		 } else {	// in this plain ar phase
+			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+		 }
+		 oldPhaseIn = thisPhaseIn;
 		 //noise
 		 x2 = frand2(s1, s2, s3);
 		 mod = 0.25f * (x0 + x1 + x2 + x3);
@@ -580,7 +734,16 @@ void BEOsc_next_iaaa(BEOsc *unit, int inNumSamples)
 		 phase += (int32)(cpstoinc * ZXP(freqin));
 		 ZXP(out) = z;
 		 
-		 phaseoffset = phase + (int32)(radtoinc * ZXP(phasein));
+		 ////
+		 thisPhaseIn = ZXP(phasein);
+		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+			phaseoffset = phase; 
+		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+			phaseoffset = phase = thisPhaseIn;
+		 } else {	// in this plain ar phase
+			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+		 }
+		 oldPhaseIn = thisPhaseIn;
 		 //noise
 		 x1 = frand2(s1, s2, s3);
 		 mod = 0.25f * (x0 + x1 + x2 + x3);
@@ -592,7 +755,15 @@ void BEOsc_next_iaaa(BEOsc *unit, int inNumSamples)
 		 );
 	// remainder
 	LOOP(inNumSamples & 3,
-		 int32 phaseoffset = phase + (int32)(radtoinc * ZXP(phasein));
+		 thisPhaseIn = ZXP(phasein);
+		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+			phaseoffset = phase; 
+		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+			phaseoffset = phase = thisPhaseIn;
+		 } else {	// in this plain ar phase
+			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+		 }
+		 oldPhaseIn = thisPhaseIn;
 		 //noise
 		 x0 = frand2(s1, s2, s3);
 		 mod = 0.25f * (x0 + x1 + x2 + x3);
@@ -608,6 +779,7 @@ void BEOsc_next_iaaa(BEOsc *unit, int inNumSamples)
 		 );
 	
 	unit->m_phase = phase;
+	unit->m_phasein = thisPhaseIn;
 	//unit->mLevel = mod;
 	RPUT
 		
@@ -618,7 +790,7 @@ void BEOsc_next_iaaa(BEOsc *unit, int inNumSamples)
 	
 }
 
-void BEOsc_next_iaak(BEOsc *unit, int inNumSamples)
+void BEOsc_next_iaak(BEOsc *unit, int inNumSamples) // freq, phase audio, bw ctrl or scalar
 {
 	float *out = ZOUT(0);
 	float *freqin = ZIN(0);
@@ -639,6 +811,10 @@ void BEOsc_next_iaak(BEOsc *unit, int inNumSamples)
 	float x2 = unit->m_x2;
 	float x3 = unit->m_x3;
 	
+	float thisPhaseIn;
+	float oldPhaseIn = unit->m_phasein;
+	int32 phaseoffset;
+	
 	RGET
 	//float mod = unit->mLevel; //old noise val
 	float bw1, bw2, mod; 
@@ -651,7 +827,15 @@ void BEOsc_next_iaak(BEOsc *unit, int inNumSamples)
 	
 	// unroll by 4
 	LOOP(inNumSamples >> 2,
-		 int32 phaseoffset = phase + (int32)(radtoinc * ZXP(phasein));
+		 thisPhaseIn = ZXP(phasein);
+		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+			phaseoffset = phase; 
+		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+			phaseoffset = phase = thisPhaseIn;
+		 } else {	// in this plain ar phase
+			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+		 }
+		 oldPhaseIn = thisPhaseIn;
 		 //noise
 		 x0 = frand2(s1, s2, s3);
 		 mod = 0.25f * (x0 + x1 + x2 + x3);
@@ -660,7 +844,16 @@ void BEOsc_next_iaak(BEOsc *unit, int inNumSamples)
 		 phase += (int32)(cpstoinc * ZXP(freqin));
 		 ZXP(out) = z;
 		 
-		 phaseoffset = phase + (int32)(radtoinc * ZXP(phasein));
+		 ////
+		 thisPhaseIn = ZXP(phasein);
+		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+			phaseoffset = phase; 
+		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+			phaseoffset = phase = thisPhaseIn;
+		 } else {	// in this plain ar phase
+			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+		 }
+		 oldPhaseIn = thisPhaseIn;
 		 //noise
 		 x3 = frand2(s1, s2, s3);
 		 mod = 0.25f * (x0 + x1 + x2 + x3);
@@ -669,7 +862,16 @@ void BEOsc_next_iaak(BEOsc *unit, int inNumSamples)
 		 phase += (int32)(cpstoinc * ZXP(freqin));
 		 ZXP(out) = z;
 		 
-		 phaseoffset = phase + (int32)(radtoinc * ZXP(phasein));
+		 ////
+		 thisPhaseIn = ZXP(phasein);
+		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+			phaseoffset = phase; 
+		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+			phaseoffset = phase = thisPhaseIn;
+		 } else {	// in this plain ar phase
+			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+		 }
+		 oldPhaseIn = thisPhaseIn;
 		 //noise
 		 x2 = frand2(s1, s2, s3);
 		 mod = 0.25f * (x0 + x1 + x2 + x3);
@@ -678,7 +880,16 @@ void BEOsc_next_iaak(BEOsc *unit, int inNumSamples)
 		 phase += (int32)(cpstoinc * ZXP(freqin));
 		 ZXP(out) = z;
 		 
-		 phaseoffset = phase + (int32)(radtoinc * ZXP(phasein));
+		 ////
+		 thisPhaseIn = ZXP(phasein);
+		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+			phaseoffset = phase; 
+		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+			phaseoffset = phase = thisPhaseIn;
+		 } else {	// in this plain ar phase
+			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+		 }
+		 oldPhaseIn = thisPhaseIn;
 		 //noise
 		 x1 = frand2(s1, s2, s3);
 		 mod = 0.25f * (x0 + x1 + x2 + x3);
@@ -689,7 +900,16 @@ void BEOsc_next_iaak(BEOsc *unit, int inNumSamples)
 		 );
 	// remainder
 	LOOP(inNumSamples & 3,
-		 int32 phaseoffset = phase + (int32)(radtoinc * ZXP(phasein));
+		 ////
+		 thisPhaseIn = ZXP(phasein);
+		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+			phaseoffset = phase; 
+		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+			phaseoffset = phase = thisPhaseIn;
+		 } else {	// in this plain ar phase
+			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+		 }
+		 oldPhaseIn = thisPhaseIn;
 		 //noise
 		 x0 = frand2(s1, s2, s3);
 		 mod = 0.25f * (x0 + x1 + x2 + x3);
@@ -704,6 +924,7 @@ void BEOsc_next_iaak(BEOsc *unit, int inNumSamples)
 		 );
 	
 	unit->m_phase = phase;
+	unit->m_phasein = thisPhaseIn;
 	//unit->mLevel = mod;
 	RPUT
 		
@@ -819,7 +1040,7 @@ void BEOsc_next_iaak(BEOsc *unit, int inNumSamples)
 //}
 
 // version with whitenoise/ unrolled average filter
-void BEOsc_next_iaka(BEOsc *unit, int inNumSamples)
+void BEOsc_next_iaka(BEOsc *unit, int inNumSamples) // freq audio phase control or scalar, audio bw
 {
 	
 	float *out = ZOUT(0);
@@ -836,6 +1057,9 @@ void BEOsc_next_iaka(BEOsc *unit, int inNumSamples)
 	float cpstoinc = unit->m_cpstoinc;
 	float radtoinc = unit->m_radtoinc;
 	float phasemod = unit->m_phasein;
+	if(phasein == -INFINITY){ // ignore special phase value
+		phasein = phasemod;
+	}
 	float phaseslope = CALCSLOPE(phasein, phasemod);
 	
 	float x0;
@@ -907,7 +1131,7 @@ void BEOsc_next_iaka(BEOsc *unit, int inNumSamples)
 		 );
 	// in case of remainder
 	LOOP(inNumSamples & 3, 
-		 printf("remain\n");
+		 //printf("remain\n");
 		 x0 = frand2(s1, s2, s3);
 		 mod = 0.25f * (x0 + x1 + x2 + x3);
 		 bw = ZXP(bwin);
@@ -938,7 +1162,7 @@ void BEOsc_next_iaka(BEOsc *unit, int inNumSamples)
 }
 
 // control rate bw
-void BEOsc_next_iakk(BEOsc *unit, int inNumSamples)
+void BEOsc_next_iakk(BEOsc *unit, int inNumSamples) // freq audio phase control or scalar, control bw
 {
 	
 	float *out = ZOUT(0);
@@ -955,6 +1179,9 @@ void BEOsc_next_iakk(BEOsc *unit, int inNumSamples)
 	float cpstoinc = unit->m_cpstoinc;
 	float radtoinc = unit->m_radtoinc;
 	float phasemod = unit->m_phasein;
+	if(phasein == -INFINITY){ // ignore special phase value
+		phasein = phasemod;
+	}
 	float phaseslope = CALCSLOPE(phasein, phasemod);
 	
 	float x0;
@@ -1014,7 +1241,7 @@ void BEOsc_next_iakk(BEOsc *unit, int inNumSamples)
 			 );
 	// in case of remainder
 	LOOP(inNumSamples & 3, 
-		 printf("remain\n");
+		 //printf("remain\n");
 		 x0 = frand2(s1, s2, s3);
 		 mod = 0.25f * (x0 + x1 + x2 + x3);
 		 pphase = phase + (int32)(radtoinc * phasemod);
@@ -1038,6 +1265,798 @@ void BEOsc_next_iakk(BEOsc *unit, int inNumSamples)
 		
 		unit->m_phase = phase;
 	unit->m_phasein = phasein;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// hastily and messily adapted (with apologies) from EnvGen
+// -INFINITY is understood by BEOsc to mean ignore phase input
+// This outputs -INFINITY except at phase reset points
+
+enum {
+	kEnvGen_gate,
+	kEnvGen_levelScale,
+	kEnvGen_levelBias,
+	kEnvGen_timeScale,
+	kEnvGen_doneAction,
+	kEnvGen_initLevel,
+	kEnvGen_numStages,
+	kEnvGen_releaseNode,
+	kEnvGen_loopNode,
+	// 'kEnvGen_nodeOffset' must always be last
+	// if you need to add an arg, put it before this one
+	kEnvGen_nodeOffset
+};
+
+void LorisPhaseGen_Ctor(LorisPhaseGen *unit)
+{
+	//Print("LorisPhaseGen_Ctor A\n");
+	if (unit->mCalcRate == calc_FullRate) {
+		if (INRATE(0) == calc_FullRate) { // gate
+			SETCALC(LorisPhaseGen_next_aa);
+		} else {
+			SETCALC(LorisPhaseGen_next_ak);
+		}
+	} else {
+		SETCALC(LorisPhaseGen_next_k);
+	}
+	// gate = 1.0, levelScale = 1.0, levelBias = 0.0, timeScale
+	// level0, numstages, releaseNode, loopNode,
+	// [level, dur, shape, curve]
+	
+	unit->m_endLevel = unit->m_level = ZIN0(kEnvGen_initLevel) * ZIN0(kEnvGen_levelScale) + ZIN0(kEnvGen_levelBias);
+	unit->m_counter = 0;
+	unit->m_stage = 1000000000;
+	unit->m_prevGate = 0.f;
+	unit->m_released = false;
+	unit->m_releaseNode = (int)ZIN0(kEnvGen_releaseNode);
+	LorisPhaseGen_next_k(unit, 1);
+}
+
+enum {
+	shape_Step,
+	shape_Linear,
+	shape_Exponential,
+	shape_Sine,
+	shape_Welch,
+	shape_Curve,
+	shape_Squared,
+	shape_Cubed,
+	shape_Sustain = 9999
+};
+
+void LorisPhaseGen_next_k(LorisPhaseGen *unit, int inNumSamples)
+{
+	float *out = OUT(0);
+	float gate = ZIN0(kEnvGen_gate); 
+	//Print("->EnvGen_next_k gate %g\n", gate);
+	int counter = unit->m_counter;
+	double level = unit->m_level;
+	
+	if (unit->m_prevGate <= 0. && gate > 0.) { // trigger
+		unit->m_stage = -1;
+		unit->mDone = false;
+		unit->m_released = false;
+		counter = 0;
+	} else if (gate <= -1.f && unit->m_prevGate > -1.f) {
+		// cutoff
+		int numstages = (int)ZIN0(kEnvGen_numStages);
+		float dur = -gate - 1.f;
+		counter  = (int32)(dur * SAMPLERATE);
+		counter  = sc_max(1, counter);
+		unit->m_stage = numstages;
+		unit->m_shape = shape_Linear;
+		// first ZIN0 gets the last envelope node's level, then apply levelScale and levelBias
+		unit->m_endLevel = ZIN0(unit->mNumInputs - 4) * ZIN0(kEnvGen_levelScale) + ZIN0(kEnvGen_levelBias);
+		unit->m_grow = (unit->m_endLevel - level) / counter;
+	} else if (unit->m_prevGate > 0.f && gate <= 0.f 
+			   && unit->m_releaseNode >= 0 && !unit->m_released) { // release
+		counter = 0;
+		unit->m_stage = unit->m_releaseNode - 1;
+		unit->m_released = true;
+	}
+	unit->m_prevGate = gate;
+	
+	
+	// gate = 1.0, levelScale = 1.0, levelBias = 0.0, timeScale
+	// level0, numstages, releaseNode, loopNode,
+	// [level, dur, shape, curve]
+	
+	if (counter <= 0) {
+		//Print("stage %d rel %d\n", unit->m_stage, (int)ZIN0(kEnvGen_releaseNode));
+		int numstages = (int)ZIN0(kEnvGen_numStages);
+		
+		//Print("stage %d   numstages %d\n", unit->m_stage, numstages);
+		if (unit->m_stage+1 >= numstages) { // num stages
+			//Print("stage+1 > num stages\n");
+			counter = INT_MAX;
+			unit->m_shape = 0;
+			level = unit->m_endLevel;
+			unit->mDone = true;
+			int doneAction = (int)ZIN0(kEnvGen_doneAction);
+			DoneAction(doneAction, unit);					// we're done
+		} else if (unit->m_stage+1 == unit->m_releaseNode && !unit->m_released) { // sustain stage
+			int loopNode = (int)ZIN0(kEnvGen_loopNode);
+			if (loopNode >= 0 && loopNode < numstages) {
+				unit->m_stage = loopNode;
+				goto initSegment;
+			} else {
+				counter = INT_MAX;
+				unit->m_shape = shape_Sustain;
+				level = unit->m_level; // changed here from m_endLevel ****
+			}
+			//Print("sustain\n");
+		} else {
+			unit->m_stage++;
+		initSegment:
+			//Print("stage %d\n", unit->m_stage);
+			//Print("initSegment\n");
+			//out = unit->m_level;
+			int stageOffset = (unit->m_stage << 2) + kEnvGen_nodeOffset;
+			
+			if (stageOffset + 4 > unit->mNumInputs) {
+				// oops.
+				Print("envelope went past end of inputs.\n");
+				ClearUnitOutputs(unit, 1);
+				NodeEnd(&unit->mParent->mNode);
+				return;
+			}
+			
+			// set this at init segment to value of last endLevel
+			level = unit->m_endLevel; 
+			
+			float** envPtr  = unit->mInBuf + stageOffset;
+			double endLevel = *envPtr[0] * ZIN0(kEnvGen_levelScale) + ZIN0(kEnvGen_levelBias); // scale levels
+			double dur      = *envPtr[1] * ZIN0(kEnvGen_timeScale);
+			//unit->m_shape   = (int32)*envPtr[2];
+			unit->m_shape   = 1; // always shape_Linear
+			double curve    = *envPtr[3];
+			unit->m_endLevel = endLevel;
+			
+			counter  = (int32)(dur * SAMPLERATE);
+			counter  = sc_max(1, counter);
+			//Print("stageOffset %d   level %g   endLevel %g   dur %g   shape %d   curve %g\n", stageOffset, level, endLevel, dur, unit->m_shape, curve);
+			//Print("SAMPLERATE %g\n", SAMPLERATE);
+//			if (counter == 1) unit->m_shape = 1; // shape_Linear
+//			//Print("new counter = %d  shape = %d\n", counter, unit->m_shape);
+//			switch (unit->m_shape) {
+//				case shape_Step : {
+//					level = endLevel;
+//				} break;
+//				case shape_Linear : {
+//					unit->m_grow = (endLevel - level) / counter;
+//					//Print("grow %g\n", unit->m_grow);
+//				} break;
+//				case shape_Exponential : {
+//					unit->m_grow = std::pow(endLevel / level, 1.0 / counter);
+//				} break;
+//				case shape_Sine : {
+//					double w = pi / counter;
+//					
+//					unit->m_a2 = (endLevel + level) * 0.5;
+//					unit->m_b1 = 2. * cos(w);
+//					unit->m_y1 = (endLevel - level) * 0.5;
+//					unit->m_y2 = unit->m_y1 * sin(pi * 0.5 - w);
+//					level = unit->m_a2 - unit->m_y1;
+//				} break;
+//				case shape_Welch : {
+//					double w = (pi * 0.5) / counter;
+//					
+//					unit->m_b1 = 2. * cos(w);
+//					
+//					if (endLevel >= level) {
+//						unit->m_a2 = level;
+//						unit->m_y1 = 0.;
+//						unit->m_y2 = -sin(w) * (endLevel - level);
+//					} else {
+//						unit->m_a2 = endLevel;
+//						unit->m_y1 = level - endLevel;
+//						unit->m_y2 = cos(w) * (level - endLevel);
+//					}
+//					level = unit->m_a2 + unit->m_y1;
+//				} break;
+//				case shape_Curve : {
+//					if (fabs(curve) < 0.001) {
+//						unit->m_shape = 1; // shape_Linear
+//						unit->m_grow = (endLevel - level) / counter;
+//					} else {
+//						double a1 = (endLevel - level) / (1.0 - exp(curve));	
+//						unit->m_a2 = level + a1;
+//						unit->m_b1 = a1; 
+//						unit->m_grow = exp(curve / counter);
+//					}
+//				} break;
+//				case shape_Squared : {
+//					unit->m_y1 = sqrt(level); 
+//					unit->m_y2 = sqrt(endLevel); 
+//					unit->m_grow = (unit->m_y2 - unit->m_y1) / counter;
+//				} break;
+//				case shape_Cubed : {
+//					unit->m_y1 = std::pow(level, 0.33333333);
+//					unit->m_y2 = std::pow(endLevel, 0.33333333);
+//					unit->m_grow = (unit->m_y2 - unit->m_y1) / counter;
+//				} break;
+//			}
+		}
+	}
+	
+	
+//	switch (unit->m_shape) {
+//		case shape_Step : {
+//		} break;
+//		case shape_Linear : {
+//			double grow = unit->m_grow;
+//			//Print("level %g\n", level);
+//			level += grow;
+//		} break;
+//		case shape_Exponential : {
+//			double grow = unit->m_grow;
+//			level *= grow;
+//		} break;
+//		case shape_Sine : {
+//			double a2 = unit->m_a2;
+//			double b1 = unit->m_b1;
+//			double y2 = unit->m_y2;
+//			double y1 = unit->m_y1;
+//			double y0 = b1 * y1 - y2; 
+//			level = a2 - y0;
+//			y2 = y1; 
+//			y1 = y0;
+//			unit->m_y1 = y1;
+//			unit->m_y2 = y2;
+//		} break;
+//		case shape_Welch : {
+//			double a2 = unit->m_a2;
+//			double b1 = unit->m_b1;
+//			double y2 = unit->m_y2;
+//			double y1 = unit->m_y1;
+//			double y0 = b1 * y1 - y2; 
+//			level = a2 + y0;
+//			y2 = y1; 
+//			y1 = y0;
+//			unit->m_y1 = y1;
+//			unit->m_y2 = y2;
+//		} break;
+//		case shape_Curve : {
+//			double a2 = unit->m_a2;
+//			double b1 = unit->m_b1;
+//			double grow = unit->m_grow;
+//			b1 *= grow;
+//			level = a2 - b1;
+//			unit->m_b1 = b1;
+//		} break;
+//		case shape_Squared : {
+//			double grow = unit->m_grow;
+//			double y1 = unit->m_y1;
+//			y1 += grow;
+//			level = y1*y1;
+//			unit->m_y1 = y1;
+//		} break;
+//		case shape_Cubed : {
+//			double grow = unit->m_grow;
+//			double y1 = unit->m_y1;
+//			y1 += grow;
+//			level = y1*y1*y1;
+//			unit->m_y1 = y1;
+//		} break;
+//		case shape_Sustain : {
+//		} break;
+//	}
+	*out = level;
+	//Print("x %d %d %d %g\n", unit->m_stage, counter, unit->m_shape, *out);
+	unit->m_level = -INFINITY;
+	unit->m_counter = counter - 1;
+	
+}
+
+// control rate gate
+void LorisPhaseGen_next_ak(LorisPhaseGen *unit, int inNumSamples)
+{
+	float *out = ZOUT(0);
+	float gate = ZIN0(kEnvGen_gate);
+	int counter = unit->m_counter;
+	double level = unit->m_level;
+	
+	if (unit->m_prevGate <= 0. && gate > 0.) { // trigger
+		unit->m_stage = -1;
+		unit->mDone = false;
+		unit->m_released = false;
+		counter = 0;
+	} else if (gate <= -1.f && unit->m_prevGate > -1.f) {
+		// cutoff
+		int numstages = (int)ZIN0(kEnvGen_numStages);
+		float dur = -gate - 1.f;
+		counter  = (int32)(dur * SAMPLERATE);
+		counter  = sc_max(1, counter);
+		unit->m_stage = numstages;
+		unit->m_shape = shape_Linear;
+		unit->m_endLevel = ZIN0(unit->mNumInputs - 4) * ZIN0(kEnvGen_levelScale) + ZIN0(kEnvGen_levelBias);
+		unit->m_grow = (unit->m_endLevel - level) / counter;
+	} else if (unit->m_prevGate > 0.f && gate <= 0.f 
+			   && unit->m_releaseNode >= 0 && !unit->m_released) { // release
+		counter = 0;
+		unit->m_stage = unit->m_releaseNode - 1;
+		unit->m_released = true;
+	}
+	unit->m_prevGate = gate;
+	
+	int remain = inNumSamples;
+	while (remain)
+	{
+		if (counter == 0) {
+			int numstages = (int)ZIN0(kEnvGen_numStages);
+			
+			if (unit->m_stage+1 >= numstages) { // num stages
+				counter = INT_MAX;
+				unit->m_shape = 0;
+				level = unit->m_endLevel;
+				unit->mDone = true;
+				int doneAction = (int)ZIN0(kEnvGen_doneAction);
+				DoneAction(doneAction, unit);						// we're done
+			} else if (unit->m_stage+1 == (int)ZIN0(kEnvGen_releaseNode) && !unit->m_released) { // sustain stage
+				int loopNode = (int)ZIN0(kEnvGen_loopNode);
+				if (loopNode >= 0 && loopNode < numstages) {
+					unit->m_stage = loopNode;
+					goto initSegment;
+				} else {
+					counter = INT_MAX;
+					unit->m_shape = shape_Sustain;
+					level = unit->m_level; // changed here from m_endLevel ****
+				}
+			} else {
+				unit->m_stage++;
+			initSegment:
+				int stageOffset = (unit->m_stage << 2) + kEnvGen_nodeOffset;
+				
+				if (stageOffset + 4 > unit->mNumInputs) {
+					// oops.
+					Print("envelope went past end of inputs.\n");
+					ClearUnitOutputs(unit, 1);
+					NodeEnd(&unit->mParent->mNode);
+					return;
+				}
+				
+				// set this at init segment to value of last endLevel
+				level = unit->m_endLevel; 
+				
+				float** envPtr  = unit->mInBuf + stageOffset;
+				double endLevel = *envPtr[0] * ZIN0(kEnvGen_levelScale) + ZIN0(kEnvGen_levelBias); // scale levels
+				double dur      = *envPtr[1] * ZIN0(kEnvGen_timeScale);
+				//unit->m_shape   = (int32)*envPtr[2];
+				unit->m_shape   = 1; // always shape_Linear
+				double curve    = *envPtr[3];
+				unit->m_endLevel = endLevel;
+				
+				counter  = (int32)(dur * SAMPLERATE);
+				counter  = sc_max(1, counter);
+				
+//				if (counter == 1) unit->m_shape = 1; // shape_Linear
+//				switch (unit->m_shape) {
+//					case shape_Step : {
+//						level = endLevel;
+//					} break;
+//					case shape_Linear : {
+//						unit->m_grow = (endLevel - level) / counter;
+//					} break;
+//					case shape_Exponential : {
+//						unit->m_grow = std::pow(endLevel / level, 1.0 / counter);
+//					} break;
+//					case shape_Sine : {
+//						double w = pi / counter;
+//						
+//						unit->m_a2 = (endLevel + level) * 0.5;
+//						unit->m_b1 = 2. * cos(w);
+//						unit->m_y1 = (endLevel - level) * 0.5;
+//						unit->m_y2 = unit->m_y1 * sin(pi * 0.5 - w);
+//						level = unit->m_a2 - unit->m_y1;
+//					} break;
+//					case shape_Welch : {
+//						double w = (pi * 0.5) / counter;
+//						
+//						unit->m_b1 = 2. * cos(w);
+//						
+//						if (endLevel >= level) {
+//							unit->m_a2 = level;
+//							unit->m_y1 = 0.;
+//							unit->m_y2 = -sin(w) * (endLevel - level);
+//						} else {
+//							unit->m_a2 = endLevel;
+//							unit->m_y1 = level - endLevel;
+//							unit->m_y2 = cos(w) * (level - endLevel);
+//						}
+//						level = unit->m_a2 + unit->m_y1;
+//					} break;
+//					case shape_Curve : {
+//						if (fabs(curve) < 0.001) {
+//							unit->m_shape = 1; // shape_Linear
+//							unit->m_grow = (endLevel - level) / counter;
+//						} else {
+//							double a1 = (endLevel - level) / (1.0 - exp(curve));	
+//							unit->m_a2 = level + a1;
+//							unit->m_b1 = a1; 
+//							unit->m_grow = exp(curve / counter);
+//						}
+//					} break;
+//					case shape_Squared : {
+//						unit->m_y1 = sqrt(level); 
+//						unit->m_y2 = sqrt(endLevel); 
+//						unit->m_grow = (unit->m_y2 - unit->m_y1) / counter;
+//					} break;
+//					case shape_Cubed : {
+//						unit->m_y1 = std::pow(level, 0.33333333);
+//						unit->m_y2 = std::pow(endLevel, 0.33333333);
+//						unit->m_grow = (unit->m_y2 - unit->m_y1) / counter;
+//					} break;
+//				}
+			}
+		}
+		
+		int nsmps = sc_min(remain, counter);
+		
+		for (int i=0; i<nsmps; ++i) { // much simpler than EnvGen
+			ZXP(out) = level;
+			level = -INFINITY;
+		}
+//		switch (unit->m_shape) {
+//			case shape_Step : {
+//				for (int i=0; i<nsmps; ++i) {
+//					ZXP(out) = level;
+//				}
+//			} break;
+//			case shape_Linear : {
+//				double grow = unit->m_grow;
+//				for (int i=0; i<nsmps; ++i) {
+//					ZXP(out) = level;
+//					level += grow;
+//				}
+//			} break;
+//			case shape_Exponential : {
+//				double grow = unit->m_grow;
+//				for (int i=0; i<nsmps; ++i) {
+//					ZXP(out) = level;
+//					level *= grow;
+//				}
+//			} break;
+//			case shape_Sine : {
+//				double a2 = unit->m_a2;
+//				double b1 = unit->m_b1;
+//				double y2 = unit->m_y2;
+//				double y1 = unit->m_y1;
+//				for (int i=0; i<nsmps; ++i) {
+//					ZXP(out) = level;
+//					double y0 = b1 * y1 - y2; 
+//					level = a2 - y0;
+//					y2 = y1; 
+//					y1 = y0;
+//				}
+//				unit->m_y1 = y1;
+//				unit->m_y2 = y2;
+//			} break;
+//			case shape_Welch : {
+//				double a2 = unit->m_a2;
+//				double b1 = unit->m_b1;
+//				double y2 = unit->m_y2;
+//				double y1 = unit->m_y1;
+//				for (int i=0; i<nsmps; ++i) {
+//					ZXP(out) = level;
+//					double y0 = b1 * y1 - y2; 
+//					level = a2 + y0;
+//					y2 = y1; 
+//					y1 = y0;
+//				}
+//				unit->m_y1 = y1;
+//				unit->m_y2 = y2;
+//			} break;
+//			case shape_Curve : {
+//				double a2 = unit->m_a2;
+//				double b1 = unit->m_b1;
+//				double grow = unit->m_grow;
+//				for (int i=0; i<nsmps; ++i) {
+//					ZXP(out) = level;
+//					b1 *= grow;
+//					level = a2 - b1;
+//				}
+//				unit->m_b1 = b1;
+//			} break;
+//			case shape_Squared : {
+//				double grow = unit->m_grow;
+//				double y1 = unit->m_y1;
+//				for (int i=0; i<nsmps; ++i) {
+//					ZXP(out) = level;
+//					y1 += grow;
+//					level = y1*y1;
+//				}
+//				unit->m_y1 = y1;
+//			} break;
+//			case shape_Cubed : {
+//				double grow = unit->m_grow;
+//				double y1 = unit->m_y1;
+//				for (int i=0; i<nsmps; ++i) {
+//					ZXP(out) = level;
+//					y1 += grow;
+//					level = y1*y1*y1;
+//				}
+//				unit->m_y1 = y1;
+//			} break;
+//			case shape_Sustain : {
+//				for (int i=0; i<nsmps; ++i) {
+//					ZXP(out) = level;
+//				}
+//			} break;
+//		}
+		remain -= nsmps;
+		counter -= nsmps;
+	}
+	//Print("x %d %d %d %g\n", unit->m_stage, counter, unit->m_shape, ZOUT0(0));
+	unit->m_level = level;
+	unit->m_counter = counter;
+	
+}
+
+
+#define CHECK_GATE \
+prevGate = gate; \
+gate = ZXP(gatein); \
+if (prevGate <= 0.f && gate > 0.f) { \
+gatein--; \
+unit->m_stage = -1; \
+unit->m_released = false; \
+unit->mDone = false; \
+counter = i; \
+nsmps = i; \
+break; \
+} else if (gate <= -1.f && unit->m_prevGate > -1.f) { \
+int numstages = (int)ZIN0(kEnvGen_numStages); \
+float dur = -gate - 1.f; \
+gatein--; \
+counter  = (int32)(dur * SAMPLERATE); \
+counter  = sc_max(1, counter) + i; \
+unit->m_stage = numstages; \
+unit->m_shape = shape_Linear; \
+unit->m_endLevel = ZIN0(unit->mNumInputs - 4) * ZIN0(kEnvGen_levelScale) + ZIN0(kEnvGen_levelBias); \
+unit->m_grow = (unit->m_endLevel - level) / counter; \
+nsmps = i; \
+break; \
+} else if (prevGate > 0.f && gate <= 0.f \
+&& unit->m_releaseNode >= 0 && !unit->m_released) { \
+gatein--; \
+counter = i; \
+unit->m_stage = unit->m_releaseNode - 1; \
+unit->m_released = true; \
+nsmps = i; \
+break; \
+} \
+
+// audio rate trigger
+void LorisPhaseGen_next_aa(LorisPhaseGen *unit, int inNumSamples)
+{
+	float *out = ZOUT(0);
+	float *gatein = ZIN(kEnvGen_gate);
+	int counter = unit->m_counter;
+	double level = unit->m_level;
+	float gate = 0.;
+	float prevGate = unit->m_prevGate;
+	int remain = inNumSamples;
+	while (remain)
+	{
+		if (counter == 0) {
+			
+			int numstages = (int)ZIN0(kEnvGen_numStages);
+			
+			if (unit->m_stage+1 >= numstages) { // num stages
+				counter = INT_MAX;
+				unit->m_shape = 0;
+				level = unit->m_endLevel;
+				unit->mDone = true;
+				int doneAction = (int)ZIN0(kEnvGen_doneAction);
+				DoneAction(doneAction, unit);						// we're done
+			} else if (unit->m_stage+1 == (int)ZIN0(kEnvGen_releaseNode) && !unit->m_released) { // sustain stage
+				int loopNode = (int)ZIN0(kEnvGen_loopNode);
+				if (loopNode >= 0 && loopNode < numstages) {
+					unit->m_stage = loopNode;
+					goto initSegment;
+				} else {
+					counter = INT_MAX;
+					unit->m_shape = shape_Sustain;
+					level = unit->m_level; // changed here from m_endLevel **** 
+				}
+			} else {
+				unit->m_stage++;
+			initSegment:
+				int stageOffset = (unit->m_stage << 2) + kEnvGen_nodeOffset;
+				
+				if (stageOffset + 4 > unit->mNumInputs) {
+					// oops.
+					Print("envelope went past end of inputs.\n");
+					ClearUnitOutputs(unit, 1);
+					NodeEnd(&unit->mParent->mNode);
+					return;
+				}
+				
+				// set this at init segment to value of last endLevel
+				level = unit->m_endLevel; 
+				
+				float** envPtr  = unit->mInBuf + stageOffset;
+				double endLevel = *envPtr[0] * ZIN0(kEnvGen_levelScale) + ZIN0(kEnvGen_levelBias); // scale levels
+				double dur      = *envPtr[1] * ZIN0(kEnvGen_timeScale);
+				//unit->m_shape   = (int32)*envPtr[2];
+				unit->m_shape   = 1; // always shape_Linear
+				double curve    = *envPtr[3];
+				unit->m_endLevel = endLevel;
+				
+				counter  = (int32)(dur * SAMPLERATE);
+				counter  = sc_max(1, counter);
+//				if (counter == 1) unit->m_shape = 1; // shape_Linear
+//				switch (unit->m_shape) {
+//					case shape_Step : {
+//						level = endLevel;
+//					} break;
+//					case shape_Linear : {
+//						unit->m_grow = (endLevel - level) / counter;
+//					} break;
+//					case shape_Exponential : {
+//						unit->m_grow = std::pow(endLevel / level, 1.0 / counter);
+//					} break;
+//					case shape_Sine : {
+//						double w = pi / counter;
+//						
+//						unit->m_a2 = (endLevel + level) * 0.5;
+//						unit->m_b1 = 2. * cos(w);
+//						unit->m_y1 = (endLevel - level) * 0.5;
+//						unit->m_y2 = unit->m_y1 * sin(pi * 0.5 - w);
+//						level = unit->m_a2 - unit->m_y1;
+//					} break;
+//					case shape_Welch : {
+//						double w = (pi * 0.5) / counter;
+//						
+//						unit->m_b1 = 2. * cos(w);
+//						
+//						if (endLevel >= level) {
+//							unit->m_a2 = level;
+//							unit->m_y1 = 0.;
+//							unit->m_y2 = -sin(w) * (endLevel - level);
+//						} else {
+//							unit->m_a2 = endLevel;
+//							unit->m_y1 = level - endLevel;
+//							unit->m_y2 = cos(w) * (level - endLevel);
+//						}
+//						level = unit->m_a2 + unit->m_y1;
+//					} break;
+//					case shape_Curve : {
+//						if (fabs(curve) < 0.001) {
+//							unit->m_shape = 1; // shape_Linear
+//							unit->m_grow = (endLevel - level) / counter;
+//						} else {
+//							double a1 = (endLevel - level) / (1.0 - exp(curve));	
+//							unit->m_a2 = level + a1;
+//							unit->m_b1 = a1; 
+//							unit->m_grow = exp(curve / counter);
+//						}
+//					} break;
+//					case shape_Squared : {
+//						unit->m_y1 = sqrt(level); 
+//						unit->m_y2 = sqrt(endLevel); 
+//						unit->m_grow = (unit->m_y2 - unit->m_y1) / counter;
+//					} break;
+//					case shape_Cubed : {
+//						unit->m_y1 = std::pow(level, 0.33333333);
+//						unit->m_y2 = std::pow(endLevel, 0.33333333);
+//						unit->m_grow = (unit->m_y2 - unit->m_y1) / counter;
+//					} break;
+//				}
+			}
+		}
+		
+		int nsmps = sc_min(remain, counter);
+		
+		for (int i=0; i<nsmps; ++i) { // much simpler than EnvGen
+			CHECK_GATE
+			ZXP(out) = level;
+			level = -INFINITY;
+		}
+		
+//		switch (unit->m_shape) {
+//			case shape_Step : {
+//				for (int i=0; i<nsmps; ++i) {
+//					CHECK_GATE
+//					ZXP(out) = level;
+//				}
+//			} break;
+//			case shape_Linear : {
+//				double grow = unit->m_grow;
+//				for (int i=0; i<nsmps; ++i) {
+//					CHECK_GATE
+//					ZXP(out) = level;
+//					level += grow;
+//				}
+//			} break;
+//			case shape_Exponential : {
+//				double grow = unit->m_grow;
+//				for (int i=0; i<nsmps; ++i) {
+//					CHECK_GATE
+//					ZXP(out) = level;
+//					level *= grow;
+//				}
+//			} break;
+//			case shape_Sine : {
+//				double a2 = unit->m_a2;
+//				double b1 = unit->m_b1;
+//				double y2 = unit->m_y2;
+//				double y1 = unit->m_y1;
+//				for (int i=0; i<nsmps; ++i) {
+//					CHECK_GATE
+//					ZXP(out) = level;
+//					double y0 = b1 * y1 - y2; 
+//					level = a2 - y0;
+//					y2 = y1; 
+//					y1 = y0;
+//				}
+//				unit->m_y1 = y1;
+//				unit->m_y2 = y2;
+//			} break;
+//			case shape_Welch : {
+//				double a2 = unit->m_a2;
+//				double b1 = unit->m_b1;
+//				double y2 = unit->m_y2;
+//				double y1 = unit->m_y1;
+//				for (int i=0; i<nsmps; ++i) {
+//					CHECK_GATE
+//					ZXP(out) = level;
+//					double y0 = b1 * y1 - y2; 
+//					level = a2 + y0;
+//					y2 = y1; 
+//					y1 = y0;
+//				}
+//				unit->m_y1 = y1;
+//				unit->m_y2 = y2;
+//			} break;
+//			case shape_Curve : {
+//				double a2 = unit->m_a2;
+//				double b1 = unit->m_b1;
+//				double grow = unit->m_grow;
+//				for (int i=0; i<nsmps; ++i) {
+//					CHECK_GATE
+//					ZXP(out) = level;
+//					b1 *= grow;
+//					level = a2 - b1;
+//				}
+//				unit->m_b1 = b1;
+//			} break;
+//			case shape_Squared : {
+//				double grow = unit->m_grow;
+//				double y1 = unit->m_y1;
+//				for (int i=0; i<nsmps; ++i) {
+//					CHECK_GATE
+//					ZXP(out) = level;
+//					y1 += grow;
+//					level = y1*y1;
+//				}
+//				unit->m_y1 = y1;
+//			} break;
+//			case shape_Cubed : {
+//				double grow = unit->m_grow;
+//				double y1 = unit->m_y1;
+//				for (int i=0; i<nsmps; ++i) {
+//					CHECK_GATE
+//					ZXP(out) = level;
+//					y1 += grow;
+//					level = y1*y1*y1;
+//				}
+//				unit->m_y1 = y1;
+//			} break;
+//			case shape_Sustain : {
+//				for (int i=0; i<nsmps; ++i) {
+//					CHECK_GATE
+//					ZXP(out) = level;
+//				}
+//			} break;
+//		}
+		remain -= nsmps;
+		counter -= nsmps;
+	}
+	unit->m_level = level;
+	unit->m_counter = counter;
+	unit->m_prevGate = gate;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1537,6 +2556,7 @@ void load(InterfaceTable *inTable)
 	ft = inTable;
 	
 	DefineSimpleUnit(BEOsc);
+	DefineSimpleUnit(LorisPhaseGen);
 	DefineSimpleUnit(LP4PAv);
 	DefineSimpleUnit(FastSqrt);
 	DefineSimpleUnit(LP4Noise);
