@@ -1,8 +1,8 @@
 BEPartials {
-	var <name, <size, <partialList, <dur;
+	var <>size, <>partialList, <dur = 0;
 
-	*new { arg name, sdif;	
-		^super.newCopyArgs(name).init(sdif);
+	*new { arg sdif;	
+		^super.new.init(sdif);
 	}
 	
 	init { arg sdif;	
@@ -17,13 +17,17 @@ BEPartials {
 	}
 	
 	// fades in or out partials with non-zero start and/or end amps
-	fadeInOut { arg list;
+	fadeInOut {
 		var fadein = 0.001, fadeout = 0.01;
-		list.do({ arg partial;
+		partialList = partialList.collect({ arg partial;
 			// fadein
 			if(partial[3].first > 0,{
-				partial[0] = partial[0] - fadein; // roll back start slightly
-				partial[1] = partial[1] - (2pi * partial[4].first * fadein); // roll back phase
+				partial[0] = partial[0] - fadein; // roll back startime slightly
+				// roll back phase
+				partial[1] = partial[1].insert(0, 
+					partial[1].first - (2pi * partial[4].first * fadein)
+				);
+				
 				partial[2] = partial[2].insert(0, fadein); // short fadein time segment
 				partial[3] = partial[3].insert(0, 0); // amp zero
 				partial[4] = partial[4].insert(0, partial[4].first); // extra freq
@@ -32,11 +36,14 @@ BEPartials {
 			
 			// fadeout
 			if(partial[3].last > 0,{
+				// extra phase
+				partial[1] = partial[1].add(partial[1].last + (2pi * partial[4].last * fadeout));
 				partial[2] = partial[2].add(fadeout); // short fadeout segment
 				partial[3] = partial[3].add(0); // amp zero
 				partial[4] = partial[4].add(partial[4].last); // extra freq
 				partial[5] = partial[5].add(partial[5].last); // extra bw
 			});
+			partial
 		});
 	
 	}
@@ -48,9 +55,11 @@ BEPartials {
 		bw = bw.value;
 		
 		recipStretch = stretch.reciprocal; // calculate only once
-		partialList.fadeInOut; // fade in and out non-zero partialtimes
+		this.fadeInOut; // fade in and out non-zero partialtimes
+		
 		partialList.do({ arg item, i;
 			var starttime, times, amps, phases, numSegs, theseEnvs, thisDelay, phaseEnv;
+			//i.postln;
 			//item.postln;
 			starttime = item[0];
 			// correct times for fadeins by compensating for stretch
@@ -58,23 +67,31 @@ BEPartials {
 			times = Array.new(numSegs);
 			amps = item[4];
 			phases = Array.new(numSegs + 1);
-			amps.do({|amp, i|
-				if(amp == 0 && (i != numSegs), {
-					// null amps are phase reset points
-					phases = phases.add(item[1][i]);
-					// keep fadein times constant under stretch so that onset phase
-					// is correct once start amp is reached
-					times = times.add(item[2][i] * recipStretch)
-				}, {
-					phases = phases.add(-inf); // otherwise ignore instantaneous phase
-					times = times.add(item[2][i]);
+			amps.do({|amp, j|
+				if(j < numSegs, {
+					if(amp == 0, {
+						// null amps are phase reset points
+						phases = phases.add(item[1][j]);
+						// keep fadein times constant under stretch so that onset phase
+						// is correct once start amp is reached
+						times = times.add(item[2][j] * recipStretch)
+					}, {
+						phases = phases.add(-inf); // otherwise ignore instantaneous phase
+						times = times.add(item[2][j]);
+					});
 				});
 			});
+			phases = phases.add(item[1].last);
+			
+			[phases.size, amps.size].postln;
+			//phases = item[1];
+			//times = item[2];
 			// freq, amp, bw
 			theseEnvs = [Env(item[4], times), Env(item[3], times), Env(item[5], times)];
 			
 			thisDelay = starttime + (i * ioff);
-			
+			//\bar.postln;
+//			thisDelay.postln;
 			theseEnvs = theseEnvs
 				.collect({|env, j|
 					var levelScale = 1;

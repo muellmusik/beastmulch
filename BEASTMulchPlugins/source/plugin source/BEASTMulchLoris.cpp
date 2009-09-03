@@ -161,7 +161,7 @@ void BEOsc_Ctor(BEOsc* unit)
 	if (INRATE(0) == calc_FullRate) {	// freq audio rate
 		if (INRATE(1) == calc_FullRate) {	// freq and phase audio rate
 			if (INRATE(2) == calc_FullRate) {
-				//Print("next_iaaa\n");
+				Print("next_iaaa\n");
 				SETCALC(BEOsc_next_iaaa); // ar bandwidth
 				unit->m_phase = 0;
 			} else {
@@ -682,6 +682,7 @@ void BEOsc_next_iaaa(BEOsc *unit, int inNumSamples) // freq, phase, bw audio
 		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
 			phaseoffset = phase; 
 		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+			Print("Phase Reset\n");
 			phaseoffset = phase = thisPhaseIn;
 		 } else {	// in this plain ar phase
 			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
@@ -701,6 +702,7 @@ void BEOsc_next_iaaa(BEOsc *unit, int inNumSamples) // freq, phase, bw audio
 		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
 			phaseoffset = phase; 
 		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+			Print("Phase Reset\n");
 			phaseoffset = phase = thisPhaseIn;
 		 } else {	// in this plain ar phase
 			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
@@ -720,8 +722,9 @@ void BEOsc_next_iaaa(BEOsc *unit, int inNumSamples) // freq, phase, bw audio
 		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
 			phaseoffset = phase; 
 		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+			Print("Phase Reset\n");
 			phaseoffset = phase = thisPhaseIn;
-		 } else {	// in this plain ar phase
+		 } else {	// in this case plain ar phase
 			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
 		 }
 		 oldPhaseIn = thisPhaseIn;
@@ -739,6 +742,7 @@ void BEOsc_next_iaaa(BEOsc *unit, int inNumSamples) // freq, phase, bw audio
 		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
 			phaseoffset = phase; 
 		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+			Print("Phase Reset\n");
 			phaseoffset = phase = thisPhaseIn;
 		 } else {	// in this plain ar phase
 			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
@@ -759,6 +763,7 @@ void BEOsc_next_iaaa(BEOsc *unit, int inNumSamples) // freq, phase, bw audio
 		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
 			phaseoffset = phase; 
 		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+			Print("Phase Reset\n");
 			phaseoffset = phase = thisPhaseIn;
 		 } else {	// in this plain ar phase
 			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
