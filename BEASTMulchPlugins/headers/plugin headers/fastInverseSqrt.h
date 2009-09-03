@@ -14,21 +14,21 @@
 #include <vecLib/vDSP.h>
 #include <stdint.h>
 
-inline int checkBadValues(float samp) {
-	int classification = fpclassify(samp);
-	switch (classification) 
-	{ 
-		case FP_INFINITE: 
-			printf("Infinite number found\n"); 
-			break; 
-		case FP_NAN: 
-			printf("NaN found\n"); 
-			//			 break; 
-			//		 default: 
-			//			 printf("Normal %f %i\n", samp, classification); 
-	};
-	return classification;
-}
+//inline int checkBadValues(float samp) {
+//	int classification = fpclassify(samp);
+//	switch (classification) 
+//	{ 
+//		case FP_INFINITE: 
+//			printf("Infinite number found\n"); 
+//			break; 
+//		case FP_NAN: 
+//			printf("NaN found\n"); 
+//			//			 break; 
+//			//		 default: 
+//			//			 printf("Normal %f %i\n", samp, classification); 
+//	};
+//	return classification;
+//}
 
 #if defined(__ppc__) || defined(__ppc64__)
 

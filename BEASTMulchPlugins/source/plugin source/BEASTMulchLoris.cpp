@@ -864,7 +864,7 @@ void BEOsc_next_iaka(BEOsc *unit, int inNumSamples)
 		 //ZXP(out) = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
 		 final = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
 		 ZXP(out) = final;
-		 checkBadValues(final);
+		 //checkBadValues(final);
 		 
 		 x3 = frand2(s1, s2, s3);
 		 mod = 0.25f * (x0 + x1 + x2 + x3);
@@ -877,7 +877,7 @@ void BEOsc_next_iaka(BEOsc *unit, int inNumSamples)
 		 //ZXP(out) = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
 		 final = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
 		 ZXP(out) = final;
-		 checkBadValues(final);
+		 //checkBadValues(final);
 		 
 		 x2 = frand2(s1, s2, s3);
 		 mod = 0.25f * (x0 + x1 + x2 + x3);
@@ -890,7 +890,7 @@ void BEOsc_next_iaka(BEOsc *unit, int inNumSamples)
 		 //ZXP(out) = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
 		 final = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
 		 ZXP(out) = final;
-		 checkBadValues(final);
+		 //checkBadValues(final);
 		 
 		 x1 = frand2(s1, s2, s3);
 		 mod = 0.25f * (x0 + x1 + x2 + x3);
@@ -903,7 +903,7 @@ void BEOsc_next_iaka(BEOsc *unit, int inNumSamples)
 		 //ZXP(out) = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
 		 final = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
 		 ZXP(out) = final;
-		 checkBadValues(final);
+		 //checkBadValues(final);
 		 );
 	// in case of remainder
 	LOOP(inNumSamples & 3, 
@@ -919,7 +919,7 @@ void BEOsc_next_iaka(BEOsc *unit, int inNumSamples)
 		 //ZXP(out) = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
 		 final = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
 		 ZXP(out) = final;
-		 checkBadValues(final);
+		 //checkBadValues(final);
 		 
 		 x3 = x2;
 		 x2 = x1;
@@ -1198,19 +1198,19 @@ void LP4Noise_next(LP4Noise* unit, int inNumSamples)
 	LOOP(inNumSamples >> 2,
 		 x0 = frand2(s1, s2, s3); 
 		 val = 0.25f * (x0 + x1 + x2 + x3);
-		 checkBadValues(val);
+		 //checkBadValues(val);
 		 ZXP(out) = val;
 		 x3 = frand2(s1, s2, s3); 
 		 val = 0.25f * (x0 + x1 + x2 + x3);
-		 checkBadValues(val);
+		 //checkBadValues(val);
 		 ZXP(out) = val;
 		 x2 = frand2(s1, s2, s3);
 		 val = 0.25f * (x0 + x1 + x2 + x3);
-		 checkBadValues(val);
+		 //checkBadValues(val);
 		 ZXP(out) = val;
 		 x1 = frand2(s1, s2, s3); 
 		 val = 0.25f * (x0 + x1 + x2 + x3);
-		 checkBadValues(val);
+		 //checkBadValues(val);
 		 ZXP(out) = val;
 		 );
 	// in case of remainder
@@ -1487,24 +1487,24 @@ void CheckBadValues_next(CheckBadValues* unit, int inNumSamples)
 	LOOP(inNumSamples,
 		 samp = ZXP(in);
 		 //checkBadValues(samp);
-		 classification = fpclassify(samp);
-		 switch (classification) 
-		 { 
-			 case FP_INFINITE: 
-				 printf("Infinite number found in Synth %d, ID: %d\n", unit->mParent->mNode.mID, (int)id); 
-				 output = 2;
-				 break; 
-			 case FP_NAN: 
-				 printf("NaN found in Synth %d, ID: %d\n", unit->mParent->mNode.mID, (int)id); 
-				 output = 1;
-				 break; 
-			 case FP_SUBNORMAL:
-				 printf("Denormal found in Synth %d, ID: %d\n", unit->mParent->mNode.mID, (int)id); 
-				 output = 3;
-				 break;
-			 default: 
-				 output = 0;
-		 };
+		 //classification = fpclassify(samp);
+//		 switch (classification) 
+//		 { 
+//			 case FP_INFINITE: 
+//				 printf("Infinite number found in Synth %d, ID: %d\n", unit->mParent->mNode.mID, (int)id); 
+//				 output = 2;
+//				 break; 
+//			 case FP_NAN: 
+//				 printf("NaN found in Synth %d, ID: %d\n", unit->mParent->mNode.mID, (int)id); 
+//				 output = 1;
+//				 break; 
+//			 case FP_SUBNORMAL:
+//				 printf("Denormal found in Synth %d, ID: %d\n", unit->mParent->mNode.mID, (int)id); 
+//				 output = 3;
+//				 break;
+//			 default: 
+//				 output = 0;
+//		 };
 		 
 		 ZXP(out) = output;
 		 );
