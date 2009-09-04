@@ -54,7 +54,8 @@ struct BEOsc : public TableLookup
 	int32 m_phase;
 	float m_phasein;
 	//float mLevel; // for BrownNoise
-	float m_x1, m_x2, m_x3; // for 4 pt avg
+	float m_x1, m_x2, m_x3; // MA
+	float m_y1, m_y2, m_y3; // AR
 };
 
 struct LorisPhaseGen : public Unit
@@ -146,6 +147,28 @@ extern "C"
 
 //////////////////////////////////////////////////////////////////
 
+
+///* Digital filter designed by mkfilter/mkshape/gencode   A.J. Fisher
+// Command line: /www/usr/fisher/helpers/mkfilter -Ch -1.0000000000e+00 -Lp -o 3 -a 1.1337868481e-02 0.0000000000e+00 -l */
+//
+//#define NZEROS 3
+//#define NPOLES 3
+//#define GAIN   4.663939207e+04
+//
+//static float xv[NZEROS+1], yv[NPOLES+1];
+//
+//static void filterloop()
+//{ for (;;)
+//{ xv[0] = xv[1]; xv[1] = xv[2]; xv[2] = xv[3]; 
+//	xv[3] = `next input value' / GAIN;
+//	yv[0] = yv[1]; yv[1] = yv[2]; yv[2] = yv[3]; 
+//	yv[3] =   (xv[0] + xv[3]) + 3 * (xv[1] + xv[2])
+//	+ (  0.9320209047 * yv[0]) + ( -2.8580608588 * yv[1])
+//	+ (  2.9258684253 * yv[2]);
+//	`next output value' = yv[3];
+//}
+//}
+
 void BEOsc_Ctor(BEOsc* unit)
 {
 	
@@ -208,21 +231,20 @@ void BEOsc_Ctor(BEOsc* unit)
 			unit->m_phase = (int32)(unit->m_phasein * unit->m_radtoinc);
 		}
 	}
-	//unit->mLevel = unit->mParent->mRGen->frand2(); // get a val for BrownNoise
 	
 	RGET
 	unit->m_x1 = frand2(s1, s2, s3);
 	unit->m_x2 = frand2(s1, s2, s3);
 	unit->m_x3 = frand2(s1, s2, s3);
+	unit->m_y1 = 0;
+	unit->m_y2 = 0;
+	unit->m_y3 = 0;
 	RPUT
 	BEOsc_next_ikk(unit, 1);
 }
 
 
 //////////////////////////////////////////////////////////////////
-
-// The calculation function executes once per control period 
-// which is typically 64 samples.
 
 void BEOsc_next_ikk(BEOsc *unit, int inNumSamples) // freq and phase control or scalar
 {
@@ -293,6 +315,11 @@ void vBEOsc_next_ikk(BEOsc *unit, int inNumSamples) // freq and phase control or
 	float x2 = unit->m_x2;
 	float x3 = unit->m_x3;
 	
+	float y0;
+	float y1 = unit->m_y1;
+	float y2 = unit->m_y2;
+	float y3 = unit->m_y3;
+	
 	//vfloat32 vbw = vload(bw);
 	vfloat32 bw1, bw2; 
 	
@@ -307,14 +334,20 @@ void vBEOsc_next_ikk(BEOsc *unit, int inNumSamples) // freq and phase control or
 	for (int i=0; i<len; i+=16) {
 		
 		vec_union mod;
-		x0 = frand2(s1, s2, s3);
-		mod.f[0] = (0.25f * (x0 + x1 + x2 + x3));
-		x3 = frand2(s1, s2, s3);
-		mod.f[1] = (0.25f * (x0 + x1 + x2 + x3));
-		x2 = frand2(s1, s2, s3);
-		mod.f[2] = (0.25f * (x0 + x1 + x2 + x3));
-		x1 = frand2(s1, s2, s3);
-		mod.f[3] = (0.25f * (x0 + x1 + x2 + x3));
+//		x0 = frand2(s1, s2, s3);
+//		mod.f[0] = (0.25f * (x0 + x1 + x2 + x3));
+//		x3 = frand2(s1, s2, s3);
+//		mod.f[1] = (0.25f * (x0 + x1 + x2 + x3));
+//		x2 = frand2(s1, s2, s3);
+//		mod.f[2] = (0.25f * (x0 + x1 + x2 + x3));
+//		x1 = frand2(s1, s2, s3);
+//		mod.f[3] = (0.25f * (x0 + x1 + x2 + x3));
+		for(int j = 0; j < 4; j++) {
+			x0 = x1; x1 = x2; x2 = x3;
+			x3 = frand2(s1, s2, s3) * 0.00012864661681256f; // kelly uses 6. / GAIN
+			y0 = y1; y1 = y2; y2 = y3;
+			mod.f[j] = y3 = (x0 + x3) + (3 * (x1 + x2)) + (0.9320209047f * y0) + (-2.8580608588f * y1) + (2.9258684253f * y2);
+		}
 		
 		vfloat32 noise = vec_madd(bw2, mod.vf, bw1);
 		
@@ -346,6 +379,11 @@ void vBEOsc_next_ikk(BEOsc *unit, int inNumSamples) // freq and phase control or
 	unit->m_x1 = x1;
 	unit->m_x2 = x2;
 	unit->m_x3 = x3;
+	
+	unit->m_y1 = y1;
+	unit->m_y2 = y2;
+	unit->m_y3 = y3;
+	
 	RPUT
 	
 }
@@ -374,6 +412,11 @@ void BEOsc_next_ikaa(BEOsc *unit, int inNumSamples) // freq control or scalar ph
 	float x2 = unit->m_x2;
 	float x3 = unit->m_x3;
 	
+	float y0;
+	float y1 = unit->m_y1;
+	float y2 = unit->m_y2;
+	float y3 = unit->m_y3;
+	
 	RGET
 	//float mod = unit->mLevel; //old noise val
 	float mod;
@@ -384,110 +427,133 @@ void BEOsc_next_ikaa(BEOsc *unit, int inNumSamples) // freq control or scalar ph
 	int32 phaseoffset;
 	
 	//Print("BEOsc_next_ika %d %g %d\n", inNumSamples, radtoinc, phase);
-	// unroll by 4
-	LOOP(inNumSamples >> 2,
-		 
-		 thisPhaseIn = ZXP(phasein);
-		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
-			phaseoffset = phase; 
-		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
-			phaseoffset = phase = thisPhaseIn;
-		 } else {	// in this plain ar phase
-			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
-		 }
-		 oldPhaseIn = thisPhaseIn;
-		 
-		 //noise
-		 x0 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
-		 bw = ZXP(bwin);
-		 
-		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (FastScalarSqrt( 1.f - bw ) + ( mod * FastScalarSqrt( 2.f * bw ) ));
-		 phase += freq;
-		 
-		 ////
-		 thisPhaseIn = ZXP(phasein);
-		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
-			phaseoffset = phase; 
-		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
-			phaseoffset = phase = thisPhaseIn;
-		 } else {	// in this plain ar phase
-			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
-		 }
-		 oldPhaseIn = thisPhaseIn;
-		 
-		 //noise
-		 x3 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
-		 bw = ZXP(bwin);
-		 
-		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (FastScalarSqrt( 1.f - bw ) + ( mod * FastScalarSqrt( 2.f * bw ) ));
-		 phase += freq;
-		 
-		 ////
-		 thisPhaseIn = ZXP(phasein);
-		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
-			phaseoffset = phase; 
-		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
-			phaseoffset = phase = thisPhaseIn;
-		 } else {	// in this plain ar phase
-			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
-		 }
-		 oldPhaseIn = thisPhaseIn;
-		 
-		 //noise
-		 x2 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
-		 bw = ZXP(bwin);
-		 
-		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (FastScalarSqrt( 1.f - bw ) + ( mod * FastScalarSqrt( 2.f * bw ) ));
-		 phase += freq;
-		 
-		 ////
-		 thisPhaseIn = ZXP(phasein);
-		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
-			phaseoffset = phase; 
-		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
-			phaseoffset = phase = thisPhaseIn;
-		 } else {	// in this plain ar phase
-			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
-		 }
-		 oldPhaseIn = thisPhaseIn;
-		 
-		 //noise
-		 x1 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
-		 bw = ZXP(bwin);
-		 
-		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (FastScalarSqrt( 1.f - bw ) + ( mod * FastScalarSqrt( 2.f * bw ) ));
-		 phase += freq;
-		 
-		 );
+//	// unroll by 4
+//	LOOP(inNumSamples >> 2,
+//		 
+//		 thisPhaseIn = ZXP(phasein);
+//		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+//			phaseoffset = phase; 
+//		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+//			phaseoffset = phase = thisPhaseIn;
+//		 } else {	// in this plain ar phase
+//			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+//		 }
+//		 oldPhaseIn = thisPhaseIn;
+//		 
+//		 //noise
+//		 x0 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 bw = ZXP(bwin);
+//		 
+//		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (FastScalarSqrt( 1.f - bw ) + ( mod * FastScalarSqrt( 2.f * bw ) ));
+//		 phase += freq;
+//		 
+//		 ////
+//		 thisPhaseIn = ZXP(phasein);
+//		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+//			phaseoffset = phase; 
+//		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+//			phaseoffset = phase = thisPhaseIn;
+//		 } else {	// in this plain ar phase
+//			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+//		 }
+//		 oldPhaseIn = thisPhaseIn;
+//		 
+//		 //noise
+//		 x3 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 bw = ZXP(bwin);
+//		 
+//		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (FastScalarSqrt( 1.f - bw ) + ( mod * FastScalarSqrt( 2.f * bw ) ));
+//		 phase += freq;
+//		 
+//		 ////
+//		 thisPhaseIn = ZXP(phasein);
+//		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+//			phaseoffset = phase; 
+//		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+//			phaseoffset = phase = thisPhaseIn;
+//		 } else {	// in this plain ar phase
+//			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+//		 }
+//		 oldPhaseIn = thisPhaseIn;
+//		 
+//		 //noise
+//		 x2 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 bw = ZXP(bwin);
+//		 
+//		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (FastScalarSqrt( 1.f - bw ) + ( mod * FastScalarSqrt( 2.f * bw ) ));
+//		 phase += freq;
+//		 
+//		 ////
+//		 thisPhaseIn = ZXP(phasein);
+//		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+//			phaseoffset = phase; 
+//		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+//			phaseoffset = phase = thisPhaseIn;
+//		 } else {	// in this plain ar phase
+//			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+//		 }
+//		 oldPhaseIn = thisPhaseIn;
+//		 
+//		 //noise
+//		 x1 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 bw = ZXP(bwin);
+//		 
+//		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (FastScalarSqrt( 1.f - bw ) + ( mod * FastScalarSqrt( 2.f * bw ) ));
+//		 phase += freq;
+//		 
+//		 );
+//	
+//	// in case of remainder
+//	LOOP(inNumSamples & 3, 
+//
+//		 thisPhaseIn = ZXP(phasein);
+//		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+//			phaseoffset = phase; 
+//		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+//			phaseoffset = phase = thisPhaseIn;
+//		 } else {	// in this plain ar phase
+//			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+//		 }
+//		 oldPhaseIn = thisPhaseIn;
+//		 
+//		 //noise
+//		 x0 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 bw = ZXP(bwin);
+//		 
+//		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (FastScalarSqrt( 1.f - bw ) + ( mod * FastScalarSqrt( 2.f * bw ) ));
+//		 phase += freq;
+//		 
+//		 x3 = x2;
+//		 x2 = x1;
+//		 x1 = x0;
+//		 )
 	
-	// in case of remainder
-	LOOP(inNumSamples & 3, 
-
+	LOOP(inNumSamples, 
+		 
 		 thisPhaseIn = ZXP(phasein);
 		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
-			phaseoffset = phase; 
+		 phaseoffset = phase; 
 		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
-			phaseoffset = phase = thisPhaseIn;
+		 phaseoffset = phase = thisPhaseIn;
 		 } else {	// in this plain ar phase
-			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+		 phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
 		 }
 		 oldPhaseIn = thisPhaseIn;
 		 
 		 //noise
-		 x0 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
+		 x0 = x1; x1 = x2; x2 = x3;
+		 x3 = frand2(s1, s2, s3) * 0.00012864661681256f; // kelly uses 6. / GAIN
+		 y0 = y1; y1 = y2; y2 = y3;
+		 y3 = mod = (x0 + x3) + (3 * (x1 + x2)) + (0.9320209047f * y0) + (-2.8580608588f * y1) + (2.9258684253f * y2);
 		 bw = ZXP(bwin);
 		 
 		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (FastScalarSqrt( 1.f - bw ) + ( mod * FastScalarSqrt( 2.f * bw ) ));
 		 phase += freq;
-		 
-		 x3 = x2;
-		 x2 = x1;
-		 x1 = x0;
 		 )
 		
 	unit->m_phase = phase;
@@ -497,6 +563,10 @@ void BEOsc_next_ikaa(BEOsc *unit, int inNumSamples) // freq control or scalar ph
 	unit->m_x1 = x1;
 	unit->m_x2 = x2;
 	unit->m_x3 = x3;
+	
+	unit->m_y1 = y1;
+	unit->m_y2 = y2;
+	unit->m_y3 = y3;
 	
 	RPUT
 	
@@ -518,10 +588,16 @@ void BEOsc_next_ikak(BEOsc *unit, int inNumSamples) // freq control or scalar, p
 	
 	int32 freq = (int32)(unit->m_cpstoinc * freqin);
 	float radtoinc = unit->m_radtoinc;
+	
 	float x0;
 	float x1 = unit->m_x1;
 	float x2 = unit->m_x2;
 	float x3 = unit->m_x3;
+	
+	float y0;
+	float y1 = unit->m_y1;
+	float y2 = unit->m_y2;
+	float y3 = unit->m_y3;
 	
 	float thisPhaseIn;
 	float oldPhaseIn = unit->m_phasein;
@@ -537,66 +613,93 @@ void BEOsc_next_ikak(BEOsc *unit, int inNumSamples) // freq control or scalar, p
 		//float mod = unit->mLevel; //old noise val
 	float mod;
 	
-	//Print("BEOsc_next_ika %d %g %d\n", inNumSamples, radtoinc, phase);
-//	LOOP(inNumSamples,
-//		 int32 phaseoffset = phase + (int32)(radtoinc * ZXP(phasein));
-//		 //noise
-//		 mod += frand8(s1, s2, s3);
-//		 if (mod > 1.f) mod = 2.f - mod; 
-//		 else if (mod < -1.f) mod = -2.f - mod;
+//	// unroll by 4
+//	LOOP(inNumSamples >> 2,
+//		 thisPhaseIn = ZXP(phasein);
+//		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+//			phaseoffset = phase; 
+//		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+//			phaseoffset = phase = thisPhaseIn;
+//		 } else {	// in this plain ar phase
+//			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+//		 }
+//		 oldPhaseIn = thisPhaseIn;
 //		 
+//		 //noise
+//		 x0 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (bw1 + ( mod * bw2 ));
+//		 phase += freq;
+//		 
+//		 thisPhaseIn = ZXP(phasein);
+//		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+//			phaseoffset = phase; 
+//		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+//			phaseoffset = phase = thisPhaseIn;
+//		 } else {	// in this plain ar phase
+//			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+//		 }
+//		 oldPhaseIn = thisPhaseIn;
+//		 //noise
+//		 x3 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (bw1 + ( mod * bw2 ));
+//		 phase += freq;
+//		 
+//		 thisPhaseIn = ZXP(phasein);
+//		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+//			phaseoffset = phase; 
+//		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+//			phaseoffset = phase = thisPhaseIn;
+//		 } else {	// in this plain ar phase
+//			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+//		 }
+//		 oldPhaseIn = thisPhaseIn;
+//		 
+//		 //noise
+//		 x2 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (bw1 + ( mod * bw2 ));
+//		 phase += freq;
+//		 
+//		 thisPhaseIn = ZXP(phasein);
+//		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+//			phaseoffset = phase; 
+//		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+//			phaseoffset = phase = thisPhaseIn;
+//		 } else {	// in this plain ar phase
+//			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+//		 }
+//		 oldPhaseIn = thisPhaseIn;
+//		 //noise
+//		 x1 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
 //		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (bw1 + ( mod * bw2 ));
 //		 phase += freq;
 //		 );
-	// unroll by 4
-	LOOP(inNumSamples >> 2,
-		 thisPhaseIn = ZXP(phasein);
-		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
-			phaseoffset = phase; 
-		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
-			phaseoffset = phase = thisPhaseIn;
-		 } else {	// in this plain ar phase
-			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
-		 }
-		 oldPhaseIn = thisPhaseIn;
-		 
-		 //noise
-		 x0 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
-		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (bw1 + ( mod * bw2 ));
-		 phase += freq;
-		 
-		 thisPhaseIn = ZXP(phasein);
-		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
-			phaseoffset = phase; 
-		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
-			phaseoffset = phase = thisPhaseIn;
-		 } else {	// in this plain ar phase
-			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
-		 }
-		 oldPhaseIn = thisPhaseIn;
-		 //noise
-		 x3 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
-		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (bw1 + ( mod * bw2 ));
-		 phase += freq;
-		 
-		 thisPhaseIn = ZXP(phasein);
-		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
-			phaseoffset = phase; 
-		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
-			phaseoffset = phase = thisPhaseIn;
-		 } else {	// in this plain ar phase
-			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
-		 }
-		 oldPhaseIn = thisPhaseIn;
-		 
-		 //noise
-		 x2 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
-		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (bw1 + ( mod * bw2 ));
-		 phase += freq;
-		 
+//	// in case of remainder
+//	LOOP(inNumSamples & 3, 
+//		 thisPhaseIn = ZXP(phasein);
+//		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+//			phaseoffset = phase; 
+//		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+//			phaseoffset = phase = thisPhaseIn;
+//		 } else {	// in this plain ar phase
+//			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+//		 }
+//		 oldPhaseIn = thisPhaseIn;
+//		 //noise
+//		 x0 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (bw1 + ( mod * bw2 ));
+//		 phase += freq;
+//		 
+//		 x3 = x2;
+//		 x2 = x1;
+//		 x1 = x0;
+//		 )
+	
+	LOOP(inNumSamples, 
 		 thisPhaseIn = ZXP(phasein);
 		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
 			phaseoffset = phase; 
@@ -607,32 +710,16 @@ void BEOsc_next_ikak(BEOsc *unit, int inNumSamples) // freq control or scalar, p
 		 }
 		 oldPhaseIn = thisPhaseIn;
 		 //noise
-		 x1 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
-		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (bw1 + ( mod * bw2 ));
-		 phase += freq;
-		 );
-	// in case of remainder
-	LOOP(inNumSamples & 3, 
-		 thisPhaseIn = ZXP(phasein);
-		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
-			phaseoffset = phase; 
-		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
-			phaseoffset = phase = thisPhaseIn;
-		 } else {	// in this plain ar phase
-			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
-		 }
-		 oldPhaseIn = thisPhaseIn;
-		 //noise
-		 x0 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
-		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (bw1 + ( mod * bw2 ));
-		 phase += freq;
+		 x0 = x1; x1 = x2; x2 = x3;
+		 x3 = frand2(s1, s2, s3) * 0.00012864661681256f; // kelly uses 6. / GAIN
+		 y0 = y1; y1 = y2; y2 = y3;
+		 y3 = mod = (x0 + x3) + (3 * (x1 + x2)) + (0.9320209047f * y0) + (-2.8580608588f * y1) + (2.9258684253f * y2);
 		 
-		 x3 = x2;
-		 x2 = x1;
-		 x1 = x0;
+		 ZXP(out) = lookupi1(table0, table1, phaseoffset, lomask) * (bw1 + ( mod * bw2 ));
+		 phase += freq;
 		 )
+	
+	
 	unit->m_phase = phase;
 	unit->m_phasein = thisPhaseIn;
 	//unit->mLevel = mod;
@@ -640,6 +727,10 @@ void BEOsc_next_ikak(BEOsc *unit, int inNumSamples) // freq control or scalar, p
 	unit->m_x1 = x1;
 	unit->m_x2 = x2;
 	unit->m_x3 = x3;
+	
+	unit->m_y1 = y1;
+	unit->m_y2 = y2;
+	unit->m_y3 = y3;
 	
 	RPUT
 		
@@ -666,6 +757,11 @@ void BEOsc_next_iaaa(BEOsc *unit, int inNumSamples) // freq, phase, bw audio
 	float x2 = unit->m_x2;
 	float x3 = unit->m_x3;
 	
+	float y0;
+	float y1 = unit->m_y1;
+	float y2 = unit->m_y2;
+	float y3 = unit->m_y3;
+	
 	float thisPhaseIn;
 	float oldPhaseIn = unit->m_phasein;
 	int32 phaseoffset;
@@ -676,111 +772,135 @@ void BEOsc_next_iaaa(BEOsc *unit, int inNumSamples) // freq, phase, bw audio
 	float bw;
 	//Print("BEOsc_next_iaa %d %g %g %d\n", inNumSamples, cpstoinc, radtoinc, phase);
 	
-	// unroll by 4
-	LOOP(inNumSamples >> 2,
+//	// unroll by 4
+//	LOOP(inNumSamples >> 2,
+//		 thisPhaseIn = ZXP(phasein);
+//		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+//			phaseoffset = phase; 
+//		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+//			//Print("Phase Reset\n");
+//			phaseoffset = phase = thisPhaseIn;
+//		 } else {	// in this plain ar phase
+//			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+//		 }
+//		 oldPhaseIn = thisPhaseIn;
+//		 //noise
+//		 x0 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 bw = ZXP(bwin);
+//		 
+//		 float z = lookupi1(table0, table1, phaseoffset, lomask) * (FastScalarSqrt( 1.f - bw ) + ( mod * FastScalarSqrt( 2.f * bw ) ));
+//		 phase += (int32)(cpstoinc * ZXP(freqin));
+//		 ZXP(out) = z;
+//		 
+//		 ////
+//		 thisPhaseIn = ZXP(phasein);
+//		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+//			phaseoffset = phase; 
+//		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+//			//Print("Phase Reset\n");
+//			phaseoffset = phase = thisPhaseIn;
+//		 } else {	// in this plain ar phase
+//			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+//		 }
+//		 oldPhaseIn = thisPhaseIn;
+//		 //noise
+//		 x3 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 bw = ZXP(bwin);
+//		 
+//		 z = lookupi1(table0, table1, phaseoffset, lomask) * (FastScalarSqrt( 1.f - bw ) + ( mod * FastScalarSqrt( 2.f * bw ) ));
+//		 phase += (int32)(cpstoinc * ZXP(freqin));
+//		 ZXP(out) = z;
+//		 
+//		 ////
+//		 thisPhaseIn = ZXP(phasein);
+//		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+//			phaseoffset = phase; 
+//		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+//			//Print("Phase Reset\n");
+//			phaseoffset = phase = thisPhaseIn;
+//		 } else {	// in this case plain ar phase
+//			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+//		 }
+//		 oldPhaseIn = thisPhaseIn;
+//		 //noise
+//		 x2 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 bw = ZXP(bwin);
+//		 
+//		 z = lookupi1(table0, table1, phaseoffset, lomask) * (FastScalarSqrt( 1.f - bw ) + ( mod * FastScalarSqrt( 2.f * bw ) ));
+//		 phase += (int32)(cpstoinc * ZXP(freqin));
+//		 ZXP(out) = z;
+//		 
+//		 ////
+//		 thisPhaseIn = ZXP(phasein);
+//		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+//			phaseoffset = phase; 
+//		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+//			//Print("Phase Reset\n");
+//			phaseoffset = phase = thisPhaseIn;
+//		 } else {	// in this plain ar phase
+//			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+//		 }
+//		 oldPhaseIn = thisPhaseIn;
+//		 //noise
+//		 x1 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 bw = ZXP(bwin);
+//		 
+//		 z = lookupi1(table0, table1, phaseoffset, lomask) * (FastScalarSqrt( 1.f - bw ) + ( mod * FastScalarSqrt( 2.f * bw ) ));
+//		 phase += (int32)(cpstoinc * ZXP(freqin));
+//		 ZXP(out) = z;
+//		 );
+//	// remainder
+//	LOOP(inNumSamples & 3,
+//		 thisPhaseIn = ZXP(phasein);
+//		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+//			phaseoffset = phase; 
+//		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+//			//Print("Phase Reset\n");
+//			phaseoffset = phase = thisPhaseIn;
+//		 } else {	// in this plain ar phase
+//			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+//		 }
+//		 oldPhaseIn = thisPhaseIn;
+//		 //noise
+//		 x0 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 bw = ZXP(bwin);
+//		 
+//		 float z = lookupi1(table0, table1, phaseoffset, lomask) * (FastScalarSqrt( 1.f - bw ) + ( mod * FastScalarSqrt( 2.f * bw ) ));
+//		 phase += (int32)(cpstoinc * ZXP(freqin));
+//		 ZXP(out) = z;
+//		 
+//		 x3 = x2;
+//		 x2 = x1;
+//		 x1 = x0;
+//		 );
+	
+	LOOP(inNumSamples,
 		 thisPhaseIn = ZXP(phasein);
 		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
 			phaseoffset = phase; 
 		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
-			//Print("Phase Reset\n");
+		 //Print("Phase Reset\n");
 			phaseoffset = phase = thisPhaseIn;
 		 } else {	// in this plain ar phase
 			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
 		 }
 		 oldPhaseIn = thisPhaseIn;
 		 //noise
-		 x0 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
+		 x0 = x1; x1 = x2; x2 = x3;
+		 x3 = frand2(s1, s2, s3) * 0.00012864661681256f; // kelly uses 6. / GAIN
+		 y0 = y1; y1 = y2; y2 = y3;
+		 y3 = mod = (x0 + x3) + (3 * (x1 + x2)) + (0.9320209047f * y0) + (-2.8580608588f * y1) + (2.9258684253f * y2);
+		 
 		 bw = ZXP(bwin);
 		 
 		 float z = lookupi1(table0, table1, phaseoffset, lomask) * (FastScalarSqrt( 1.f - bw ) + ( mod * FastScalarSqrt( 2.f * bw ) ));
 		 phase += (int32)(cpstoinc * ZXP(freqin));
 		 ZXP(out) = z;
-		 
-		 ////
-		 thisPhaseIn = ZXP(phasein);
-		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
-			phaseoffset = phase; 
-		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
-			//Print("Phase Reset\n");
-			phaseoffset = phase = thisPhaseIn;
-		 } else {	// in this plain ar phase
-			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
-		 }
-		 oldPhaseIn = thisPhaseIn;
-		 //noise
-		 x3 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
-		 bw = ZXP(bwin);
-		 
-		 z = lookupi1(table0, table1, phaseoffset, lomask) * (FastScalarSqrt( 1.f - bw ) + ( mod * FastScalarSqrt( 2.f * bw ) ));
-		 phase += (int32)(cpstoinc * ZXP(freqin));
-		 ZXP(out) = z;
-		 
-		 ////
-		 thisPhaseIn = ZXP(phasein);
-		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
-			phaseoffset = phase; 
-		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
-			//Print("Phase Reset\n");
-			phaseoffset = phase = thisPhaseIn;
-		 } else {	// in this case plain ar phase
-			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
-		 }
-		 oldPhaseIn = thisPhaseIn;
-		 //noise
-		 x2 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
-		 bw = ZXP(bwin);
-		 
-		 z = lookupi1(table0, table1, phaseoffset, lomask) * (FastScalarSqrt( 1.f - bw ) + ( mod * FastScalarSqrt( 2.f * bw ) ));
-		 phase += (int32)(cpstoinc * ZXP(freqin));
-		 ZXP(out) = z;
-		 
-		 ////
-		 thisPhaseIn = ZXP(phasein);
-		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
-			phaseoffset = phase; 
-		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
-			//Print("Phase Reset\n");
-			phaseoffset = phase = thisPhaseIn;
-		 } else {	// in this plain ar phase
-			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
-		 }
-		 oldPhaseIn = thisPhaseIn;
-		 //noise
-		 x1 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
-		 bw = ZXP(bwin);
-		 
-		 z = lookupi1(table0, table1, phaseoffset, lomask) * (FastScalarSqrt( 1.f - bw ) + ( mod * FastScalarSqrt( 2.f * bw ) ));
-		 phase += (int32)(cpstoinc * ZXP(freqin));
-		 ZXP(out) = z;
-		 );
-	// remainder
-	LOOP(inNumSamples & 3,
-		 thisPhaseIn = ZXP(phasein);
-		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
-			phaseoffset = phase; 
-		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
-			//Print("Phase Reset\n");
-			phaseoffset = phase = thisPhaseIn;
-		 } else {	// in this plain ar phase
-			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
-		 }
-		 oldPhaseIn = thisPhaseIn;
-		 //noise
-		 x0 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
-		 bw = ZXP(bwin);
-		 
-		 float z = lookupi1(table0, table1, phaseoffset, lomask) * (FastScalarSqrt( 1.f - bw ) + ( mod * FastScalarSqrt( 2.f * bw ) ));
-		 phase += (int32)(cpstoinc * ZXP(freqin));
-		 ZXP(out) = z;
-		 
-		 x3 = x2;
-		 x2 = x1;
-		 x1 = x0;
 		 );
 	
 	unit->m_phase = phase;
@@ -791,6 +911,11 @@ void BEOsc_next_iaaa(BEOsc *unit, int inNumSamples) // freq, phase, bw audio
 	unit->m_x1 = x1;
 	unit->m_x2 = x2;
 	unit->m_x3 = x3;
+	
+	unit->m_y1 = y1;
+	unit->m_y2 = y2;
+	unit->m_y3 = y3;
+	
 	//unit->m_phasein = ZX(phasein);
 	
 }
@@ -816,6 +941,11 @@ void BEOsc_next_iaak(BEOsc *unit, int inNumSamples) // freq, phase audio, bw ctr
 	float x2 = unit->m_x2;
 	float x3 = unit->m_x3;
 	
+	float y0;
+	float y1 = unit->m_y1;
+	float y2 = unit->m_y2;
+	float y3 = unit->m_y3;
+	
 	float thisPhaseIn;
 	float oldPhaseIn = unit->m_phasein;
 	int32 phaseoffset;
@@ -830,102 +960,123 @@ void BEOsc_next_iaak(BEOsc *unit, int inNumSamples) // freq, phase audio, bw ctr
 	
 	//Print("BEOsc_next_iaa %d %g %g %d\n", inNumSamples, cpstoinc, radtoinc, phase);
 	
-	// unroll by 4
-	LOOP(inNumSamples >> 2,
+//	// unroll by 4
+//	LOOP(inNumSamples >> 2,
+//		 thisPhaseIn = ZXP(phasein);
+//		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+//			phaseoffset = phase; 
+//		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+//			phaseoffset = phase = thisPhaseIn;
+//		 } else {	// in this plain ar phase
+//			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+//		 }
+//		 oldPhaseIn = thisPhaseIn;
+//		 //noise
+//		 x0 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 
+//		 float z = lookupi1(table0, table1, phaseoffset, lomask) * (bw1 + ( mod * bw2 ));
+//		 phase += (int32)(cpstoinc * ZXP(freqin));
+//		 ZXP(out) = z;
+//		 
+//		 ////
+//		 thisPhaseIn = ZXP(phasein);
+//		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+//			phaseoffset = phase; 
+//		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+//			phaseoffset = phase = thisPhaseIn;
+//		 } else {	// in this plain ar phase
+//			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+//		 }
+//		 oldPhaseIn = thisPhaseIn;
+//		 //noise
+//		 x3 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 
+//		 z = lookupi1(table0, table1, phaseoffset, lomask) * (bw1 + ( mod * bw2 ));
+//		 phase += (int32)(cpstoinc * ZXP(freqin));
+//		 ZXP(out) = z;
+//		 
+//		 ////
+//		 thisPhaseIn = ZXP(phasein);
+//		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+//			phaseoffset = phase; 
+//		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+//			phaseoffset = phase = thisPhaseIn;
+//		 } else {	// in this plain ar phase
+//			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+//		 }
+//		 oldPhaseIn = thisPhaseIn;
+//		 //noise
+//		 x2 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 
+//		 z = lookupi1(table0, table1, phaseoffset, lomask) * (bw1 + ( mod * bw2 ));
+//		 phase += (int32)(cpstoinc * ZXP(freqin));
+//		 ZXP(out) = z;
+//		 
+//		 ////
+//		 thisPhaseIn = ZXP(phasein);
+//		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+//			phaseoffset = phase; 
+//		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+//			phaseoffset = phase = thisPhaseIn;
+//		 } else {	// in this plain ar phase
+//			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+//		 }
+//		 oldPhaseIn = thisPhaseIn;
+//		 //noise
+//		 x1 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 
+//		 z = lookupi1(table0, table1, phaseoffset, lomask) * (bw1 + ( mod * bw2 ));
+//		 phase += (int32)(cpstoinc * ZXP(freqin));
+//		 ZXP(out) = z;
+//		 );
+//	// remainder
+//	LOOP(inNumSamples & 3,
+//		 ////
+//		 thisPhaseIn = ZXP(phasein);
+//		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+//			phaseoffset = phase; 
+//		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+//			phaseoffset = phase = thisPhaseIn;
+//		 } else {	// in this plain ar phase
+//			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+//		 }
+//		 oldPhaseIn = thisPhaseIn;
+//		 //noise
+//		 x0 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 
+//		 float z = lookupi1(table0, table1, phaseoffset, lomask) * (bw1 + ( mod * bw2 ));
+//		 phase += (int32)(cpstoinc * ZXP(freqin));
+//		 ZXP(out) = z;
+//		 
+//		 x3 = x2;
+//		 x2 = x1;
+//		 x1 = x0;
+//		 );
+
+	LOOP(inNumSamples,
 		 thisPhaseIn = ZXP(phasein);
 		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
-			phaseoffset = phase; 
+		 phaseoffset = phase; 
 		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
-			phaseoffset = phase = thisPhaseIn;
+		 phaseoffset = phase = thisPhaseIn;
 		 } else {	// in this plain ar phase
-			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+		 phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
 		 }
 		 oldPhaseIn = thisPhaseIn;
 		 //noise
-		 x0 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
+		 x0 = x1; x1 = x2; x2 = x3;
+		 x3 = frand2(s1, s2, s3) * 0.00012864661681256f; // kelly uses 6. / GAIN
+		 y0 = y1; y1 = y2; y2 = y3;
+		 y3 = mod = (x0 + x3) + (3 * (x1 + x2)) + (0.9320209047f * y0) + (-2.8580608588f * y1) + (2.9258684253f * y2);
 		 
 		 float z = lookupi1(table0, table1, phaseoffset, lomask) * (bw1 + ( mod * bw2 ));
 		 phase += (int32)(cpstoinc * ZXP(freqin));
 		 ZXP(out) = z;
-		 
-		 ////
-		 thisPhaseIn = ZXP(phasein);
-		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
-			phaseoffset = phase; 
-		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
-			phaseoffset = phase = thisPhaseIn;
-		 } else {	// in this plain ar phase
-			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
-		 }
-		 oldPhaseIn = thisPhaseIn;
-		 //noise
-		 x3 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
-		 
-		 z = lookupi1(table0, table1, phaseoffset, lomask) * (bw1 + ( mod * bw2 ));
-		 phase += (int32)(cpstoinc * ZXP(freqin));
-		 ZXP(out) = z;
-		 
-		 ////
-		 thisPhaseIn = ZXP(phasein);
-		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
-			phaseoffset = phase; 
-		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
-			phaseoffset = phase = thisPhaseIn;
-		 } else {	// in this plain ar phase
-			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
-		 }
-		 oldPhaseIn = thisPhaseIn;
-		 //noise
-		 x2 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
-		 
-		 z = lookupi1(table0, table1, phaseoffset, lomask) * (bw1 + ( mod * bw2 ));
-		 phase += (int32)(cpstoinc * ZXP(freqin));
-		 ZXP(out) = z;
-		 
-		 ////
-		 thisPhaseIn = ZXP(phasein);
-		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
-			phaseoffset = phase; 
-		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
-			phaseoffset = phase = thisPhaseIn;
-		 } else {	// in this plain ar phase
-			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
-		 }
-		 oldPhaseIn = thisPhaseIn;
-		 //noise
-		 x1 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
-		 
-		 z = lookupi1(table0, table1, phaseoffset, lomask) * (bw1 + ( mod * bw2 ));
-		 phase += (int32)(cpstoinc * ZXP(freqin));
-		 ZXP(out) = z;
-		 );
-	// remainder
-	LOOP(inNumSamples & 3,
-		 ////
-		 thisPhaseIn = ZXP(phasein);
-		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
-			phaseoffset = phase; 
-		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
-			phaseoffset = phase = thisPhaseIn;
-		 } else {	// in this plain ar phase
-			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
-		 }
-		 oldPhaseIn = thisPhaseIn;
-		 //noise
-		 x0 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
-		 
-		 float z = lookupi1(table0, table1, phaseoffset, lomask) * (bw1 + ( mod * bw2 ));
-		 phase += (int32)(cpstoinc * ZXP(freqin));
-		 ZXP(out) = z;
-		 
-		 x3 = x2;
-		 x2 = x1;
-		 x1 = x0;
 		 );
 	
 	unit->m_phase = phase;
@@ -933,9 +1084,13 @@ void BEOsc_next_iaak(BEOsc *unit, int inNumSamples) // freq, phase audio, bw ctr
 	//unit->mLevel = mod;
 	RPUT
 		
-		unit->m_x1 = x1;
+	unit->m_x1 = x1;
 	unit->m_x2 = x2;
 	unit->m_x3 = x3;
+	
+	unit->m_y1 = y1;
+	unit->m_y2 = y2;
+	unit->m_y3 = y3;
 	//unit->m_phasein = ZX(phasein);
 	
 }
@@ -1044,7 +1199,6 @@ void BEOsc_next_iaak(BEOsc *unit, int inNumSamples) // freq, phase audio, bw ctr
 //		unit->m_phasein = phasein;
 //}
 
-// version with whitenoise/ unrolled average filter
 void BEOsc_next_iaka(BEOsc *unit, int inNumSamples) // freq audio phase control or scalar, audio bw
 {
 	
@@ -1072,6 +1226,11 @@ void BEOsc_next_iaka(BEOsc *unit, int inNumSamples) // freq audio phase control 
 	float x2 = unit->m_x2;
 	float x3 = unit->m_x3;
 	
+	float y0;
+	float y1 = unit->m_y1;
+	float y2 = unit->m_y2;
+	float y3 = unit->m_y3;
+	
 	float z, bw, mod;
 	float final;
 	int32 pphase;
@@ -1079,11 +1238,88 @@ void BEOsc_next_iaka(BEOsc *unit, int inNumSamples) // freq audio phase control 
 	RGET
 		//float mod = unit->mLevel; //old noise val
 	
-	// unroll by 4	
-	LOOP(inNumSamples >> 2,
+//	// unroll by 4	
+//	LOOP(inNumSamples >> 2,
+//		 
+//		 x0 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 bw = ZXP(bwin);
+//		 pphase = phase + (int32)(radtoinc * phasemod);
+//		 phasemod += phaseslope;
+//		 z = lookupi1(table0, table1, pphase, lomask);
+//		 phase += (int32)(cpstoinc * ZXP(freqin));
+//		 //ZXP(out) = z * (sc_sqrt( 1.f - bw) + ( mod * sc_sqrt( 2.f * bw ) ));
+//		 //ZXP(out) = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
+//		 final = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
+//		 ZXP(out) = final;
+//		 //checkBadValues(final);
+//		 
+//		 x3 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 bw = ZXP(bwin);
+//		 pphase = phase + (int32)(radtoinc * phasemod);
+//		 phasemod += phaseslope;
+//		 z = lookupi1(table0, table1, pphase, lomask);
+//		 phase += (int32)(cpstoinc * ZXP(freqin));
+//		 //ZXP(out) = z * (sc_sqrt( 1.f - bw) + ( mod * sc_sqrt( 2.f * bw ) ));
+//		 //ZXP(out) = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
+//		 final = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
+//		 ZXP(out) = final;
+//		 //checkBadValues(final);
+//		 
+//		 x2 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 bw = ZXP(bwin);
+//		 pphase = phase + (int32)(radtoinc * phasemod);
+//		 phasemod += phaseslope;
+//		 z = lookupi1(table0, table1, pphase, lomask);
+//		 phase += (int32)(cpstoinc * ZXP(freqin));
+//		 //ZXP(out) = z * (sc_sqrt( 1.f - bw) + ( mod * sc_sqrt( 2.f * bw ) ));
+//		 //ZXP(out) = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
+//		 final = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
+//		 ZXP(out) = final;
+//		 //checkBadValues(final);
+//		 
+//		 x1 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 bw = ZXP(bwin);
+//		 pphase = phase + (int32)(radtoinc * phasemod);
+//		 phasemod += phaseslope;
+//		 z = lookupi1(table0, table1, pphase, lomask);
+//		 phase += (int32)(cpstoinc * ZXP(freqin));
+//		 //ZXP(out) = z * (sc_sqrt( 1.f - bw) + ( mod * sc_sqrt( 2.f * bw ) ));
+//		 //ZXP(out) = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
+//		 final = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
+//		 ZXP(out) = final;
+//		 //checkBadValues(final);
+//		 );
+//	// in case of remainder
+//	LOOP(inNumSamples & 3, 
+//		 //printf("remain\n");
+//		 x0 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 bw = ZXP(bwin);
+//		 pphase = phase + (int32)(radtoinc * phasemod);
+//		 phasemod += phaseslope;
+//		 z = lookupi1(table0, table1, pphase, lomask);
+//		 phase += (int32)(cpstoinc * ZXP(freqin));
+//		 //ZXP(out) = z * (sc_sqrt( 1.f - bw) + ( mod * sc_sqrt( 2.f * bw ) ));
+//		 //ZXP(out) = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
+//		 final = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
+//		 ZXP(out) = final;
+//		 //checkBadValues(final);
+//		 
+//		 x3 = x2;
+//		 x2 = x1;
+//		 x1 = x0;
+//		 )
+	
+	LOOP(inNumSamples,
 		 
-		 x0 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
+		 x0 = x1; x1 = x2; x2 = x3;
+		 x3 = frand2(s1, s2, s3) * 0.00012864661681256f; // kelly uses 6. / GAIN
+		 y0 = y1; y1 = y2; y2 = y3;
+		 y3 = mod = (x0 + x3) + (3 * (x1 + x2)) + (0.9320209047f * y0) + (-2.8580608588f * y1) + (2.9258684253f * y2);
 		 bw = ZXP(bwin);
 		 pphase = phase + (int32)(radtoinc * phasemod);
 		 phasemod += phaseslope;
@@ -1094,71 +1330,16 @@ void BEOsc_next_iaka(BEOsc *unit, int inNumSamples) // freq audio phase control 
 		 final = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
 		 ZXP(out) = final;
 		 //checkBadValues(final);
-		 
-		 x3 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
-		 bw = ZXP(bwin);
-		 pphase = phase + (int32)(radtoinc * phasemod);
-		 phasemod += phaseslope;
-		 z = lookupi1(table0, table1, pphase, lomask);
-		 phase += (int32)(cpstoinc * ZXP(freqin));
-		 //ZXP(out) = z * (sc_sqrt( 1.f - bw) + ( mod * sc_sqrt( 2.f * bw ) ));
-		 //ZXP(out) = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
-		 final = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
-		 ZXP(out) = final;
-		 //checkBadValues(final);
-		 
-		 x2 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
-		 bw = ZXP(bwin);
-		 pphase = phase + (int32)(radtoinc * phasemod);
-		 phasemod += phaseslope;
-		 z = lookupi1(table0, table1, pphase, lomask);
-		 phase += (int32)(cpstoinc * ZXP(freqin));
-		 //ZXP(out) = z * (sc_sqrt( 1.f - bw) + ( mod * sc_sqrt( 2.f * bw ) ));
-		 //ZXP(out) = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
-		 final = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
-		 ZXP(out) = final;
-		 //checkBadValues(final);
-		 
-		 x1 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
-		 bw = ZXP(bwin);
-		 pphase = phase + (int32)(radtoinc * phasemod);
-		 phasemod += phaseslope;
-		 z = lookupi1(table0, table1, pphase, lomask);
-		 phase += (int32)(cpstoinc * ZXP(freqin));
-		 //ZXP(out) = z * (sc_sqrt( 1.f - bw) + ( mod * sc_sqrt( 2.f * bw ) ));
-		 //ZXP(out) = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
-		 final = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
-		 ZXP(out) = final;
-		 //checkBadValues(final);
-		 );
-	// in case of remainder
-	LOOP(inNumSamples & 3, 
-		 //printf("remain\n");
-		 x0 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
-		 bw = ZXP(bwin);
-		 pphase = phase + (int32)(radtoinc * phasemod);
-		 phasemod += phaseslope;
-		 z = lookupi1(table0, table1, pphase, lomask);
-		 phase += (int32)(cpstoinc * ZXP(freqin));
-		 //ZXP(out) = z * (sc_sqrt( 1.f - bw) + ( mod * sc_sqrt( 2.f * bw ) ));
-		 //ZXP(out) = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
-		 final = z * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
-		 ZXP(out) = final;
-		 //checkBadValues(final);
-		 
-		 x3 = x2;
-		 x2 = x1;
-		 x1 = x0;
 		 )
 	
 	//unit->mLevel = mod;
 	unit->m_x1 = x1;
 	unit->m_x2 = x2;
 	unit->m_x3 = x3;
+	
+	unit->m_y1 = y1;
+	unit->m_y2 = y2;
+	unit->m_y3 = y3;
 	
 	RPUT
 	
@@ -1194,6 +1375,11 @@ void BEOsc_next_iakk(BEOsc *unit, int inNumSamples) // freq audio phase control 
 	float x2 = unit->m_x2;
 	float x3 = unit->m_x3;
 	
+	float y0;
+	float y1 = unit->m_y1;
+	float y2 = unit->m_y2;
+	float y3 = unit->m_y3;
+	
 	float z, mod;
 	float bw1, bw2; 
 	int32 pphase;
@@ -1203,68 +1389,87 @@ void BEOsc_next_iakk(BEOsc *unit, int inNumSamples) // freq audio phase control 
 	bw2 = FastScalarSqrt( 2.f * bwin );
 	
 	RGET
-		//float mod = unit->mLevel; //old noise val
-		
-		// unroll by 4	
-		LOOP(inNumSamples >> 2,
-			 
-			 x0 = frand2(s1, s2, s3);
-			 mod = 0.25f * (x0 + x1 + x2 + x3);
-			 pphase = phase + (int32)(radtoinc * phasemod);
-			 phasemod += phaseslope;
-			 z = lookupi1(table0, table1, pphase, lomask);
-			 phase += (int32)(cpstoinc * ZXP(freqin));
-			 //ZXP(out) = z * (sc_sqrt( 1.f - bw) + ( mod * sc_sqrt( 2.f * bw ) ));
-			 ZXP(out) = z * (bw1 + ( mod * bw2 ));
-			 
-			 x3 = frand2(s1, s2, s3);
-			 mod = 0.25f * (x0 + x1 + x2 + x3);
-			 pphase = phase + (int32)(radtoinc * phasemod);
-			 phasemod += phaseslope;
-			 z = lookupi1(table0, table1, pphase, lomask);
-			 phase += (int32)(cpstoinc * ZXP(freqin));
-			 //ZXP(out) = z * (sc_sqrt( 1.f - bw) + ( mod * sc_sqrt( 2.f * bw ) ));
-			 ZXP(out) = z * (bw1 + ( mod * bw2 ));
-			 
-			 x2 = frand2(s1, s2, s3);
-			 mod = 0.25f * (x0 + x1 + x2 + x3);
-			 pphase = phase + (int32)(radtoinc * phasemod);
-			 phasemod += phaseslope;
-			 z = lookupi1(table0, table1, pphase, lomask);
-			 phase += (int32)(cpstoinc * ZXP(freqin));
-			 //ZXP(out) = z * (sc_sqrt( 1.f - bw) + ( mod * sc_sqrt( 2.f * bw ) ));
-			 ZXP(out) = z * (bw1 + ( mod * bw2 ));
-			 
-			 x1 = frand2(s1, s2, s3);
-			 mod = 0.25f * (x0 + x1 + x2 + x3);
-			 pphase = phase + (int32)(radtoinc * phasemod);
-			 phasemod += phaseslope;
-			 z = lookupi1(table0, table1, pphase, lomask);
-			 phase += (int32)(cpstoinc * ZXP(freqin));
-			 //ZXP(out) = z * (sc_sqrt( 1.f - bw) + ( mod * sc_sqrt( 2.f * bw ) ));
-			 ZXP(out) = z * (bw1 + ( mod * bw2 ));
-			 );
-	// in case of remainder
-	LOOP(inNumSamples & 3, 
-		 //printf("remain\n");
-		 x0 = frand2(s1, s2, s3);
-		 mod = 0.25f * (x0 + x1 + x2 + x3);
+	//float mod = unit->mLevel; //old noise val
+	
+//	// unroll by 4	
+//	LOOP(inNumSamples >> 2,
+//		 
+//		 x0 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 pphase = phase + (int32)(radtoinc * phasemod);
+//		 phasemod += phaseslope;
+//		 z = lookupi1(table0, table1, pphase, lomask);
+//		 phase += (int32)(cpstoinc * ZXP(freqin));
+//		 //ZXP(out) = z * (sc_sqrt( 1.f - bw) + ( mod * sc_sqrt( 2.f * bw ) ));
+//		 ZXP(out) = z * (bw1 + ( mod * bw2 ));
+//		 
+//		 x3 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 pphase = phase + (int32)(radtoinc * phasemod);
+//		 phasemod += phaseslope;
+//		 z = lookupi1(table0, table1, pphase, lomask);
+//		 phase += (int32)(cpstoinc * ZXP(freqin));
+//		 //ZXP(out) = z * (sc_sqrt( 1.f - bw) + ( mod * sc_sqrt( 2.f * bw ) ));
+//		 ZXP(out) = z * (bw1 + ( mod * bw2 ));
+//		 
+//		 x2 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 pphase = phase + (int32)(radtoinc * phasemod);
+//		 phasemod += phaseslope;
+//		 z = lookupi1(table0, table1, pphase, lomask);
+//		 phase += (int32)(cpstoinc * ZXP(freqin));
+//		 //ZXP(out) = z * (sc_sqrt( 1.f - bw) + ( mod * sc_sqrt( 2.f * bw ) ));
+//		 ZXP(out) = z * (bw1 + ( mod * bw2 ));
+//		 
+//		 x1 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 pphase = phase + (int32)(radtoinc * phasemod);
+//		 phasemod += phaseslope;
+//		 z = lookupi1(table0, table1, pphase, lomask);
+//		 phase += (int32)(cpstoinc * ZXP(freqin));
+//		 //ZXP(out) = z * (sc_sqrt( 1.f - bw) + ( mod * sc_sqrt( 2.f * bw ) ));
+//		 ZXP(out) = z * (bw1 + ( mod * bw2 ));
+//		 );
+//	// in case of remainder
+//	LOOP(inNumSamples & 3, 
+//		 //printf("remain\n");
+//		 x0 = frand2(s1, s2, s3);
+//		 mod = 0.25f * (x0 + x1 + x2 + x3);
+//		 pphase = phase + (int32)(radtoinc * phasemod);
+//		 phasemod += phaseslope;
+//		 z = lookupi1(table0, table1, pphase, lomask);
+//		 phase += (int32)(cpstoinc * ZXP(freqin));
+//		 //ZXP(out) = z * (sc_sqrt( 1.f - bw) + ( mod * sc_sqrt( 2.f * bw ) ));
+//		 ZXP(out) = z * (bw1 + ( mod * bw2 ));
+//		 
+//		 x3 = x2;
+//		 x2 = x1;
+//		 x1 = x0;
+//		 )
+	
+	LOOP(inNumSamples, 
+		 //noise
+		 x0 = x1; x1 = x2; x2 = x3;
+		 x3 = frand2(s1, s2, s3) * 0.00012864661681256f; // kelly uses 6. / GAIN
+		 y0 = y1; y1 = y2; y2 = y3;
+		 y3 = mod = (x0 + x3) + (3 * (x1 + x2)) + (0.9320209047f * y0) + (-2.8580608588f * y1) + (2.9258684253f * y2);
+		 
 		 pphase = phase + (int32)(radtoinc * phasemod);
 		 phasemod += phaseslope;
 		 z = lookupi1(table0, table1, pphase, lomask);
 		 phase += (int32)(cpstoinc * ZXP(freqin));
 		 //ZXP(out) = z * (sc_sqrt( 1.f - bw) + ( mod * sc_sqrt( 2.f * bw ) ));
 		 ZXP(out) = z * (bw1 + ( mod * bw2 ));
-		 
-		 x3 = x2;
-		 x2 = x1;
-		 x1 = x0;
 		 )
 		
 	//unit->mLevel = mod;
 	unit->m_x1 = x1;
 	unit->m_x2 = x2;
 	unit->m_x3 = x3;
+	
+	unit->m_y1 = y1;
+	unit->m_y2 = y2;
+	unit->m_y3 = y3;
 	
 	RPUT
 		
@@ -1274,6 +1479,7 @@ void BEOsc_next_iakk(BEOsc *unit, int inNumSamples) // freq audio phase control 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// LorisPhaseGen
 // hastily and messily adapted (with apologies) from EnvGen
 // -INFINITY is understood by BEOsc to mean ignore phase input
 // This outputs -INFINITY except at phase reset points

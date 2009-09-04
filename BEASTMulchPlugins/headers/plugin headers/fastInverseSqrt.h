@@ -57,6 +57,22 @@ inline float FastScalarInvSqrt( float f )
 	
 }
 
+//#else
+//
+//inline float FastScalarInvSqrt( float x ) 
+//{
+//	//printf("Intel\n");
+//	float xhalf = 0.5f * x;
+//	int i = *(int*)&x; // store floating-point bits in integer
+//	i = 0x5f3759d5 - (i >> 1); // initial guess for Newton's method
+//	x = *(float*)&i; // convert new bits into float
+//	x = x*(1.5f - xhalf*x*x); // Three rounds of Newton's method
+//	x = x*(1.5f - xhalf*x*x);
+//	x = x*(1.5f - xhalf*x*x);
+//	return x;
+//	
+//}
+
 #endif // __ppc__ || __ppc64__
 
 // safe for zero and negative numbers, but not for Nan
@@ -68,7 +84,8 @@ inline float FastScalarSqrt( float f ) {
 	returnval = f == 0.f ? 0.f :  f * (f < 0.f ? FastScalarInvSqrt(-f) : FastScalarInvSqrt(f));
 	//checkBadValues(returnval);
 #else
-	returnval = f == 0.f ? 0.f : sqrtf(fabsf(f)); // fast enough on intel
+	returnval = f == 0.f ? 0.f : sqrtf(fabsf(f)); // fast enough on intel, and faster than anything else...
+	//returnval = f == 0.f ? 0.f :  f * (f < 0.f ? FastScalarInvSqrt(-f) : FastScalarInvSqrt(f));
 #endif // __ppc__ || __ppc64__
 	
 	return returnval;
