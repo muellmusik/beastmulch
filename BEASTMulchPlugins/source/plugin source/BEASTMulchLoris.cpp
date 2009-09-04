@@ -93,8 +93,6 @@ struct LorisMod : public Unit
 
 struct LorisBW : public Unit {};
 
-struct CheckBadValues : public Unit {};
-
 struct ZapGremlins : public Unit {};
 
 // declare unit generator functions 
@@ -136,9 +134,6 @@ extern "C"
 	
 	void LorisBW_Ctor(LorisBW* unit);
 	void LorisBW_next(LorisBW* unit, int inNumSamples);
-	
-	void CheckBadValues_Ctor(CheckBadValues* unit);
-	void CheckBadValues_next(CheckBadValues* unit, int inNumSamples);
 	
 	void ZapGremlins_Ctor(ZapGremlins* unit);
 	void ZapGremlins_next(ZapGremlins* unit, int inNumSamples);
@@ -2695,50 +2690,6 @@ void LorisBW_next(LorisBW* unit, int inNumSamples)
 //	
 //}
 	
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-void CheckBadValues_Ctor(CheckBadValues* unit)
-{	
-	SETCALC(CheckBadValues_next);
-}
-
-
-void CheckBadValues_next(CheckBadValues* unit, int inNumSamples)
-{
-	
-	
-	float *in = ZIN(0);
-	float *out = ZOUT(0);
-	float id = ZIN0(1);
-	
-	float samp, output;
-	int classification;
-	
-	LOOP(inNumSamples,
-		 samp = ZXP(in);
-		 //checkBadValues(samp);
-		 //classification = fpclassify(samp);
-//		 switch (classification) 
-//		 { 
-//			 case FP_INFINITE: 
-//				 printf("Infinite number found in Synth %d, ID: %d\n", unit->mParent->mNode.mID, (int)id); 
-//				 output = 2;
-//				 break; 
-//			 case FP_NAN: 
-//				 printf("NaN found in Synth %d, ID: %d\n", unit->mParent->mNode.mID, (int)id); 
-//				 output = 1;
-//				 break; 
-//			 case FP_SUBNORMAL:
-//				 printf("Denormal found in Synth %d, ID: %d\n", unit->mParent->mNode.mID, (int)id); 
-//				 output = 3;
-//				 break;
-//			 default: 
-//				 output = 0;
-//		 };
-		 
-		 ZXP(out) = output;
-		 );
-}
 
 ////////////////////////////////////////////////////////////////////
 
@@ -2773,8 +2724,6 @@ void load(InterfaceTable *inTable)
 	DefineSimpleUnit(LP4Noise);
 	DefineSimpleUnit(LorisMod);
 	DefineSimpleUnit(LorisBW);
-	//DefineSimpleUnit(BERingz);
-	DefineSimpleUnit(CheckBadValues);
 	DefineSimpleUnit(ZapGremlins);
 }
 
