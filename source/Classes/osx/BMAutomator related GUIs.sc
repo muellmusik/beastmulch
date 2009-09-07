@@ -25,7 +25,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	
 	*new {|ca, name, origin|
 		//^super.new.init(ca, name ? ca.name ? "test").makeWindow(origin ? (40@200));
-		^super.new.init(ca, name ? "Soundfile / Controller Snapshots").makeWindow(origin ? (40@200));
+		^super.new.init(ca, name ? "Soundfile / Controller Snapshots").makeWindow(origin ? (200@200));
 	}
 	
 	init {|argCa, argName|
@@ -36,7 +36,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		ca.sequences.do({|sq, i| sequenceLevels[sq] = (0.1 * (i + 1))%1.0});
 	}
 	
-	makeWindow {
+	makeWindow { |origin|
 		var width = 1008;
 		path = ca.timeReference.path; // How best to do this?
 		sf = SoundFile.new;
@@ -46,7 +46,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		//f.openRead("sounds/a11wlk01.wav");
 		//f.openRead("/Users/scottw/Music/SuperCollider\ Recordings/SC_080725_143355.aiff");
 		
-		window = SCWindow.new(name, Rect(200, 200, width, 400), false);
+		window = SCWindow.new(name, Rect(origin.x, origin.y, width, 400), false);
 		window.view.decorator = FlowLayout(window.view.bounds);
 		
 		window.view.keyDownAction = { arg view,char,modifiers,unicode,keycode;
