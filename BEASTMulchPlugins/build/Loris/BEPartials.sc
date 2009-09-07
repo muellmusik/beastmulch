@@ -1,14 +1,22 @@
 BEPartials {
-	var <>size, <>partialList, <dur = 0;
+	var <>size, <partialList, <dur = 0;
 
 	*new { arg sdif;	
 		^super.new.init(sdif);
 	}
 	
 	init { arg sdif;	
-		partialList = sdif.readFramesToPartials;		
+		partialList = sdif.readFramesToPartials;	
+		this.calcSizeAndDur;	
+	}
+	
+	partialList_{|list|
+		partialList = list;
+		this.calcSizeAndDur;
+	}
+	
+	calcSizeAndDur {
 		size = partialList.size;
-		// calculate dur
 		partialList.do({|item| 
 			var end;
 			end = item[2].sum + item[0]; // duration
@@ -18,7 +26,7 @@ BEPartials {
 	
 	// fades in or out partials with non-zero start and/or end amps
 	fadeInOut {
-		var fadein = 0.001, fadeout = 0.01;
+		var fadein = 0.001, fadeout = 0.001; // loris standard
 		partialList = partialList.collect({ arg partial;
 			// fadein
 			if(partial[3].first > 0,{
@@ -59,8 +67,6 @@ BEPartials {
 		
 		partialList.do({ arg item, i;
 			var starttime, times, amps, phases, numSegs, theseEnvs, thisDelay, phaseEnv;
-			//i.postln;
-			//item.postln;
 			starttime = item[0];
 			// correct times for fadeins by compensating for stretch
 			numSegs = item[2].size;
@@ -87,8 +93,6 @@ BEPartials {
 			theseEnvs = [Env(item[4], times), Env(item[3], times), Env(item[5], times)];
 			
 			thisDelay = starttime + (i * ioff);
-			//\bar.postln;
-//			thisDelay.postln;
 			theseEnvs = theseEnvs
 				.collect({|env, j|
 					var levelScale = 1;
