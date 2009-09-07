@@ -1,3 +1,6 @@
+/* in progress
+
+
 // VDiskIn cannot play backwards
 // VDiskIn does not rate scale
 // VDiskIn will not adjust on a new cueing
@@ -241,3 +244,5 @@ BMSoundFileStream : BMSoundFilePlayer {
 		});
 	}
 }
+
+*/

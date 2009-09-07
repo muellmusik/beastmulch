@@ -221,7 +221,12 @@ BMPluginSpec {
 		}
 	}
 	
-	guiFunc { ^guiFunc ? defaultGuiFunc }
+	// protect for now
+	guiFunc { 
+		if(GUI.id == \cocoa, {
+			^guiFunc ? defaultGuiFunc 
+		}, {^nil})
+	}
 	
 }
 
