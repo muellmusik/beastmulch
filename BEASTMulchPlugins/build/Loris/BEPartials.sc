@@ -56,7 +56,7 @@ BEPartials {
 	
 	}
 	
-	ar {| stretch = 1, pitch = 1, bw, ioff = 0|
+	ar {| stretch = 1, pitch = 1, bw|
 		var envs, recipStretch;
 		stretch = stretch.value; // could be a function
 		pitch = pitch.value;
@@ -66,7 +66,7 @@ BEPartials {
 		this.fadeInOut; // fade in and out non-zero partialtimes
 		
 		partialList.do({ arg item, i;
-			var starttime, times, amps, phases, numSegs, theseEnvs, thisDelay, phaseEnv;
+			var starttime, times, amps, phases, numSegs, theseEnvs, phaseEnv;
 			starttime = item[0];
 			// correct times for fadeins by compensating for stretch
 			numSegs = item[2].size;
@@ -92,14 +92,13 @@ BEPartials {
 			// freq, amp, bw
 			theseEnvs = [Env(item[4], times), Env(item[3], times), Env(item[5], times)];
 			
-			thisDelay = starttime + (i * ioff);
 			theseEnvs = theseEnvs
 				.collect({|env, j|
 					var levelScale = 1;
 					if(j == 0, {levelScale = pitch});
 					if(j == 2, {levelScale = bw}); 
 					
-					if(thisDelay > 0, {env = env.delay(thisDelay)});
+					if(starttime > 0, {env = env.delay(starttime)});
 				
 					EnvGen.ar(env, levelScale: levelScale, 
 						timeScale: stretch); 
@@ -107,9 +106,9 @@ BEPartials {
 			
 			// now add phasegen
 			
-			if(thisDelay > 0, {
+			if(starttime > 0, {
 				// initial -inf ensures reset on first partial
-				phaseEnv = Env([-inf] ++ phases, [thisDelay] ++ times);
+				phaseEnv = Env([-inf] ++ phases, [starttime] ++ times);
 			}, {
 				phaseEnv = Env(phases, times);
 			});
