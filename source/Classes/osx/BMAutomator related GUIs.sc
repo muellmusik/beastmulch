@@ -690,13 +690,17 @@ BMSnapShotSeqConfigGUI : BMAbstractGUI {
 		^super.new.makeWindow(parent);
 	}
 	
-	makeWindow {|parent, origin|
+	makeWindow {|parent|
 		var allControls, numControls, font, toggleWidth, numColumns, numRows;
 		var results;
 		results = IdentitySet.new;
 		allControls = BMAbstractController.allControls;
-		font = Font("Helvetica-Bold", 10);
 		numControls = allControls.size;
+		if(numControls == 0, {
+			"No Controls to select".warn;
+			^nil;
+		});
+		font = Font("Helvetica-Bold", 10);
 		toggleWidth = allControls.keys.collect({|name| 
 			name.asString.bounds(font).width
 		}).maxItem + 8;
@@ -741,7 +745,7 @@ BMSnapShotSeqConfigGUI : BMAbstractGUI {
 			.action_({
 				window.close;
 			});		
-		window.onClose = { onClose.value(results.asArray.sort.postcs) };
+		window.onClose = { onClose.value(results.asArray.sort) };
 		//window.front;
 	}
 	
