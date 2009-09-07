@@ -1,29 +1,9 @@
 // Matrixes for audio and and scaling with controllers
 
-// ins and outs are either arrays of symbols corresponding to names
-// in which case size equals the number of mappable inputs
-// and index = busnum
-// or BMInOutArrays of name -> busNum
-// use the latter for arbitrary indices
-
-// mappings is an Dictionary with in names as keys, and Lists of output names
-// (Symbols) as values
-
-// Issues:
-// can input and output names be changed while this is running?
-
-//InputArray and OutputArray classes should take care of indexes automatically. Keep the matrices stupid.
-
-// Should BMInOutArrays for ins and outs offset channels by 1?
-
-// CmdPeriod registration is automatic, unless turned off manually or by a MatrixManager
-
-// At the moment AudioMatrices default to the head of the default group, AmpControlMatrices to the tail, but a Matrix Manager can control the ordering of this.
-
 // Defines the minimum interface for a matrix AudioChainElement
 BMAbstractMatrix : BMAbstractAudioChainElement {
 
-	var <matrixArray, <mappings, defname; // defname is the def for a node
+	var <matrixArray, <mappings, defname, defSentCond; // defname is the def for a node
 	
 	*new { |ins, outs, target, addAction = \addToTail, name|
 		^super.new.init(ins.asBMInOutArray, outs.asBMInOutArray, target, addAction, name);
@@ -51,6 +31,7 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 		defname = ("BMMatrix-" ++ name);
 //		postf("defname %\n", defname);
 //		defname.do(_.postln);
+		defSentCond = Condition.new(false);
 		this.sendDef;
 		//CmdPeriod.add(this);
 	}
@@ -66,18 +47,21 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 		// not so efficient, but okay for our purposes
 		var inBus, outBus, inMatrixIndex, outMatrixIndex;
 		(inBus = ins[input]).notNil.if({
-			inMatrixIndex = inNames.indexOf(input);
-			outputs = outputs.flat;
-			outputs.do({ |out|
-				(outBus = outs[out]).notNil.if({
-					outMatrixIndex = outNames.indexOf(out);
-					mappings[input].includes(out).not.if({
-						matrixArray[inMatrixIndex][outMatrixIndex] = 
-							Synth.new(defname, [\in, inBus, \out, outBus], group);
-						mappings[input].add(out);
-						this.changed;
-					}, {warn(input ++ " already connected to " ++ out)});
-				}, {error("Output:" + out + "is not defined.")});
+			server.bind({
+				server.sync(defSentCond);
+				inMatrixIndex = inNames.indexOf(input);
+				outputs = outputs.flat;
+				outputs.do({ |out|
+					(outBus = outs[out]).notNil.if({
+						outMatrixIndex = outNames.indexOf(out);
+						mappings[input].includes(out).not.if({
+							matrixArray[inMatrixIndex][outMatrixIndex] = 
+								Synth.new(defname, [\in, inBus, \out, outBus], group);
+							mappings[input].add(out);
+							this.changed;
+						}, {warn(input ++ " already connected to " ++ out)});
+					}, {error("Output:" + out + "is not defined.")});
+				});
 			});
 		}, {error("Input:" + input + "is not defined.")});
 	}
@@ -154,12 +138,15 @@ BMAudioMatrix : BMAbstractMatrix {
 //	}
 	
 	sendDef {
-		SynthDef(defname, { arg in, out, gate = 1;
-			// short fade in and out
-			Out.ar(out, In.ar(in, 1) 
-				* EnvGen.kr(Env.asr(BMOptions.crossfade, 1, BMOptions.crossfade), gate, doneAction: 2)
-			);
-		}).send(server);	
+		{
+			SynthDef(defname, { arg in, out, gate = 1;
+				// short fade in and out
+				Out.ar(out, In.ar(in, 1) 
+					* EnvGen.kr(Env.asr(BMOptions.crossfade, 1, BMOptions.crossfade), gate, doneAction: 2)
+				);
+			}).send(server);
+		server.sync(defSentCond);
+		}.fork;	
 	}
 	
 //	makeGroup {
@@ -175,12 +162,15 @@ BMAudioMixerMatrix : BMAbstractMatrix {
 //	}
 	
 	sendDef {
-		SynthDef(defname, { arg in, out, amp = 1, gate = 1;
-			// short fade in and out
-			Out.ar(out, In.ar(in, 1) * Lag.kr(amp, BMOptions.crossfade)
-				* EnvGen.kr(Env.asr(BMOptions.crossfade, 1, BMOptions.crossfade), gate, doneAction: 2)
-			);
-		}).send(server);	
+		{
+			SynthDef(defname, { arg in, out, amp = 1, gate = 1;
+				// short fade in and out
+				Out.ar(out, In.ar(in, 1) * Lag.kr(amp, BMOptions.crossfade)
+					* EnvGen.kr(Env.asr(BMOptions.crossfade, 1, BMOptions.crossfade), gate, doneAction: 2)
+				);
+			}).send(server);
+		server.sync(defSentCond);
+		}.fork;	
 	}
 	
 		// allows for multiple outs mapped at once
@@ -188,28 +178,31 @@ BMAudioMixerMatrix : BMAbstractMatrix {
 		// not so efficient, but okay for our purposes
 		var inBus, outBus, inMatrixIndex, outMatrixIndex;
 		(inBus = ins[input]).notNil.if({
-			inMatrixIndex = inNames.indexOf(input);
-			if(outputs.rank == 3, {outputs = outputs.unbubble});
-			outputs.do({ |out|
-				var outname;
-				if(out.size < 2, { out = [out, 1].flat}); // default amp is 1
-				outname = out.first;
-				(outBus = outs[outname]).notNil.if({
-					outMatrixIndex = outNames.indexOf(outname);
-					mappings[input].flat.includes(outname).not.if({
-						matrixArray[inMatrixIndex][outMatrixIndex] = 
-							Synth.new(defname, 
-								[\in, inBus, \out, outBus, \amp, out[1]], 
-								group
-							);
-						mappings[input].add(out);
-						this.changed;
-					}, {
-						// if we find it, set the level
-						matrixArray[inMatrixIndex][outMatrixIndex].set(\amp, out[1]);
-						mappings[input].detect({|item| item.first == out.first})[1] = out[1];
-					});
-				}, {error("Output:" + out + "is not defined.")});
+			server.bind({
+				server.sync(defSentCond);
+				inMatrixIndex = inNames.indexOf(input);
+				if(outputs.rank == 3, {outputs = outputs.unbubble});
+				outputs.do({ |out|
+					var outname;
+					if(out.size < 2, { out = [out, 1].flat}); // default amp is 1
+					outname = out.first;
+					(outBus = outs[outname]).notNil.if({
+						outMatrixIndex = outNames.indexOf(outname);
+						mappings[input].flat.includes(outname).not.if({
+							matrixArray[inMatrixIndex][outMatrixIndex] = 
+								Synth.new(defname, 
+									[\in, inBus, \out, outBus, \amp, out[1]], 
+									group
+								);
+							mappings[input].add(out);
+							this.changed;
+						}, {
+							// if we find it, set the level
+							matrixArray[inMatrixIndex][outMatrixIndex].set(\amp, out[1]);
+							mappings[input].detect({|item| item.first == out.first})[1] = out[1];
+						});
+					}, {error("Output:" + out + "is not defined.")});
+				});
 			});
 		}, {error("Input:" + input + "is not defined.")});
 	}
@@ -263,7 +256,7 @@ BMAmpControlMatrix : BMAbstractMatrix {
 			^this;
 		});
 		
-		// outputs can inly be mapped to a single input (control)
+		// outputs can only be mapped to a single input (control)
 		outputs.do({|output| 
 			currentIn = outmappings[output];
 			currentIn.notNil.if({this.disconnect(currentIn, output); });
@@ -323,13 +316,16 @@ BMAmpControlMatrix : BMAbstractMatrix {
 //	}
 	
 	sendDef {
-		SynthDef(defname, {arg in, out, gate = 1;
-			// XFade in new scaled value, crossfade out when freeing so no clicks
-			XOut.ar(out, 
-				EnvGen.kr(Env.asr(BMOptions.crossfade, 1, BMOptions.crossfade), gate, doneAction: 2),
-				In.ar(out, 1) * In.kr(in, 1)
-			);
-		}).send(server);
+		{
+			SynthDef(defname, {arg in, out, gate = 1;
+				// XFade in new scaled value, crossfade out when freeing so no clicks
+				XOut.ar(out, 
+					EnvGen.kr(Env.asr(BMOptions.crossfade, 1, BMOptions.crossfade), gate, doneAction: 2),
+					In.ar(out, 1) * In.kr(in, 1)
+				);
+			}).send(server);
+		server.sync(defSentCond);
+		}.fork;
 	}
 	
 //	makeGroup {
