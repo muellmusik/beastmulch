@@ -83,9 +83,13 @@ RBE_SDIF_File : File {
 			var oldTime = 0.0;
 			item = item.flop;
 			// start-time, phases, times, amps, freqs, bw
+			// start-time, times, freqs, phases, bw, amps
 			
-			[item.first.first, item[3], item[0].differentiate.drop(1), item[2], item[1], 
-				item[4]];
+//			[item.first.first, item[3], item[0].differentiate.drop(1), item[2], item[1], 
+//				item[4]];
+			
+			[item.first.first, item[0].differentiate.drop(1), item[1], item[3], item[4],
+				item[2]];
 		}, Array);
 		^list;
 	}
