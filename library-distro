@@ -9,3 +9,4 @@ svn export --force Help ./BEASTmulchLib/Help
 svn export --force UGens ./BEASTmulchLib/
 cp source/license.txt ./BEASTmulchLib/
 cp source/COPYRIGHT ./BEASTmulchLib/
+zip -r -j ./BEASTmulchLib/plugins-source.zip BEASTMulchPlugins/source/plugin\ source/*.cpp BEASTMulchPlugins/headers/plugin\ headers/*.h
