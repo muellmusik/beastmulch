@@ -4,61 +4,24 @@ BEOsc : UGen {
 		arg freq=440.0, phase=0.0, bw, mul=1.0, add=0.0;
 		^this.multiNew('audio', freq, phase, bw).madd(mul, add)
 	}
-	
-	*arFromEnvs {|envs, add = 0|
-		^BEOsc.ar(envs[0], envs[3], envs[2], envs[1], add)
-	
-	}
-
 }
 
-//BEOsc {	
-//	*ar { 
-//		arg freq=440.0, phase=0.0, bw, mul=1.0, add=0.0;
-//		var mod;
-//		mod = sqrt( 1.0 - bw ) + ( BrownNoise.ar * sqrt( 2.0 * bw ) );
-//		^SinOsc.ar(freq, phase, mul * mod);
-//	}
-//}
-
-//BEOsc2 : UGen {	
-//	*ar { 
-//		arg freq=440.0, phase=0.0, bw, mul=1.0, add=0.0;
-//		var mod;
-//		mod = FastSqrt( 1.0 - bw ) + ( LP4PAv.ar(WhiteNoise.ar) * FastSqrt( 2.0 * bw ) );
-//		^SinOsc.ar(freq, phase, mul * mod);
-//	}
-//}
-
-LP4Noise : UGen {
-	
-	*ar { arg mul = 1.0, add = 0.0;
-		// support this idiom from SC2.
-		if (mul.isArray, {
-			^{ this.multiNew('audio') }.dup(mul.size).madd(mul, add)
-		},{
-			^this.multiNew('audio').madd(mul, add)
-		});
+// special case EnvGen variant
+LorisPhaseGen : UGen {	
+	*ar { arg envelope, gate = 1.0, levelScale = 1.0, levelBias = 0.0, timeScale = 1.0, doneAction = 0;
+		^this.multiNewList(['audio', gate, levelScale, levelBias, timeScale, doneAction, `envelope])
 	}
-	*kr { arg mul = 1.0, add = 0.0;
-		if (mul.isArray, {
-			^{ this.multiNew('control') }.dup(mul.size).madd(mul, add)
-		},{
-			^this.multiNew('control').madd(mul, add)
-		});
+	*kr { arg envelope, gate = 1.0, levelScale = 1.0, levelBias = 0.0, timeScale = 1.0, doneAction = 0;
+		^this.multiNewList(['control', gate, levelScale, levelBias, timeScale, doneAction, `envelope])
 	}
-	
-}
+	*new1 { arg rate, gate, levelScale, levelBias, timeScale, doneAction, envelope;
 
-LorisMod : UGen {
-	
-	*ar { arg bw = 0.0, mul = 1.0, add = 0.0;
-		// support this idiom from SC2.
-		if (mul.isArray, {
-			^{ this.multiNew('audio', bw) }.dup(mul.size).madd(mul, add)
-		},{
-			^this.multiNew('audio', bw).madd(mul, add)
-		});
+		^super.new.rate_(rate).addToSynth.init([gate, levelScale, levelBias, timeScale, doneAction] 
+			++ envelope.dereference.asArray); 
 	}
-	
+ 	init { arg theInputs;
+ 		// store the inputs as an array
+ 		inputs = theInputs;
+ 	}
+	argNamesInputsOffset { ^2 }
 }

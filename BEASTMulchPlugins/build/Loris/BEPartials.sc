@@ -89,8 +89,8 @@ BEPartials {
 			});
 			phases = phases.add(item[1].last);
 			
-			// freq, amp, bw
-			theseEnvs = [Env(item[4], times), Env(item[3], times), Env(item[5], times)];
+			// freq, bw, amp
+			theseEnvs = [Env(item[4], times), Env(item[5], times), Env(item[3], times),];
 			
 			theseEnvs = theseEnvs
 				.collect({|env, j|
@@ -113,7 +113,8 @@ BEPartials {
 				phaseEnv = Env(phases, times);
 			});
 			
-			theseEnvs = theseEnvs.add(LorisPhaseGen.ar(phaseEnv, timeScale: stretch));
+			// freq, phase, bw, amp as in BEOsc
+			theseEnvs = theseEnvs.insert(1, LorisPhaseGen.ar(phaseEnv, timeScale: stretch));
 			
 			envs = envs.addAll(theseEnvs);
 		});
