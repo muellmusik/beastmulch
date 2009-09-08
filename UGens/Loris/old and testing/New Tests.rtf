@@ -36,7 +36,7 @@ outmix = \cf2 Mix\cf0 (\cf2 PanAz\cf0 .ar(2, \cf2 BEOsc\cf0 .ar(*envs), \{\cf2 L
 envs = p.ar(\cf2 EnvGen\cf0 .kr(\cf2 Env\cf0 ([1, 1, 10], [0.1, 0.05])), pitch, bw, 0);\
 \cf4 \\foo\cf0 .postln;\
 \
-outmix = \cf2 Mix\cf0 (\cf2 PanAz\cf0 .ar(2, \cf2 BEOsc\cf0 .arFromEnvs(envs), \{\cf2 LinRand\cf0 (-1, 1)\} ! envs[0].size)) \
+outmix = \cf2 Mix\cf0 (\cf2 PanAz\cf0 .ar(2, \cf2 BEOsc\cf0 .ar(*envs), \{\cf2 LinRand\cf0 (-1, 1)\} ! envs[0].size)) \
 		* \cf2 EnvGen\cf0 .ar(\cf2 Env\cf0 .linen(attack, p.dur * 12, release), gate, mul, doneAction: 2);\
 	\
 \cf2 Out\cf0 .ar(out, outmix); \
