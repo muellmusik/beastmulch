@@ -54,7 +54,7 @@ BMSwarmGranulator {
 			output = input * EnvGen.kr(Env.asr(attack, 1.0, decay), gate, amp, 0, 1.0, 7);
 			// free the nodes in the group when released
 			speakerList.do({|spkr, i|
-				Out.ar(spkr.index, input[i]);
+				Out.ar(spkr.index, output[i]);
 			});
 		}).send(server);
 		this.initKDTree;
