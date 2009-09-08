@@ -1,8 +1,3 @@
-// has a maximum number of channels in order to allow it to return an input array and set the Bus
-
-// start time only works when not already playing. Make sense?
-
-// update for rate FF FB?
 
 BMSoundFilePlayer : BMAbstractAudioSource {
 	

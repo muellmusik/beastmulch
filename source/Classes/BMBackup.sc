@@ -1,3 +1,5 @@
+// notes on sergio's stuff below
+// To clarify:
 
 BMBackup {	
 	classvar <backupsDirs, <preferencesPath;

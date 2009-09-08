@@ -186,7 +186,7 @@ BMMultichannelPluginsRackGUI : BMAbstractGUI {
 		var x, y, width, pluglist, numTypes, numStrips, stripGUIs, buttons;
 		x = origin.x;
 		y = origin.y;
-		//width = 4 + 210 + 4 + min(104 * pluginsRack.ins.size, 1078); // max 7 visible
+		
 		width = 4 + 210 + 300;
 		window = SCWindow(name, Rect.new(x, y, width, 618), false);
 		window.view.decorator = FlowLayout(window.view.bounds);
@@ -213,18 +213,7 @@ BMMultichannelPluginsRackGUI : BMAbstractGUI {
 		pluginsStripGUIs.add(
 			BMMultichannelPluginsStripGUI(pluginsRack, window, pluginsRack.name)
 		);
-//		stripGUIs = SCScrollView(window, Rect(0, 0, width - 216, 508))
-//			.hasVerticalScroller_(false)
-//			.hasBorder_(true);
-//		stripGUIs.action = {window.refresh};
-//		//stripGUIs = SCHLayoutView(stripGUIs, Rect(4, 4, 104 * numStrips + 4, 500));
-//		stripGUIs = SCCompositeView(stripGUIs, Rect(4, 4, 104 * numStrips + 4, 500));
-//		stripGUIs.decorator = FlowLayout(stripGUIs.bounds, 0@0);
-//		//pluginsRack.inNames.do({|chanName|
-//			pluginsStripGUIs.add(
-//				BMMultichannelPluginsStripGUI(pluginsRack, stripGUIs, pluginsRack.name)
-//			);
-		//});
+
 		defaultHelpString = "Click names at left for description.\nDrag from left to add plugins.\nDouble-click or select and press enter to edit plugin settings.\nCmd down and up arrows to change order.\nCmd drag to copy trim or a plugin and its settings to another channel.";
 		window.view.decorator.nextLine;
 		window.view.decorator.shift(20, 0);
@@ -241,21 +230,6 @@ BMMultichannelPluginsRackGUI : BMAbstractGUI {
 			.states_([["?", Color.black, Color.white.alpha_(0.2)]])
 			.font_(Font("Helvetica-Bold", 14))
 			.action_({descriptionHelpText.string = defaultHelpString;});
-//		TriggerView(buttons, Rect(0, 0, 20, 20))
-//			.string_("APi")
-//			.font_(Font("Helvetica-Bold", 8))
-//			.colorOn_(Color.white.alpha_(0.2))
-//			.action_({|v|v.value.if{pluginsRack.autoPlugins}});
-//		TriggerView(buttons, Rect(0, 0, 20, 20))
-//			.string_("ATr")
-//			.font_(Font("Helvetica-Bold", 8))
-//			.colorOn_(Color.white.alpha_(0.2))
-//			.action_({|v| v.value.if{pluginsRack.autoTrim}});
-//		TriggerView(buttons, Rect(0, 0, 20, 20))
-//			.string_("dT")
-//			.font_(Font("Helvetica-Bold", 12))
-//			.colorOn_(Color.white.alpha_(0.2))
-//			.action_({|v|v.value.if{pluginsRack.delayCompensateDistance}});
 
 		window.onClose = { 
 			pluginsStripGUIs.do({|tpisg|
@@ -281,17 +255,8 @@ BMMultichannelPluginsStripGUI {
 	 }
 	 
 	 makeGUI{|parent, name, origin|
-	 	name.postln;
 	 	containerView = SCCompositeView(parent, Rect(origin.x, origin.y, 300, 508));
-	 	//containerView.decorator = FlowLayout(containerView.bounds);
-//	 	labelView = SCStaticText(containerView, Rect(0, 0, 300, 30))
-//	 		.font_(Font("Helvetica-Bold", 13))
-//	 		.background_(Color.grey.alpha_(0.3))
-//	 		.string_(" " ++ name);
-//	 	ezKnob = EZKnob(containerView, 50@20, " Trim (dBFS)", \db.asSpec, 
-//	 		{|ez| pluginsStrip.trim_(ez.value);}, pluginsStrip.trim, false, 96, 70);
-//	 	ezKnob.labelView.align_(\left).font_(Font("Helvetica-Bold", 12));
-//	 	ezKnob.numberView.background_(Color.white.alpha_(0.3));
+
 	 	listView = SCListView(containerView, Rect(0, 0, 300, 508))
 	 		.items_(pluginsStrip.plugins.collect({|plugin| plugin.spec.name}));
 	 	listView.enterKeyAction = {
@@ -336,7 +301,7 @@ BMMultichannelPluginsStripGUI {
 	 }
 	 
 	 update {|tpv, what|
-	 	//if(what == \trim, {ezKnob.value = pluginsStrip.trim;});
+	 	
 	 	listView.items_(pluginsStrip.plugins.collect({|plugin| plugin.spec.name}));
 	 	switch(what,
 	 		\moveDown, {listView.value = listView.value + 1},
@@ -385,10 +350,6 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 					dragSource = \ins;
 					inKey
 				}); 
-//				.mouseDownAction_({
-//					descriptionHelpText.string = piName ++ ": " ++ 
-//						BMMultichannelPluginSpec.specs[piName].description;
-//				});
 		});
 		
 		
@@ -402,11 +363,10 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 		};
 		inResult.keyDownAction = { arg view,char,modifiers,unicode,keycode;
 			var newItems;
-			//\foo.postln;
 	 		block { |break|
 				if((modifiers == 11534600) && (unicode == 63233), {
 					if(view.value < (view.items.size -1), {
-						view.items = view.items.postln.swap(view.value, view.value + 1).postln;
+						view.items = view.items.swap(view.value, view.value + 1);
 						view.refresh;
 						view.value = view.value + 1;
 					});
@@ -415,7 +375,6 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 				if((modifiers == 11534600) && (unicode == 63232), {
 					if(view.value > 0, {
 						view.items = view.items.swap(view.value, view.value - 1);
-						//view.value = view.value - 1;
 					});
 					break.value;
 				});
@@ -458,10 +417,7 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 					dragSource = \outs;
 					outKey
 				}); 
-//				.mouseDownAction_({
-//					descriptionHelpText.string = piName ++ ": " ++ 
-//						BMMultichannelPluginSpec.specs[piName].description;
-//				});
+
 		});
 		outResult = SCListView(window, Rect(0, 0, 160, 254)).font_(Font("Helvetica-Bold", 12));
 		outResult.canReceiveDragHandler = { 
@@ -473,11 +429,11 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 		};
 		outResult.keyDownAction = { arg view,char,modifiers,unicode,keycode;
 			var newItems;
-			//\foo.postln;
+			
 	 		block { |break|
 				if((modifiers == 11534600) && (unicode == 63233), {
 					if(view.value < (view.items.size -1), {
-						view.items = view.items.postln.swap(view.value, view.value + 1).postln;
+						view.items = view.items.swap(view.value, view.value + 1);
 						view.refresh;
 						view.value = view.value + 1;
 					});
@@ -486,7 +442,6 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 				if((modifiers == 11534600) && (unicode == 63232), {
 					if(view.value > 0, {
 						view.items = view.items.swap(view.value, view.value - 1);
-						//view.value = view.value - 1;
 					});
 					break.value;
 				});

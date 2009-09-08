@@ -24,10 +24,8 @@ BMSoundFilePlayerGUI : BMAbstractGUI {
 		
 		clockView = SCStaticText.new(window, Rect(0,0,200,45));
 		clockView.string = "00:00:00.0";
-		//clockView.background = Color.black;
 		clockView.background = HiliteGradient(Color.black.alpha_(0.1), Color.black, \v, 256, 0.5);
 		clockView.font = Font("Helvetica-Bold", 18);
-		//clockView.stringColor = Color.yellow(0.9);
 		clockView.stringColor = Color.new255(106, 90, 205);
 		clockView.align = \center;
 		
@@ -65,20 +63,18 @@ BMSoundFilePlayerGUI : BMAbstractGUI {
 		};
 		clearButton = RoundButton.new(clust2, Rect(10,10,200,20)).extrude_(false).canFocus_(false);
 		clearButton.states = [[\x, Color.black,Color.clear]];
-		clearButton.action = { player.stop; player.freeBuffer; }; // stopwatch stopped by dependancy
+		clearButton.action = { player.stop; player.freeBuffer; };
 		
 		window.view.decorator.nextLine;
 		
 		stopButton = RoundButton.new(window, Rect(10,10,200,20)).extrude_(false).canFocus_(false);
 		stopButton.states = [[\stop]];
-		stopButton.action = { player.stop; }; // stopwatch stopped by dependancy
+		stopButton.action = { player.stop; };
 		
 		backButton = RoundButton.new(window, Rect(10,10,95,20)).extrude_(false).canFocus_(false);
 		backButton.states = [[\rewind]];
 		backButton.action = { player.rate = -6; playButton.value = 0 };
 		
-//		playButton = SCButton.new(window, Rect(10,10,200,20));
-//		playButton.states = [["Play", Color.black,Color.clear]];
 		playButton = RoundButton.new(window, Rect(10,10,200,20)).extrude_(false).canFocus_(false);
 		playButton.states = [[\play], [\pause]];
 		playButton.action = { |butt|
@@ -87,9 +83,7 @@ BMSoundFilePlayerGUI : BMAbstractGUI {
 				0, {player.pause}
 			)
 			
-		}; // stopwatch started by dependancy
-		//playButton.action = { player.play(0, 0); stopwatch.start; };
-		
+		};
 		
 		forwButton = RoundButton.new(window, Rect(10,10,95,20)).extrude_( false ).canFocus_(false);
 		forwButton.states = [[\forward]];
@@ -110,7 +104,6 @@ BMSoundFilePlayerGUI : BMAbstractGUI {
 			bigClock.onClose = { bigClock = nil; };
 			bigText = SCStaticText.new(bigClock, Rect(0, 0, 800, 180)).resize_(5);
 			bigText.string = "00:00:00.0";
-			//clockView.background = Color.black;
 			bigText.background = HiliteGradient(Color.black.alpha_(0.3), Color.black, \v, 1024, 0.5);
 			bigText.font = Font("Helvetica-Bold", 120);
 			bigText.stringColor = Color.new255(106, 90, 205);

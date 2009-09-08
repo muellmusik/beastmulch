@@ -1,32 +1,3 @@
-// plugin, numInputs, numOutputs, inputs passed to function as prepend args
-// inputs is an array of In Ugens reading from buses derived from a BMInOutArray or subarray
-// inputs could be 0
-
-// synthdefFunc is a function suitable for use with SynthDef:wrap
-
-// guiFunc creates a window to control a plugin synth.
-// guiFunc will be passed the plugin itself so that specs, and current vals can be derived
-// A default GUI can be created if one is not supplied.
-
-// presets is an IdentityDict of IdentityDicts: name->IdentityDict[\control->value...]
-// for the moment presets cannot be created at runtime
-// eventually this will be possible, and they will be stored in the piece preset?
-
-// attributes allows for arbitrary user data for constructing the synthdef and gui
-
-// setupFunc is a setup function that must be completed before the plugin is made
-// it will be passed the plugin instance
-// it can store any objects for further reference in attributes for use by the plugin or graphFunc
-// if needed you can wrap the plugin:new in a routine and sync before calling makeSynth
-
-// cleanupFunc allows for any heavy resources to be cleaned up after the plugin is removed.
-// e.g a Buffer, which would have been stored in attributes
-
-// description is human readable text (String)
-
-// ---------
-
-
 
 BMMultichannelPluginSpec {
 	classvar <specs, defaultGuiFunc;
@@ -271,7 +242,7 @@ BMMultichannelPluginSpec {
 							^false;
 						});
 						[out.azi * atorad, out.ele * atorad];
-					}, Array).flop.postln;
+					}, Array).flop;
 					plugin.attributes[\speakersCoords] = speakers;
 				},								// setupFunc
 				nil								// cleanupFunc
@@ -744,14 +715,6 @@ BMMultichannelPluginSpec {
 }
 
 
-// To do:
-// Fix new
-// Fix init with sync func
-// At the moment, this does sync func before making the def. Is that right?
-// Otherwise we'd need to store info about heavy resources rather than hard coding it
-// I'm not sure if there's a case where we actually need a reply.
-// Should this allow changing ins and outs
-
 // Class which manages resources for a plugin instance
 BMMultichannelPlugin {
 	var <spec, <specsDict, <server, <attributes, <defName, <def;
@@ -775,7 +738,7 @@ BMMultichannelPlugin {
 		outputs = argouts;
 		numInputs = inputs.size;
 		numOutputs = outputs.size;
-		// check size and bail
+		// check size and bail if wrong
 		if(numInputs.inclusivelyBetween(spec.minInputs, spec.maxInputs).not || 
 			numOutputs.inclusivelyBetween(spec.minOutputs, spec.maxOutputs).not, {
 			("Input or output array not within allowable size range for plugin" 
@@ -816,18 +779,16 @@ BMMultichannelPlugin {
 		mappings = controlNames.values.collectAs({|cn| 
 			[cn.name, ("c" ++ (bus.index + cn.index)).asSymbol];
 		}, Array).flat;
-		//CmdPeriod.add(this);
 	}
 	
 	makeDef {
 		defName = spec.name ++ UniqueID.next; 
-		//if(attributes.notNil, { defName = defName ++ "-" ++ UniqueID.next});
 		def = SynthDef(defName, {arg cfgate = 1;
 			var input, out, env;
 			input = In.ar(inputs);
 			(input.size == 1).if({input = input[0];});
 			out = SynthDef.wrap(spec.ugenGraphFunc, nil, [this, numInputs, numOutputs, input]);
-			//out.postln;
+			
 			// fade in and out, release
 			env = EnvGen.kr(Env.asr(BMOptions.crossfade, 1, BMOptions.crossfade), cfgate, 
 				doneAction: 2);
@@ -902,14 +863,7 @@ BMMultichannelPlugin {
 		bus = nil;
 		gui.notNil.if({ gui.close });
 		spec.cleanupFunc.value(this);
-		//CmdPeriod.remove(this);
 	} // I'm a lame duck...
-	
-//	cmdPeriod { 
-//		synth = nil; 
-//		bus.free; 
-//		CmdPeriod.remove(this);
-//	}
 	
 	gui {
 		gui.isNil.if({
@@ -931,35 +885,9 @@ BMMultichannelPlugin {
 }
 
 
-//BMAbstractAudioChainElement {
-//	classvar <allChainElements;
-//	var <ins, <outs, <inNames, <outNames; // in the default case the getters return nil, as an element need not have both ins and outs
-//	var <group, <>server, <name, <callCmdPeriod = true;
-
-//------- To do:
-// should addPlugin just take a symbol and populate the new method as appropriate
-// - not sure we actually need ins and outs for this class, also maybe for mono version
 
 BMMultichannelPluginsRack : BMAbstractAudioChainElement {
 	var <plugins;
-	
-//	*new {|target, input|
-//		^super.new.init(target, input);
-//	}
-
-	
-//	init {|argtarget, arginput|
-//		target = argtarget.asGroup;
-//		server = target.server;
-//		input = arginput;
-//		
-//		plugins = List.new;
-//		target.server.makeBundle(nil, {
-//			this.sendDef;
-//			server.sync;
-//			this.makeNodes; // first time only trim...
-//		});
-//	}
 	
 	*new { |ins, outs, target, addAction = \addToTail, name|
 		^super.new.init(ins.asBMInOutArray, (outs ? ins).asBMInOutArray, target, addAction, name);
@@ -974,12 +902,6 @@ BMMultichannelPluginsRack : BMAbstractAudioChainElement {
 		outNames = outs.keys;
 		plugins = List.new;
 	}
-
-//	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
-//		^this.new(inAudioArray, group, server, name);
-//	}
-	
-//	makeGroup { group = Group.tail(server); }
 	
 	clear { 
 		plugins = List.new;
@@ -1012,17 +934,8 @@ BMMultichannelPluginsRack : BMAbstractAudioChainElement {
 		this.changed;
 	}
 	
-//	target_{|argtarget|
-//		target = argtarget.asGroup; 
-//		(target.asTarget.server != server).if({
-//			Error("Target server does not match Plugins' server.").throw;
-//		});
-//	
-//	}
-	
 	makeNodes { 
 		server.makeBundle(nil, {
-			//group = Group.new(target);
 			plugins.do({|plgin|
 				plgin.makeSynth(group, \addToTail);
 			});
@@ -1079,7 +992,6 @@ BMMultichannelPluginsRack : BMAbstractAudioChainElement {
 	free {
 		plugins.do{| plugin, i | this.removePlugin(i) };
 		SystemClock.sched(BMOptions.crossfade, { group.free; group = plugins = nil; allChainElements[name] = nil; });
-		//CmdPeriod.remove(this)
 	}
 	
  

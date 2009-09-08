@@ -38,19 +38,13 @@ inline float FastScalarInvSqrt( float f )
 	float oneHalf = 0.5f;
 	float one = oneHalf + oneHalf;
 	
-	//if(finite(f) == 0 ) printf("f is not finite\n");
-	
 	//Calculate a 5 bit starting estimate for the reciprocal sqrt
 	estimate = estimate2 = __frsqrte ( f );
-	
-	//if(finite(estimate) == 0 ) printf("initial estimate is not finite\n");
 	
 	//if you require less precision, you may reduce the number of loop iterations
 	estimate = estimate + oneHalf * estimate * ( one - f * estimate * estimate );
 	estimate = estimate + oneHalf * estimate * ( one - f * estimate * estimate );
 	estimate = estimate + oneHalf * estimate * ( one - f * estimate * estimate );
-	
-	//if(finite(estimate) == 0 ) printf("final estimate is not finite\n");
 	
 	return __fsels( -f, estimate2, estimate );
 	
@@ -66,7 +60,6 @@ inline float FastScalarSqrt( float f ) {
 // fast version for PPC	
 #if defined(__ppc__) || defined(__ppc64__)
 	returnval = f == 0.f ? 0.f :  f * (f < 0.f ? FastScalarInvSqrt(-f) : FastScalarInvSqrt(f));
-	//checkBadValues(returnval);
 #else
 	returnval = f == 0.f ? 0.f : sqrtf(fabsf(f)); // fast enough on intel, and faster than anything else...
 	//returnval = f == 0.f ? 0.f :  f * (f < 0.f ? FastScalarInvSqrt(-f) : FastScalarInvSqrt(f));

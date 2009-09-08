@@ -40,8 +40,6 @@ BMMatrixMenuGUI : BMAbstractGUI {
 		labelPlusButton = SCHLayoutView(assignSection, Rect(0, 0, 200, 20));
 		SCStaticText.new(labelPlusButton, Rect(0,0,180,20)).font_(Font("Helvetica-Bold", 14))
 			.string = "Assignments";
-//		SCStaticText.new(labelPlusButton, Rect(0,0,100,20)).font_(Font("Arial Bold", 10))
-//			.string = "(delete to remove)";
 		assignView = SCListView(assignSection, Rect(0, 0, 200, 250)).canReceiveDragHandler = true;
 		assignView.receiveDragHandler = { 
 			matrix.connect(inputView.item, SCView.currentDrag.asSymbol);
@@ -95,7 +93,6 @@ BMMatrixMenuGUI : BMAbstractGUI {
 			   			    };
 		
 		SCStaticText.new(buttonSection, Rect(0,0,80,110)).string_("Assign outputs to selected input. Cmd-drag or use button to assign, select and press delete to unassign.");
-		///.font_(Font("CoffeeCup", 40)).align_(\center);
 		this.update;
 		window.onClose = { 
 			matrix.removeDependant(this); 
@@ -169,20 +166,15 @@ BMMatrixGUI : BMAbstractGUI {
 		cellsize = cellsize min: (screenBounds.width - 40 - hoffset / numOuts);
 		cellsize = cellsize min: (screenBounds.height - 40 - voffset / numIns);
 		dotSize = cellsize * 0.33 min: 15; // maximum dot size
-		//if(cellsize < 35, {voffset = 35}); // double line of top labels
 		h = numOuts * cellsize + hoffset;
 		v = numIns * cellsize + voffset;
 		
-		
-		 
-		//color = Color.rand(0.0,1.0).alpha_(rrand(0.1,0.7)).set;
 		color = Color.blue.alpha_(0.5).set;
-		//ringColor = color.copy.alpha_(1);
 		ringColor = Color.black;
 		
 		window = SCWindow(name, Rect(40, 40, h, v), false);
 		window.alpha = 0.98;
-		//window.view.background = Color.rand(0,0.3);
+
 		window.view.background = Color.new255(140, 38, 255);
 		hinterval = window.bounds.width - hoffset / (numOuts + 1);
 		vinterval = window.bounds.height - voffset / (numIns + 1);
@@ -195,7 +187,6 @@ BMMatrixGUI : BMAbstractGUI {
 			if(matrix.mappings[y].indexOf(x).isNil, {matrix.connect(y, x); on = true;},
 				{matrix.disconnect(y, x); on = false});
 			lastx = x; lasty = y;
-			//window.refresh;
 		};
 		// dragging
 		tabletView.action = { arg  view,inx,iny;
@@ -208,12 +199,10 @@ BMMatrixGUI : BMAbstractGUI {
 				if(on, {
 						if(matrix.mappings[y].indexOf(x).isNil, {
 							matrix.connect(y, x);
-							//window.refresh;
 						});},
 					{
 						if(matrix.mappings[y].indexOf(x).notNil, {
 							matrix.disconnect(y, x);
-							//window.refresh;
 						});
 				});
 				window.refresh;
@@ -224,7 +213,6 @@ BMMatrixGUI : BMAbstractGUI {
 		
 		// draw line for easy view
 		tabletView.mouseOverAction = { arg view,inx,iny;
-			//\over.postln;
 			xpos = (inx - hoffset/ hinterval);
 			ypos = (iny - voffset/ vinterval);
 			linex = outs[xpos.round.clip(1, numOuts) - 1];
@@ -241,12 +229,10 @@ BMMatrixGUI : BMAbstractGUI {
 			Pen.width = 2;
 			
 			Pen.use {
-				//ringColor.set;
 				// border lines
 		
 				Pen.line(hoffset@voffset, window.bounds.width@voffset);
 				Pen.line(hoffset@voffset, hoffset@window.bounds.height);
-				//Pen.stroke;
 				
 				color.set;
 				numIns.do { |i|
@@ -310,7 +296,6 @@ BMMatrixGUI : BMAbstractGUI {
 			
 				Pen.use({
 					Pen.translate((hoffset / 2), (voffset + vinterval + (vinterval * i)));
-					//Pen.rotate(0.5pi);
 					item.asString.drawCenteredIn(Rect.aboutPoint(0@0, 40, 10), 
 						font,
 						inColor
@@ -319,54 +304,8 @@ BMMatrixGUI : BMAbstractGUI {
 			});
 
 		};
-		
-		// write labels
-		//outs.do({|item, i|
-//			var y, t;
-//			//if(voffset > 20, { y = [10, 25].wrapAt(i) }, { y = 10 });
-////			t = SCStaticText(window,
-////				Rect.aboutPoint((hoffset + hinterval + (hinterval * i))@y, 40, 10)
-////			);
-////			t = SCStaticText(window,
-////				Rect.aboutPoint((hoffset + hinterval + (hinterval * i))@(voffset / 2), 40, 10)
-////			);
-////			t.string = item.asString;
-////			t.stringColor = Color.black;
-////			t.font = Font("Andale Mono", 12);
-////			t.align = \center;
-//			
-//			Pen.use({
-//				Pen.translate((hoffset + hinterval + (hinterval * i)), (voffset / 2));
-//				Pen.rotate(0.5pi);
-//				item.asString.drawCenteredIn(Rect.aboutPoint(0@0, 40, 10).postln, 
-//					Font("Andale Mono", 12),
-//					Color.black
-//				);
-//			});
-//		});
 
-		// should change this to use Pen
-		//ins.do({|item, i| 
-//			var t, inColor;
-//			t = SCStaticText(window,
-//				Rect.aboutPoint((hoffset / 2)@(voffset + vinterval + (vinterval * i)), 40, 10)
-//			);
-//			t.string = item.asString;
-//			(matrix.takesControlsForInputs && BMOptions.allowMultipleControlMappings.not).if({
-//				var mappedTo;
-//				mappedTo = BMAbstractController.allControls[item].mappedTo;
-//				if(mappedTo.notNil && (mappedTo !== matrix), {
-//					inColor = Color.grey;
-//				}, { inColor = Color.black;});
-//			}, { inColor = Color.black;});
-//			t.stringColor = inColor;
-//			t.font = Font("Andale Mono", 12);
-//			t.align = \center;
-//		});
-		
-		//CmdPeriod.add(this);
-		window.onClose = { 
-			//CmdPeriod.remove(this); 
+		window.onClose = {  
 			matrix.removeDependant(this); 
 			matrix.takesControlsForInputs.if({
 				matrix.inNames.do({|inName|
@@ -377,8 +316,6 @@ BMMatrixGUI : BMAbstractGUI {
 		};
 		window.refresh;
 	}
-	
-	//cmdPeriod { window.refresh }
 	
 	update { |changed, what| window.refresh; }
 }

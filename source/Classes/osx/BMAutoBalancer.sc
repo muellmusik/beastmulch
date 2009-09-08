@@ -1,4 +1,4 @@
-// operates on the Speakerlist directly
+// operates on the speaker list directly
 BMAutoBalancer {
 
 	classvar <>running = false, rout, trimList;

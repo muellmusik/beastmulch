@@ -14,26 +14,13 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 		this.initNameAndTarget(argTarget, argAddAction, argName);
 		ins = argins;
 		outs = argouts;
-		// replace below with server methods
-//		// allow for arrays as well as Dictionaries
-//		// if array, offset by input channels
-//		if(ins.isBMInOutArray.not, 
-//			{ins = ins.collectAs({|item, i| item -> (i + server.options.numInputBusChannels)}, 
-//				BMInOutArray);
-//		});
-//		//ins.postln;
-//		if(outs.isBMInOutArray.not, 
-//			{outs = outs.collectAs({|item, i| item -> i}, BMInOutArray)});
 		// used for indices for matrix lookup
 		inNames = ins.keys;
 		outNames = outs.keys;
 		this.newCollections;
 		defname = ("BMMatrix-" ++ name);
-//		postf("defname %\n", defname);
-//		defname.do(_.postln);
 		defSentCond = Condition.new(false);
 		this.sendDef;
-		//CmdPeriod.add(this);
 	}
 	
 	newCollections {
@@ -83,7 +70,6 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 		}, {error("Input:" + input + "is not defined.")});
 	}
 	
-	// currently will reset to different ins and outs. useful?
 	clear { |time = 0.1|
 		group.release(time);
 		this.newCollections; // gc's all the Synths
@@ -103,19 +89,6 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 		mappingsDict.keysValuesDo({|input, outputs| this.connect(input, outputs.asArray)});
 	}
 	
-//	cmdPeriod {
-//		this.newCollections;
-//		this.makeGroup;
-//		this.changed;
-//	}
-	
-//	// this defeats CmdPeriod control
-//	// Allows for a chain manager to control ordering
-//	callCmdPeriod_ { |bool|
-//		bool.if({ CmdPeriod.add(this); }, {CmdPeriod.remove(this);});
-//		callCmdPeriod = bool;
-//	}
-	
 	// subclass stuff
 	sendDef {
 		^this.subclassResponsibility(thisMethod);
@@ -129,10 +102,6 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 // maps ins to outs
 BMAudioMatrix : BMAbstractMatrix {
 	
-//	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
-//		^this.new(inAudioArray, outAudioArray, group, server, name);
-//	}
-	
 	sendDef {
 		{
 			SynthDef(defname, { arg in, out, gate = 1;
@@ -144,18 +113,11 @@ BMAudioMatrix : BMAbstractMatrix {
 		server.sync(defSentCond);
 		}.fork;	
 	}
-	
-//	makeGroup {
-//		group = Group.head(server);
-//	}
+
 }
 
 // maps ins to outs with an optional amp scale
 BMAudioMixerMatrix : BMAbstractMatrix {
-	
-//	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
-//		^this.new(inAudioArray, outAudioArray, group, server, name);
-//	}
 	
 	sendDef {
 		{
@@ -228,10 +190,6 @@ BMAmpControlMatrix : BMAbstractMatrix {
 	
 	var outmappings;
 	
-//	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
-//		^this.new(controllerArray, outAudioArray, group, server, name);
-//	}
-	
 	newCollections {
 		matrixArray = Array.newClear(outNames.size) ! ins.size;
 		//should this be a set instead of a list?
@@ -244,7 +202,7 @@ BMAmpControlMatrix : BMAbstractMatrix {
 		
 		outputs = outputs.flat;
 		
-		if(outputs.size == 0, {^this }); // this edge case arises. why? preset updating?
+		if(outputs.size == 0, {^this }); // this edge case arises sometimes
 		
 		// confirm that input exists
 		BMAbstractController.allControls[input].isNil.if({
@@ -306,11 +264,6 @@ BMAmpControlMatrix : BMAbstractMatrix {
 		});
 	}
 	
-//	cmdPeriod {
-//		this.clearControlMappings;
-//		super.cmdPeriod;
-//	}
-	
 	sendDef {
 		{
 			SynthDef(defname, {arg in, out, gate = 1;
@@ -323,10 +276,6 @@ BMAmpControlMatrix : BMAbstractMatrix {
 		server.sync(defSentCond);
 		}.fork;
 	}
-	
-//	makeGroup {
-//		group = Group.tail(server);
-//	}
 	
 	takesControlsForInputs { ^true }
 	

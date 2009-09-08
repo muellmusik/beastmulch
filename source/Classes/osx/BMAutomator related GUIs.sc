@@ -1,16 +1,8 @@
 
 
-// delete deletes a snapshot (not indeterminate ones)
-// add ss adds to active seq at insertion point
-// prompt if insertion point or active sequence off screen
-
-// snapshot opens a window with current controller states and toggles for inclusion
-
 // probably this should be made into a subclass with alternate makeWindows for timerefs
 // which are not soundfiles
 
-// needs to respond to loading, etc.
-// need to protect against path = nil
 BMControllerAutomatorGUI : BMAbstractGUI {
 	var ca, envView;
 	var path, sf, durInv, sfView, scrollView, selectView, backView, timesView;
@@ -24,7 +16,6 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	var zoomSlider;
 	
 	*new {|ca, name, origin|
-		//^super.new.init(ca, name ? ca.name ? "test").makeWindow(origin ? (40@200));
 		^super.new.init(ca, name ? "Soundfile / Controller Snapshots").makeWindow(origin ? (200@200));
 	}
 	
@@ -43,8 +34,6 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		path.notNil.if({sf.openRead(path);});
 		
 		durInv = sf.duration.reciprocal;
-		//f.openRead("sounds/a11wlk01.wav");
-		//f.openRead("/Users/scottw/Music/SuperCollider\ Recordings/SC_080725_143355.aiff");
 		
 		window = SCWindow.new(name, Rect(origin.x, origin.y, width, 400), false);
 		window.view.decorator = FlowLayout(window.view.bounds);
@@ -61,7 +50,6 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		
 		sfView = SCSoundFileView.new(scrollView, Rect(0,20, width - 10, 300));
 		sfView.background = HiliteGradient(Color.blue, Color.cyan, steps: 256);
-		//a.waveColors_([HiliteGradient(Color.blue, Color.cyan), HiliteGradient(Color.blue, Color.cyan)]);
 		this.setWaveColors;
 		sfView.timeCursorOn = true;
 		sfView.timeCursorColor = Color.red;
@@ -75,8 +63,6 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		
 		sfView.mouseMoveAction = sfView.mouseDownAction;
 		sfView.gridOn = false;
-		//sfView.gridResolution = 10;
-		//sfView.yZoom = 0.8;
 		
 		scrollView.canFocus_(false);
 		
@@ -110,16 +96,12 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 				sfView.setSelectionSize(i, sf.numFrames / sfView.bounds.width);
 			});
 			this.drawSelections;
-//			envView.refresh;
 			this.resetPoints;
 			scrollView.refresh;
 		}).knobSize_(1).canFocus_(false).hilightColor_(Color.blue).enabled_(false);
 		SCStaticText(window, Rect(0, 0, 10, 10)).string_("+").font_(Font("Helvetica-Bold", 10));
 		window.view.decorator.shift(0, -5);
-		
-//		sfView.readWithTask(block: 256, doneAction: {
-//			this.makeEnvView;
-//		});
+
 		window.front;
 		
 		if(path.notNil, {sfView.read(block: 256); zoomSlider.enabled = true;});
@@ -198,14 +180,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		if(activeSnapshot.notNil, {
 			curSSTime.string_("Selected Snapshot Time:" + activeSnapshot.time.asTimeString);
 		});
-		//a.resize = 5;
-		
-		//window.view.decorator.shift(0, -5);
-//		refTime = SCStaticText(window, Rect(0, 0, 200, 25))
-//			.string_("Source Time:") // initialise
-//			.font_(Font("Helvetica-Bold", 16));
-			
-		//window.front;
+
 		zoomSlider.doAction; // hack to make envView take mouseDown initially
 	}
 	
@@ -220,7 +195,6 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	makeTimesView {
 		
 		timesView.notNil.if({timesView.remove});
-		//timesView = SCUserView(scrollView, Rect(0, 0, sfView.bounds.width, scrollView.bounds.height - 20));
 		timesView = SCUserView(scrollView, Rect(0, 0, sfView.bounds.width, 20));
 		timesView.background = Color.clear;
 		timesView.canFocus_(false);
@@ -231,8 +205,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			Pen.addRect(Rect(0, 0, bounds.width, 20));
 			Pen.fillColor = Color.new255(0, 0, 238);
 			Pen.fill;
-//			Pen.fillRadialGradient(bounds.center, bounds.center, 0, bounds.width, 
-//				Color.cyan, Color.clear);
+
 			tenSecs = timesView.bounds.width * durInv * 10;
 			Pen.beginPath;
 			Pen.strokeColor = Color.new255(125, 125, 255).alpha_(0.8);
@@ -286,7 +259,6 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			
 		currentEnvironment[\envV] = envView;
 			
-		//b.setStatic(0,true);
 		(ca.sequences.size > 0).if({
 		if(activeSequence.isNil, {activeSequence = ca.sequences.values[0]});
 		if(activeSnapshot.isNil, {activeSnapshot = activeSequence.snapshots[0]});
@@ -309,8 +281,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 				sfView.setEditableSelectionSize(view.index, true);
 				sfView.setSelection(index, [sf.numFrames * time, sf.numFrames / sfView.bounds.width]); 
 				sfView.setSelectionColor(index, Color.white);
-				//ss.time = (time * sf.duration);
-				//envView.setString(view.index, ss.name.asString + (time * sf.duration).asTimeString(0.01));
+
 				sfView.setEditableSelectionStart(index, false);
 				sfView.setEditableSelectionSize(index, false);
 				
@@ -321,7 +292,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 				this.drawSelections;
 			});
 		};
-		//envView.mouseUpAction = envView.mouseMoveAction;
+
 		envView.mouseUpAction = {|view|
 			var ss, seq, index, next, prev, selected;
 			index = view.index;
@@ -350,19 +321,6 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 				this.drawSelections;
 				
 				this.setFillColors;
-				//this.makeEnvView;
-				//\mousUpNotNil.postln;
-//				ss = snapshots[index];
-//				seq = seqs[index];
-//				ss.time = view.value[0][index] * sf.duration;
-//				envView.value_([
-//					seq.snapshots.collect({|ss| ss.time }) / sf.duration, // times
-//					0.1 ! seq.snapshots.size]); // values
-//				// a little inefficient, but works
-//				snapshots.do({arg snsh, i;
-//					envView.setString(i, snsh.name.asString + snsh.time.asTimeString(0.01));
-//					//envView.setFillColor(i,Color.black);
-//				});
 			});
 		};
 		envView.mouseDownAction = {|view, x, y, modifiers, buttonNumber, clickCount|
@@ -393,10 +351,8 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 					BMSnapShotSliders(activeSnapshot, window);
 				})
 			})
-			//envView.mouseMoveAction.value(envView);	
+
 		};
-		
-		//menu.items_(ca.sequences.keys.asArray.sort).doAction;
 	
 		}, {
 			envView.mouseDownAction = {|view, x, y, modifiers, buttonNumber, clickCount|
@@ -410,13 +366,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			envView.mouseMoveAction = envView.mouseDownAction;
 		});
 	}
-	
-//	selectSnapShot {|selected|
-//		var index;
-//		index = snapshots.indexOf(selected);
-//		envView.selectIndex(index);
-//	
-//	}
+
 	
 	setFillColors {
 		var color;
@@ -459,27 +409,15 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		// values
 		envView.value_([times, seqs.collect({|seq| sequenceLevels[seq] })]); 
 		
-		// connections
-		//seqs.doAdjacentPairs({|a,b, i| if(a===b, {envView.connect(i, [i +1])})});
-//		seqs.doAdjacentPairs({|a,b, i| if(a === b && (a === activeSequence), {
-//			i.postln;
-//			envView.connect(i, [i +1])}, {envView.connect(i, [])})});
 		this.drawConnections;
 		
-		//// labels
-//		names.do({arg name, i;
-//			envView.setString(i, name);
-//			//envView.setFillColor(i,Color.black);
-//		});
 		snapshots.do({arg ss, i;
 			envView.setString(i, ss.isKnown.if({""}, {"?"}));
 		});
 	}
 	
 	drawConnections {
-		//seqs.doAdjacentPairs({|a,b, i| if(a === b && (a === activeSequence), {
-//			envView.connect(i, [i +1])
-//		}, {envView.connect(i, [])})});
+
 		seqs.doAdjacentPairs({|a,b, i| if(a === b, {
 			envView.connect(i, [i +1])
 		}, {envView.connect(i, [])})});
@@ -489,7 +427,6 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	drawSelections {
 	
 		var seltime;
-		//view.value.postln;
 		
 		if(sfView.numFrames.notNil, {this.clearSelections;});
 		snapshots.do({|ss, index|
@@ -500,8 +437,6 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 				sfView.setSelection(index, [sf.numFrames * seltime, 
 					sf.numFrames / sfView.bounds.width * 2]); 
 				sfView.setSelectionColor(index, Color.white);
-				//ss.time = (time * sf.duration);
-				//view.setString(index, ss.name.asString + ss.time.asTimeString(0.01));
 				sfView.setEditableSelectionStart(index, false);
 				sfView.setEditableSelectionSize(index, false);
 			});
@@ -542,7 +477,6 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 				{sfView.timeCursorPosition = 0;}.defer;
 			},
 			\base, {
-				\base.postln;
 				path = ca.timeReference.path; // How best to do this?
 				path.notNil.if({
 					{
@@ -565,9 +499,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 				}, {zoomSlider.value = 0; zoomSlider.enabled = false;});
 				
 			}
-//			\sequencesChanged, {
-//				{this.makeEnvViews; this.drawSelections(envViews[menu.value]);}.defer;
-//			}
+
 		)
 	
 	}
@@ -576,10 +508,6 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 //Runs as a sheet
 BMSnapShotSliders : BMAbstractGUI {
 	var snapshot, sliders;
-//	var fromUpdate = false;
-//	var needsRefresh = false;
-//	var <>refreshInterval = 0.05;
-//	var refreshLoopOn = false;
 	
 	*new {|snapshot, parent|
 		^super.new.init(snapshot)
@@ -612,17 +540,14 @@ BMSnapShotSliders : BMAbstractGUI {
 			var initVal, control, displaySpec, unitWidth = 20;
 			control = BMAbstractController.allControls[label];
 			displaySpec = control.displaySpec;
-			initVal = displaySpec.map(snapshot.values[label.postln].postln);
-			postf("init: %\n", initVal);
+			initVal = displaySpec.map(snapshot.values[label]);
+			//postf("init: %\n", initVal);
 			sliders[label] = EZSlider.new(window, (640 - widthOffset)@20, label.asString, displaySpec,
 				{|ez| 
-//					if(fromUpdate.not, {
-						// convert back to 0..1
-						snapshot.setValue(label, displaySpec.unmap(ez.value));
-//					})
+					// convert back to 0..1
+					snapshot.setValue(label, displaySpec.unmap(ez.value));
 				}, initVal, layout: \horz, labelWidth: labelWidth, unitWidth: unitWidth
 			);
-			//sliders[label].numberView.background = Color.white.alpha_(0.4);
 			sliders[label].font = font;
 		});
 		window.view.decorator.nextLine;
@@ -639,52 +564,12 @@ BMSnapShotSliders : BMAbstractGUI {
 				window.close;
 			});	
 		window.onClose = { snapshot.removeDependant(this); onClose.value };
-		//window.front;
 	}
 	
-	// could be some jitter, but safer
-//	startRefreshLoop {
-//		refreshLoopOn.not.if({
-//			refreshLoopOn = true;
-//			AppClock.sched(refreshInterval, {
-//				var resched;
-//				needsRefresh.if({resched = refreshInterval}, {refreshLoopOn = false});
-//				fromUpdate = true; // prevent a loop
-//				snapshot.getAllValues.do({|val, i| 
-//					sliders[i].value_(val.ampdb);
-//				});
-//				fromUpdate = false;
-//				needsRefresh = false;
-//				resched;
-//			});
-//		});
-//	}
-	
-	update {|changed, what, index, val|
-//		switch(what,
-//			\snap, {
-//				//needsRefresh = true;
-////				this.startRefreshLoop;
-//				{
-//				fromUpdate = true; // prevent a loop
-//				snapshot.values.keysValuesDo({|key, value| 
-//					sliders[key].value = value; });
-//				fromUpdate = false;
-//				}.defer;
-//				
-//			}
-//		)
-	}
-	
-
 }
 
 // runs as a sheet
 BMSnapShotSeqConfigGUI : BMAbstractGUI {
-//	var sliders, fromUpdate = false;
-//	var needsRefresh = false;
-//	var <>refreshInterval = 0.05;
-//	var refreshLoopOn = false;
 	
 	*new {|parent|
 		^super.new.makeWindow(parent);
@@ -706,24 +591,16 @@ BMSnapShotSeqConfigGUI : BMAbstractGUI {
 		}).maxItem + 8;
 		numColumns = (parent.bounds.width - 4 / (toggleWidth + 4)).floor;
 		numColumns = min(numColumns, numControls);
-		numRows = (numControls / numColumns.postln).ceil;
+		numRows = (numControls / numColumns).ceil;
 		window = SCModalSheet.new(parent, 
 			Rect(300, 300, (numColumns * (toggleWidth + 4)) + 4, 24 * numRows + 28)); // 508
 		window.view.decorator = FlowLayout(window.view.bounds);
 		window.view.background = Color.rand.alpha_(0.3);
-		//sliders = IdentityDictionary.new;
 		allControls.keys.asArray.sort({|a, b| 
 			b.asString.naturalCompare(a.asString) >= 0
 		}).do({|label, i|
 			var control;
 			control = allControls[label];
-			//ToggleView(window, Rect(0, 0, toggleWidth, 20))
-//				.colorOn_(Color.white.alpha_(0.5))
-//				.colorOff_(Color.black.alpha_(0.1))
-//				.font_(font)
-//				.canFocus_(false)
-//				.string_(label.asString)
-//				.action_({|v| v.value.if({results.add(control.name)}, {results.remove(control.name)})});
 			RoundButton(window, Rect(0, 0, toggleWidth, 20))
 				.states_([[label.asString, Color.black, Color.black.alpha_(0.1)], [label.asString, Color.black, Color.white.alpha_(0.5)]])
 				.font_(font)
@@ -746,41 +623,6 @@ BMSnapShotSeqConfigGUI : BMAbstractGUI {
 				window.close;
 			});		
 		window.onClose = { onClose.value(results.asArray.sort) };
-		//window.front;
-	}
-	
-	// could be some jitter, but safer
-//	startRefreshLoop {
-//		refreshLoopOn.not.if({
-//			refreshLoopOn = true;
-//			AppClock.sched(refreshInterval, {
-//				var resched;
-//				needsRefresh.if({resched = refreshInterval}, {refreshLoopOn = false});
-//				fromUpdate = true; // prevent a loop
-//				snapshot.getAllValues.do({|val, i| 
-//					sliders[i].value_(val.ampdb);
-//				});
-//				fromUpdate = false;
-//				needsRefresh = false;
-//				resched;
-//			});
-//		});
-//	}
-	
-	update {|changed, what, index, val|
-//		switch(what,
-//			\snap, {
-//				//needsRefresh = true;
-////				this.startRefreshLoop;
-//				{
-//				fromUpdate = true; // prevent a loop
-//				snapshot.values.keysValuesDo({|key, value| 
-//					sliders[key].value = value; });
-//				fromUpdate = false;
-//				}.defer;
-//				
-//			}
-//		)
 	}
 	
 

@@ -31,15 +31,6 @@ BMSystemConfigAppGUI : BMAbstractGUI {
 		window = Window.new(" System Configuration", Rect(128, 64, 332, 490), resizable: false).front;
 		window.addFlowLayout;
 		StaticText(window, Rect(10, 10, 200, 20)).font_(Font("Helvetica-Bold", 14)).string_("Inputs and Outputs");
-//		numOutChannels = EZNumber(	window,  	// parent
-//			300@20,	// bounds
-//			"Number of Output Channels",	// label
-//			[1, 200, \linear, 1, sysconfig.numOutChannels].asSpec, 	// controlSpec
-//			nil, // action
-//			nil,		// initValue
-//			true,		// initAction
-//			200
-//		);
 		
 		numInChannels = EZNumber(	window,  	// parent
 			300@20,	// bounds
@@ -126,7 +117,6 @@ BMSystemConfigAppGUI : BMAbstractGUI {
 			dragSource = nil;
 			class = SCView.currentDrag;
 			BMControllerConfigGUI(class, window, {|result|
-				result.postln;
 				controllersList.add(result.name.asSymbol -> (class: class, paramsDict: result));
 				addedControllers.items = controllersList.keys;
 				addedControllers.focus;
@@ -167,7 +157,6 @@ BMSystemConfigAppGUI : BMAbstractGUI {
 			class = controllersList[addedControllers.item][\class];
 			index = addedControllers.value;
 	 		BMControllerConfigGUI(class, window, {|result|
-				result.postln;
 				controllersList.removeAt(addedControllers.item);
 				controllersList.insert(index, result.name.asSymbol -> (class: class, paramsDict: result));
 				addedControllers.items = controllersList.keys;
@@ -195,7 +184,6 @@ BMSystemConfigAppGUI : BMAbstractGUI {
 			.extrude_(false).canFocus_(false)
 			.states_([[ "OK", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ]])
 			.action_({ 
-				//sysconfig.numOutChannels = numOutChannels.value;
 				sysconfig.numInChannels = numInChannels.value;
 				sysconfig.numSoundFilePlayerChans = numSoundFilePlayerChans.value;
 				sysconfig.numVirtIns = numVirtIns.value;

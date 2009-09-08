@@ -17,10 +17,6 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 			strips[chanName] = BMTrimPluginsStrip(group, ins[chanName]);
 		});
 	}
-
-//	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
-//		^this.new(inAudioArray, group, server, name);
-//	}
 	
 	mappings { ^strips.collect({|strip, name| strip.mappings});}
 	
@@ -35,30 +31,6 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 	
 	at { |channel| ^strips[channel] }
 	
-	// this should return an instance of our default GUI class
-	// which builds the window itself
-	
-//	cmdPeriod {
-//		server.makeBundle(nil, { 
-//			server.sync;
-//			this.makeGroup;
-//			server.sync;
-//			strips.do({|strip|
-//				strip.target = group;
-//				strip.clear;
-//				server.sync;
-//			});
-//		});
-//		//this.changed;
-//	} 
-	
-//	callCmdPeriod_ { |bool| 
-//		bool.if({ CmdPeriod.add(this); }, {CmdPeriod.remove(this);});
-//		callCmdPeriod = bool;
-//	}
-	
-//	makeGroup { group = Group.tail(server); }
-	
 	free {
 		strips.do{| pluginsStrip | 
 			pluginsStrip.plugins.do{| plugin, i | 
@@ -66,7 +38,6 @@ BMTrimPluginsRack : BMAbstractAudioChainElement {
 			} 
 		};
 		SystemClock.sched(BMOptions.crossfade, { group.free; group = strips = nil; allChainElements[name] = nil; });
-		//CmdPeriod.remove(this)
 		
 	}
 

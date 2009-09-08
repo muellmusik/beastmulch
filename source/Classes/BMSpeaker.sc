@@ -1,4 +1,4 @@
-// should this subclass assoc with key = name
+
 BMSpeaker {
 	classvar rad2deg, deg2rad;
 	var <name; // matches speaker taxonomy we've hashed out
@@ -12,7 +12,7 @@ BMSpeaker {
 	var <>description; // human readable text
 	var <>directivity = 'direct'; // symbol, either 'direct' or 'reflected'
 	
-	// VBAP style spherical coords, angles (probably in degrees) from a central point
+	// spherical coords, angles (in degrees) from a central point
 	var <azi; // from median plane +/- 180 deg 
 	var <ele; // above azimuthal plane
 	var <rad; // in meters from (0, 0, 0), which should be from head height at audience centre
@@ -58,15 +58,6 @@ BMSpeaker {
 		rad = (x.squared + y.squared + z.squared).sqrt;
 		ele = atan2(z, hypot(x, y)) * rad2deg;
 	}
-//	*newFromSpherical {|azi, ele, rad = 1|
-//		^super.new.initFromSpherical(azi, ele, rad = 1);
-//	}
-//	
-//	initFromSpherical{|azimuth, elevation, radius|
-//		azi = azimuth;
-//		ele = elevation;
-//		rad = radius;
-//	}
 	
 	name_ {| newName | 
 		name = newName.asSymbol;
@@ -147,11 +138,6 @@ BMSpeakerSpec {
 			 BMSpeakerSpec('Kef-C20', (brand: 'Kef', minFreq: 72, maxFreq: 20000, spl: 90, powered: false, fullRange: true));
 		 }	
 	 }
-	 
-	// these forward to the appropriate dicts
-//	*doesNotUnderstand { arg selector;
-//		^if(specs[selector.asSymbol].notNil, {this.newNoInit(selector)}, {super.doesNotUnderstand(selector)});
-//	}
 	
 	doesNotUnderstand { arg selector ... args;
 		^vals.perform(selector, *args); // so nil if not there, vals if setter

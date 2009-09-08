@@ -8,10 +8,6 @@ BMAbstractMIDIController : BMAbstractController {
 	var <>acceptsAutomation = false;
 	var inputSpec;
 	
-//	*new { |midiport, name, server|
-//		^super.new.init(uid, name, server ? Server.default).addControlsToIndex;
-//	}
-	
 	startListening { 
 		this.subclassResponsibility(thisMethod);
 	}
@@ -58,8 +54,6 @@ BMAbstractMIDIController : BMAbstractController {
 	// val is native midi value
 	updateValue { |ind, val|
 		var value;
-		//server.sendMsg("/c_set", busIndex + ind, val);
-		//valueArray[ind] = value = spec.map(val).asInteger;
 		valueArray[ind] = val;
 		value = spec.map(inputSpec.unmap(val)); // convert from midi to 0..1 and then add curve
 		server.sendMsg("/c_set", busIndex + ind, value);
@@ -124,13 +118,6 @@ BMMIDIBendController : BMAbstractMIDIController {
 	}
 	
 	startListening { 
-//		faderRoutine = Routine({
-//			var	event, port, channel, bend;
-//			loop {
-//				event = MIDIIn.waitBend(uid);
-//				this.updateValue(event.chan, event.b);
-//			}
-//		}).play;
 		responder = BendResponder({|src, chan, value|
 			this.updateValue(chan, value);
 		}, uid);
@@ -182,7 +169,6 @@ BMMIDICCController : BMAbstractMIDIController {
 	
 	startListening { 
 		responder = CCResponder({|src, chan, num, value|
-			[chan, num, value].postln;
 			this.updateValue(ccArray.indexOf(num), value);
 		}, uid, chan, ccArray);
 	}

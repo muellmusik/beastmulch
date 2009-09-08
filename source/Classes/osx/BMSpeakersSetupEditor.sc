@@ -33,8 +33,8 @@ BMSpeakerArrayGUI : BMAbstractGUI {
 	   numTypes	= BMSpeakerSpec.specs.size;
 	   specsList	= SCVLayoutView(specsList, Rect(4,4,150, numTypes * 24 + 4));
 	   
-	   BMSpeakerSpec.specs.keys.asArray.sort.do({|spName|Ê
-			SCDragSource(specsList, Rect(0, 0, 150, 20)).string_(" Ê " ++ spName.asString)
+	   BMSpeakerSpec.specs.keys.asArray.sort.do({|spName|æ
+			SCDragSource(specsList, Rect(0, 0, 150, 20)).string_(" æ " ++ spName.asString)
 				.background_(Color.grey.alpha_(0.2))
 				.font_(Font("Helvetica-Bold", 12))
 				.beginDragAction_({ BMSpeaker(spec: spName) })
@@ -248,25 +248,6 @@ BMSpeakerArrayGUI : BMAbstractGUI {
 			   .extrude_(false).canFocus_(false) 
 			   .states_([[ "Cancel", Color.black, Color.white.alpha_(0.8) ]])
 			   .action_({	window.close });
-		
-//		okButton = RoundButton(window, 115 @ 20)
-//				   .extrude_(false).canFocus_(false)
-//				   .states_([[ "OK", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ]])
-//				   .action_({ concertGUI.configManager.currentConfig_('all off', \concertEditor);
-//				   			concertGUI.chain[0].do({|el|
-//       							el.free; // clean me up
-//       							el.release; // remove from BMAbstractAudioChainElement's dict
-//							});
-//							concertGUI.chain.copyToEnd(1).do({|el|
-//       							el.free; // clean me up
-//       							el.release; // remove from BMAbstractAudioChainElement's dict
-//							});
-//				   			this.updatestartArray(outputArray);
-//				   			this.rebuildChain;
-//				   			window.close;
-//				   			concertGUI.listViewSelection(false);
-//				   			concertGUI.concertManager.storeSession(concertGUI.configManager);
-//				   });
 
 		okButton = RoundButton(window, 115 @ 20)
 				   .extrude_(false).canFocus_(false)
@@ -283,43 +264,7 @@ BMSpeakerArrayGUI : BMAbstractGUI {
 		};
 		window.front;
 		}
-		
-//		makeTempOutArray {| array | 
-//			outputArray = array.deepCopy;
-//			//outputArray.array.do{| assoc | assoc.value.addDependant(outputArray) };
-////			outputArray.addDependant(this);
-//		}
-		
-//		removeoutputArrayDependants {
-//			outputArray.array.do{| assoc |  assoc.value.removeDependant(outputArray) };
-//			outputArray.removeDependant(this); 
-//		}
-//		
-//		updatestartArray {| newChain |
-//			startArray.subArrays.copy.do{| key | startArray.removeSubArray(key) };
-//			startArray.keys.copy.do{| key |  startArray.removeAt(key) };
-//   		     
-//   		     newChain.keys.do{| key | startArray.add(newChain[key].deepCopy) };
-//   		     newChain.subArrays.do{| key | 
-//   		     	startArray.defineSubArray(key, newChain.getSubArrayKeys(key).deepCopy) 
-//   		     };
-//   		     startArray.storeSpeakerArray;
-//		}
-//		
-//		rebuildChain {
-//			concertGUI.chain = concertGUI.chainFunc.value;
-//			concertGUI.configsGUIFunc.value(concertGUI.chain); 
-//		}
-//		
-//		update {| changed, change |
-//		 	if (change != \newCoordinate) { speakerList.items_(outputArray.keys.asArray) }; 
-//		 	switch(change,
-//		 		\moveDown, { speakerList.value = speakerList.value + 1 },
-//		 		\moveUp, { speakerList.value = speakerList.value - 1 }
-//		 	);
-//		 	speakerList.doAction;
-//		 }
-	
+			
 	// popup window for a new speaker	 
 	makeNewSpeakerWindow {| newSpeaker, origin |
 
@@ -484,14 +429,10 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 			} 
 		};
 		
-//		SCStaticText.new(buttonSection, Rect(0,0,80,0)).string_(" ");// placeholder
-//		SCStaticText.new(buttonSection, Rect(0,0,80,0)).string_(" ");// placeholder
-		
 		SCStaticText.new(buttonSection, Rect(0,30,155,115))
 		 .string_("Assign speakers to selected subarray. Cmd-drag or use button to add, select and press delete to remove.");
 		this.updateLists;
 		
-//		buttonSection.decorator.shift(0, 40);
 		RoundButton(buttonSection, Rect(40, 260, 115, 20))
 			.extrude_(false).canFocus_(false)
 			.states_([[ "OK", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ]])
@@ -541,7 +482,7 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 	   			name = subarrayNameField.string;
 	   			if (name.size > 0) 
 	   				{ name = name.asSymbol;
-	   				  if (outputArray.postln.subArrays.postln.any{| nameInList | nameInList == name })
+	   				  if (outputArray.subArrays.any{| nameInList | nameInList == name })
 	   			        	{ BMAlert("The name \"" ++ name ++ "\" is already taken. Please choose a different name.", 
 	   			        			 [[ "OK", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ]],
 	   			        			 background: Color.white,

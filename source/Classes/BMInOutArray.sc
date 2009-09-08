@@ -1,11 +1,4 @@
-// An Ordered Dictionary of associations (\name->index);
-// Should this really be a subclass of list?
-// We really need to protect against some methods
-// Maybe better as a subclass of Dictionary
-
-// reworked to build keys on demand.
-// this is slow but much safer and simpler in terms of List compatibility
-// do we need subArraysKeys
+// An Ordered Dictionary of associations or BMSpeakers (\name->index);
 
 // items which call do expecting the list behaviour (associations rather than values only) should use super.do
  

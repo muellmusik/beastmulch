@@ -37,7 +37,8 @@ BMTitlePage {
  http://www.beast.bham.ac.uk/research/mulch.shtml
  beastmulch-info@contacts.bham.ac.uk
  
- The BEASTmulch project was supported by a grant from the Arts and Humanities Research Council of the UK: http://www.ahrc.ac.uk
+ The BEASTmulch project was supported by a grant from the Arts and Humanities
+ Research Council of the UK: http://www.ahrc.ac.uk
 \n\n//////////////////////////////////////////////////////////////////////////\n\n".postln;
 		5.wait;
 		titleWindow.close;

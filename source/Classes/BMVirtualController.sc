@@ -62,12 +62,6 @@ BMVirtualController : BMAbstractController {
 	getAllLabels {  ^labelArray  }
 	
 	setAllLabels {|array| array.do({|item, i| this.setLabel(i+1, item);}); }
-	
-//	getInputArray {
-//		^this.controlNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
-//	}
-	
-//	controlNames {^Array.fill(numControls, {|i| name.asString ++ "-" ++ (i+1)})}
 
 	acceptsAutomation { ^true }
 }

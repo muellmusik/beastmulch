@@ -1,5 +1,3 @@
-// maybe 'mappings' should be preset and used throughout the library
-
 
 // class for storing some library wide and BEASTmulch System options
 BMOptions {
@@ -28,15 +26,6 @@ BMAbstractAudioChainElement {
 	classvar <allChainElements;
 	var <ins, <outs, <inNames, <outNames; // in the default case the getters return nil, as an element need not have both ins and outs
 	var <target, <addAction, <group, <server, <name;
-	
-	// for chain construction in BMAudioChainManager
-	// overriding methods in subclasses should have these args, but may ignore them
-	// if appropriate
-	
-//	// maybe don't need two audio arrays here
-//	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
-//		^this.subclassResponsibility(thisMethod);
-//	}
 	
 	// simplest case
 //	*new { |target, addAction = \addToTail, name| 
@@ -71,13 +60,6 @@ BMAbstractAudioChainElement {
 	// which builds the window itself
 	gui { ^this.subclassResponsibility(thisMethod); } 
 	
-//	// this should recreate our group and do any other necessary bookkeeping
-//	cmdPeriod { ^this.subclassResponsibility(thisMethod); } 
-	
-//	callCmdPeriod_ { |bool| } // maybe change this later
-//	
-//	free {CmdPeriod.remove(this);} // overrride to do more complicated things
-	
 	// this way if you make them in order
 	makeGroup { group = Group.new(target, addAction); }
 	
@@ -91,15 +73,10 @@ BMAbstractAudioChainElement {
 
 BMAbstractAudioSource : BMAbstractAudioChainElement {
 
-//	// sources are not instantiated by the chain manager
-//	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
-//		^this.shouldNotImplement(thisMethod);
+	// sources addToHead
+//	*new { |target, addAction = \addToHead, name| 
+//		^super.new.init(target, addAction, name);
 //	}
-
-//	// sources addToHead
-////	*new { |target, addAction = \addToHead, name| 
-////		^super.new.init(target, addAction, name);
-////	}
 	
 	// experimental time ref support
 	play { ^nil }
@@ -116,16 +93,11 @@ BMAbstractAudioSource : BMAbstractAudioChainElement {
 	
 }
 
-// valueArray holds the controller value in its native form
-// setValue should convert to 0-1 and send to the bus 
+
 BMAbstractController {
 	classvar <allControllers, <allControls;
 	var <name, <bus, <busIndex, valueArray, labelArray, <server, <numControls;
 	var spec;
-	
-//	*new {
-//		^super.new.addValuesToIndex;
-//	}
 	
 	*initClass {
 		allControllers = IdentityDictionary.new;
@@ -184,8 +156,6 @@ BMAbstractController {
 	
 	setAllValues {|array| this.subclassResponsibility(thisMethod)}
 	
-	//setFaders {|array| this.subclassResponsibility(thisMethod)} 
-	
 	setLabel { |controlNum, name|
 		this.subclassResponsibility(thisMethod)
 	}
@@ -198,10 +168,6 @@ BMAbstractController {
 	setAllLabels { |array| }
 	
 	controlNames {^Array.fill(numControls, {|i| (name.asString ++ "-" ++ (i+1)).asSymbol})}
-	
-//	getInputArray {
-//		^this.controlNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
-//	}
 
 	asBMInOutArray {
 		^this.controlNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
@@ -226,7 +192,6 @@ BMAbstractController {
 		("No calibration to do for " ++ name ++ ".").postln;
 		^0;
 	}
-	
 	
 	// a dictionary of arguments, excluding server in the form
 	// argname->[class, spec, humanName];

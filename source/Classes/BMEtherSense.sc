@@ -5,8 +5,7 @@
 // valueArray holds the controller value in its native form
 // setValue should convert to 0-1 and send to the bus 
 BMEtherSense : BMAbstractController {
-	//classvar <allControllers;
-	//var <name, <bus, <busIndex, valueArray, labelArray, <server, <numControls;
+	
 	var <addr, responders, busBoard2Index;
 	
 	// address should be with port 57120 (sclang)
@@ -39,10 +38,8 @@ BMEtherSense : BMAbstractController {
 		bus = Bus.control(server, numControls);
 		busIndex = bus.index;
 		busBoard2Index = busIndex + 16; // save an add every message
-		//spec = [0, 65535, 'cos', 0.0].asSpec;
 		spec = [0, 1, 'cos', 0.0].asSpec; // map from normalised to curve
 		this.startListening;
-		//this.updateAllFaders(valueArray);
 		allControllers[name] = this;
 	}
 	
@@ -81,14 +78,6 @@ BMEtherSense : BMAbstractController {
 	
 	setAllValues {|array| this.shouldNotImplement(thisMethod) }
 	
-	// for faders
-//	getInputArray {
-//		^this.controlNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
-//	}
-	
-//	controlNames {^Array.fill(numControls, {|i| name.asString ++ "-" ++ (i+1)})}
-	
-	// perhaps this should be more generalised and named something else like 'preset'
 	mappings {
 		^nil
 	}

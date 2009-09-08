@@ -1,11 +1,10 @@
+// notes on Sergio's implementation below
 // manages sets of chain configs
 // stores in a dict, but also seems to have to do with order?
 
 // configs seems to be an Event  (dict:  IdentityDictionary[], names: List[ 'all off' ])
-// configs could perhaps be something ordered? (BMInOutArray?)
+// configs could perhaps be something ordered? 
 
-// should this take the chain itself?
-// should it take the backup manager?
 BMConfigurations {
 	var <configurations, backup;
 	var <dict, <names, <currentConfig;

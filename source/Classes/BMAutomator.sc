@@ -80,18 +80,13 @@ BMAbstractIndependentRateAutomator : BMAbstractAutomator {
 				
 				lastTime = time;
 			}
-//			,
-//			\base, {
-//				// inform my dependants
-//				this.update(\base);
-//			}
 		)
 	}
 }
 
 
 /*
-The logic for this is actually quite complicated. We need to allow for:
+The logic for this is actually pretty complicated. We need to allow for:
 
 - unspecified start (and possibly end states)
 - variable rates of playback, both positive and negative
@@ -113,26 +108,10 @@ At the moment there can be only one automator assigned to each control.
 It is possible to have multiple controller automators (for instance assigned to different time references) providing they don't try to automate the same controls.
 A single automator can have overlapping sequences, but if they try to update the same controller in the same automation cycle all but the first will fail. 
 
-For more elaborate and fine tuned control, use the DAW like automator object, under a single fader. Or we could have a more elaborate ControllerAutomator which has envelopes for the entire duration.
-	- this would be easy to do. Just have separate sequences for each fader.
-----
-
-To do:
-
-Add initial fader state
-	- probably a special kind of snapshot, see addStartSnapShot
-Decide if we need a separate class for the DAW version
-Should snap be in *new?
-
-Should automators be named?
-
-How best to get representation from timeRef (i.e. sfview)
-
-Should name come last in seq
-
-sort out mappings
+For more elaborate and fine tuned control, just have separate sequences for each fader.
 
 */
+
 BMControllerAutomator : BMAbstractIndependentRateAutomator {
 	// interpolates between controller snapshots
 	var <controls; // an array of controlNames or a single one
@@ -282,7 +261,7 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 	free { controls.do({|ctrl| ctrl.automator = nil});}
 	
 	update {arg changed, what ...args; 
-		//if(what == \n_end, {stopwatch.stop;});
+		
 		switch(what,
 			\segsBuilt, {
 				this.changed(\sequencesChanged);
@@ -298,7 +277,6 @@ BMSnapShotSeq {
 	var <name, controls, <curve;
 	var started = false;
 	var <start, <end, <duration;
-	//var lastAtTime = -inf; // in
 	var arbStart, arbStartEnd;
 	var arbEnd, arbEndEnd;
 	var <snapshots; // by order
@@ -370,7 +348,6 @@ BMSnapShotSeq {
 		snapshots = snapshots.sort({|a, b| a.time < b.time || (a === firstSnap)  });
 		//postf("snapshots(buildSegs): %\n", snapshots);
 		if(firstSnap.time >= snapshots[1].time, {
-			\first.postln;
 			firstSnap.removeDependant(this);
 			firstSnap.time = max(snapshots[1].time - minSegSize, 0);
 			firstSnap.addDependant(this);
@@ -404,9 +381,7 @@ BMSnapShotSeq {
 			// maybe better to cache this, and update when a snapshot is changed
 			// using dependancy
 			seg = segs[snapTimes.indexInBetween(time).trunc.clip(0, segs.size - 1)];
-			//seg = segs.detect({|sg| time.inclusivelyBetween(sg.startSS.time, sg.endSS.time)});
 			if(seg != oldSeg, {
-				//oldSeg.notNil.if({oldSeg.makeInactive}); // clean house
 				seg.makeActive(time);
 				oldSeg = seg;
 			});
@@ -421,7 +396,6 @@ BMSnapShotSeq {
 	containsTime {|time| ^time.inclusivelyBetween(start, end);}
 	
 	reset { 
-		//segs.do(_.makeInactive); 
 		oldSeg = nil; 
 	}
 	
@@ -444,7 +418,6 @@ BMSnapShotSeq {
 BMSnapShotSequenceSeg {
 	var <startSS, <endSS, controls, curve;
 	var envs, known;
-	//var activated = false;
 	
 	*new {|startSS, endSS, controls, curve = 'sin'|
 		^super.newCopyArgs(startSS, endSS, controls, curve).init;
@@ -452,29 +425,18 @@ BMSnapShotSequenceSeg {
 	
 	init {
 		known = startSS.isKnown && endSS.isKnown;
-		//known.if({this.makeEnvs});
 	}
 	
 	makeActive { |time|
-		//activated.not.if({
-			startSS.makeActive(controls, time);
-			endSS.makeActive(controls, time);
-			//activated = true;
-			//known.not.if({this.makeEnvs;});
-			this.makeEnvs;
-		//});
+		startSS.makeActive(controls, time);
+		endSS.makeActive(controls, time);
+		this.makeEnvs;
 	}
 	
 	// Could also delay envs to save a subtraction
 	atTime {|ctrlname, time|
 		^envs[ctrlname][time - startSS.time]
 	}
-	
-//	makeInActive {
-//		startSS.makeInActive;
-//		endSS.makeInActive; 
-//		activated = false;
-//	}
 
 	// might optimise here to check if both ss are known and cache envs if true
 	// maybe not worth it
@@ -526,7 +488,6 @@ BMAbstractSnapShot {
 		this.changed(\snap);
 	}
 	makeActive { this.subclassResponsibility(thisMethod); }
-	//makeInActive { this.subclassResponsibility(thisMethod); }
 	
 	isKnown {^true}
 	
@@ -535,14 +496,13 @@ BMAbstractSnapShot {
 
 // a known state
 BMSnapShot : BMAbstractSnapShot {
-	// no-ops
+	// no-op
 	makeActive { } 
-	//makeInActive { }
 }
 
 // for unknown start (and maybe end) states
 BMArbitraryStartSnapShot : BMAbstractSnapShot {
-	//var activated = false;
+	
 	var <snapTime;
 	
 	*new{|controls, time, name|
@@ -562,10 +522,7 @@ BMArbitraryStartSnapShot : BMAbstractSnapShot {
 		values = controls.collectAs({|ctrlname| 
 			ctrlname -> BMAbstractController.getValueByName(ctrlname);
 		}, IdentityDictionary);
-		//this.changed(\snap);
 	}
-	
-	//makeInActive { values = nil; activated = false;}
 	
 	isKnown {^false}
 }

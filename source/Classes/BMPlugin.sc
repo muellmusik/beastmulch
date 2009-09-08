@@ -1,40 +1,5 @@
 // Classes for implementing 'Plugins' for processing audio
-// Plugins must be mono
-
-// synthdefFunc is a function suitable for use with SynthDef:wrap
-// which is passed args |plugin, in| and returns a ugen for output
-// Multichannel output plugins should send the output to a private bus
-// and mute or passthrough the source as appropriate.
-
-// guiFunc creates a window to control a plugin synth.
-// guiFunc will be passed the plugin itself so that specs, and current vals can be derived
-// A default GUI can be created if one is not supplied.
-
-// presets is an IdentityDict of IdentityDicts: name->IdentityDict[\control->value...]
-// for the moment presets cannot be created at runtime
-// eventually this will be possible, and they will be stored in the piece preset?
-
-// attributes allows for arbitrary user data for constructing the synthdef and gui
-
-// setupFunc is a setup function that must be completed before the plugin is made
-// it will be passed the plugin instance
-// it can store any objects for further reference in attributes for use by the plugin or graphFunc
-// if needed you can wrap the plugin:new in a routine and sync before calling makeSynth
-
-// cleanupFunc allows for any heavy resources to be cleaned up after the plugin is removed.
-// e.g a Buffer, which would have been stored in attributes
-
-// description is human readable text (String)
-
-// For now at least plugins map to control busses
-// This should allow for an easy later extension to allow rt control with controllers
-
-//-----
-// To do:
-// control support
-// remove number of channels arg?
-// probably should add syncFunc and cleanupFunc from multi version
-// should multi version just replace this
+// Plugins here are mono
 
 BMPluginSpec {
 	classvar <specs, defaultGuiFunc;
@@ -289,7 +254,6 @@ BMPlugin {
 		mappings = controlNames.values.collectAs({|cn| 
 			[cn.name, ("c" ++ (bus.index + cn.index)).asSymbol];
 		}, Array).flat;
-		//CmdPeriod.add(this);
 	}
 	
 	makeDef {
@@ -369,14 +333,7 @@ BMPlugin {
 		bus = nil;
 		gui.notNil.if({ gui.close });
 		spec.cleanupFunc.value(this);
-		//CmdPeriod.remove(this);
 	} // I'm a lame duck...
-	
-//	cmdPeriod { 
-//		synth = nil; 
-//		bus.free; 
-//		CmdPeriod.remove(this);
-//	}
 	
 	gui {
 		gui.isNil.if({

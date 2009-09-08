@@ -1,3 +1,4 @@
+// notes on sergio's implementation:
 // manages a concert, which consists of 
 // (system: (speakers: arrays[0], controllers: controllers), pieces: pieces)
 
@@ -37,11 +38,10 @@ BMConcert {
 	// asssociated with a piece
 	loadAt {| pieceEventIndex |
 		var pieceEvent, element;
-		\loadAt.postln;
 		//this.changed(\loadPiece, concert.pieces[pieceEventIndex])
 		
 		pieceEvent = concert.pieces[pieceEventIndex];
-		// probably the way this should work, but for now...
+		// probably not the way this should work, but for now...
 //		pieceEvent.chainResources.keysValuesDo{| key, value |
 // 			element = BMAbstractAudioChainElement.allChainElements[\key];
 //			element.notNil.if({ element.loadPiece(value) });
@@ -456,7 +456,6 @@ BMConcertGUI  {
 			
 	update {| changed, change, config, from |
 		var piece;
-		change.postln;
 		if ((change == \currentConfig) and: { from == \configurationEditor }) 
 	    	  { 	if (selectable) { this.listViewSelection(false) } }
 		  {  if ((change != \storeSession) and: { change != \store }) 

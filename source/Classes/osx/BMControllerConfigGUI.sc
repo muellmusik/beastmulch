@@ -77,7 +77,7 @@ BMControllerConfigGUI : BMAbstractGUI {
 					var interpretedInput;
 					try {
 						interpretedInput = 
-							(paramclass.asString ++ "[" ++ widget.value ++ "]").postln.interpret;
+							(paramclass.asString ++ "[" ++ widget.value ++ "]").interpret;
 						result[argName] = lastValidInput = interpretedInput;
 					} {|error| 
 						("Invalid input for array parameter" + vals[2] ++ ". Please re-enter.").error;

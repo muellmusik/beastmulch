@@ -2,8 +2,7 @@
 // valueArray holds the controller value in its native form
 // setValue should convert to 0-1 and send to the bus 
 BMMotorBEAST : BMAbstractController {
-	//classvar <allControllers;
-	//var <name, <bus, <busIndex, valueArray, labelArray, <server, <numControls;
+	
 	var <addr, responder, calibrationRanges;
 	
 	// address should be with port 57120 (sclang)
@@ -34,11 +33,9 @@ BMMotorBEAST : BMAbstractController {
 		valueArray = 0 ! 32;
 		bus = Bus.control(server, numControls);
 		busIndex = bus.index;
-		//spec = Env([0, 1], [65536], \sine);
 		calibrationRanges = Archive.global['MotorBEASTCal', name] ?? {this.initialCalibrations};
 		spec = [0, 1, 'cos', 0.0].asSpec;
 		this.startListening;
-		//this.updateAllFaders(valueArray);
 		allControllers[name] = this;
 	}
 	
@@ -135,7 +132,6 @@ BMMotorBEAST : BMAbstractController {
 		var cal;
 		cal = calibrationRanges[controlNum - 1];
 		addr.sendMsg("/MF/" ++ (controlNum - 1), spec.unmap(val).linlin(*cal[[2, 3, 0, 1]]).asInteger) 
-		//addr.sendMsg("/MF", *(valueArray.copy[controlNum - 1] = spec.map(val).asInteger))
 	}
 	
 	getAllValues { ^valueArray.collect({|val, i| spec.map(val.linlin(*calibrationRanges[i]))}) }
@@ -144,13 +140,6 @@ BMMotorBEAST : BMAbstractController {
 	setAllValues {|array|
 		addr.sendMsg("/MF", *(array.collect({|val, i| spec.unmap(val).linlin(*calibrationRanges[i][[2, 3, 0, 1]]).asInteger})))
 	}
-	
-	// for faders
-//	getInputArray {
-//		^this.controlNames.collectAs({|item, i| item.asSymbol -> (i + busIndex)}, BMInOutArray);
-//	}
-	
-//	controlNames {^Array.fill(numControls, {|i| name.asString ++ "-" ++ (i+1)})}
 
 	setLED {|controlNum, colour|
 		addr.sendMsg("/mfLED/" ++ (controlNum - 1), colour)

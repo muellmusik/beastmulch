@@ -1,6 +1,5 @@
-// registry and convenience methods for time sources
+// registry and convenience methods for time references
 
-// may wish to reconsider use of names here
 BMTimeReferences {
 	classvar timeReferences;
 	

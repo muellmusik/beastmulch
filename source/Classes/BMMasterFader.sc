@@ -1,13 +1,7 @@
-// this probably needs a cleanup method for the bus
+// sergio, this probably needs a cleanup method for the bus
 BMMasterFader : BMAbstractAudioChainElement {
-
 	
 	var masterFaderSynth, <level = -12, <>minLevel = -inf, <>maxLevel = 0, bus, <busIndex;
-	
-//use super
-//	*new {| group, server, name |
-//		 ^super.new.init(group, server ? Server.default, name);
-//	}
 
 	*new { |target, addAction = \addToTail, name| 
 		^super.new.init(target, addAction, name);
@@ -20,10 +14,6 @@ BMMasterFader : BMAbstractAudioChainElement {
 		this.level	= level;
 		this.addMasterFaderSynth;
 	}
-	
-//	*newFromChain { |controllerArray, inAudioArray, outAudioArray, group, server, name| 
-//		^this.new(group, server, name)
-//	}
 
 	level_ {| x |
 	 	level = x.clip(minLevel, maxLevel);
@@ -46,26 +36,11 @@ BMMasterFader : BMAbstractAudioChainElement {
 			ReplaceOut.ar(0, In.ar(0, server.options.numOutputBusChannels) * In.kr(busIndex, 1));
 		}.play(group, addAction: \addToTail);
 	}
-		
-//	cmdPeriod { 
-//
-//		server.makeBundle(nil, { 
-//			server.sync;
-//			this.makeGroup;
-//			server.sync;
-//			this.addMasterFaderSynth;
-//			server.sync
-//		})
-//	
-//	} 
-	
-//	makeGroup { group = Group.tail(server) }
 	
 	free { 
 		group.release(BMOptions.crossfade);
 		allChainElements[name] = nil;
 		SystemClock.sched(BMOptions.crossfade, { group.free; bus.free; group = bus = nil;  });
-		//CmdPeriod.remove(this)
 	}
 	
 }
