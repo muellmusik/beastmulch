@@ -1,11 +1,26 @@
 /*
- *  fastInverseSqrt.h
- *  xSC3plugins
- *
- *  Created by Scott Wilson on 15/08/2005.
- *  Copyright 2005 Scott Wilson. All rights reserved.
- *
- */
+ BEASTmulch UGens
+ Copyright (C) 2009 Scott Wilson
+ 
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License version 2 as published by
+ the Free Software Foundation.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA 
+ 
+ http://www.beast.bham.ac.uk/research/mulch.shtml
+ beastmulch-info@contacts.bham.ac.uk
+ 
+ The BEASTmulch project was supported by a grant from the Arts and Humanities Research Council of the UK: http://www.ahrc.ac.uk 
+
+*/
 
 #if defined( __GNUC__ )
 #include<ppc_intrinsics.h>
@@ -13,22 +28,6 @@
 #include <math.h>
 #include <vecLib/vDSP.h>
 #include <stdint.h>
-
-//inline int checkBadValues(float samp) {
-//	int classification = fpclassify(samp);
-//	switch (classification) 
-//	{ 
-//		case FP_INFINITE: 
-//			printf("Infinite number found\n"); 
-//			break; 
-//		case FP_NAN: 
-//			printf("NaN found\n"); 
-//			//			 break; 
-//			//		 default: 
-//			//			 printf("Normal %f %i\n", samp, classification); 
-//	};
-//	return classification;
-//}
 
 #if defined(__ppc__) || defined(__ppc64__)
 
@@ -57,21 +56,6 @@ inline float FastScalarInvSqrt( float f )
 	
 }
 
-//#else
-//
-//inline float FastScalarInvSqrt( float x ) 
-//{
-//	//printf("Intel\n");
-//	float xhalf = 0.5f * x;
-//	int i = *(int*)&x; // store floating-point bits in integer
-//	i = 0x5f3759d5 - (i >> 1); // initial guess for Newton's method
-//	x = *(float*)&i; // convert new bits into float
-//	x = x*(1.5f - xhalf*x*x); // Three rounds of Newton's method
-//	x = x*(1.5f - xhalf*x*x);
-//	x = x*(1.5f - xhalf*x*x);
-//	return x;
-//	
-//}
 
 #endif // __ppc__ || __ppc64__
 

@@ -1,6 +1,6 @@
 /*
  BEASTmulch UGens
- Copyright (C) 2009  Scott Wilson
+ Copyright (C) 2009 Scott Wilson
  
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License version 2 as published by
@@ -18,7 +18,7 @@
  http://www.beast.bham.ac.uk/research/mulch.shtml
  beastmulch-info@contacts.bham.ac.uk
  
- The BEASTmulch project was supported by a grant from the Arts and Humanities Research Council or the UK: http://www.ahrc.ac.uk
+ The BEASTmulch project was supported by a grant from the Arts and Humanities Research Council of the UK: http://www.ahrc.ac.uk
  */
 
 /*
