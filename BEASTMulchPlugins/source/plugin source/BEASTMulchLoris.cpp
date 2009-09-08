@@ -631,10 +631,10 @@ void BEOsc_next_iaaa(BEOsc *unit, int inNumSamples) // freq, phase, bw audio
 		 thisPhaseIn = ZXP(phasein);
 		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
 			phaseoffset = phase; 
-		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
+		 } else if(oldPhaseIn == -INFINITY){ // else in this case reset phase (this phase != -inf because we already checked)
 		 //Print("Phase Reset\n");
 			phaseoffset = phase = thisPhaseIn;
-		 } else {	// in this plain ar phase
+		 } else {	// in this case plain ar phase
 			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
 		 }
 		 oldPhaseIn = thisPhaseIn;
@@ -1235,6 +1235,7 @@ void LorisPhaseGen_next_ak(LorisPhaseGen *unit, int inNumSamples)
 				
 				// set this at init segment to value of last endLevel
 				level = unit->m_endLevel; 
+				//Print("Phase reset\n");
 				
 				float** envPtr  = unit->mInBuf + stageOffset;
 				double endLevel = *envPtr[0] * ZIN0(kEnvGen_levelScale) + ZIN0(kEnvGen_levelBias); // scale levels
