@@ -18,20 +18,19 @@ p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helve
 p.p9 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
 p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
 p.p11 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
-p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
-p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
+p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #003cf7}
+span.s2 {color: #0043f5}
 span.s3 {color: #000000}
 span.s4 {text-decoration: underline}
-span.s5 {color: #002afb}
+span.s5 {color: #0034f9}
 span.s6 {font: 9.0px Monaco; color: #007300}
 span.s7 {font: 9.0px Monaco}
-span.s8 {font: 9.0px Monaco; color: #625d3a}
-span.s9 {font: 9.0px Monaco; color: #007300}
+span.s8 {font: 9.0px Monaco; color: #625d3b}
+span.s9 {color: #001dfd}
 span.s10 {color: #0000ff}
 span.s11 {color: #0000bf}
 span.s12 {color: #bf0000}
@@ -67,7 +66,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s6">\addToTail</span><span class="s7"> </span><span class="s8"><span class="Apple-tab-span">	</span></span>- add at the tail of the group specified by <b>target</b></p>
 <p class="p7"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s6">\addAfter</span> <span class="Apple-tab-span">	</span>- add immediately after <b>target </b>in its server's node order</p>
 <p class="p7"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s6">\addBefore</span> <span class="Apple-tab-span">	</span>- add immediately before <b>target </b>in its server's node order</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">\addReplace</span> <span class="Apple-tab-span">	</span>- replace <b>target</b> and take its place in its server's node order</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">\addReplace</span> <span class="Apple-tab-span">	</span>- replace <b>target</b> and take its place in its server's node order</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>targetDef </b>- The <a href="SC://SynthDef"><span class="s2">SynthDef</span></a> to use for grains. Default value is "BMSwarmPodGrain". It is possible to customise behaviour by using a different def. The standard one (defined in <b>*initClass</b>) can be used as a template.</p>
 <p class="p6"><br></p>
 <p class="p6"><br></p>
@@ -95,7 +94,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p8"><span class="Apple-tab-span">	</span></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>play (pitch, stretch, dur, durRand, delay, delRand, offset, mul, loop, attack, decay, targetArgs)</b></p>
 <p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Start granulating. All of the following arguments can be instances of <a href="SC://Function"><span class="s10">Function</span></a> or <a href="SC://Stream"><span class="s10">Stream</span></a> which return the correct argument type as well as scalars.</p>
+<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Start granulating. All of the following arguments can be instances of <a href="SC://Function"><span class="s9">Function</span></a> or <a href="SC://Stream"><span class="s9">Stream</span></a> which return the correct argument type as well as scalars.</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>pitch </b>- A pitch scalar. Default value is 1.</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>stretch </b>- A time stretch factor. Default value is 1. 2 is twice as long, 0.5 half as long, etc.</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>dur </b>- Grain duration in seconds. Default value is 0.05.</p>
@@ -139,54 +138,54 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><br></p>
 <p class="p6"><br></p>
 <p class="p10"><b>Examples</b></p>
-<p class="p12"><br></p>
-<p class="p13">// some speakers</p>
-<p class="p14"><span class="s3">l = </span><span class="s11">Object</span><span class="s3">.readArchive(</span>"../../Inputs and Outputs/BigSpeakerArray"<span class="s3">.resolveRelative);</span></p>
-<p class="p13"><span class="s3">v = </span><span class="s11">BMSpeakerListVisualiser</span><span class="s3">(l); </span>// a gui to see the boids</p>
-<p class="p12"><br></p>
-<p class="p14"><span class="s3">c = </span><span class="s11">Buffer</span><span class="s3">.read(s, </span>"sounds/a11wlk01.wav"<span class="s3">);</span></p>
-<p class="p12"><br></p>
-<p class="p15">(</p>
-<p class="p15">b = <span class="s11">BMBoidSpace</span>(3, 20, <span class="s11">nil</span>, l, 1, 13, 0.1);</p>
-<p class="p12"><br></p>
-<p class="p13">// this updates their positions in the GUI</p>
-<p class="p15">d = <span class="s11">Task</span>({</p>
-<p class="p15"><span class="Apple-tab-span">	</span>loop({</p>
-<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>v.boidPositions = b.positions;</p>
-<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>0.05.wait;</p>
-<p class="p15"><span class="Apple-tab-span">	</span>})</p>
-<p class="p16"><span class="s3">}, </span>AppClock<span class="s3">);</span></p>
-<p class="p15">d.start;</p>
-<p class="p15">)</p>
-<p class="p15">g = <span class="s11">BMSwarmGranulator</span>.new(l, b, c);</p>
-<p class="p15">g.play;</p>
-<p class="p12"><br></p>
-<p class="p15">b.minDist = 0.05; <span class="s12">// cluster closer</span></p>
-<p class="p12"><br></p>
-<p class="p15">b.centre = [0,0,0]; <span class="s12">// go to the middle</span></p>
-<p class="p12"><br></p>
-<p class="p15">b.centre = [1,0,0.5];<span class="Apple-converted-space"> </span></p>
-<p class="p12"><br></p>
-<p class="p15">b.centre = [-1,-1,-0.2];</p>
-<p class="p12"><br></p>
-<p class="p13"><span class="s3">b.centre = </span><span class="s11">nil</span><span class="s3">; </span>// wander freely</p>
-<p class="p12"><br></p>
-<p class="p15">b.velScale = 5; <span class="s12">// slow down</span></p>
-<p class="p12"><br></p>
-<p class="p15">b.velScale = 135; <span class="s12">// really fast</span></p>
-<p class="p12"><br></p>
-<p class="p13"><span class="s3">b.velMax = 0.02; </span>// don't flit too far</p>
-<p class="p12"><br></p>
-<p class="p13"><span class="s3">b.avoidD = </span><span class="s11">true</span><span class="s3">; </span>// don't go to the middle</p>
-<p class="p12"><br></p>
-<p class="p13"><span class="s3">b.minDist = 0.1; </span>// spread a little more</p>
-<p class="p12"><br></p>
-<p class="p13"><span class="s3">b.velMax = 0.5; </span>// wild and crazy</p>
-<p class="p12"><br></p>
-<p class="p15">g.pitch = 0.5; <span class="s12">// half pitch</span></p>
-<p class="p12"><br></p>
-<p class="p15">g.stretch = 2; <span class="s12">// time stretch</span></p>
-<p class="p12"><br></p>
-<p class="p15">d.stop; g.release(2);</p>
+<p class="p3"><br></p>
+<p class="p12">// some speakers (there are some other layouts in <a href="../../Inputs and Outputs/BMSpeaker.html"><span class="s10">BMSpeaker</span></a> help)</p>
+<p class="p13"><span class="s3">l = </span><span class="s11">Object</span><span class="s3">.readArchive(</span>"../../Inputs and Outputs/BigSpeakerArray"<span class="s3">.resolveRelative);</span></p>
+<p class="p12"><span class="s3">v = </span><span class="s11">BMSpeakerListVisualiser</span><span class="s3">(l); </span>// a gui to see the boids</p>
+<p class="p3"><br></p>
+<p class="p13"><span class="s3">c = </span><span class="s11">Buffer</span><span class="s3">.read(s, </span>"sounds/a11wlk01.wav"<span class="s3">);</span></p>
+<p class="p3"><br></p>
+<p class="p14">(</p>
+<p class="p14">b = <span class="s11">BMBoidSpace</span>(3, 20, <span class="s11">nil</span>, l, 1, 13, 0.1);</p>
+<p class="p3"><br></p>
+<p class="p12">// this updates their positions in the GUI</p>
+<p class="p14">d = <span class="s11">Task</span>({</p>
+<p class="p14"><span class="Apple-tab-span">	</span>loop({</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>v.boidPositions = b.positions;</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>0.05.wait;</p>
+<p class="p14"><span class="Apple-tab-span">	</span>})</p>
+<p class="p15"><span class="s3">}, </span>AppClock<span class="s3">);</span></p>
+<p class="p14">d.start;</p>
+<p class="p14">)</p>
+<p class="p14">g = <span class="s11">BMSwarmGranulator</span>.new(l, b, c);</p>
+<p class="p14">g.play;</p>
+<p class="p3"><br></p>
+<p class="p14">b.minDist = 0.05; <span class="s12">// cluster closer</span></p>
+<p class="p3"><br></p>
+<p class="p14">b.centre = [0,0,0]; <span class="s12">// go to the middle</span></p>
+<p class="p3"><br></p>
+<p class="p14">b.centre = [1,0,0.5];<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p14">b.centre = [-1,-1,-0.2];</p>
+<p class="p3"><br></p>
+<p class="p12"><span class="s3">b.centre = </span><span class="s11">nil</span><span class="s3">; </span>// wander freely</p>
+<p class="p3"><br></p>
+<p class="p14">b.velScale = 5; <span class="s12">// slow down</span></p>
+<p class="p3"><br></p>
+<p class="p14">b.velScale = 135; <span class="s12">// really fast</span></p>
+<p class="p3"><br></p>
+<p class="p12"><span class="s3">b.velMax = 0.02; </span>// don't flit too far</p>
+<p class="p3"><br></p>
+<p class="p12"><span class="s3">b.avoidD = </span><span class="s11">true</span><span class="s3">; </span>// don't go to the middle</p>
+<p class="p3"><br></p>
+<p class="p12"><span class="s3">b.minDist = 0.1; </span>// spread a little more</p>
+<p class="p3"><br></p>
+<p class="p12"><span class="s3">b.velMax = 0.5; </span>// wild and crazy</p>
+<p class="p3"><br></p>
+<p class="p14">g.pitch = 0.5; <span class="s12">// half pitch</span></p>
+<p class="p3"><br></p>
+<p class="p14">g.stretch = 2; <span class="s12">// time stretch</span></p>
+<p class="p3"><br></p>
+<p class="p14">d.stop; g.release(2);</p>
 </body>
 </html>

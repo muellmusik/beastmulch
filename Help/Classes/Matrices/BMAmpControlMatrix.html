@@ -20,18 +20,19 @@ p.p10 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helv
 p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p12 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p13 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
-p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
 p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
-p.p17 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p17 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p18 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
-span.s3 {color: #003cf7}
+span.s3 {color: #0043f5}
 span.s4 {text-decoration: underline}
-span.s5 {color: #0034f9}
+span.s5 {color: #003cf7}
 span.s6 {color: #0000bf}
-span.s7 {color: #0049f3}
-span.s8 {color: #606060}
+span.s7 {color: #004ef1}
+span.s8 {color: #007300}
 span.s9 {color: #0000bf}
 span.s10 {color: #007300}
 span.s11 {color: #bf0000}
@@ -84,36 +85,36 @@ span.Apple-tab-span {white-space:pre}
 <p class="p11"><br></p>
 <p class="p13"><b>Examples</b></p>
 <p class="p4"><br></p>
-<p class="p14">(</p>
-<p class="p15">// make a speaker list</p>
-<p class="p14">l = [[-30, <span class="s8">"L"</span>], [30, <span class="s8">"R"</span>], [0, <span class="s8">"C"</span>], [-110, <span class="s8">"Ls"</span>], [110, <span class="s8">"Rs"</span>]].collectAs({<span class="s9">|el, i|</span></p>
-<p class="p14"><span class="Apple-tab-span">	</span><span class="s9">BMSpeaker</span>.newFromSpherical(el[1], i, el[0], 0, 2);</p>
+<p class="p6">(</p>
+<p class="p14">// make a speaker list</p>
+<p class="p15">l = [[-30, <span class="s8">'L'</span>], [30, <span class="s8">'R'</span>], [0, <span class="s8">'C'</span>], [-110, <span class="s8">'Ls'</span>], [110, <span class="s8">'Rs'</span>]].collectAs({<span class="s9">|el, i|</span></p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="s9">BMSpeaker</span>.newFromSpherical(el[1], i, el[0], 0, 2);</p>
 <p class="p16"><span class="s2">}, </span>BMInOutArray<span class="s2">);</span></p>
-<p class="p14">)</p>
-<p class="p17"><br></p>
-<p class="p15">// something to scale</p>
-<p class="p14">x = { l.do({<span class="s9">|spkr, i|</span> <span class="s9">Out</span>.ar(spkr, <span class="s9">Ringz</span>.ar(<span class="s9">Dust</span>.ar(3, 0.1), 300 * (i + 1), 2))}) }.play;</p>
-<p class="p17"><br></p>
-<p class="p16"><span class="s2">c = </span>BMVirtualController<span class="s2">(</span><span class="s10">\sliders</span><span class="s2">, s, 5);</span></p>
-<p class="p17"><br></p>
-<p class="p16">BMAbstractController<span class="s2">.masterInOutArray; </span><span class="s11">// now it's there</span></p>
-<p class="p17"><br></p>
-<p class="p15">// make a matrix</p>
-<p class="p16"><span class="s2">m = </span>BMAmpControlMatrix<span class="s2">(c, l);</span></p>
-<p class="p17"><br></p>
-<p class="p15"><span class="s2">s.meter; </span>// so we can watch</p>
-<p class="p17"><br></p>
-<p class="p14">m.connect(<span class="s10">'sliders-1'</span>, <span class="s10">'L'</span>);</p>
-<p class="p14">m.connect(<span class="s10">'sliders-2'</span>, <span class="s10">'R'</span>);</p>
-<p class="p17"><br></p>
-<p class="p16">BMVirtualControllerSliders<span class="s2">(c); </span><span class="s11">// now try it out</span></p>
-<p class="p17"><br></p>
-<p class="p14">m.mappings;</p>
-<p class="p17"><br></p>
-<p class="p15"><span class="s2">m.gui; </span>// Use a GUI. Be sure to click 'View Matrix' for alternate view.</p>
-<p class="p17"><br></p>
-<p class="p15"><span class="s2">m.clear(3); </span>// fade out connections</p>
-<p class="p17"><br></p>
-<p class="p14">m.free; x.free;</p>
+<p class="p6">)</p>
+<p class="p4"><br></p>
+<p class="p17">// something to scale</p>
+<p class="p6">x = { l.do({<span class="s6">|spkr, i|</span> <span class="s6">Out</span>.ar(spkr, <span class="s6">Ringz</span>.ar(<span class="s6">Dust</span>.ar(3, 0.1), 300 * (i + 1), 2))}) }.play;</p>
+<p class="p4"><br></p>
+<p class="p18"><span class="s2">c = </span>BMVirtualController<span class="s2">(</span><span class="s10">\sliders</span><span class="s2">, s, 5);</span></p>
+<p class="p4"><br></p>
+<p class="p18">BMAbstractController<span class="s2">.masterInOutArray; </span><span class="s11">// now it's there</span></p>
+<p class="p4"><br></p>
+<p class="p17">// make a matrix</p>
+<p class="p18"><span class="s2">m = </span>BMAmpControlMatrix<span class="s2">(c, l);</span></p>
+<p class="p4"><br></p>
+<p class="p17"><span class="s2">s.meter; </span>// so we can watch</p>
+<p class="p4"><br></p>
+<p class="p6">m.connect(<span class="s10">'sliders-1'</span>, <span class="s10">'L'</span>);</p>
+<p class="p6">m.connect(<span class="s10">'sliders-2'</span>, <span class="s10">'R'</span>);</p>
+<p class="p4"><br></p>
+<p class="p18">BMVirtualControllerSliders<span class="s2">(c); </span><span class="s11">// now try it out</span></p>
+<p class="p4"><br></p>
+<p class="p6">m.mappings;</p>
+<p class="p4"><br></p>
+<p class="p17"><span class="s2">m.gui; </span>// Use a GUI. Be sure to click 'View Matrix' for alternate view.</p>
+<p class="p4"><br></p>
+<p class="p17"><span class="s2">m.clear(3); </span>// fade out connections</p>
+<p class="p4"><br></p>
+<p class="p6">m.free; x.free;</p>
 </body>
 </html>

@@ -16,19 +16,15 @@ p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco
 p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
 p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p9 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
-p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #000000}
+p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
 p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0000bf}
-p.p12 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
-p.p13 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
-p.p14 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica; min-height: 17.0px}
-p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #b22827}
-p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0021c0}
-p.p17 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p12 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
+p.p13 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica; min-height: 17.0px}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
-span.s3 {color: #0000ff}
+span.s3 {color: #001dfd}
 span.s4 {text-decoration: underline}
-span.s5 {color: #001dfd}
+span.s5 {color: #002afb}
 span.s6 {color: #0000bf}
 span.s7 {color: #007300}
 span.s8 {color: #bf0000}
@@ -59,11 +55,11 @@ span.Apple-tab-span {white-space:pre}
 <p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>c = <span class="s6">BMVirtualController</span>.new(<span class="s7">\sliders</span>, s, 4); <span class="s8">// new controller</span></p>
 <p class="p11"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = </span>BMVirtualControllerSliders<span class="s2">(c);</span></p>
-<p class="p12"><br></p>
+<p class="p6"><br></p>
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.close; c.free; <span class="s8">// free resources</span></p>
 <p class="p6"><br></p>
 <p class="p6"><br></p>
-<p class="p13"><b>Accessing Instance and Class Variables</b></p>
+<p class="p12"><b>Accessing Instance and Class Variables</b></p>
 <p class="p8"><span class="Apple-tab-span">	</span></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>refreshInterval_(arg1)</b></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>refreshInterval</b></p>
@@ -71,8 +67,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Set or get a time in seconds indicating the interval at which this GUI will update in response to automation changes. The default value is 0.05 seconds (20 FPS).</p>
 <p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p13"><b>Implementation Details</b></p>
-<p class="p14"><br></p>
+<p class="p12"><b>Implementation Details</b></p>
+<p class="p13"><br></p>
 <p class="p7">The following methods are 'private' but may be of interest to anyone making a similar class.</p>
 <p class="p8"><span class="Apple-tab-span">	</span></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span>update (changed, what, index, val)</b></p>
@@ -85,13 +81,5 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>This checks to see if the refresh loop is already running, and if not starts a loop to update the state of the sliders. Each time the loop is evaluated it checks if <b>needsRefresh</b> is true, and if so updates the sliders, sets <b>needsRefresh</b> to false, and then reschedules itself after <b>refreshInterval</b>. The next time it occurs it will update and reschedule only if <b>update </b>has been called in the interim. Otherwise, it stops the loop.</p>
 <p class="p6"><br></p>
 <p class="p6"><br></p>
-<p class="p13"><b>Examples</b></p>
-<p class="p4"><br></p>
-<p class="p15">// what this example does</p>
-<p class="p16"><span class="s2">e = </span>BMVirtualControllerSliders<span class="s2">.new;</span></p>
-<p class="p17">e.instanceMethod(someObject);</p>
-<p class="p17">e.cleanUp;</p>
-<p class="p4"><br></p>
-<p class="p17">...</p>
 </body>
 </html>

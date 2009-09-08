@@ -5,28 +5,27 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="949.35">
+<meta name="CocoaVersion" content="949.54">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #000000}
 p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #002daf}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica; min-height: 17.0px}
-p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #5c3c29}
-span.s1 {color: #002daf}
-span.s2 {color: #59661f}
-span.s3 {font: 9.0px Monaco; color: #3c6d00}
-span.s4 {color: #0020bb}
-span.s5 {color: #3c6d00}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0000bf}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000ff}
+span.s1 {color: #0000bf}
+span.s2 {color: #007300}
+span.s3 {color: #000000}
+span.s4 {font: 9.0px Monaco; color: #007300}
+span.s5 {color: #0027b9}
 span.s6 {font: 12.0px Helvetica}
-span.s7 {color: #000000}
-span.s8 {text-decoration: underline ; color: #0041da}
-span.s9 {color: #153aa5}
+span.s7 {font: 12.0px Helvetica; color: #000000}
+span.s8 {color: #0000ff}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -49,25 +48,25 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p3">Note that if the original source is from another computer it will be necessary to synchronise the two machines using a network time source.</p>
 <p class="p2"><br></p>
-<p class="p3">If capable of pausing, a source should notify its dependants that <span class="s3">\time</span> has changed with a rate of 0.</p>
+<p class="p3">If capable of pausing, a source should notify its dependants that<span class="s3"> </span><span class="s4">\time</span> has changed with a rate of 0.</p>
 <p class="p2"><br></p>
 <p class="p3">2. If it can stop (for instance in the case of a sound file player), it must call the following to notify its dependants:</p>
 <p class="p2"><br></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="s1">this</span>.changed(<span class="s2">\stop</span>);</p>
+<p class="p6"><span class="s3"><span class="Apple-tab-span">	</span></span><span class="s1">this</span>.changed(<span class="s2">\stop</span>);</p>
 <p class="p2"><br></p>
 <p class="p3">Again it is up to dependants to interpret this, but stopping should normally be equivalent to<span class="Apple-converted-space"> </span></p>
 <p class="p2"><br></p>
-<p class="p8"><span class="s4"><span class="Apple-tab-span">	</span>this</span>.changed(<span class="s5">\time</span>, 0, 0, <span class="s4">Main</span>.elapsedTime);<span class="s6">.</span></p>
+<p class="p8"><span class="s5"><span class="Apple-tab-span">	</span></span><span class="s1">this</span>.changed(<span class="s2">\time</span>, 0, 0, <span class="s1">Main</span>.elapsedTime);<span class="s6">.</span></p>
 <p class="p2"><br></p>
 <p class="p3">Stopped sources need not continue to regularly update their time.</p>
 <p class="p2"><br></p>
 <p class="p3">3. If the base for the time reference changes (for instance when a sound file player loads a new file), it should notify its dependants:</p>
 <p class="p2"><br></p>
-<p class="p8"><span class="s6"><span class="Apple-tab-span">	</span></span><span class="s1">this</span>.changed(<span class="s2">\base</span>);</p>
+<p class="p8"><span class="s7"><span class="Apple-tab-span">	</span></span><span class="s1">this</span>.changed(<span class="s2">\base</span>);</p>
 <p class="p2"><br></p>
 <p class="p3">4. It must register itself with BMTimeReferences as a reference.</p>
-<p class="p5"><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s7"><span class="Apple-tab-span">	</span></span>BMTimeReferences<span class="s7">.addReference(</span>this<span class="s7">);</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span></p>
+<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span></span>BMTimeReferences<span class="s3">.addReference(</span>this<span class="s3">);</span></p>
 <p class="p2"><br></p>
 <p class="p3">5. It must respond to the message 'path' with either nil or a String. Time References which derive from files (such as sound file players) should return the file's path in response to this message. Those which don't, should return nil. This functionality allows dependants to access the source for things such as GUI representations.<span class="Apple-converted-space"> </span></p>
 <p class="p2"><br></p>
@@ -81,7 +80,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><span class="Apple-converted-space"> </span></p>
 <p class="p3">The class BMTimeReferences provides a framework for accurate updating and interpolation of data from Time References. It serves as a centralised registry of time sources, and provides utility functions for updating time based on the current logical time. To obtain the current time for a reference, one can simple call</p>
 <p class="p2"><br></p>
-<p class="p8"><span class="s6"><span class="Apple-tab-span">	</span></span><span class="s1">BMTimeReferences</span>.currentTime(<span class="s1">ref</span>);</p>
+<p class="p8"><span class="s7"><span class="Apple-tab-span">	</span></span><span class="s1">BMTimeReferences</span>.currentTime(ref);</p>
 <p class="p2"><br></p>
 <p class="p3">for an updated time.</p>
 <p class="p2"><br></p>
@@ -89,14 +88,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><span class="Apple-converted-space"> </span></p>
 <p class="p3">In general objects should respond gracefully to any rate of change in time (faster or slower, backwards, or large leaps). Objects which make use of time sources should respond gracefully to current time values of nil, &lt; 0 or +/- inf.</p>
 <p class="p2"><br></p>
-<p class="p3"><b>See also: </b><a href="../ServerArchitecture/Buffer.html"><span class="s8">Buffer</span></a><b> </b>[other related help files]</p>
+<p class="p11"><span class="s3"><b>See also: </b><a href="Classes/Other/BMTimeReferences.html"><span class="s8">BMTimeReferences</span></a>, <a href="Classes/Automation/BMAbstractAutomator.html"><span class="s8">BMAbstractAutomator</span></a>, <a href="Classes/Automation/BMControllerAutomator.html"><span class="s8">BMControllerAutomator</span></a></span></p>
 <p class="p2"><br></p>
-<p class="p4"><b>More detailed examples</b></p>
-<p class="p10"><br></p>
-<p class="p11"><span class="s7">b = </span><span class="s9">SomeClass</span><span class="s7">.new(s, 100, 2); <span class="Apple-tab-span">	</span></span>// explanation of this line</p>
-<p class="p11"><span class="s7">b.doSomething;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// explanation of this line</p>
-<p class="p6">b.cleanUp</p>
 <p class="p7"><br></p>
-<p class="p6">...</p>
 </body>
 </html>

@@ -18,23 +18,17 @@ p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helve
 p.p9 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
 p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
 p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0000bf}
-p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p13 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
-p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #b22827}
-p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0021c0}
-p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
-span.s3 {color: #001dfd}
+span.s3 {color: #002afb}
 span.s4 {text-decoration: underline}
 span.s5 {color: #0000bf}
 span.s6 {color: #007300}
 span.s7 {color: #bf0000}
-span.s8 {color: #002afb}
-span.s9 {text-decoration: underline ; color: #0027ea}
-span.s10 {color: #0000bf}
-span.s11 {color: #606060}
-span.s12 {color: #007300}
+span.s8 {color: #0034f9}
+span.s9 {text-decoration: underline ; color: #0030e8}
+span.s10 {color: #606060}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -80,11 +74,11 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>See <a href="../Root Classes/BMAbstractController.html"><span class="s9">BMAbstractController</span></a> for a discussion of this method. This is the implementation for BMVirtualController:</p>
 <p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>*parameterList {<span class="Apple-converted-space"> </span></p>
-<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s10">var</span> class;</p>
-<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>class = <span class="s10">this</span>;</p>
+<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">var</span> class;</p>
+<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>class = <span class="s5">this</span>;</p>
 <p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>^(</p>
-<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>name: [<span class="s10">Symbol</span>, {class.makeName}, <span class="s11">"Name"</span>],</p>
-<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>numControls: [<span class="s10">Integer</span>, [1, 64, <span class="s12">\linear</span>, 1].asSpec, <span class="s11">"Number of Faders"</span>]</p>
+<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>name: [<span class="s5">Symbol</span>, {class.makeName}, <span class="s10">"Name"</span>],</p>
+<p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>numControls: [<span class="s5">Integer</span>, [1, 64, <span class="s6">\linear</span>, 1].asSpec, <span class="s10">"Number of Faders"</span>]</p>
 <p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>);<span class="Apple-converted-space"> </span></p>
 <p class="p12"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}</p>
 <p class="p6"><br></p>
@@ -94,13 +88,5 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Returns the String "GUI Controller".</p>
 <p class="p6"><br></p>
 <p class="p6"><br></p>
-<p class="p13"><b>Examples</b></p>
-<p class="p4"><br></p>
-<p class="p14">// what this example does</p>
-<p class="p15"><span class="s2">e = </span>BMVirtualController<span class="s2">.new;</span></p>
-<p class="p16">e.instanceMethod(someObject);</p>
-<p class="p16">e.cleanUp;</p>
-<p class="p4"><br></p>
-<p class="p16">...</p>
 </body>
 </html>
