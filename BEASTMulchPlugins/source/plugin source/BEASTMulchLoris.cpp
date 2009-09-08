@@ -1,11 +1,72 @@
 /*
- *  SDWUGens.cpp
- *  myxSC3plugins
- *
- *  Created by Scott Wilson on 12/08/2005.
- *  Copyright 2005 __MyCompanyName__. All rights reserved.
- *
- */
+ 
+ BEASTmulch UGens
+ Copyright (C) 2009 Scott Wilson
+ 
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License version 2 as published by
+ the Free Software Foundation.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA 
+ 
+ http://www.beast.bham.ac.uk/research/mulch.shtml
+ beastmulch-info@contacts.bham.ac.uk
+ 
+ The BEASTmulch project was supported by a grant from the Arts and Humanities Research Council of the UK: http://www.ahrc.ac.uk
+
+*/
+
+/*
+ 
+ Loris UGens adapted from Loris 1.5
+
+ Loris is Copyright (c) 1999-2007 by Kelly Fitz and Lippold Haken
+ 
+ Loris is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY, without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ file COPYING or the GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ 
+ loris@cerlsoundgroup.org
+ http://www.cerlsoundgroup.org/Loris/
+ 
+*/
+
+/*
+ SuperCollider real time audio synthesis system
+ Copyright (c) 2002 James McCartney. All rights reserved.
+ http://www.audiosynth.com
+ 
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 
 #include <limits.h>
 #include "SC_PlugIn.h"
