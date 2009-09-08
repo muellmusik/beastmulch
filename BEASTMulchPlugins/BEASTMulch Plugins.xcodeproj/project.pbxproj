@@ -16,6 +16,7 @@
 				FEDA69430C949E20007670AE /* PBXTargetDependency */,
 				FEDA69450C949E23007670AE /* PBXTargetDependency */,
 				FEDA69470C949E25007670AE /* PBXTargetDependency */,
+				FED395D9105687E700916E0C /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = "SC_Synth PlugIns";
@@ -31,7 +32,6 @@
 		FE5B5AFB0D6B30F6008C3FE7 /* fastInverseSqrt.h in Headers */ = {isa = PBXBuildFile; fileRef = FE5B594A0D6B23F8008C3FE7 /* fastInverseSqrt.h */; };
 		FE5B5AFC0D6B3110008C3FE7 /* SC_Altivec.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB3F70BB597D5009F34F8 /* SC_Altivec.h */; };
 		FE5B5B120D6B3209008C3FE7 /* SC_PlugIn.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB3DE0BB59628009F34F8 /* SC_PlugIn.h */; };
-		FE5B5B190D6B32D7008C3FE7 /* BEASTMulchLoris.h in Headers */ = {isa = PBXBuildFile; fileRef = FE5B5B180D6B32D7008C3FE7 /* BEASTMulchLoris.h */; };
 		FEC02E0B0C4D1E72009EC06B /* SC_Lock.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB40F0BB5995A009F34F8 /* SC_Lock.h */; };
 		FEC02E1B0C4D1F5F009EC06B /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92CCC51F045B4BDE00CA2167 /* Carbon.framework */; };
 		FEC02EB10C4D1FA5009EC06B /* SC_Altivec.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2BB3F70BB597D5009F34F8 /* SC_Altivec.h */; };
@@ -57,6 +57,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		FED395D8105687E700916E0C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FE5B59240D6B22F2008C3FE7 /* BEASTMulchLoris */;
+			remoteInfo = BEASTMulchLoris;
+		};
 		FEDA69420C949E20007670AE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
@@ -119,8 +126,6 @@
 		FE5B593E0D6B22F2008C3FE7 /* BEASTMulchLoris.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = BEASTMulchLoris.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE5B59480D6B2385008C3FE7 /* BEASTMulchLoris.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BEASTMulchLoris.cpp; sourceTree = "<group>"; };
 		FE5B594A0D6B23F8008C3FE7 /* fastInverseSqrt.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = fastInverseSqrt.h; sourceTree = "<group>"; };
-		FE5B5B160D6B328E008C3FE7 /* BEASTMulchLoris.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BEASTMulchLoris.h; sourceTree = "<group>"; };
-		FE5B5B180D6B32D7008C3FE7 /* BEASTMulchLoris.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = BEASTMulchLoris.h; path = ../../BEASTMulchLoris.h; sourceTree = "<group>"; };
 		FEC02E180C4D1E72009EC06B /* BEASTMulchSendIndex.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = BEASTMulchSendIndex.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		FEC02ECE0C4D22F8009EC06B /* MsgFifo.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MsgFifo.h; sourceTree = "<group>"; };
 		FEC02ED70C4D234B009EC06B /* SC_SyncCondition.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SC_SyncCondition.h; sourceTree = "<group>"; };
@@ -181,7 +186,6 @@
 				F50D060302E69C2101CA2799 /* Products */,
 				F50D069402E6A1C601CA2799 /* Frameworks */,
 				F50D069D02E6A1C601CA2799 /* Resources */,
-				FE5B5B160D6B328E008C3FE7 /* BEASTMulchLoris.h */,
 			);
 			sourceTree = "<group>";
 		};
@@ -259,7 +263,6 @@
 		FE2BB3F10BB5975C009F34F8 /* plugin headers */ = {
 			isa = PBXGroup;
 			children = (
-				FE5B5B180D6B32D7008C3FE7 /* BEASTMulchLoris.h */,
 				FE5B594A0D6B23F8008C3FE7 /* fastInverseSqrt.h */,
 				FEC9FE6C0BFCD7D800237BCA /* BEASTMulchPV.h */,
 				FE2BB3F20BB5975C009F34F8 /* BEASTMulchVBAP.h */,
@@ -355,7 +358,6 @@
 			files = (
 				FE5B5AFC0D6B3110008C3FE7 /* SC_Altivec.h in Headers */,
 				FE5B5AFB0D6B30F6008C3FE7 /* fastInverseSqrt.h in Headers */,
-				FE5B5B190D6B32D7008C3FE7 /* BEASTMulchLoris.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -532,7 +534,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
+			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx ../UGens/VBAP";
 		};
 		FE5B59390D6B22F2008C3FE7 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -541,7 +543,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
+			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx ../UGens/Loris";
 		};
 		FEC02E120C4D1E72009EC06B /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -550,7 +552,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
+			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx ../UGens/PlaySendIndex";
 		};
 		FEC9FE540BFCD6C500237BCA /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -559,7 +561,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
+			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx ../UGens/PV";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -602,6 +604,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		FED395D9105687E700916E0C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FE5B59240D6B22F2008C3FE7 /* BEASTMulchLoris */;
+			targetProxy = FED395D8105687E700916E0C /* PBXContainerItemProxy */;
+		};
 		FEDA69430C949E20007670AE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = FE2BB36C0BB59278009F34F8 /* BEASTMulchVBAP */;
