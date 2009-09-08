@@ -6,5 +6,6 @@ mkdir ./BEASTmulchLib
 
 svn export --force source/Classes ./BEASTmulchLib/Classes
 svn export --force Help ./BEASTmulchLib/Help
+svn export --force UGens ./BEASTmulchLib/
 cp source/license.txt ./BEASTmulchLib/
 cp source/COPYRIGHT ./BEASTmulchLib/
