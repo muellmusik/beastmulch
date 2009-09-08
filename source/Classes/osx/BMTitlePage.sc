@@ -17,8 +17,8 @@ BMTitlePage {
 			.path_(this.filenameSymbol.asString.dirname ++ "/QC/Title.qtz";)
 			.start;
 		
-		"/////////////////////////////////////\n\n
- BEASTmulch System version 1.1.0
+		"\n\n//////////////////////////////////////////////////////////////////////////\n\n
+ BEASTmulch System version 1.0.0
  Copyright (C) 2009 Scott Wilson and Sergio Luque
  
  This program is free software; you can redistribute it and/or modify
@@ -38,7 +38,7 @@ BMTitlePage {
  beastmulch-info@contacts.bham.ac.uk
  
  The BEASTmulch project was supported by a grant from the Arts and Humanities Research Council of the UK: http://www.ahrc.ac.uk
-\n\n/////////////////////////////////////\n\n".postln;
+\n\n//////////////////////////////////////////////////////////////////////////\n\n".postln;
 		5.wait;
 		titleWindow.close;
 		}.fork(AppClock)
