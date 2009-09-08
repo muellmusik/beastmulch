@@ -23,15 +23,15 @@ p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
 p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0043f5}
+span.s2 {color: #0049f3}
 span.s3 {color: #000000}
 span.s4 {text-decoration: underline}
-span.s5 {color: #0034f9}
+span.s5 {color: #003cf7}
 span.s6 {font: 9.0px Monaco; color: #007300}
 span.s7 {font: 9.0px Monaco}
-span.s8 {font: 9.0px Monaco; color: #625d3b}
-span.s9 {color: #001dfd}
-span.s10 {color: #0000ff}
+span.s8 {font: 9.0px Monaco; color: #625d3c}
+span.s9 {color: #002afb}
+span.s10 {color: #001dfd}
 span.s11 {color: #0000bf}
 span.s12 {color: #bf0000}
 span.Apple-tab-span {white-space:pre}
@@ -42,11 +42,13 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p1"><b>Inherits from: </b><a href="SC://Object"><span class="s2"><b>Object</b></span></a></p>
 <p class="p3"><br></p>
-<p class="p1">Swarm Granulation is a multichannel spatialisation technique which is effective for spatialising over large non-homogenous speaker arrays (particularly those that have speakers at multiple distances). It is quite effective at creating an impression of volume, and provides a practical technique for varying the localisation of a multichannel granulation process.</p>
+<p class="p1">Spatial Swarm Granulation is a multichannel spatialisation technique which is effective for spatialising over large non-homogenous speaker arrays (particularly those that have speakers at multiple distances). It is quite effective at creating an impression of volume, and provides a practical technique for varying the localisation of a multichannel granulation process.</p>
 <p class="p2"><br></p>
 <p class="p1">BMSwarmGranulator is a soundfile granulator (roughly in the style of Barry Truax's GSAMX programme) which uses a boid swarm (in the form of a <a href="BMBoidSpace.html"><span class="s2">BMBoidSpace</span></a>), and a speaker list (in the form of a <a href="../../Inputs and Outputs/BMInOutArray.html"><span class="s2">BMInOutArray</span></a>) to determine the output channel for each grain. The number of simultaneous grains corresponds to the number of boids.</p>
 <p class="p2"><br></p>
 <p class="p1">The boids are polled for position in sequence as each grain is spawned. A k-dimensional tree (in an implementation by Dan Stowell) is used to determine the nearest speaker to the boid's current position, and the grain's output is routed there. With reasonably large numbers of short grains this is sufficient to create a sense of volume in a space, and more efficient than attempting to pan grains in some fashion (especially as 'distance panning' is far from straightforward). The result is essentially the same in any case: A number of channels with similar but decorrelated signals.</p>
+<p class="p2"><br></p>
+<p class="p1">For more information on Spatial Swarm Granulation see the following ICMC 2008 paper: <a href="http://eprints.bham.ac.uk/237/1/cr1690.pdf">http://eprints.bham.ac.uk/237/1/cr1690.pdf</a></p>
 <p class="p2"><br></p>
 <p class="p1"><b>N.B.</b> This implementation is still experimental and should be considered subject to change in future versions of the library.</p>
 <p class="p2"><br></p>

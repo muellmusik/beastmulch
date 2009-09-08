@@ -18,19 +18,19 @@ p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helve
 p.p9 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
 p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
 p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica; min-height: 17.0px}
-p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
-p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
-p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
+p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0034f9}
-span.s3 {text-decoration: underline ; color: #0030e8}
-span.s4 {color: #0000ff}
-span.s5 {color: #000000}
-span.s6 {text-decoration: underline}
-span.s7 {color: #0000bf}
-span.s8 {color: #bf0000}
+span.s2 {color: #0043f5}
+span.s3 {text-decoration: underline ; color: #003de4}
+span.s4 {color: #002afb}
+span.s5 {text-decoration: underline ; color: #001bec}
+span.s6 {color: #000000}
+span.s7 {text-decoration: underline}
+span.s8 {color: #0000bf}
+span.s9 {color: #bf0000}
 span.Apple-tab-span {white-space:pre}
 ul.ul1 {list-style-type: disc}
 </style>
@@ -42,13 +42,15 @@ ul.ul1 {list-style-type: disc}
 <p class="p3"><br></p>
 <p class="p1">BMBoidSpace encapsulates a swarm of boids and the artificial space in which they move. It manages boid creation, and the application of movement rules. For a discussion of Craig Reynolds' original boids algorithm see: <a href="http://www.red3d.com/cwr/boids/"><span class="s3">http://www.red3d.com/cwr/boids/</span></a></p>
 <p class="p2"><br></p>
-<p class="p1">In the BEASTmulch library boids are used for Swarm Granulation, which is an idiosyncratic approach to multichannel spatialisation over large non-homogenous speaker arrays. It is particularly useful in cases where one might wish to utilise speakers at different distances. <a href="../../Inputs and Outputs/BMSpeakerListVisualiser.html"><span class="s4">BMSpeakerListVisualiser</span></a> provides facility for visualising boids in a space.</p>
+<p class="p1">In the BEASTmulch library boids are used for Spatial Swarm Granulation, which is an idiosyncratic approach to multichannel spatialisation over large non-homogenous speaker arrays. It is particularly useful in cases where one might wish to utilise speakers at different distances. <a href="../../Inputs and Outputs/BMSpeakerListVisualiser.html"><span class="s4">BMSpeakerListVisualiser</span></a> provides facility for visualising boids in a space.</p>
+<p class="p2"><br></p>
+<p class="p1">For information on Spatial Swarm Granulation see the following ICMC 2008 paper: <a href="http://eprints.bham.ac.uk/237/1/cr1690.pdf"><span class="s5">http://eprints.bham.ac.uk/237/1/cr1690.pdf</span></a></p>
 <p class="p2"><br></p>
 <p class="p1">BMBoidSpace implements rules for boid coherence, avoidance, velocity matching, attraction points, and space boundaries, as well as allowing for scaling and limiting boid velocity, and adding a special 'avoid desk' behaviour (see below).</p>
 <p class="p2"><br></p>
 <p class="p1"><b>N.B.</b> This implementation is still experimental and should be considered subject to change in future versions of the library.</p>
 <p class="p2"><br></p>
-<p class="p4"><span class="s5"><b>See also:</b> <a href="BMBoid.html"><span class="s6">BMBoid</span></a>, <a href="BMSwarmGranulator.html"><span class="s6">BMSwarmGranulator</span></a>, <a href="../../Inputs and Outputs/BMSpeakerListVisualiser.html"><span class="s6">BMSpeakerListVisualiser</span></a></span></p>
+<p class="p4"><span class="s6"><b>See also:</b> <a href="BMBoid.html"><span class="s7">BMBoid</span></a>, <a href="BMSwarmGranulator.html"><span class="s7">BMSwarmGranulator</span></a>, <a href="../../Inputs and Outputs/BMSpeakerListVisualiser.html"><span class="s7">BMSpeakerListVisualiser</span></a></span></p>
 <p class="p2"><br></p>
 <p class="p5"><b>Coordinates and Position Updating</b></p>
 <p class="p2"><br></p>
@@ -58,7 +60,7 @@ ul.ul1 {list-style-type: disc}
 <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica">The centre point of the input coordinate space (e.g (0,0,0) in three dimensions) remains the centre point in the normalised coordinate space.<span class="Apple-converted-space"> </span></li>
 <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica">Minimum X and maximum X are scaled such that whichever has the largest absolute value will have an absolute value of 1 in the new coordinates.<span class="Apple-converted-space"> </span></li>
 <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica">All other axes are scaled proportionally.<span class="Apple-converted-space"> </span></li>
-<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px"><br></li>
+<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica"></li>
 </ul>
 <p class="p1">The intention of this approach is to allow boid positions to be specified in a general way that can be easily adapted to different spaces, while maintaining some sense of the proportions of a space and avoiding distorting velocity by normalising each axis separately. (In the current implementation it is assumed that positions correspond to real-world spatial locations.) Note that by convention (and in keeping with assumptions used in <a href="../../Inputs and Outputs/BMSpeaker.html"><span class="s2">BMSpeaker</span></a>) it is generally assumed that in a three dimensional space (0,0,0) corresponds to head height at the centre of the listening area.</p>
 <p class="p2"><br></p>
@@ -146,47 +148,47 @@ ul.ul1 {list-style-type: disc}
 <p class="p6"><br></p>
 <p class="p6"><br></p>
 <p class="p10"><b>Examples</b></p>
-<p class="p12"><br></p>
-<p class="p13">// some speakers</p>
-<p class="p14"><span class="s5">l = </span><span class="s7">Object</span><span class="s5">.readArchive(</span>"../../Inputs and Outputs/BigSpeakerArray"<span class="s5">.resolveRelative);</span></p>
-<p class="p13"><span class="s5">v = </span><span class="s7">BMSpeakerListVisualiser</span><span class="s5">(l); </span>// a gui to see the boids</p>
-<p class="p12"><br></p>
-<p class="p15">(</p>
-<p class="p15">b = <span class="s7">BMBoidSpace</span>(3, 20, <span class="s7">nil</span>, l, 1, 13, 0.1);</p>
-<p class="p12"><br></p>
-<p class="p13">// this updates their positions in the GUI</p>
-<p class="p15">d = <span class="s7">Task</span>({</p>
-<p class="p15"><span class="Apple-tab-span">	</span>loop({</p>
-<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>v.boidPositions = b.positions;</p>
-<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>0.05.wait;</p>
-<p class="p15"><span class="Apple-tab-span">	</span>})</p>
-<p class="p16"><span class="s5">}, </span>AppClock<span class="s5">);</span></p>
-<p class="p15">d.start;</p>
-<p class="p15">)</p>
-<p class="p12"><br></p>
-<p class="p15">b.minDist = 0.05; <span class="s8">// cluster closer</span></p>
-<p class="p12"><br></p>
-<p class="p15">b.centre = [0,0,0]; <span class="s8">// go to the middle</span></p>
-<p class="p12"><br></p>
-<p class="p15">b.centre = [1,0,0.5];<span class="Apple-converted-space"> </span></p>
-<p class="p12"><br></p>
-<p class="p15">b.centre = [-1,-1,-0.2];</p>
-<p class="p12"><br></p>
-<p class="p13"><span class="s5">b.centre = </span><span class="s7">nil</span><span class="s5">; </span>// wander freely</p>
-<p class="p12"><br></p>
-<p class="p15">b.velScale = 5; <span class="s8">// slow down</span></p>
-<p class="p12"><br></p>
-<p class="p15">b.velScale = 135; <span class="s8">// really fast</span></p>
-<p class="p12"><br></p>
-<p class="p13"><span class="s5">b.velMax = 0.02; </span>// don't flit too far</p>
-<p class="p12"><br></p>
-<p class="p13"><span class="s5">b.avoidD = </span><span class="s7">true</span><span class="s5">; </span>// don't go to the middle</p>
-<p class="p12"><br></p>
-<p class="p13"><span class="s5">b.minDist = 0.1; </span>// spread a little more</p>
-<p class="p12"><br></p>
-<p class="p13"><span class="s5">b.velMax = 0.5; </span>// wild and crazy</p>
-<p class="p12"><br></p>
-<p class="p15">d.stop;</p>
-<p class="p12"><br></p>
+<p class="p3"><br></p>
+<p class="p12">// some speakers</p>
+<p class="p13"><span class="s6">l = </span><span class="s8">Object</span><span class="s6">.readArchive(</span>"../../Inputs and Outputs/BigSpeakerArray"<span class="s6">.resolveRelative);</span></p>
+<p class="p12"><span class="s6">v = </span><span class="s8">BMSpeakerListVisualiser</span><span class="s6">(l); </span>// a gui to see the boids</p>
+<p class="p3"><br></p>
+<p class="p14">(</p>
+<p class="p14">b = <span class="s8">BMBoidSpace</span>(3, 20, <span class="s8">nil</span>, l, 1, 13, 0.1);</p>
+<p class="p3"><br></p>
+<p class="p12">// this updates their positions in the GUI</p>
+<p class="p14">d = <span class="s8">Task</span>({</p>
+<p class="p14"><span class="Apple-tab-span">	</span>loop({</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>v.boidPositions = b.positions;</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>0.05.wait;</p>
+<p class="p14"><span class="Apple-tab-span">	</span>})</p>
+<p class="p15"><span class="s6">}, </span>AppClock<span class="s6">);</span></p>
+<p class="p14">d.start;</p>
+<p class="p14">)</p>
+<p class="p3"><br></p>
+<p class="p14">b.minDist = 0.05; <span class="s9">// cluster closer</span></p>
+<p class="p3"><br></p>
+<p class="p14">b.centre = [0,0,0]; <span class="s9">// go to the middle</span></p>
+<p class="p3"><br></p>
+<p class="p14">b.centre = [1,0,0.5];<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p14">b.centre = [-1,-1,-0.2];</p>
+<p class="p3"><br></p>
+<p class="p12"><span class="s6">b.centre = </span><span class="s8">nil</span><span class="s6">; </span>// wander freely</p>
+<p class="p3"><br></p>
+<p class="p14">b.velScale = 5; <span class="s9">// slow down</span></p>
+<p class="p3"><br></p>
+<p class="p14">b.velScale = 135; <span class="s9">// really fast</span></p>
+<p class="p3"><br></p>
+<p class="p12"><span class="s6">b.velMax = 0.02; </span>// don't flit too far</p>
+<p class="p3"><br></p>
+<p class="p12"><span class="s6">b.avoidD = </span><span class="s8">true</span><span class="s6">; </span>// don't go to the middle</p>
+<p class="p3"><br></p>
+<p class="p12"><span class="s6">b.minDist = 0.1; </span>// spread a little more</p>
+<p class="p3"><br></p>
+<p class="p12"><span class="s6">b.velMax = 0.5; </span>// wild and crazy</p>
+<p class="p3"><br></p>
+<p class="p14">d.stop;</p>
+<p class="p3"><br></p>
 </body>
 </html>
