@@ -308,7 +308,10 @@ void BEOsc_next_ikk(BEOsc *unit, int inNumSamples) // freq and phase control or 
 	float freqin = ZIN0(0);
 	float phasein = ZIN0(1);
 	
-	if(phasein == -INFINITY){ // ignore special phase value
+	if(phasein == INFINITY){ // this partial is done
+		//Print("Partial Done\n");
+		SETCALC(ClearUnitOutputs);
+	} else if(phasein == -INFINITY){ // ignore special phase value
 		phasein = unit->m_phasein;
 	}
 	
@@ -339,7 +342,10 @@ void vBEOsc_next_ikk(BEOsc *unit, int inNumSamples) // freq and phase control or
 	float freqin = ZIN0(0);
 	float phasein = ZIN0(1);
 	
-	if(phasein == -INFINITY){ // ignore special phase value
+	if(phasein == INFINITY){ // this partial is done
+		//Print("Partial Done\n");
+		SETCALC(ClearUnitOutputs);
+	} else if(phasein == -INFINITY){ // ignore special phase value
 		phasein = unit->m_phasein;
 	}
 	
@@ -478,12 +484,15 @@ void BEOsc_next_ikaa(BEOsc *unit, int inNumSamples) // freq control or scalar ph
 	LOOP(inNumSamples, 
 		 
 		 thisPhaseIn = ZXP(phasein);
-		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
-		 phaseoffset = phase; 
+		 if(thisPhaseIn == INFINITY){ // this partial is done
+			//Print("Partial Done\n");
+			SETCALC(ClearUnitOutputs);
+		 } else if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+			phaseoffset = phase; 
 		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
-		 phaseoffset = phase = thisPhaseIn;
+			phaseoffset = phase = thisPhaseIn;
 		 } else {	// in this plain ar phase
-		 phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
 		 }
 		 oldPhaseIn = thisPhaseIn;
 		 
@@ -556,7 +565,10 @@ void BEOsc_next_ikak(BEOsc *unit, int inNumSamples) // freq control or scalar, p
 	
 	LOOP(inNumSamples, 
 		 thisPhaseIn = ZXP(phasein);
-		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+		 if(thisPhaseIn == INFINITY){ // this partial is done
+			//Print("Partial Done\n");
+			SETCALC(ClearUnitOutputs);
+		 } else if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
 			phaseoffset = phase; 
 		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
 			phaseoffset = phase = thisPhaseIn;
@@ -629,7 +641,10 @@ void BEOsc_next_iaaa(BEOsc *unit, int inNumSamples) // freq, phase, bw audio
 	
 	LOOP(inNumSamples,
 		 thisPhaseIn = ZXP(phasein);
-		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+		 if(thisPhaseIn == INFINITY){ // this partial is done
+			//Print("Partial Done\n");
+			SETCALC(ClearUnitOutputs);
+		 } else if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
 			phaseoffset = phase; 
 		 } else if(oldPhaseIn == -INFINITY){ // else in this case reset phase (this phase != -inf because we already checked)
 		 //Print("Phase Reset\n");
@@ -708,12 +723,15 @@ void BEOsc_next_iaak(BEOsc *unit, int inNumSamples) // freq, phase audio, bw ctr
 
 	LOOP(inNumSamples,
 		 thisPhaseIn = ZXP(phasein);
-		 if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
-		 phaseoffset = phase; 
+		 if(thisPhaseIn == INFINITY){ // this partial is done
+			//Print("Partial Done\n");
+			SETCALC(ClearUnitOutputs);
+		 } else if(thisPhaseIn == -INFINITY){ // in this case only increment by freq
+			phaseoffset = phase; 
 		 } else if(oldPhaseIn == -INFINITY){ // in this case reset phase
-		 phaseoffset = phase = thisPhaseIn;
+			phaseoffset = phase = thisPhaseIn;
 		 } else {	// in this plain ar phase
-		 phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
+			phaseoffset = phase + (int32)(radtoinc * thisPhaseIn);
 		 }
 		 oldPhaseIn = thisPhaseIn;
 		 //noise
@@ -760,7 +778,10 @@ void BEOsc_next_iaka(BEOsc *unit, int inNumSamples) // freq audio phase control 
 	float cpstoinc = unit->m_cpstoinc;
 	float radtoinc = unit->m_radtoinc;
 	float phasemod = unit->m_phasein;
-	if(phasein == -INFINITY){ // ignore special phase value
+	if(phasein == INFINITY){ // this partial is done
+		//Print("Partial Done\n");
+		SETCALC(ClearUnitOutputs);
+	} else if(phasein == -INFINITY){ // ignore special phase value
 		phasein = phasemod;
 	}
 	float phaseslope = CALCSLOPE(phasein, phasemod);
@@ -828,7 +849,10 @@ void BEOsc_next_iakk(BEOsc *unit, int inNumSamples) // freq audio phase control 
 	float cpstoinc = unit->m_cpstoinc;
 	float radtoinc = unit->m_radtoinc;
 	float phasemod = unit->m_phasein;
-	if(phasein == -INFINITY){ // ignore special phase value
+	if(phasein == INFINITY){ // this partial is done
+		//Print("Partial Done\n");
+		SETCALC(ClearUnitOutputs);
+	} else if(phasein == -INFINITY){ // ignore special phase value
 		phasein = phasemod;
 	}
 	float phaseslope = CALCSLOPE(phasein, phasemod);
