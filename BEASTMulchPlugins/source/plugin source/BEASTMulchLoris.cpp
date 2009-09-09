@@ -161,14 +161,15 @@ extern "C"
 {
 	void load(InterfaceTable *inTable);
 	
-	void BEOsc_next_ikk(BEOsc *unit, int inNumSamples);
-	void vBEOsc_next_ikk(BEOsc *unit, int inNumSamples);
-	void BEOsc_next_ikaa(BEOsc *unit, int inNumSamples);
-	void BEOsc_next_ikak(BEOsc *unit, int inNumSamples);
-	void BEOsc_next_iaka(BEOsc *unit, int inNumSamples);
-	void BEOsc_next_iakk(BEOsc *unit, int inNumSamples);
-	void BEOsc_next_iaak(BEOsc *unit, int inNumSamples);
-	void BEOsc_next_iaaa(BEOsc *unit, int inNumSamples);
+	void BEOsc_next_kkk(BEOsc *unit, int inNumSamples);
+	void BEOsc_next_kka(BEOsc *unit, int inNumSamples);
+	void vBEOsc_next_kkk(BEOsc *unit, int inNumSamples);
+	void BEOsc_next_kaa(BEOsc *unit, int inNumSamples);
+	void BEOsc_next_kak(BEOsc *unit, int inNumSamples);
+	void BEOsc_next_aka(BEOsc *unit, int inNumSamples);
+	void BEOsc_next_akk(BEOsc *unit, int inNumSamples);
+	void BEOsc_next_aak(BEOsc *unit, int inNumSamples);
+	void BEOsc_next_aaa(BEOsc *unit, int inNumSamples);
 	void BEOsc_Ctor(BEOsc* unit);
 	
 	void LorisPhaseGen_next_aa(LorisPhaseGen *unit, int inNumSamples);
@@ -240,73 +241,78 @@ void BEOsc_Ctor(BEOsc* unit)
 	if (INRATE(0) == calc_FullRate) {	// freq audio rate
 		if (INRATE(1) == calc_FullRate) {	// freq and phase audio rate
 			if (INRATE(2) == calc_FullRate) {
-				//Print("next_iaaa\n");
-				SETCALC(BEOsc_next_iaaa); // ar bandwidth
+				//Print("next_aaa\n");
+				SETCALC(BEOsc_next_aaa); // ar bandwidth
 				unit->m_phase = 0;
 			} else {
-				//Print("next_iaak\n");
-				SETCALC(BEOsc_next_iaak); // kr bandwidth
+				//Print("next_aak\n");
+				SETCALC(BEOsc_next_aak); // kr bandwidth
 				unit->m_phase = 0;
 			}
 		} else {						// freq audio phase control or scalar
 			if (INRATE(2) == calc_FullRate) {
-				//Print("next_iaka\n");
-				SETCALC(BEOsc_next_iaka);	// ar bandwidth
+				//Print("next_aka\n");
+				SETCALC(BEOsc_next_aka);	// ar bandwidth
 				unit->m_phase = 0;
 			} else {
-				//Print("next_iakk\n");
-				SETCALC(BEOsc_next_iakk);	// kr bandwidth
+				//Print("next_akk\n");
+				SETCALC(BEOsc_next_akk);	// kr bandwidth
 				unit->m_phase = 0;
 			}
 		}
 	} else {							
 		if (INRATE(1) == calc_FullRate) {	// freq control or scalar, phase audio
 			if (INRATE(2) == calc_FullRate) {
-				//Print("next_ikaa\n");
-				SETCALC(BEOsc_next_ikaa); // ar bandwidth
+				//Print("next_kaa\n");
+				SETCALC(BEOsc_next_kaa); // ar bandwidth
 				unit->m_phase = 0;
 			} else {
-				//Print("next_ikak\n");
-				SETCALC(BEOsc_next_ikak); // kr bandwidth
+				//Print("next_kak\n");
+				SETCALC(BEOsc_next_kak); // kr bandwidth
 				unit->m_phase = 0;
 			}
 				
 		} else {
+			if (INRATE(2) == calc_FullRate) { // freq and phase control, bw audio
+				//Print("next_kka\n");
+				SETCALC(BEOsc_next_kka);
+			} else {
 #if __VEC__
-			if (USEVEC) {					// freq and phase control use vec
-				//Print("next_ikk VEC\n");
-				SETCALC(vBEOsc_next_ikk);
-			} else {						// freq and phase control no vec
-				//Print("next_ikk\n");
-				SETCALC(BEOsc_next_ikk);
-			}
+				if (USEVEC) {					// freq and phase control use vec
+					//Print("next_kkk VEC\n");
+					SETCALC(vBEOsc_next_kkk);
+				} else {						// freq and phase control no vec
+					//Print("next_kkk\n");
+					SETCALC(BEOsc_next_kkk);
+				}
 #else
-			//Print("next_ikk\n");
-			SETCALC(BEOsc_next_ikk);	// freq and phase control no vec
+				//Print("next_kkk\n");
+				SETCALC(BEOsc_next_kkk);	// freq and phase control no vec
 #endif
+			}
 			unit->m_phase = (int32)(unit->m_phasein * unit->m_radtoinc);
 		}
 	}
 	
-	RGET
-	unit->m_x1 = frand2(s1, s2, s3);
-	unit->m_x2 = frand2(s1, s2, s3);
-	unit->m_x3 = frand2(s1, s2, s3);
+	unit->m_x1 = 0;
+	unit->m_x2 = 0;
+	unit->m_x3 = 0;
 	unit->m_y1 = 0;
 	unit->m_y2 = 0;
 	unit->m_y3 = 0;
-	RPUT
-	BEOsc_next_ikk(unit, 1);
+	
+	BEOsc_next_kkk(unit, 1);
 }
 
 
 //////////////////////////////////////////////////////////////////
 
-void BEOsc_next_ikk(BEOsc *unit, int inNumSamples) // freq and phase control or scalar
+void BEOsc_next_kkk(BEOsc *unit, int inNumSamples) // freq phase bw control or scalar
 {
 	float *out = ZOUT(0);
 	float freqin = ZIN0(0);
 	float phasein = ZIN0(1);
+	float bwin = ZIN0(2);
 	
 	if(phasein == INFINITY){ // this partial is done
 		//Print("Partial Done\n");
@@ -325,17 +331,51 @@ void BEOsc_next_ikk(BEOsc *unit, int inNumSamples) // freq and phase control or 
 	int32 phaseinc = freq + (int32)(CALCSLOPE(phasein, unit->m_phasein) * unit->m_radtoinc);
 	unit->m_phasein = phasein;
 	
+	float x0;
+	float x1 = unit->m_x1;
+	float x2 = unit->m_x2;
+	float x3 = unit->m_x3;
+	
+	float y0;
+	float y1 = unit->m_y1;
+	float y2 = unit->m_y2;
+	float y3 = unit->m_y3;
+	
+	RGET
+	
+	float bw1, bw2, mod; 
+	
+	// bw coefficients
+	bw1 = FastScalarSqrt( 1.f - bwin );
+	bw2 = FastScalarSqrt( 2.f * bwin );
+	
 	LOOP(inNumSamples,
-		 ZXP(out) = lookupi1(table0, table1, phase, lomask);
+		 //noise
+		 x0 = x1; x1 = x2; x2 = x3;
+		 x3 = frand2(s1, s2, s3) * 0.00012864661681256f; // kelly uses 6. / GAIN
+		 y0 = y1; y1 = y2; y2 = y3;
+		 y3 = mod = (x0 + x3) + (3 * (x1 + x2)) + (0.9320209047f * y0) + (-2.8580608588f * y1) + (2.9258684253f * y2);
+		 
+		 ZXP(out) = lookupi1(table0, table1, phase, lomask)  * (bw1 + ( mod * bw2 ));
 		 phase += phaseinc;
 		 );
 	unit->m_phase = phase;
+	
+	RPUT
+	
+	unit->m_x1 = x1;
+	unit->m_x2 = x2;
+	unit->m_x3 = x3;
+	
+	unit->m_y1 = y1;
+	unit->m_y2 = y2;
+	unit->m_y3 = y3;
 	
 }
 
 #if __VEC__
 
-void vBEOsc_next_ikk(BEOsc *unit, int inNumSamples) // freq and phase control or scalar use vec
+void vBEOsc_next_kkk(BEOsc *unit, int inNumSamples) // freq and phase control or scalar use vec
 {
 	define_vzero
 	vfloat32 *vout = (vfloat32*)OUT(0);
@@ -423,7 +463,7 @@ void vBEOsc_next_ikk(BEOsc *unit, int inNumSamples) // freq and phase control or
 		
 		vfloat32 result = vec_mul(vec_madd(vval2.vf, vfrac, vval1.vf), noise);
 		vec_st(result, i, vout);
-		if(vec_any_nan(result)) Print("NaN detected in vBEOsc_next_ikk\n");
+		if(vec_any_nan(result)) Print("NaN detected in vBEOsc_next_kkk\n");
 		
 		vphase = vec_add(vphase, vphaseinc);
 
@@ -443,7 +483,72 @@ void vBEOsc_next_ikk(BEOsc *unit, int inNumSamples) // freq and phase control or
 
 #endif
 
-void BEOsc_next_ikaa(BEOsc *unit, int inNumSamples) // freq control or scalar phase and bw audio
+void BEOsc_next_kka(BEOsc *unit, int inNumSamples) // freq and phase control or scalar
+{
+	float *out = ZOUT(0);
+	float freqin = ZIN0(0);
+	float phasein = ZIN0(1);
+	float *bwin = ZIN(2);
+	
+	if(phasein == INFINITY){ // this partial is done
+		//Print("Partial Done\n");
+		SETCALC(ClearUnitOutputs);
+	} else if(phasein == -INFINITY){ // ignore special phase value
+		phasein = unit->m_phasein;
+	}
+	
+	float *table0 = ft->mSineWavetable;
+	float *table1 = table0 + 1;
+	
+	int32 phase = unit->m_phase;
+	int32 lomask = unit->m_lomask;
+	
+	int32 freq = (int32)(unit->m_cpstoinc * freqin);
+	int32 phaseinc = freq + (int32)(CALCSLOPE(phasein, unit->m_phasein) * unit->m_radtoinc);
+	unit->m_phasein = phasein;
+	
+	float x0;
+	float x1 = unit->m_x1;
+	float x2 = unit->m_x2;
+	float x3 = unit->m_x3;
+	
+	float y0;
+	float y1 = unit->m_y1;
+	float y2 = unit->m_y2;
+	float y3 = unit->m_y3;
+	
+	RGET
+	
+	float mod;
+	float bw;
+	float thisPhaseIn;
+	
+	LOOP(inNumSamples,
+		 //noise
+		 x0 = x1; x1 = x2; x2 = x3;
+		 x3 = frand2(s1, s2, s3) * 0.00012864661681256f; // kelly uses 6. / GAIN
+		 y0 = y1; y1 = y2; y2 = y3;
+		 y3 = mod = (x0 + x3) + (3 * (x1 + x2)) + (0.9320209047f * y0) + (-2.8580608588f * y1) + (2.9258684253f * y2);
+		 bw = ZXP(bwin);
+		 
+		 ZXP(out) = lookupi1(table0, table1, phase, lomask)  * (FastScalarSqrt( 1.f - bw) + ( mod * FastScalarSqrt( 2.f * bw ) ));
+		 phase += phaseinc;
+		 );
+	unit->m_phase = phase;
+	
+	RPUT
+	
+	unit->m_x1 = x1;
+	unit->m_x2 = x2;
+	unit->m_x3 = x3;
+	
+	unit->m_y1 = y1;
+	unit->m_y2 = y2;
+	unit->m_y3 = y3;
+	
+}
+
+void BEOsc_next_kaa(BEOsc *unit, int inNumSamples) // freq control or scalar phase and bw audio
 {
 	
 	float *out = ZOUT(0);
@@ -479,7 +584,7 @@ void BEOsc_next_ikaa(BEOsc *unit, int inNumSamples) // freq control or scalar ph
 	
 	int32 phaseoffset;
 	
-	//Print("BEOsc_next_ika %d %g %d\n", inNumSamples, radtoinc, phase);
+	//Print("BEOsc_next_ka %d %g %d\n", inNumSamples, radtoinc, phase);
 	
 	LOOP(inNumSamples, 
 		 
@@ -522,7 +627,7 @@ void BEOsc_next_ikaa(BEOsc *unit, int inNumSamples) // freq control or scalar ph
 	
 }
 
-void BEOsc_next_ikak(BEOsc *unit, int inNumSamples) // freq control or scalar, phase audio, bw control or scalar
+void BEOsc_next_kak(BEOsc *unit, int inNumSamples) // freq control or scalar, phase audio, bw control or scalar
 {
 	
 	float *out = ZOUT(0);
@@ -603,7 +708,7 @@ void BEOsc_next_ikak(BEOsc *unit, int inNumSamples) // freq control or scalar, p
 		
 }
 
-void BEOsc_next_iaaa(BEOsc *unit, int inNumSamples) // freq, phase, bw audio
+void BEOsc_next_aaa(BEOsc *unit, int inNumSamples) // freq, phase, bw audio
 {
 	float *out = ZOUT(0);
 	float *freqin = ZIN(0);
@@ -637,7 +742,7 @@ void BEOsc_next_iaaa(BEOsc *unit, int inNumSamples) // freq, phase, bw audio
 	
 	float mod;
 	float bw;
-	//Print("BEOsc_next_iaa %d %g %g %d\n", inNumSamples, cpstoinc, radtoinc, phase);
+	//Print("BEOsc_next_aa %d %g %g %d\n", inNumSamples, cpstoinc, radtoinc, phase);
 	
 	LOOP(inNumSamples,
 		 thisPhaseIn = ZXP(phasein);
@@ -681,7 +786,7 @@ void BEOsc_next_iaaa(BEOsc *unit, int inNumSamples) // freq, phase, bw audio
 	
 }
 
-void BEOsc_next_iaak(BEOsc *unit, int inNumSamples) // freq, phase audio, bw ctrl or scalar
+void BEOsc_next_aak(BEOsc *unit, int inNumSamples) // freq, phase audio, bw ctrl or scalar
 {
 	float *out = ZOUT(0);
 	float *freqin = ZIN(0);
@@ -719,7 +824,7 @@ void BEOsc_next_iaak(BEOsc *unit, int inNumSamples) // freq, phase audio, bw ctr
 	bw1 = FastScalarSqrt( 1.f - bwin );
 	bw2 = FastScalarSqrt( 2.f * bwin );
 	
-	//Print("BEOsc_next_iaa %d %g %g %d\n", inNumSamples, cpstoinc, radtoinc, phase);
+	//Print("BEOsc_next_aa %d %g %g %d\n", inNumSamples, cpstoinc, radtoinc, phase);
 
 	LOOP(inNumSamples,
 		 thisPhaseIn = ZXP(phasein);
@@ -761,7 +866,7 @@ void BEOsc_next_iaak(BEOsc *unit, int inNumSamples) // freq, phase audio, bw ctr
 }
 
 
-void BEOsc_next_iaka(BEOsc *unit, int inNumSamples) // freq audio phase control or scalar, audio bw
+void BEOsc_next_aka(BEOsc *unit, int inNumSamples) // freq audio phase control or scalar, audio bw
 {
 	
 	float *out = ZOUT(0);
@@ -832,7 +937,7 @@ void BEOsc_next_iaka(BEOsc *unit, int inNumSamples) // freq audio phase control 
 }
 
 // control rate bw
-void BEOsc_next_iakk(BEOsc *unit, int inNumSamples) // freq audio phase control or scalar, control bw
+void BEOsc_next_akk(BEOsc *unit, int inNumSamples) // freq audio phase control or scalar, control bw
 {
 	
 	float *out = ZOUT(0);
