@@ -76,7 +76,7 @@ b = Buffer.read(s, "squareresynth.aiff".resolveRelative);\
 envs = p.ar(stretch, pitch, 0, 0);\
 \
 play = PlayBuf.ar(1, b);\
-outmix = \cf2 Mix\cf0 (\cf2 BEOsc\cf0 .arFromEnvs(envs)); \
+outmix = \cf2 Mix\cf0 (\cf2 BEOsc\cf0 .ar(*envs)); \
 	\
 \cf2 Out\cf0 .ar(out, [outmix, play] * 4); \
 \}).load(s, dir: \cf3 ""\cf0 .resolveRelative);\
