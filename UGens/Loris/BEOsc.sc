@@ -1,7 +1,7 @@
 
 BEOsc : UGen {	
 	*ar { 
-		arg freq=440.0, phase=0.0, bw, mul=1.0, add=0.0;
+		arg freq=440.0, phase=0.0, bw = 0, mul=1.0, add=0.0;
 		^this.multiNew('audio', freq, phase, bw).madd(mul, add)
 	}
 }
