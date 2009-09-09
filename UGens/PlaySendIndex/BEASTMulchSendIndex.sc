@@ -16,14 +16,15 @@ PlayBufSendIndex : MultiOutUGen {
 	argNamesInputsOffset { ^2 }
 }
 
-DiskInSendIndex : MultiOutUGen {
-	*ar { arg numChannels, bufnum, indFreq = 10, id = 0;
-		^this.multiNew('audio', numChannels, bufnum, indFreq, id)
-	}
-	//init { arg numChannels, bufnum;
-//		inputs = [bufnum];
-	init { arg numChannels ... theInputs;
-		inputs = theInputs;
-		^this.initOutputs(numChannels, rate)
-	}
-}
+// not working just now
+//DiskInSendIndex : MultiOutUGen {
+//	*ar { arg numChannels, bufnum, indFreq = 10, id = 0;
+//		^this.multiNew('audio', numChannels, bufnum, indFreq, id)
+//	}
+//	//init { arg numChannels, bufnum;
+////		inputs = [bufnum];
+//	init { arg numChannels ... theInputs;
+//		inputs = theInputs;
+//		^this.initOutputs(numChannels, rate)
+//	}
+//}
