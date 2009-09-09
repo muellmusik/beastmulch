@@ -79,14 +79,10 @@ RBE_SDIF_File : File {
 		
 		});
 		
-		list = dict.values.collectAs({|item| // a list of Lists, one for each partial
+		list = dict.values.collectAs({|item| // a Array of Arrays, one for each partial
 			var oldTime = 0.0;
 			item = item.flop;
-			// start-time, phases, times, amps, freqs, bw
 			// start-time, times, freqs, phases, bw, amps
-			
-//			[item.first.first, item[3], item[0].differentiate.drop(1), item[2], item[1], 
-//				item[4]];
 			
 			[item.first.first, item[0].differentiate.drop(1), item[1], item[3], item[4],
 				item[2]];
