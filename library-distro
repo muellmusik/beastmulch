@@ -7,6 +7,8 @@ svn export --force Help ./BEASTmulchLib/Help
 svn export --force UGens ./BEASTmulchLib/
 cp source/license.txt ./BEASTmulchLib/
 cp source/COPYRIGHT ./BEASTmulchLib/
+cp source/INSTALLATION ./BEASTmulchLib/
+cp source/README ./BEASTmulchLib/
 zip -r -j ./BEASTmulchLib/plugins-source.zip BEASTMulchPlugins/source/plugin\ source/*.cpp BEASTMulchPlugins/headers/plugin\ headers/*.h
 rm -r ./BEASTmulchLib/Classes/testclasses
 rm -r ./BEASTmulchLib/Classes/ignore
