@@ -1,14 +1,15 @@
 #!/bin/bash
 
-mkdir -p ./BEASTmulchLib
+rm -r ./BEASTmulchLib/UGens
+mkdir -p ./BEASTmulchLib/UGens
 
 svn export --force source/Classes ./BEASTmulchLib/Classes
 svn export --force Help ./BEASTmulchLib/Help
-svn export --force UGens ./BEASTmulchLib/
+svn export --force UGens ./BEASTmulchLib/UGens
 cp source/license.txt ./BEASTmulchLib/
 cp source/COPYRIGHT ./BEASTmulchLib/
 cp source/INSTALLATION ./BEASTmulchLib/
 cp source/README ./BEASTmulchLib/
-zip -r -j ./BEASTmulchLib/plugins-source.zip BEASTMulchPlugins/source/plugin\ source/*.cpp BEASTMulchPlugins/headers/plugin\ headers/*.h
+zip -r -j ./BEASTmulchLib/UGens/plugins-source.zip BEASTMulchPlugins/source/plugin\ source/*.cpp BEASTMulchPlugins/headers/plugin\ headers/*.h
 rm -r ./BEASTmulchLib/Classes/testclasses
 rm -r ./BEASTmulchLib/Classes/ignore
