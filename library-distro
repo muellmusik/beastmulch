@@ -13,3 +13,4 @@ cp source/README ./BEASTmulchLib/
 zip -r -j ./BEASTmulchLib/UGens/plugins-source.zip BEASTMulchPlugins/source/plugin\ source/*.cpp BEASTMulchPlugins/headers/plugin\ headers/*.h
 rm -r ./BEASTmulchLib/Classes/testclasses
 rm -r ./BEASTmulchLib/Classes/ignore
+rm -r ./BEASTmulchLib/UGens/Loris/old\ and\ testing
