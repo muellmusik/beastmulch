@@ -1,0 +1,75 @@
+var o, p;
+o = [
+	BMInOutArray.prNew,  Array.prNew(4),  BMSpeaker.prNew,  BMSpeakerSpec.prNew,  
+	Event.prNew,  Array.prNew(20),  Event.prNew,  Array.prNew(8),  
+	BMSpeaker.prNew,  BMSpeaker.prNew,  BMSpeaker.prNew,  Array.prNew,  
+	IdentityDictionary.prNew,  Array.prNew(32)
+];
+p = [
+	// BMInOutArray
+	0, [ array: o[1],  subArraysKeys: o[11],  
+		subArrays: o[12],  busObjects: nil ],  
+	// Array
+	1, [ o[2],  o[8],  o[9],  o[10] ],  
+	// BMSpeaker
+	2, [ name: 'FL',  index: 0,  
+		x: -1.414213562373095,  y: 1.4142135623730951,  
+		z: 0.0,  spec: o[3],  
+		description: nil,  directivity: 'direct',  
+		azi: -45,  ele: 0,  
+		rad: 2,  autoTrim: 0 ],  
+	// BMSpeakerSpec
+	3, [ name: 'Generic',  vals: o[4] ],  
+	// Event
+	4, [ array: o[5],  size: 5,  
+		proto: o[6],  parent: nil,  
+		know: true ],  
+	// Array
+	5, [ 'fullRange',  true,  nil,  nil,  
+		nil,  nil,  'brand',  'Unknown',  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'maxFreq',  20000,  
+		'minFreq',  20,  'powered',  false ],  
+	// Event
+	6, [ array: o[7],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: true ],  
+	// Array
+	7, [ 'fullRange',  true,  'brand',  'Unknown',  
+		nil,  nil,  nil,  nil ],  
+	// BMSpeaker
+	8, [ name: 'FR',  index: 1,  
+		x: 1.414213562373095,  y: 1.4142135623730951,  
+		z: 0.0,  spec: o[3],  
+		description: nil,  directivity: 'direct',  
+		azi: 45,  ele: 0,  
+		rad: 2,  autoTrim: 0 ],  
+	// BMSpeaker
+	9, [ name: 'BR',  index: 2,  
+		x: 1.4142135623730951,  y: -1.414213562373095,  
+		z: 0.0,  spec: o[3],  
+		description: nil,  directivity: 'direct',  
+		azi: 135,  ele: 0,  
+		rad: 2,  autoTrim: 0 ],  
+	// BMSpeaker
+	10, [ name: 'BL',  index: 3,  
+		x: -1.4142135623730951,  y: -1.414213562373095,  
+		z: 0.0,  spec: o[3],  
+		description: nil,  directivity: 'direct',  
+		azi: -135,  ele: 0,  
+		rad: 2,  autoTrim: 0 ],  
+	// IdentityDictionary
+	12, [ array: o[13],  size: 0,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	13, [ nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil ]
+];
+prUnarchive(o,p);

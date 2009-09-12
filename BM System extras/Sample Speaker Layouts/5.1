@@ -1,0 +1,103 @@
+var o, p;
+o = [
+	BMInOutArray.prNew,  Array.prNew(6),  BMSpeaker.prNew,  BMSpeakerSpec.prNew,  
+	Event.prNew,  Array.prNew(20),  Event.prNew,  Array.prNew(8),  
+	BMSpeaker.prNew,  BMSpeaker.prNew,  BMSpeaker.prNew,  BMSpeaker.prNew,  
+	BMSpeaker.prNew,  BMSpeakerSpec.prNew,  Event.prNew,  Array.prNew(20),  
+	Array.prNew,  IdentityDictionary.prNew,  Array.prNew(32)
+];
+p = [
+	// BMInOutArray
+	0, [ array: o[1],  subArraysKeys: o[16],  
+		subArrays: o[17],  busObjects: nil ],  
+	// Array
+	1, [ o[2],  o[8],  o[9],  o[10],  
+		o[11],  o[12] ],  
+	// BMSpeaker
+	2, [ name: 'L',  index: 0,  
+		x: -0.9999999999999999,  y: 1.7320508075688774,  
+		z: 0.0,  spec: o[3],  
+		description: nil,  directivity: 'direct',  
+		azi: -30,  ele: 0,  
+		rad: 2,  autoTrim: 0 ],  
+	// BMSpeakerSpec
+	3, [ name: 'Generic',  vals: o[4] ],  
+	// Event
+	4, [ array: o[5],  size: 5,  
+		proto: o[6],  parent: nil,  
+		know: true ],  
+	// Array
+	5, [ 'fullRange',  true,  nil,  nil,  
+		nil,  nil,  'brand',  'Unknown',  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'maxFreq',  20000,  
+		'minFreq',  20,  'powered',  false ],  
+	// Event
+	6, [ array: o[7],  size: 2,  
+		proto: nil,  parent: nil,  
+		know: true ],  
+	// Array
+	7, [ 'fullRange',  true,  'brand',  'Unknown',  
+		nil,  nil,  nil,  nil ],  
+	// BMSpeaker
+	8, [ name: 'C',  index: 1,  
+		x: 0.0,  y: 2.0,  
+		z: 0.0,  spec: o[3],  
+		description: nil,  directivity: 'direct',  
+		azi: 0,  ele: 0,  
+		rad: 2,  autoTrim: 0 ],  
+	// BMSpeaker
+	9, [ name: 'R',  index: 2,  
+		x: 0.9999999999999999,  y: 1.7320508075688774,  
+		z: 0.0,  spec: o[3],  
+		description: nil,  directivity: 'direct',  
+		azi: 30,  ele: 0,  
+		rad: 2,  autoTrim: 0 ],  
+	// BMSpeaker
+	10, [ name: 'Ls',  index: 3,  
+		x: -1.8793852415718169,  y: -0.6840402866513374,  
+		z: 0.0,  spec: o[3],  
+		description: nil,  directivity: 'direct',  
+		azi: -110,  ele: 0,  
+		rad: 2,  autoTrim: 0 ],  
+	// BMSpeaker
+	11, [ name: 'Rs',  index: 4,  
+		x: 1.8793852415718169,  y: -0.6840402866513374,  
+		z: 0.0,  spec: o[3],  
+		description: nil,  directivity: 'direct',  
+		azi: 110,  ele: 0,  
+		rad: 2,  autoTrim: 0 ],  
+	// BMSpeaker
+	12, [ name: 'LFE',  index: 5,  
+		x: 1,  y: 1,  
+		z: 1,  spec: o[13],  
+		description: nil,  directivity: 'direct',  
+		azi: 45.0,  ele: 35.264389682754654,  
+		rad: 1.7320508075688772,  autoTrim: 0 ],  
+	// BMSpeakerSpec
+	13, [ name: 'Generic Sub',  vals: o[14] ],  
+	// Event
+	14, [ array: o[15],  size: 5,  
+		proto: o[6],  parent: nil,  
+		know: true ],  
+	// Array
+	15, [ 'fullRange',  false,  nil,  nil,  
+		nil,  nil,  'brand',  'Unknown',  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  'maxFreq',  85,  
+		'minFreq',  20,  'powered',  false ],  
+	// IdentityDictionary
+	17, [ array: o[18],  size: 0,  
+		proto: nil,  parent: nil,  
+		know: false ],  
+	// Array
+	18, [ nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil,  
+		nil,  nil,  nil,  nil ]
+];
+prUnarchive(o,p);
