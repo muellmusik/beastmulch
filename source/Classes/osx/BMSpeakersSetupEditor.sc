@@ -33,8 +33,8 @@ BMSpeakerArrayGUI : BMAbstractGUI {
 	   numTypes	= BMSpeakerSpec.specs.size;
 	   specsList	= SCVLayoutView(specsList, Rect(4,4,150, numTypes * 24 + 4));
 	   
-	   BMSpeakerSpec.specs.keys.asArray.sort.do({|spName|æ
-			SCDragSource(specsList, Rect(0, 0, 150, 20)).string_(" æ " ++ spName.asString)
+	   BMSpeakerSpec.specs.keys.asArray.sort.do({|spName|
+			SCDragSource(specsList, Rect(0, 0, 150, 20)).string_("   " ++ spName.asString)
 				.background_(Color.grey.alpha_(0.2))
 				.font_(Font("Helvetica-Bold", 12))
 				.beginDragAction_({ BMSpeaker(spec: spName) })
