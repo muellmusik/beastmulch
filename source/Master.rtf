@@ -9,7 +9,7 @@
 \cf0 \
 \cf2 Routine\cf0 (\{\
 \
-\cf2 var\cf0  screenBounds;\
+\cf2 var\cf0  screenBounds, postBounds;\
 \cf2 var\cf0  player, controllersList;\
 \cf2 var\cf0  pieceUpdater,  changeFromPlayerGUI = \cf2 true\cf0 , newPresetGUIFunc, addButton, backupManager;\
 \cf2 var\cf0  arrays, outputArray, systemConfig;\
@@ -21,7 +21,10 @@
 \cf2 var\cf0  cocoaApp, cocoaMainMenu, showHideFunc;\
 \
 screenBounds = \cf2 SCWindow\cf0 .screenBounds;\
+postBounds = \cf2 Document\cf0 .listener.bounds;\
 \
+// move post window\
+\cf2 Document\cf0 .listener.bounds = postBounds.moveTo(screenBounds.width - postBounds.width, screenBounds.height - postBounds.height);\
 \
 s.options = \cf2 BMOptions\cf0 .defaultServerOptions;\
 \
@@ -62,7 +65,6 @@ if(systemConfig.controllers.size == 0, \{\
 \
 \cf3 // config controllers recall workspace and system config\cf0 \
 controllersList = systemConfig.controllers.collectAs(\{\cf2 |assoc|\cf0  \
-	assoc.value.postln;\
 	assoc.value[\cf4 \\class\cf0 ].newFromParamDict(assoc.value[\cf4 \\paramsDict\cf0 ], s);\
 \}, \cf2 List\cf0 );\
 \
@@ -138,7 +140,6 @@ concertManager= \cf2 BMConcert\cf0 (pieces, configManager, [ outputArray, inputA
 	\});\
 \});\
 \
-\pard\pardeftab560\ql\qnatural
 \cf2 SCMenuItem\cf0 (configMenu, \cf5 "Configure Speakers"\cf0 ).action_(\{ \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf0    	if(speakersWindow.isNil, \{ \
@@ -207,7 +208,7 @@ startButton.action = \{\cf2 |view|\cf0 \
 \cf3 // create controls for all parameters\cf0 \
 pinkWin.view.decorator.nextLine;\
 \
-outputControl = \cf2 EZPopUpMenu\cf0 (pinkWin, 230 @ 20, \cf5 "Hardware Out: "\cf0 , outputArray.asArray.postln, \{\cf2 |ez|\cf0  \
+outputControl = \cf2 EZPopUpMenu\cf0 (pinkWin, 230 @ 20, \cf5 "Hardware Out: "\cf0 , outputArray.asArray, \{\cf2 |ez|\cf0  \
 	synth.set(\cf5 "out"\cf0 , outputArray[ez.menu.item]); \
 	outputNumber.string_(\cf5 "Channel:"\cf0  + (outputArray[ez.menu.item].asControlInput + 1));\
 \
@@ -300,7 +301,9 @@ showHideFunc.(\cf2 true\cf0 );\
 \cf3 // Help\cf0 \
 helpMenu = \cf2 SCMenuGroup\cf0 (\cf2 nil\cf0 , \cf5 "Help"\cf0 );\
 \cf2 SCMenuItem\cf0 (helpMenu, \cf5 "BEASTmulch System Quickstart"\cf0 ).action_(\{\
-\cf5 Document.open("BEASTmulch System Quickstart"\cf0 .findHelpFile).editable_(false);\
+var help;\
+\cf5 help = Document.open("BEASTmulch System Quickstart"\cf0 .findHelpFile).editable_(false);\
+help.bounds = help.bounds.resizeBy(700, 400);\
 \});\
 \cf2 SCMenuItem\cf0 (helpMenu, \cf5 "Go to BEASTmulch Home Page"\cf0 ).action_(\{\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
