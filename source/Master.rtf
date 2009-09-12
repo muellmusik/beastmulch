@@ -39,9 +39,6 @@ systemConfig = backupManager.rememberWorkspace([ \cf4 \\concert\cf0 , \cf4 \\sys
 \
 0.5.wait;\
 \
-\cf3 //systemConfig.dump; systemConfig.controllers.postln;\cf0 \
-\
-\cf3 //outputArray	= ~outPutArrayFromTheChannelListFile;\cf0 \
 pieces		= backupManager.rememberWorkspace([ \cf4 \\concert\cf0 , \cf4 \\pieces\cf0  ],  \{ \cf2 List\cf0 [] \});\
 configurations= backupManager.rememberWorkspace(\cf4 \\configurations\cf0 ,  \{ (dict:  \cf2 IdentityDictionary\cf0 [], names: \cf2 List\cf0 [ \cf4 'all off'\cf0  ]) \});\
 \
@@ -59,9 +56,6 @@ s.bootSync(cond);\
 \
 0.2.wait;\
 \
-\cf3 //// init midi\cf0 \
-\cf3 //BMMIDIPort.init;\cf0 \
-\
 if(systemConfig.controllers.size == 0, \{\
 	systemConfig.controllers.add(\cf4 'Sample Controller'\cf0  -> (paramsDict: (name: \cf5 "Sample Controller"\cf0 , numControls: 8), class: \cf2 BMVirtualController\cf0 ));\
 \});\
@@ -72,37 +66,20 @@ controllersList = systemConfig.controllers.collectAs(\{\cf2 |assoc|\cf0  \
 	assoc.value[\cf4 \\class\cf0 ].newFromParamDict(assoc.value[\cf4 \\paramsDict\cf0 ], s);\
 \}, \cf2 List\cf0 );\
 \
-\cf3 //controllersList.add(etherSense = BMMotorBEAST(NetAddr("192.168.5.77", 57120), \\Lower, s););\cf0 \
-\cf3 //controllersList.add(BMMotorBEAST(NetAddr("192.168.5.78", 57120), \\Upper, s););\cf0 \
-\
 \
 \{\
-\cf3 //arrays		= this.executeFile(Document.current.dir ++ "/january channel list.rtf");\cf0 \
-\cf3 ////inputArray 	= arrays[1];\cf0 \
-\cf3 //~outPutArrayFromTheChannelListFile = arrays[0]; \cf0 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf0    \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf0 player = \cf2 BMSoundFilePlayer\cf0 .new(systemConfig.numSoundFilePlayerChans, name: \cf4 'Player'\cf0 );\
 \
-\cf3 //chainFunc = \{ BMAudiochain( \cf0 \
-\cf3 //					[player, BMInOutArray.hardwareInputArray], \cf0 \
-\cf3 //					['Pre-Processing'->BMTrimPluginsRack, 'Input Levels'->BMAmpControlMatrix], \cf0 \
-\cf3 //					['Output Levels'->BMAmpControlMatrix, 'Post-Processing'->BMTrimPluginsRack, 'Master Fader' -> BMMasterFader],\cf0 \
-\cf3 //					BMAbstractController.allControllers.values.collect(\{|item| item.getInputArray \}).flat.as(BMInOutArray), \cf0 \
-\cf3 //			 		outputArray\cf0 \
-\cf3 //			       );\cf0 \
-\cf3 //			       \};	\cf0 \
-\
 chainFunc = \{ \
 	controllers = \cf2 BMAbstractController\cf0 .masterInOutArray;\
 	inputs = [player, \cf2 BMInOutArray\cf0 .hardwareInputArray];\
-	\cf3 //inputArray = player.asBMInOutArray ++ inputs[1].asBMInOutArray;\cf0 \
 	inputArray = \cf2 BMInOutArray\cf0 [];\
 	inputs.do(\{\cf2 |input|\cf0  inputArray = inputArray ++ input.asBMInOutArray \});\
 	privateIns = \cf2 BMInOutArray\cf0 .privateBusBlock(\cf4 'Virtual In'\cf0 , systemConfig.numVirtIns);\
 	privateOuts = \cf2 BMInOutArray\cf0 .privateBusBlock(\cf4 'Virtual Out'\cf0 , systemConfig.numVirtOuts);\
-	\cf3 //(inputArray ++ privateIns).postln;\cf0 \
 	\
 	~getIns = inputArray;\
 	[\
@@ -161,6 +138,7 @@ concertManager= \cf2 BMConcert\cf0 (pieces, configManager, [ outputArray, inputA
 	\});\
 \});\
 \
+\pard\pardeftab560\ql\qnatural
 \cf2 SCMenuItem\cf0 (configMenu, \cf5 "Configure Speakers"\cf0 ).action_(\{ \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf0    	if(speakersWindow.isNil, \{ \
@@ -180,36 +158,14 @@ concertManager= \cf2 BMConcert\cf0 (pieces, configManager, [ outputArray, inputA
    		speakersWindow.onClose_(\{ speakersWindow = \cf2 nil\cf0  \})\
    	\})\
 \});\
-\pard\pardeftab560\ql\qnatural
-\cf0 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf3 // backupManager is added as dependant of outputArray, concertManager, configManager \cf0 \
-\cf3 //[ outputArray, concertManager, configManager ].do\{| x | backupManager.watch(x) \};\cf0 \
-\
-\cf3 // at some point, backupManager will have to be removed from the list of dependants of outputArray, concertManager, configManager\cf0 \
-\cf3 // [ outputArray, concertManager, configManager ].do\{| x | backupManager.stopWatching(x) \};\cf0 \
+\cf0 \
 \
 \{\
 configsGUIFunc =  \{\cf2 | chain |\cf0  \cf2 BMConfigurationsGUI\cf0 (chain, configManager, concertManager, \cf5 "Configuration Editor"\cf0 , 550 @ 550) \}; \
 configsGUI	 = configsGUIFunc.value(chain);\
 \cf2 BMConcertGUI\cf0 (concertManager, configManager, outputArray, chain, chainFunc, configsGUIFunc, controllerAutomator, \cf5 "Concert Editor"\cf0 , 110 @ 550);\
 \}.defer;\
-\cf3 //\cf0 \
-\cf3 //Updater(concertManager,  \cf0 \
-\cf3 //	\{| changed, change, pieceEvent |\cf0 \
-\cf3 //	 switch (change,\cf0 \
-\cf3 //	 	\\loadPiece,	 	\cf0 \
-\cf3 //	   	\{ if (pieceEvent.path.notNil)\cf0 \
-\cf3 //	   		\{ player.read(pieceEvent.path) \}\cf0 \
-\cf3 //	   		\{ player.free \};\cf0 \
-\cf3 //	   	  configManager.currentConfig_(pieceEvent.config, \\concertEditor);\cf0 \
-\cf3 //	   	  if(pieceEvent.controllerAutomation.notNil, \{\cf0 \
-\cf3 //	   	  	controllerAutomator.mappings = pieceEvent.controllerAutomation;\cf0 \
-\cf3 //	   	  \});\cf0 \
-\cf3 //	    	\}\cf0 \
-\cf3 //	 )\cf0 \
-\cf3 //	\}\cf0 \
-\cf3 //);\cf0 \
 \
 \cf3 // PinkNoise Tester\cf0 \
 \
@@ -226,9 +182,6 @@ s.waitForBoot(\{\
 pinkWin = \cf2 SCWindow\cf0 (\cf5 "PinkNoise Tester"\cf0 , \cf2 Rect\cf0 (20, 600, 416, 100), \cf2 false\cf0 );\
 pinkWin.front; \cf3 // make window visible and front window.\cf0 \
 pinkWin.view.decorator = \cf2 FlowLayout\cf0 (pinkWin.view.bounds);\
-\
-\cf3 //pinkWin.view.background = HiliteGradient(Color.rand(0.0,1.0),Color.rand(0.0,1.0),\cf0 \
-\cf3 //					[\\h,\\v].choose, 100, rrand(0.1,0.9));\cf0 \
 \
 \cf3 // add a button to start and stop the sound.\cf0 \
 startButton = \cf2 RoundButton\cf0 (pinkWin, 75 @ 20).extrude_(\cf2 false\cf0 ).canFocus_(\cf2 false\cf0 );\
@@ -292,7 +245,7 @@ pinkWin.onClose = \{\
 utilMenu = \cf2 SCMenuGroup\cf0 (bmMenu, \cf5 "Utilities"\cf0 );\
 \cf2 SCMenuItem\cf0 (utilMenu, \cf5 "Test Outputs"\cf0 ).action_(pinkNoiseFunc);\
 \cf2 SCMenuItem\cf0 (utilMenu, \cf5 "Meter Bridge"\cf0 ).action_(\{s.meter\});\
-\cf2 SCMenuItem\cf0 (utilMenu, \cf5 "Autobalance Speakers"\cf0 ).action_(\{\
+\cf2 SCMenuItem\cf0 (utilMenu, \cf5 "Auto-balance Speakers"\cf0 ).action_(\{\
 	\cf2 BMAutoBalancerGUI\cf0 (outputArray, \{\
 		\cf3 // we operated in place so we can just store with no restart\cf0 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
