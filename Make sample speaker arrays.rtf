@@ -1,0 +1,56 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
+{\fonttbl\f0\fnil\fcharset0 Monaco;}
+{\colortbl;\red255\green255\blue255;\red43\green112\blue0;\red0\green22\blue189;\red174\green26\blue25;
+}
+\deftab560
+\pard\pardeftab560\ql\qnatural
+
+\f0\fs18 \cf0 (\
+l = [[-30, \cf2 'L'\cf0 ], [0, \cf2 'C'\cf0 ], [30, \cf2 'R'\cf0 ], [-110, \cf2 'Ls'\cf0 ], [110, \cf2 'Rs'\cf0 ]].collectAs(\{\cf3 |el, i|\cf0 \
+	\cf3 BMSpeaker\cf0 .newFromSpherical(el[1], i, el[0], 0, 2);\
+\}, \cf3 BMInOutArray\cf0 );\
+l.add(BMSpeaker('LFE', 5, spec: 'Generic Sub'));\cf3 \
+\cf0 )\
+\
+l.writeArchive("BM System extras/Sample Speaker Layouts/5.1".resolveRelative);\
+\
+\pard\pardeftab560\ql\qnatural
+\cf4 // American 8 Channel Ring\
+\pard\pardeftab560\ql\qnatural
+\cf0 (\
+l = [[0, \cf2 'C'\cf0  ], [45, \cf2 'FR'\cf0 ], [90, \cf2 'R'\cf0 ], [135, \cf2 'BR'\cf0 ], [180, \cf2 'B'\cf0 ], [-135, \cf2 'BL'\cf0 ], [-90, \cf2 'L'\cf0 ], [-45, \cf2 'FL'\cf0 ]].collectAs(\{\cf3 |el, i|\cf0 \
+	\cf3 BMSpeaker\cf0 .newFromSpherical(el[1], i, el[0], 0, 2);\
+\}, \cf3 BMInOutArray\cf0 );\cf3 \
+\cf0 )\
+l.writeArchive("BM System extras/Sample Speaker Layouts/American 8 Channel".resolveRelative);\
+\
+\pard\pardeftab560\ql\qnatural
+\cf4 // QUad\
+\pard\pardeftab560\ql\qnatural
+\cf0 (\
+l = [[-45, \cf2 'FL'\cf0 ], [45, \cf2 'FR'\cf0 ], [135, \cf2 'BR'\cf0 ], [-135, \cf2 'BL'\cf0 ]].collectAs(\{\cf3 |el, i|\cf0 \
+	\cf3 BMSpeaker\cf0 .newFromSpherical(el[1], i, el[0], 0, 2);\
+\}, \cf3 BMInOutArray\cf0 );\cf3 \
+\cf0 )\
+l.writeArchive("BM System extras/Sample Speaker Layouts/Quad".resolveRelative);\
+\
+\pard\pardeftab560\ql\qnatural
+\cf4 // French 8 Channel Ring\
+\pard\pardeftab560\ql\qnatural
+\cf0 (\
+l = [[-22.5, \cf2 'FL'\cf0  ], [22.5, \cf2 'FR'\cf0 ], [-67.5, \cf2 'WL'\cf0 ], [67.5, \cf2 'WR'\cf0 ], [-112.5, \cf2 'SL'\cf0 ], [112.5, \cf2 'SR'\cf0 ], [-157.5, \cf2 'RL'\cf0 ], [157.5, \cf2 'RR'\cf0 ]].collectAs(\{\cf3 |el, i|\cf0 \
+	\cf3 BMSpeaker\cf0 .newFromSpherical(el[1], i, el[0], 0, 2);\
+\}, \cf3 BMInOutArray\cf0 );\cf3 \
+\cf0 )\
+l.writeArchive("BM System extras/Sample Speaker Layouts/French 8 Channel".resolveRelative);\
+\
+\pard\pardeftab560\ql\qnatural
+\cf4 // zig zag partial dome\
+\pard\pardeftab560\ql\qnatural
+\cf0 (\
+l = [[-22.5, 40, \cf2 'Upper1'\cf0 ], [22.5, 40, \cf2 'Upper2'\cf0 ], [-67.5, 40, \cf2 'Upper3'\cf0 ], [67.5, 40, \cf2 'Upper4'\cf0 ], [-112.5, 40, \cf2 'Upper5'\cf0 ], [112.5, 40, \cf2 'Upper6'\cf0 ], [-157.5, 40, \cf2 'Upper7'\cf0 ], [157.5, 40, \cf2 'Upper8'\cf0 ], [-45, 0, \cf2 'Lower1'\cf0 ], [45, 0, \cf2 'Lower2'\cf0 ], [-90, 0, \cf2 'Lower3'\cf0 ], [90, 0, \cf2 'Lower4'\cf0 ], [-135, 0, \cf2 'Lower5'\cf0 ], [135, 0, \cf2 'Lower6'\cf0 ], [0, 0, \cf2 'Lower7'\cf0 ], [180, 0, \cf2 'Lower8'\cf0 ]].collectAs(\{\cf3 |el, i|\cf0 \
+	\cf3 BMSpeaker\cf0 .newFromSpherical(el[2], i, el[0], el[1], 2);\
+\}, \cf3 BMInOutArray\cf0 );\cf3 \
+\cf0 )\
+\
+l.writeArchive("BM System extras/Sample Speaker Layouts/Zig Zag Partial Dome".resolveRelative);}
