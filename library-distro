@@ -14,3 +14,4 @@ zip -r -j ./BEASTmulchLib/UGens/plugins-source.zip BEASTMulchPlugins/source/plug
 rm -r ./BEASTmulchLib/Classes/testclasses
 rm -r ./BEASTmulchLib/Classes/ignore
 rm -r ./BEASTmulchLib/UGens/Loris/old\ and\ testing
+rm -r ./BEASTmulchLib/UGens/VBAP/old\ and\ testing
