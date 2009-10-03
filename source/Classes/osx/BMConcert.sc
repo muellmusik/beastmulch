@@ -380,7 +380,7 @@ BMConcertGUI  {
 				   					} 
 				   				}
 								)
-							 }, maxSize: 1)
+							 }, allowsMultiple: false)
 							 },
 					  		 
 					  		 // Export Piece
@@ -422,7 +422,7 @@ BMConcertGUI  {
 									  
 									}
 								)
-							 }, maxSize: 1)
+							 }, allowsMultiple: false)
 							 },
 							 
 							 // Export Configuration
@@ -551,7 +551,7 @@ BMConcertGUI  {
 				   			   					   event.add(\path -> path[0]);
 												   this.makeNewPieceWindow(event, origin);
 											       }, 
-											       maxSize:1
+											       allowsMultiple: false
 								)
 							   }
 							   { this.makeNewPieceWindow(event, origin) }

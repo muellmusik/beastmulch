@@ -221,7 +221,7 @@ BMSpeakerArrayGUI : BMAbstractGUI {
 								outputArray = recalledstartArray;
 								speakerList.items_(outputArray.keys.asArray);
 								speakerList.value_(0).doAction;
-								}, maxSize: 1);
+								}, allowsMultiple: false);
 
 							 },
 					   		
