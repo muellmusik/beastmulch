@@ -957,7 +957,7 @@ BMMultichannelPluginsRack : BMAbstractAudioChainElement {
 		indexOrPlugin.isInteger.not.if({ index = plugins.indexOf(indexOrPlugin) }, {
 			index = indexOrPlugin;
 		});
-		(index.notNil && (index < plugins.size)).if({ 
+		(index.notNil && {index < plugins.size}).if({ 
 			toBeRemoved = plugins.removeAt(index);
 			toBeRemoved.release; // free synth and resources
 			// just removed, no need to reset order on server
