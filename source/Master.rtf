@@ -40,6 +40,8 @@ outputArray	= backupManager.rememberWorkspace([ \cf4 \\concert\cf0 , \cf4 \\syst
 \cf3 // recall system config\cf0 \
 systemConfig = backupManager.rememberWorkspace([ \cf4 \\concert\cf0 , \cf4 \\system\cf0 , \cf4 \\sysconfig\cf0  ],  \{ \cf2 BMSystemAppConfig\cf0 .new \});\
 \
+s.options.numInputBusChannels = systemConfig.numInChannels;\
+\
 0.5.wait;\
 \
 pieces		= backupManager.rememberWorkspace([ \cf4 \\concert\cf0 , \cf4 \\pieces\cf0  ],  \{ \cf2 List\cf0 [] \});\
