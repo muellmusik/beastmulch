@@ -483,7 +483,7 @@ LorisBufPlayer : LorisPlayer {
 				OffsetOut.ar(i_lsFreq, params[0] * lsPitch);
 				OffsetOut.ar(i_lsAmp, params[1]);
 				OffsetOut.ar(i_lsBw, params[2] * lsBandScal);
-		}).writeDefFile("synthdefs/");// later make writeOnce
+		}).writeDefFile;// later make writeOnce
 	
 	}
 
