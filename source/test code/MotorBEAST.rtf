@@ -4,7 +4,7 @@
 \red191\green0\blue0;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
-\f0\fs18 \cf0 b = \cf2 BMMotorBEAST\cf0 (n = \cf2 NetAddr\cf0 (\cf3 "192.168.5.77"\cf0 , 57120), \cf4 \\foo\cf0 , s);\
+\f0\fs18 \cf0 b = \cf2 BMMotorBEAST\cf0 (n = \cf2 NetAddr\cf0 (\cf3 "192.168.5.78"\cf0 , 57120), \cf4 \\foo\cf0 , s);\
 \
 (\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
@@ -23,9 +23,9 @@ b.getAllValues\
 b.getVal(1)\
 b.calibrate\
 \
-BMMotorBEAST.clearCalibrations\
+\cf2 BMMotorBEAST\cf0 .clearCalibrations\
 \
-b.setVal(21, 0.8);\
+b.setVal(12, 0.8);\
 \
 b.setVal(2, 0.5)\
 \
@@ -35,25 +35,79 @@ b.setAllValues(1 ! 32)\
 \
 ~automator.dump.inspect\
 \
-// args are fader num (starts from 1, so 0 in OSC), setting\
-b.setLED(1, 0);// nothing\
-b.setLED(1, 1);// nothing\
-b.setLED(1, 2);// fader 1 is green\
-b.setLED(1, 3);// fader 1 is still green\
-b.setLED(2, 1);// fader 1 turns yellow\
-b.setLED(2, 2);// both fader 1 and 2 turn green\
-b.setLED(2, 3);// fader 1 turns yellow fader 2 stays green\
-b.setLED(3, 3);// fader 2 turns yellow fader 3 turns green\
+\cf5 // args are fader num (starts from 1, so 0 in OSC), setting\cf0 \
+b.setLED(1, 0);\cf5 // nothing\cf0 \
+b.setLED(1, 1);\cf5 // nothing\cf0 \
+b.setLED(1, 2);\cf5 // fader 1 is green\cf0 \
+b.setLED(1, 3);\cf5 // fader 1 is still green\cf0 \
+b.setLED(2, 1);\cf5 // fader 1 turns yellow\cf0 \
+b.setLED(2, 2);\cf5 // both fader 1 and 2 turn green\cf0 \
+b.setLED(2, 3);\cf5 // fader 1 turns yellow fader 2 stays green\cf0 \
+b.setLED(3, 3);\cf5 // fader 2 turns yellow fader 3 turns green\cf0 \
 \
-b.setAllLED(0); // all off\
-b.setAllLED(1); // all red\
-b.setAllLED(2); // all green\
-b.setAllLED(3); // all yellow\
+b.setAllLED(0); \cf5 // all off\cf0 \
+b.setAllLED(1); \cf5 // all red\cf0 \
+b.setAllLED(2); \cf5 // all green\cf0 \
+b.setAllLED(3); \cf5 // all yellow\cf0 \
 \
-\{ 32.do(\{\cf2 |i|\cf0  b.setVal(i + 1, 0.8); 0.3.wait;\})\}.fork\
+\{ 32.do(\{\cf2 |i|\cf0  b.setVal(i + 1, 0.2); 1.wait;\})\}.fork\
 \
 b.setAllLED(1);\
 \
-n.sendMsg('/mfLED/0', 2)\
+n.sendMsg(\cf4 '/mfLED/0'\cf0 , 2)\
 \
-n.sendMsg('/mfLED/1', 1);}
+n.sendMsg(\cf4 '/mfLED/1'\cf0 , 1);\
+\
+\cf5 ///////\cf0 \
+\
+\pard\pardeftab560\ql\qnatural
+\cf0 (\
+\pard\pardeftab560\ql\qnatural
+\cf5 // a source and time reference\cf0 \
+\pard\pardeftab560\li1140\fi-1140\ql\qnatural
+\cf0 p = \cf2 BMSoundFilePlayer\cf0 (name:\cf4 \\bar\cf0 );\
+p.read(\cf3 "sounds/a11wlk01.wav"\cf0 );\
+)\
+\
+(\
+\pard\pardeftab560\ql\qnatural
+\cf5 // make a speaker list\cf0 \
+\cf5 //l = [[-30, 'L'], [30, 'R'], [0, 'C'], [-110, 'Ls'], [110, 'Rs']].collectAs(\{|el, i|\cf0 \
+\cf5 //	BMSpeaker.newFromSpherical(el[1], i, el[0], 0, 2);\cf0 \
+\cf5 //\}, BMInOutArray);\cf0 \
+\
+l = \cf2 Object\cf0 .readArchive(\cf3 "/Library/Application Support/SuperCollider/Extensions/BEASTMulch SVN/Help/Classes/Inputs and Outputs/BigSpeakerArray"\cf0 );\
+\
+m = \cf2 BMAudioMatrix\cf0 (p, l, name:\cf4 'Router'\cf0 ); \cf5 // make a matrix for connections\cf0 \
+m.connect(\cf4 'bar-1'\cf0 , l.keys);\
+\pard\pardeftab560\li1140\fi-1140\ql\qnatural
+\cf0 \
+\pard\pardeftab560\li1140\fi-1140\ql\qnatural
+\cf5 // a controller to automate and an amp control matrix\cf0 \
+\pard\pardeftab560\ql\qnatural
+\cf0 c =  \cf2 BMMotorBEAST\cf0 (n = \cf2 NetAddr\cf0 (\cf3 "192.168.5.79"\cf0 , 57120), \cf4 \\foo\cf0 , s);\
+\
+n = \cf2 BMAmpControlMatrix\cf0 (c, m);\
+c.controlNames.do(\{\cf2 |name, i|\cf0  n.connect(name, l.keys[i])\}); \
+\
+a = \cf2 BMControllerAutomator\cf0 (c.controlNames, p); \cf5 // control virt sliders, player as time ref\cf0 \
+)\
+\
+\pard\pardeftab560\ql\qnatural
+\cf5 // make a sequence and add some snapshots\cf0 \
+c.setAllValues(0 ! 32);\
+a.addSequence(\cf4 'test1'\cf0 , 0, c.controlNames);\
+c.setVal(1, 0.5);\
+a.addSnapShot(\cf4 'test1'\cf0 , 0.5, \cf4 'test1-2'\cf0 );\
+c.setVal(2, 1);\
+a.addSnapShot(\cf4 'test1'\cf0 , 1, \cf4 'test1-3'\cf0 );\
+c.setAllValues((\{|i| sin(1/32 * i)\} ! 32).reverse);\
+a.addSnapShot(\cf4 'test1'\cf0 , 3, \cf4 'test1-4'\cf0 );\
+\
+\
+\pard\pardeftab560\li1140\fi-1140\ql\qnatural
+\cf0 p.play.rate_(1); \cf5 // half speed\cf0 \
+\
+\pard\pardeftab560\ql\qnatural
+\cf2 BMControllerAutomatorGUI\cf0 (a, origin: 100@600); \cf5 // try out the GUI\cf0 \
+}
