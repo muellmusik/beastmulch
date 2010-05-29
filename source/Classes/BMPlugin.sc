@@ -164,6 +164,10 @@ BMPluginSpec {
 				sliders[key].numberView.background = Color.white.alpha_(0.4);
 				SCStaticText(window, Rect(0,0,40,20)).string_(cspec.units);
 			
+			}, {|a, b|
+				var argArray;
+				argArray = plugin.spec.ugenGraphFunc.def.argNames;
+				argArray.indexOf(a) < argArray.indexOf(b)
 			});
 			window.view.decorator.nextLine.shift(10, 10);
 			presetMenu = SCPopUpMenu(window, Rect(0, 0, 100, 20));

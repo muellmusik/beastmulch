@@ -427,7 +427,7 @@ BMMultichannelPluginSpec {
 			);
 			
 			BMMultichannelPluginSpec('2D VBAP Auto Panner', 				// name
-				{|plugin, numInputs, numOutputs, inputs, spread, speed| 	// ugenGraphFunc
+				{|plugin, numInputs, numOutputs, inputs, speed, spread| 	// ugenGraphFunc
 					var azimuth;
 					azimuth = LFSaw.kr(speed.reciprocal).range(-180, 180);
 					VBAP.ar(numOutputs, inputs, plugin.attributes[\buffer], azimuth, 0, spread);
@@ -684,6 +684,10 @@ BMMultichannelPluginSpec {
 				sliders[key].numberView.background = Color.white.alpha_(0.4);
 				SCStaticText(window, Rect(0,0,40,20)).string_(cspec.units);
 			
+			}, {|a, b|
+				var argArray;
+				argArray = plugin.spec.ugenGraphFunc.def.argNames;
+				argArray.indexOf(a) < argArray.indexOf(b)
 			});
 			window.view.decorator.nextLine.shift(10, 10);
 			presetMenu = SCPopUpMenu(window, Rect(0, 0, 100, 20));
