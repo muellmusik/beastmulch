@@ -63,6 +63,25 @@ BMMultichannelPluginSpec {
 					plugin.specsDict[\width] = [2.0, plugin.numOutputs, 'lin', 0.0,  2.0].asSpec;
 				}		
 			);
+
+			BMMultichannelPluginSpec('Equal-power Xfade Random', // name
+				{|plugin, numInputs, numOutputs, inputs, rate, crossfade| // ugenGraphFunc
+					var sel, trigs;
+					sel = Demand.kr(Impulse.kr(rate), 0, Dxrand((0..(numOutputs - 1)), inf));
+					trigs = numOutputs.collect {|i| (absdif(sel, i) < 0.5) };
+					inputs * EnvGen.kr(Env([0, 1, 0], [crossfade, crossfade], 'welch', 1), trigs)
+				}, 								
+				(rate: [0.0, 10.0, 'lin', 0.0, 1.0, " Hz"].asSpec, // specsDict
+				crossfade: [0.01, 5, 'lin', 0.0, 0.1, " secs"].asSpec // placeholder
+				),				
+				nil, 							// use default GUI
+				nil, 							// presets
+				"Crossfade a signal through a random sequence of channels", // description
+				nil, 							// use defaultAttributes
+				[1, 1],						// inRange
+				[2, inf],						// outRange
+				nil						// setup		
+			);
 			
 			BMMultichannelPluginSpec('Splay Stereo', // name
 				{|plugin, numInputs, numOutputs, inputs, spread, center| // ugenGraphFunc
@@ -427,12 +446,13 @@ BMMultichannelPluginSpec {
 			);
 			
 			BMMultichannelPluginSpec('2D VBAP Auto Panner', 				// name
-				{|plugin, numInputs, numOutputs, inputs, speed, spread| 	// ugenGraphFunc
+				{|plugin, numInputs, numOutputs, inputs, speed, direction, spread| 	// ugenGraphFunc
 					var azimuth;
-					azimuth = LFSaw.kr(speed.reciprocal).range(-180, 180);
+					azimuth = LFSaw.kr(speed.reciprocal).range(-180, 180) * (direction * 2 - 1);
 					VBAP.ar(numOutputs, inputs, plugin.attributes[\buffer], azimuth, 0, spread);
 				}, 								
 				(speed: [0.1, 20, 'lin', 0.0,  5, " sec"].asSpec, 
+				direction: [0, 1, 'lin', 1,  0, ""].asSpec,
 				spread: [0, 100, 'lin', 0.0, 2, " %"].asSpec
 				),				// specsDict
 				nil, 							// default GUI
@@ -460,11 +480,11 @@ BMMultichannelPluginSpec {
 			);
 			
 			BMMultichannelPluginSpec('Stereo 3D VBAP Auto Panner', 				// name
-				{|plugin, numInputs, numOutputs, inputs, elevation, spread, speed, 
+				{|plugin, numInputs, numOutputs, inputs, elevation, spread, speed, direction, 
 					azimuthWidth, elevationWidth| 	// ugenGraphFunc
 					var azdev, eldev;
 					var azimuth;
-					azimuth = LFSaw.kr(speed.reciprocal).range(-180, 180);
+					azimuth = LFSaw.kr(speed.reciprocal).range(-180, 180) * (direction * 2 - 1);
 					azdev = azimuthWidth * 0.5;
 					eldev = elevationWidth * 0.5;
 					Mix(VBAP.ar(numOutputs, inputs, plugin.attributes[\buffer], 
@@ -472,6 +492,7 @@ BMMultichannelPluginSpec {
 						elevation + [eldev.neg, eldev], spread));
 				}, 								
 				(speed: [0.1, 20, 'lin', 0.0,  5, " sec"].asSpec,
+				direction: [0, 1, 'lin', 1,  0, ""].asSpec,
 				elevation: [-90, 90, 'lin', 0.0, 0, " deg"].asSpec, 
 				spread: [0, 100, 'lin', 0.0, 2, " %"].asSpec,
 				azimuthWidth: [0, 360, 'lin', 0.0,  60, " deg"].asSpec,
