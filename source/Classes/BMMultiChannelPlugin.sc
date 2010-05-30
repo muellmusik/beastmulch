@@ -65,14 +65,14 @@ BMMultichannelPluginSpec {
 			);
 
 			BMMultichannelPluginSpec('Equal-power Xfade Random', // name
-				{|plugin, numInputs, numOutputs, inputs, rate, crossfade| // ugenGraphFunc
+				{|plugin, numInputs, numOutputs, inputs, rate, overlap| // ugenGraphFunc
 					var sel, trigs;
 					sel = Demand.kr(Impulse.kr(rate), 0, Dxrand((0..(numOutputs - 1)), inf));
 					trigs = numOutputs.collect {|i| (absdif(sel, i) < 0.5) };
-					inputs * EnvGen.kr(Env([0, 1, 0], [crossfade, crossfade], 'welch', 1), trigs)
+					inputs * EnvGen.kr(Env([0, 1, 0], rate.reciprocal * [overlap, overlap], 'welch', 1), trigs)
 				}, 								
 				(rate: [0.0, 10.0, 'lin', 0.0, 1.0, " Hz"].asSpec, // specsDict
-				crossfade: [0.01, 5, 'lin', 0.0, 0.1, " secs"].asSpec // placeholder
+				overlap: [0.01, 5, 'lin', 0.0, 1.0, " outs"].asSpec
 				),				
 				nil, 							// use default GUI
 				nil, 							// presets
