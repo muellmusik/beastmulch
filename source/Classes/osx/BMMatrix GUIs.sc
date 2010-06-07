@@ -111,7 +111,7 @@ BMMatrixMenuGUI : BMAbstractGUI {
 		(matrix.takesControlsForInputs && BMOptions.allowMultipleControlMappings.not).if({
 			mappedTo = BMAbstractController.allControls[inputView.item.asSymbol].mappedTo;
 			if(mappedTo.notNil && (mappedTo !== matrix), {
-				assignView.items = ["Mapped to" + matrix.name];
+				assignView.items = ["Mapped to" + mappedTo.name];
 				assignView.enabled_(false);
 			}, { assignView.enabled_(true).items = matrix.mappings[inputView.item].asArray; });
 		}, { assignView.enabled_(true).items = matrix.mappings[inputView.item].asArray;});
