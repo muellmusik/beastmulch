@@ -59,8 +59,7 @@ BMConfigurations {
 	// sets the current config and notifies dependants
 	currentConfig_{| configName, from |
 		currentConfig = configName;
-		this.loadConfig(configName);
-		this.changed(\currentConfig, configName, from)
+		this.loadConfig(configName, from);
 	}
 	
 	// seems to add and deals with order
@@ -98,12 +97,18 @@ BMConfigurations {
 		//this.changed(\store, \configuration, configName, configName -> dict[configName])
 	}
 	
-	loadConfig {| configName |
-   		   BMAbstractAudioChainElement
-			 .allChainElements
-			 .keysValuesDo{| key, value |
-			 			 BMAbstractAudioChainElement.allChainElements[key].mappings = dict[configName][key]
-			 }
+	loadConfig {| configName, from |
+		{
+		BMAbstractController.stopAllListening;
+		BMAbstractAudioChainElement.allChainElements.keysValuesDo{| key, value |
+			//key.postln;		 
+		 	BMAbstractAudioChainElement.allChainElements[key].mappings = dict[configName][key];
+		 	0.01.wait;
+		 
+		};
+		this.changed(\currentConfig, configName, from);
+		BMAbstractController.startAllListening;
+		}.fork(AppClock);
 	}
 	
 }
