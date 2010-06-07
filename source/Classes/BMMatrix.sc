@@ -35,7 +35,7 @@ BMAbstractMatrix : BMAbstractAudioChainElement {
 		var inBus, outBus, inMatrixIndex, outMatrixIndex;
 		(inBus = ins[input]).notNil.if({
 			server.bind({
-				server.sync(defSentCond);
+				if(defSentCond.test.not, {server.sync(defSentCond)});
 				inMatrixIndex = inNames.indexOf(input);
 				outputs = outputs.flat;
 				outputs.do({ |out|
@@ -137,7 +137,7 @@ BMAudioMixerMatrix : BMAbstractMatrix {
 		var inBus, outBus, inMatrixIndex, outMatrixIndex;
 		(inBus = ins[input]).notNil.if({
 			server.bind({
-				server.sync(defSentCond);
+				if(defSentCond.test.not, {server.sync(defSentCond)});
 				inMatrixIndex = inNames.indexOf(input);
 				if(outputs.rank == 3, {outputs = outputs.unbubble});
 				outputs.do({ |out|
