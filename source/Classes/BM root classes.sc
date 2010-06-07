@@ -193,6 +193,15 @@ BMAbstractController {
 		^0;
 	}
 	
+	// for OSC or other streaming controllers start and stop message streams to server
+	stopListening { }
+	
+	startListening { }
+	
+	*stopAllListening { allControllers.do(_.stopListening) }
+	
+	*startAllListening { allControllers.do(_.startListening) }	
+	
 	// a dictionary of arguments, excluding server in the form
 	// argname->[class, spec, humanName];
 	// class should be Integer, float, String, Symbol, NetAddr or corresponding RawArrays

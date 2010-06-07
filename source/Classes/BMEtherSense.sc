@@ -44,24 +44,27 @@ BMEtherSense : BMAbstractController {
 	}
 	
 	startListening { 
-		// do updates directly here to minimize dispatch
-		responders[0] = OSCresponderNode(addr, '/Ethersense01/Card01', { arg time, resp, msg; 
-			var values;
-			values = msg.copyToEnd(1);
-			server.sendMsg("/c_setn", busIndex, 16, *(values.collect({|val, i| 
-				spec.map(val.linlin(0, 65535, 0.0, 1.0))
-			})));
-			valueArray[0] = values;
-			this.changed(\faderVal);
-		}).add;
-		responders[1] = OSCresponderNode(addr, '/Ethersense01/Card02', { arg time, resp, msg; 			var values;
-			values = msg.copyToEnd(1);
-			server.sendMsg("/c_setn", busBoard2Index, 16, *(values.collect({|val, i| 
-				spec.map(val.linlin(0, 65535, 0.0, 1.0))
-			})));
-			valueArray[1] = values;
-			this.changed(\faderVal);
-		}).add;
+		
+		if(responders[0].isNil, {
+			// do updates directly here to minimize dispatch
+			responders[0] = OSCresponderNode(addr, '/Ethersense01/Card01', { arg time, resp, msg; 
+				var values;
+				values = msg.copyToEnd(1);
+				server.sendMsg("/c_setn", busIndex, 16, *(values.collect({|val, i| 
+					spec.map(val.linlin(0, 65535, 0.0, 1.0))
+				})));
+				valueArray[0] = values;
+				this.changed(\faderVal);
+			}).add;
+			responders[1] = OSCresponderNode(addr, '/Ethersense01/Card02', { arg time, resp, msg; 			var values;
+				values = msg.copyToEnd(1);
+				server.sendMsg("/c_setn", busBoard2Index, 16, *(values.collect({|val, i| 
+					spec.map(val.linlin(0, 65535, 0.0, 1.0))
+				})));
+				valueArray[1] = values;
+				this.changed(\faderVal);
+			}).add;
+		});
 	}
 	
 	stopListening { responders.do(_.remove); responders = Array.newClear(2); }

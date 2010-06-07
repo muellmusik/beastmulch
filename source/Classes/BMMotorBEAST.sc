@@ -109,16 +109,18 @@ BMMotorBEAST : BMAbstractController {
 	}
 	
 	startListening { 
-		// do updates directly here to minimize dispatch
-		responder = OSCresponderNode(addr, '/analogMF', { arg time, resp, msg; 
-			var values;
-			values = msg.copyToEnd(1);
-			server.sendMsg("/c_setn", busIndex, 32, *(values.collect({|val, i| 
-				spec.map(val.linlin(*calibrationRanges[i]))
-			})));
-			valueArray= values;
-			this.changed(\faderVal);
-		}).add;
+		if(responder.isNil, {
+			// do updates directly here to minimize dispatch
+			responder = OSCresponderNode(addr, '/analogMF', { arg time, resp, msg; 
+				var values;
+				values = msg.copyToEnd(1);
+				server.sendMsg("/c_setn", busIndex, 32, *(values.collect({|val, i| 
+					spec.map(val.linlin(*calibrationRanges[i]))
+				})));
+				valueArray= values;
+				this.changed(\faderVal);
+			}).add;
+		})
 	}
 	
 	stopListening { responder.remove; responder = nil }

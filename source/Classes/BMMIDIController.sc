@@ -117,10 +117,16 @@ BMMIDIBendController : BMAbstractMIDIController {
 		inputSpec = [0, 16384].asSpec;
 	}
 	
-	startListening { 
-		responder = BendResponder({|src, chan, value|
-			this.updateValue(chan, value);
-		}, uid);
+	startListening {
+		if(responder.isNil, {
+			responder = BendResponder({|src, chan, value|
+				this.updateValue(chan, value);
+			}, uid);
+		});
+	}
+	
+	stopListening {
+		responder.remove; responder = nil;	
 	}
 	
 	loopback {|ind, val|
@@ -168,9 +174,15 @@ BMMIDICCController : BMAbstractMIDIController {
 	}
 	
 	startListening { 
-		responder = CCResponder({|src, chan, num, value|
-			this.updateValue(ccArray.indexOf(num), value);
-		}, uid, chan, ccArray);
+		if(responder.isNil, {
+			responder = CCResponder({|src, chan, num, value|
+				this.updateValue(ccArray.indexOf(num), value);
+			}, uid, chan, ccArray);
+		});
+	}
+	
+	stopListening {
+		responder.remove; responder = nil;	
 	}
 	
 	loopback {|ind, val|
