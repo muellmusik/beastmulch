@@ -63,20 +63,46 @@ BMMultichannelPluginSpec {
 					plugin.specsDict[\width] = [2.0, plugin.numOutputs, 'lin', 0.0,  2.0].asSpec;
 				}		
 			);
+			
+			BMMultichannelPluginSpec('Equal-power Xfade Auto Seq', // name
+				{|plugin, numInputs, numOutputs, inputs, speed, direction, width| // ugenGraphFunc
+					PanAz.ar(
+						numOutputs, 
+						inputs, 
+						LFSaw.kr(speed.reciprocal * (direction * 2 - 1)), 
+						1, 
+						width, 
+						0.0
+					);
+				}, 								
+				(speed: [0.1, 20, 'lin', 0.0,  5, " sec"].asSpec, 
+				direction: [0, 1, 'lin', 1,  0, ""].asSpec, // specsDict
+				width: nil // placeholder
+				),				
+				nil, 							// use default GUI
+				nil, 							// presets
+				"Crossfade a signal through a looped sequence of channels\nOrder corresponds with order of outputs\nPosition cycles between 0 and 1\nWidth is number of channels simultaneously active, i.e. 2 = stereo", // description
+				nil, 							// use defaultAttributes
+				[1, 1],						// inRange
+				[2, inf],						// outRange
+				{|plugin|						// setup
+					plugin.specsDict[\width] = [2.0, plugin.numOutputs, 'lin', 0.0,  2.0].asSpec;
+				}		
+			);
 
 			BMMultichannelPluginSpec('Equal-power Xfade Random', // name
-				{|plugin, numInputs, numOutputs, inputs, rate, overlap| // ugenGraphFunc
+				{|plugin, numInputs, numOutputs, inputs, speed, overlap| // ugenGraphFunc
 					var sel, trigs;
-					sel = Demand.kr(Impulse.kr(rate), 0, Dxrand((0..(numOutputs - 1)), inf));
+					sel = Demand.kr(Impulse.kr(speed), 0, Dxrand((0..(numOutputs - 1)), inf));
 					trigs = numOutputs.collect {|i| (absdif(sel, i) < 0.5) };
-					inputs * EnvGen.kr(Env([0, 1, 0], rate.reciprocal * [overlap, overlap], 'welch', 1), trigs)
+					inputs * EnvGen.kr(Env([0, 1, 0], speed.reciprocal * [overlap, overlap], 'welch', 1), trigs)
 				}, 								
-				(rate: [0.0, 10.0, 'lin', 0.0, 1.0, " Hz"].asSpec, // specsDict
+				(speed: [0.0, 10.0, 'lin', 0.0, 1.0, " Hz"].asSpec, // specsDict
 				overlap: [0.01, 5, 'lin', 0.0, 1.0, " outs"].asSpec
 				),				
 				nil, 							// use default GUI
 				nil, 							// presets
-				"Crossfade a signal through a random sequence of channels", // description
+				"Crossfade a signal through a random sequence of channels. Speed is channels per second", // description
 				nil, 							// use defaultAttributes
 				[1, 1],						// inRange
 				[2, inf],						// outRange
