@@ -25,7 +25,7 @@ BMTrimPluginsRackGUI : BMAbstractGUI {
 		numTypes = BMPluginSpec.specs.size;
 		numStrips = trimPluginsRack.ins.size;
 		pluglist = SCVLayoutView(pluglist, Rect(4,4,150, numTypes * 24 + 4));
-		BMPluginSpec.specs.keysDo({|piName| 
+		BMPluginSpec.specs.keys.asArray.sort.do({|piName| 
 			SCDragSource(pluglist, Rect(0, 0, 150, 20)).string_("   " ++ piName.asString)
 				.background_(Color.grey.alpha_(0.2))
 				.font_(Font("Helvetica-Bold", 12))
@@ -196,7 +196,7 @@ BMMultichannelPluginsRackGUI : BMAbstractGUI {
 		numTypes = BMMultichannelPluginSpec.specs.size;
 		numStrips = 1;
 		pluglist = SCVLayoutView(pluglist, Rect(4,4,190, numTypes * 24 + 4));
-		BMMultichannelPluginSpec.specs.keysDo({|piName| 
+		BMMultichannelPluginSpec.specs.keys.asArray.sort.do({|piName| 
 			SCDragSource(pluglist, Rect(0, 0, 150, 20)).string_("   " ++ piName.asString)
 				.background_(Color.grey.alpha_(0.2))
 				.font_(Font("Helvetica-Bold", 12))
