@@ -412,12 +412,13 @@ BMMultichannelPluginSpec {
 			);
 
 			BMMultichannelPluginSpec('3D VBAP Auto Panner', 				// name
-				{|plugin, numInputs, numOutputs, inputs, elevation, spread, speed| 	// ugenGraphFunc
+				{|plugin, numInputs, numOutputs, inputs, elevation, speed, direction, spread| 	// ugenGraphFunc
 					var azimuth;
-					azimuth = LFSaw.kr(speed.reciprocal).range(-180, 180);
+					azimuth = LFSaw.kr(speed.reciprocal * (direction * 2 - 1)).range(-180, 180);
 					VBAP.ar(numOutputs, inputs, plugin.attributes[\buffer], azimuth, elevation, spread);
 				}, 								
 				(speed: [0.1, 20, 'lin', 0.0,  5, " sec"].asSpec, 
+				direction: [0, 1, 'lin', 1,  0, ""].asSpec, 
 				elevation: [-90, 90, 'lin', 0.0, 0, " deg"].asSpec, 
 				spread: [0, 100, 'lin', 0.0, 2, " %"].asSpec
 				),				// specsDict
@@ -448,7 +449,7 @@ BMMultichannelPluginSpec {
 			BMMultichannelPluginSpec('2D VBAP Auto Panner', 				// name
 				{|plugin, numInputs, numOutputs, inputs, speed, direction, spread| 	// ugenGraphFunc
 					var azimuth;
-					azimuth = LFSaw.kr(speed.reciprocal).range(-180, 180) * (direction * 2 - 1);
+					azimuth = LFSaw.kr(speed.reciprocal * (direction * 2 - 1)).range(-180, 180);
 					VBAP.ar(numOutputs, inputs, plugin.attributes[\buffer], azimuth, 0, spread);
 				}, 								
 				(speed: [0.1, 20, 'lin', 0.0,  5, " sec"].asSpec, 
@@ -480,11 +481,11 @@ BMMultichannelPluginSpec {
 			);
 			
 			BMMultichannelPluginSpec('Stereo 3D VBAP Auto Panner', 				// name
-				{|plugin, numInputs, numOutputs, inputs, elevation, spread, speed, direction, 
+				{|plugin, numInputs, numOutputs, inputs, elevation, speed, direction, spread,  
 					azimuthWidth, elevationWidth| 	// ugenGraphFunc
 					var azdev, eldev;
 					var azimuth;
-					azimuth = LFSaw.kr(speed.reciprocal).range(-180, 180) * (direction * 2 - 1);
+					azimuth = LFSaw.kr(speed.reciprocal * (direction * 2 - 1)).range(-180, 180);
 					azdev = azimuthWidth * 0.5;
 					eldev = elevationWidth * 0.5;
 					Mix(VBAP.ar(numOutputs, inputs, plugin.attributes[\buffer], 
