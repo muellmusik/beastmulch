@@ -57,12 +57,16 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 		var source, first, second, third, fourth, fdelay;
 		var x, y, z, xs, ys, zs, sum, sum2, avg, sd;
 		var ix, iy, iz, i, j, k, iord;
+		var firstRefs, secondRefs, thirdRefs;
+		var spher;
 		
 		source = FloatArray.newClear(4);
-		first = FloatArray.newClear(4);
-		second = FloatArray.newClear(4);
-		third = FloatArray.newClear(4);
+		
 		fdelay = FloatArray.newClear(6);
+		
+		firstRefs = Array.new(6);
+		secondRefs = Array.new(18);
+		thirdRefs = Array.new(18);
 		
 		source[aZ] = az;
 		source[eL] = el;
@@ -76,7 +80,7 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 		zr = zr * spm;
 		
 		// calc direct then shift origin
-		#xs, ys, zs = stoc(az, el, r * spm);
+		#xs, ys, zs = this.stoc(az, el, r * spm);
 		source[delay] = sqrt(xs.squared + ys.squared + zs.squared); // direct sound path
 		
 		// shift origin to room center
@@ -85,12 +89,61 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 		zs = zs + zl;
 		
 		// calc coords of image model virtual sources
-		5.do({|ir|
-			x = cvs(map1[dimx][ir], xs, xr) - xl;
-			y = cvs(map1[dimx][ir], ys, yr) - yl;
-			z = cvs(map1[dimx][ir], zs, zr) - zl;
-			
+		
+		// first order
+		6.do({|ir|
+			first = FloatArray.newClear(4);
+			x = this.cvs(map1[dimx][ir], xs, xr) - xl;
+			y = this.cvs(map1[dimy][ir], ys, yr) - yl;
+			z = this.cvs(map1[dimz][ir], zs, zr) - zl;
+			spher = this.ctos(x, y, z);
+			first[aZ] = spher[0];
+			first[eL] = spher[1];
+			r = spher[2];
+			first[delay] = r - source[delay];
+			fdelay[ir] = r;
+			first[scale] = source[delay]/(source[delay] + first[delay]);
+			firstRefs = firstRefs ++ first; // az, el, delay, scale
 		});
+		
+		// second and higher
+		i = 0;
+		18.do({|ir|
+			second = FloatArray.newClear(4);
+			third = FloatArray.newClear(4);
+		
+			// second
+			x = this.cvs(map2[dimx][ir], xs, xr) - xl;
+			y = this.cvs(map2[dimy][ir], ys, yr) - yl;
+			z = this.cvs(map2[dimz][ir], zs, zr) - zl;
+			spher = this.ctos(x, y, z);
+			second[aZ] = spher[0];
+			second[eL] = spher[1];
+			r = spher[2];
+			second[delay] = r - source[delay];
+			second[scale] = source[delay]/(source[delay] + second[delay]);
+			
+			// third +
+			x = this.cvs(map3[dimx][ir], xs, xr) - xl;
+			y = this.cvs(map3[dimy][ir], ys, yr) - yl;
+			z = this.cvs(map3[dimz][ir], zs, zr) - zl;
+			spher = this.ctos(x, y, z);
+			third[aZ] = spher[0];
+			third[eL] = spher[1];
+			r = spher[2];
+			third[delay] = r - source[delay] - second[delay];
+			third[scale] = (source[delay] + second[delay])/(source[delay] + r);
+			iord = abs(map3[dimx][ir]) + abs(map3[dimy][ir]) + abs(map3[dimz][ir]) - 3;
+			if(iord == 0, {
+				second[delay] = second[delay] - fdelay[i];
+				second[scale] = fdelay[i]/(fdelay[i] + second[delay]);
+				i = i + 1;
+			});
+			
+			secondRefs = secondRefs ++ second; // az, el, delay, scale
+			thirdRefs = thirdRefs ++ third; // az, el, delay, scale
+		});
+		^[firstRefs, secondRefs, thirdRefs];
 	}
 	//private
 	
