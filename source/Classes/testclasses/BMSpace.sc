@@ -27,10 +27,10 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 	classvar aZ = 0, eL = 1, delay = 2, scale = 3, refdist = 1;
 	classvar map1, map2, map3, ord = #["3rd", "4th"];
 	
-	var xsize, ysize, zsize, listenerXOffset;
+	var xsize, ysize, zsize, listenerXOffset, listenerYOffset, listenerZOffset;
 	
-	*new {|xsize, ysize, zsize, listenerXOffset| 
-		^super.newCopyArgs
+	*new {|xsize, ysize, zsize, listenerXOffset, listenerYOffset, listenerZOffset| 
+		^super.newCopyArgs(xsize, ysize, zsize, listenerXOffset, listenerYOffset, listenerZOffset);
 	} 
 	
 	*initClass {
@@ -47,15 +47,13 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 			];
 	}
 	
-//	reflections { |x,y,z, order|
-//		
-//		
-//	}
+	//maximum source to listener distance
+	maxDist { ^sqrt(xsize.squared + ysize.squared + zsize.squared) }
 
 	// listener coords, roomDim, sourceAz, sourceEl, sourceRad
-	calcReflections { |xl, yl, zl, xr, yr, zr, az, el, r| 
+	calcReflections { |az, el, r| 
 		var source, first, second, third, fourth, fdelay;
-		var x, y, z, xs, ys, zs, sum, sum2, avg, sd;
+		var x, y, z, sourceX, sourceY, sourceZ, sum, sum2, avg, sd;
 		var ix, iy, iz, i, j, k, iord;
 		var firstRefs, secondRefs, thirdRefs;
 		var spher;
@@ -72,30 +70,30 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 		source[eL] = el;
 		
 		// convert meters to seconds
-		xl = xl * spm;
-		yl = yl * spm;
-		zl = zl * spm;
-		xr = xr * spm;
-		yr = yr * spm;
-		zr = zr * spm;
+		listenerXOffset = listenerXOffset * spm;
+		listenerYOffset = listenerYOffset * spm;
+		listenerZOffset = listenerZOffset * spm;
+		xsize = xsize * spm;
+		ysize = ysize * spm;
+		zsize = zsize * spm;
 		
 		// calc direct then shift origin
-		#xs, ys, zs = this.stoc(az, el, r * spm);
-		source[delay] = sqrt(xs.squared + ys.squared + zs.squared); // direct sound path
+		#sourceX, sourceY, sourceZ = this.stoc(az, el, r * spm);
+		source[delay] = sqrt(sourceX.squared + sourceY.squared + sourceZ.squared); // direct sound path
 		
 		// shift origin to room center
-		xs = xs + xl;
-		ys = ys + yl;
-		zs = zs + zl;
+		sourceX = sourceX + listenerXOffset;
+		sourceY = sourceY + listenerYOffset;
+		sourceZ = sourceZ + listenerZOffset;
 		
 		// calc coords of image model virtual sources
 		
 		// first order
 		6.do({|ir|
 			first = FloatArray.newClear(4);
-			x = this.cvs(map1[dimx][ir], xs, xr) - xl;
-			y = this.cvs(map1[dimy][ir], ys, yr) - yl;
-			z = this.cvs(map1[dimz][ir], zs, zr) - zl;
+			x = this.cvs(map1[dimx][ir], sourceX, xsize) - listenerXOffset;
+			y = this.cvs(map1[dimy][ir], sourceY, ysize) - listenerYOffset;
+			z = this.cvs(map1[dimz][ir], sourceZ, zsize) - listenerZOffset;
 			spher = this.ctos(x, y, z);
 			first[aZ] = spher[0];
 			first[eL] = spher[1];
@@ -113,9 +111,9 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 			third = FloatArray.newClear(4);
 		
 			// second
-			x = this.cvs(map2[dimx][ir], xs, xr) - xl;
-			y = this.cvs(map2[dimy][ir], ys, yr) - yl;
-			z = this.cvs(map2[dimz][ir], zs, zr) - zl;
+			x = this.cvs(map2[dimx][ir], sourceX, xsize) - listenerXOffset;
+			y = this.cvs(map2[dimy][ir], sourceY, ysize) - listenerYOffset;
+			z = this.cvs(map2[dimz][ir], sourceZ, zsize) - listenerZOffset;
 			spher = this.ctos(x, y, z);
 			second[aZ] = spher[0];
 			second[eL] = spher[1];
@@ -124,9 +122,9 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 			second[scale] = source[delay]/(source[delay] + second[delay]);
 			
 			// third +
-			x = this.cvs(map3[dimx][ir], xs, xr) - xl;
-			y = this.cvs(map3[dimy][ir], ys, yr) - yl;
-			z = this.cvs(map3[dimz][ir], zs, zr) - zl;
+			x = this.cvs(map3[dimx][ir], sourceX, xsize) - listenerXOffset;
+			y = this.cvs(map3[dimy][ir], sourceY, ysize) - listenerYOffset;
+			z = this.cvs(map3[dimz][ir], sourceZ, zsize) - listenerZOffset;
 			spher = this.ctos(x, y, z);
 			third[aZ] = spher[0];
 			third[eL] = spher[1];
@@ -198,3 +196,119 @@ BMDiffuseReverb { }
 
 // this manages multiple sources as a whole
 BMSourceModeler { }
+
+// a la Kendall and Mertens
+BMSpatialReverberator {
+	
+	classvar spm = 0.0034;
+	
+	// source coords relative to listener pos?
+	*ar {|input, sourceAzi, sourceEle, sourceDist, room, vbapBuf, numChans, spread = 1, refDist = 1|
+		var source, delayedSource, filtered, sourceAtten, refDistRecip, coef = 0.5;
+		var firstReflecs, secondReflecs, thirdReflecs;
+		var firstRefDel, secondRefDel;
+		
+		refDistRecip = 1 / refDist;
+		
+		#firstReflecs, secondReflecs, thirdReflecs = room.calcReflections(sourceAzi, sourceEle, sourceDist); 
+		
+		sourceAtten = (sourceDist * refDistRecip).reciprocal;
+		delayedSource = BufRdDelay(input * sourceAtten, room.maxDist * spm, sourceDist * spm);
+		
+		// could add distance filtering here
+		source = VBAP.ar(numChans, delayedSource, vbapBuf, sourceAzi, sourceEle, spread);
+		
+		filtered = OnePole.ar(input, coef);
+		// az, el, delay, scale
+		firstRefDel = MultiBufRdDelay.ar(filtered, room.maxDist * spm * 2, firstReflecs.flop[2]);
+		//firstReflecs = 
+		 
+	}
+	
+}
+
+// pseudo Ugen for audio rate interp
+BufRdDelay {
+	
+	*ar {|in, maxDelayTime, delayTime|
+		var buf, phasor, maxFrames, sr, out;
+		sr = SampleRate.ir;
+		maxFrames = maxDelayTime * sr;
+		buf = LocalBuf(maxFrames, 1);
+		phasor = Phasor.ar(0, 1, 0, maxFrames);
+		out = BufRd.ar(1, buf, phasor + (delayTime * sr) - (ControlDur.ir * sr) % maxFrames, 1, 2);
+		BufWr.ar(in, buf, phasor, 1);
+		^out
+	}
+}
+
+MultiBufRdDelay {
+	
+	*ar {|in, maxDelayTime, delayTimes|
+		var buf, phasor, maxFrames, sr, cd, out;
+		sr = SampleRate.ir;
+		maxFrames = maxDelayTime * sr;
+		buf = LocalBuf(maxFrames, 1);
+		phasor = Phasor.ar(0, 1, 0, maxFrames);
+		cd = ControlDur.ir;
+		out = delayTimes.collect({|delayTime|
+			BufRd.ar(1, buf, phasor + (delayTime * sr) - (cd * sr) % maxFrames, 1, 2);
+		});
+		BufWr.ar(in, buf, phasor, 1);
+		^out
+	}
+}
+	
+
+// Kendall-Mertens comb units
+R1 {
+	
+	*ar{|in, maxDelayTime, delayTime, coef, fbScale = 0.9|
+		var buf, phasor, maxFrames, sr, ff, out;
+		sr = SampleRate.ir;
+		maxFrames = maxDelayTime * sr;
+		buf = LocalBuf(maxFrames, 1);
+		phasor = Phasor.ar(0, 1, 0, maxFrames);
+		ff = BufRd.ar(1, buf, phasor + (delayTime * sr) - (ControlDur.ir * sr) % maxFrames, 1, 2);
+		ff = OnePole.ar(ff);
+		out = in + ff;
+		BufWr.ar(in + (ff * fbScale), buf, phasor, 1);
+		^out
+	}
+}
+
+R2 {
+	
+	*ar{|in, maxDelayTime1, delayTime1, maxDelayTime2, delayTime2, coef, fbScale = 0.9|
+		var buf1, phasor1, maxFrames1, sr, ff1, out;
+		var buf2, phasor2, maxFrames2, ff2;
+		sr = SampleRate.ir;
+		
+		// delay1 params
+		maxFrames1 = maxDelayTime1 * sr;
+		buf1 = LocalBuf(maxFrames1, 1);
+		phasor1 = Phasor.ar(0, 1, 0, maxFrames1);
+		
+		// delay2 params
+		maxFrames2 = maxDelayTime2 * sr;
+		buf2 = LocalBuf(maxFrames2, 1);
+		phasor2 = Phasor.ar(0, 1, 0, maxFrames2);
+		
+		// get and filter output of delay1
+		ff1 = BufRd.ar(1, buf1, phasor1 + (delayTime1 * sr) - (ControlDur.ir * sr) % maxFrames1, 1, 2);
+		ff1 = OnePole.ar(ff1);
+		
+		// write ff1 to delay2
+		BufWr.ar(ff1, buf2, phasor2, 1);
+		
+		// get and filter output of delay2
+		ff2 = BufRd.ar(1, buf2, phasor2 + (delayTime2 * sr) - (ControlDur.ir * sr) % maxFrames2, 1, 2);
+		ff2 = OnePole.ar(ff2);
+		
+		out = in + ff1 + ff2;
+		// feedback into delay1
+		BufWr.ar(in + (ff2 * fbScale), buf1, phasor1, 1);
+		
+		^out
+	}
+}
