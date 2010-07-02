@@ -25,26 +25,48 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 	
 	classvar spm = 0.0034, dpr = 57.29578, tiny = 1.0e-30, dimx = 0, dimy = 1, dimz = 2;
 	classvar aZ = 0, eL = 1, delay = 2, scale = 3, refdist = 1;
-	classvar map1, map2, map3, ord = #["3rd", "4th"];
+	classvar map1, map2, map3;
 	
 	var xsize, ysize, zsize, listenerXOffset, listenerYOffset, listenerZOffset;
 	
-	*new {|xsize, ysize, zsize, listenerXOffset, listenerYOffset, listenerZOffset| 
+	*new {|xsize, ysize, zsize, listenerXOffset = 0, listenerYOffset = 0, listenerZOffset = 0| 
 		^super.newCopyArgs(xsize, ysize, zsize, listenerXOffset, listenerYOffset, listenerZOffset);
 	} 
 	
 	*initClass {
-		map1 = [[0,0,1,0,-1,0], [0,1,0,-1,0,0], [1,0,0,0,0,-1]];
+		map1 = [	[0, 0, 1,  0, -1,  0], 
+				[0, 1, 0, -1,  0,  0], 
+				[1, 0, 0,  0,  0, -1]
+			];
 		map2 = [
-				[0,0,1,0,-1,0,1,2,1,0,-1,-2,-1,0,1,0,-1,0],
-				[0,1,0,-1,0,2,1,0,-1,-2,-1,0,1,1,0,-1,0,0],
-				[2,1,1,1,1,0,0,0,0,0,0,0,0,-1,-1,-1,-1,-2]
+				[0, 0, 1,  0, -1, 0, 1, 2,  1,  0, -1, -2, -1,  0,  1,  0, -1,  0],
+				[0, 1, 0, -1,  0, 2, 1, 0, -1, -2, -1,  0,  1,  1,  0, -1,  0,  0],
+				[2, 1, 1,  1,  1, 0, 0, 0,  0,  0,  0,  0,  0, -1, -1, -1, -1, -2]
 			];
 		map3 = [
-				[0,0,2,0,-2,0,2,3,2,0,-2,-3,-2,0,2,0,-2,0],
-				[0,2,0,-2,0,3,2,0,-2,-3,-2,0,2,2,0,-2,0,0],
-				[3,2,2,2,2,0,0,0,0,0,0,0,0,-2,-2,-2,-2,-3]
+				[0, 0, 2,  0, -2, 0, 2, 3,  2,  0, -2, -3, -2,  0,  2,  0, -2,  0],
+				[0, 2, 0, -2,  0, 3, 2, 0, -2, -3, -2,  0,  2,  2,  0, -2,  0,  0],
+				[3, 2, 2,  2,  2, 0, 0, 0,  0,  0,  0,  0,  0, -2, -2, -2, -2, -3]
 			];
+	}
+	
+	r1DelIndices { 
+		var flop; 
+		flop = map3.flop;
+		^[[2, 2, 0], [-2, 2, 0], [-2, -2, 0], [2, -2, 0], [0, 2, 2], [-2, 0, 2], [0, -2, 2], [2, 0, 2], [0, 2, -2], [-2, 0, -2], [0, -2, -2], [2, 0, -2]]
+			.collect({|room|
+			 	flop.indexOfEqual(room);
+			});
+	}
+	
+	// awkward but safe
+	r2DelOneIndices { 
+		var flop; 
+		flop = map2.flop;
+		^map1.flop.collect({|room| room.collect({|coord| if(abs(coord) == 1, {coord + coord}, {coord}); }) })
+			.collect({|room|
+			 	flop.indexOfEqual(room);
+			});
 	}
 	
 	//maximum source to listener distance
@@ -101,7 +123,7 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 			first[delay] = r - source[delay];
 			fdelay[ir] = r;
 			first[scale] = source[delay]/(source[delay] + first[delay]);
-			firstRefs = firstRefs ++ first; // az, el, delay, scale
+			firstRefs = firstRefs.add(first); // az, el, delay, scale
 		});
 		
 		// second and higher
@@ -138,8 +160,8 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 				i = i + 1;
 			});
 			
-			secondRefs = secondRefs ++ second; // az, el, delay, scale
-			thirdRefs = thirdRefs ++ third; // az, el, delay, scale
+			secondRefs = secondRefs.add(second); // az, el, delay, scale
+			thirdRefs = thirdRefs.add(third); // az, el, delay, scale
 		});
 		^[firstRefs, secondRefs, thirdRefs];
 	}
@@ -205,15 +227,17 @@ BMSpatialReverberator {
 	// source coords relative to listener pos?
 	*ar {|input, sourceAzi, sourceEle, sourceDist, room, vbapBuf, numChans, spread = 1, refDist = 1|
 		var source, delayedSource, filtered, sourceAtten, refDistRecip, coef = 0.5;
-		var firstReflecs, secondReflecs, thirdReflecs;
+		var firstReflecs, secondReflecs, thirdPlusReflecs;
 		var firstRefDel, secondRefDel;
-		var r1delays, r2delays;
+		var r1delays, r2delays, r1DelIndices, r2DelOneIndices;
 		var roomMaxDelay;
 		
 		refDistRecip = 1 / refDist;
+		r1DelIndices = room.r1DelIndeces;
+		r2DelOneIndices = room.r2DelOneIndices;
 		
 		// [az, el, delay, scale]
-		#firstReflecs, secondReflecs, thirdReflecs = room.calcReflections(sourceAzi, sourceEle, sourceDist).collect(_.flop); 
+		#firstReflecs, secondReflecs, thirdPlusReflecs = room.calcReflections(sourceAzi, sourceEle, sourceDist).collect(_.flop); 
 		
 		roomMaxDelay = room.maxDist * spm;
 		
@@ -241,10 +265,10 @@ BMSpatialReverberator {
 		secondRefDel = MultiBufRdDelay.ar(secondRefDel, roomMaxDelay * 2, secondReflecs[2]);
 		
 		// could refine max delay time here
-		r2delays = R2.ar(firstRefDel, roomMaxDelay * 2, secondReflecs[2] - firstReflecs[2], roomMaxDelay * 2, thirdReflecs[2] - secondReflecs[2], coef);
+		r2delays = R2.ar(firstRefDel, roomMaxDelay * 2, secondReflecs[2][r2DelOneIndices] - firstReflecs[2], roomMaxDelay * 2, thirdPlusReflecs[2] - secondReflecs[2], coef);
 		
 		// could refine max delay time here
-		r1delays = R1.ar(secondRefDel, roomMaxDelay * 2, secondReflecs[2] - firstReflecs[2], coef);
+		r1delays = R1.ar(secondRefDel, roomMaxDelay * 2, thirdPlusReflecs[2][r1DelIndices] - secondReflecs[2][r1DelIndices], coef);
 	}
 	
 }
