@@ -207,22 +207,44 @@ BMSpatialReverberator {
 		var source, delayedSource, filtered, sourceAtten, refDistRecip, coef = 0.5;
 		var firstReflecs, secondReflecs, thirdReflecs;
 		var firstRefDel, secondRefDel;
+		var r1delays, r2delays;
+		var roomMaxDelay;
 		
 		refDistRecip = 1 / refDist;
 		
-		#firstReflecs, secondReflecs, thirdReflecs = room.calcReflections(sourceAzi, sourceEle, sourceDist); 
+		// [az, el, delay, scale]
+		#firstReflecs, secondReflecs, thirdReflecs = room.calcReflections(sourceAzi, sourceEle, sourceDist).collect(_.flop); 
+		
+		roomMaxDelay = room.maxDist * spm;
 		
 		sourceAtten = (sourceDist * refDistRecip).reciprocal;
-		delayedSource = BufRdDelay(input * sourceAtten, room.maxDist * spm, sourceDist * spm);
+		delayedSource = BufRdDelay(input * sourceAtten, roomMaxDelay, sourceDist * spm);
 		
 		// could add distance filtering here
 		source = VBAP.ar(numChans, delayedSource, vbapBuf, sourceAzi, sourceEle, spread);
 		
+		
 		filtered = OnePole.ar(input, coef);
-		// az, el, delay, scale
-		firstRefDel = MultiBufRdDelay.ar(filtered, room.maxDist * spm * 2, firstReflecs.flop[2]);
-		//firstReflecs = 
-		 
+		
+		// pan first order
+		firstRefDel = VBAP.ar(numChans, filtered, vbapBuf, firstReflecs[0], firstReflecs[1], spread) * firstReflecs[3];
+		
+		// need to delay delay times...
+		firstRefDel = MultiBufRdDelay.ar(firstRefDel, roomMaxDelay * 2, firstReflecs[2]);
+		
+		filtered = OnePole.ar(filtered, coef);
+		
+		// pan second order
+		secondRefDel = VBAP.ar(numChans, filtered, vbapBuf, secondReflecs[0], secondReflecs[1], spread) * secondReflecs[3];
+		
+		// need to delay delay times...
+		secondRefDel = MultiBufRdDelay.ar(secondRefDel, roomMaxDelay * 2, secondReflecs[2]);
+		
+		// could refine max delay time here
+		r2delays = R2.ar(firstRefDel, roomMaxDelay * 2, secondReflecs[2] - firstReflecs[2], roomMaxDelay * 2, thirdReflecs[2] - secondReflecs[2], coef);
+		
+		// could refine max delay time here
+		r1delays = R1.ar(secondRefDel, roomMaxDelay * 2, secondReflecs[2] - firstReflecs[2], coef);
 	}
 	
 }
@@ -263,14 +285,14 @@ MultiBufRdDelay {
 // Kendall-Mertens comb units
 R1 {
 	
-	*ar{|in, maxDelayTime, delayTime, coef, fbScale = 0.9|
+	*ar{|in, maxDelayTime, delayTime, coef = 0.5, fbScale = 0.9|
 		var buf, phasor, maxFrames, sr, ff, out;
 		sr = SampleRate.ir;
 		maxFrames = maxDelayTime * sr;
 		buf = LocalBuf(maxFrames, 1);
 		phasor = Phasor.ar(0, 1, 0, maxFrames);
 		ff = BufRd.ar(1, buf, phasor + (delayTime * sr) - (ControlDur.ir * sr) % maxFrames, 1, 2);
-		ff = OnePole.ar(ff);
+		ff = OnePole.ar(ff, coef);
 		out = in + ff;
 		BufWr.ar(in + (ff * fbScale), buf, phasor, 1);
 		^out
@@ -279,7 +301,7 @@ R1 {
 
 R2 {
 	
-	*ar{|in, maxDelayTime1, delayTime1, maxDelayTime2, delayTime2, coef, fbScale = 0.9|
+	*ar{|in, maxDelayTime1, delayTime1, maxDelayTime2, delayTime2, coef = 0.5, fbScale = 0.9|
 		var buf1, phasor1, maxFrames1, sr, ff1, out;
 		var buf2, phasor2, maxFrames2, ff2;
 		sr = SampleRate.ir;
@@ -296,14 +318,14 @@ R2 {
 		
 		// get and filter output of delay1
 		ff1 = BufRd.ar(1, buf1, phasor1 + (delayTime1 * sr) - (ControlDur.ir * sr) % maxFrames1, 1, 2);
-		ff1 = OnePole.ar(ff1);
+		ff1 = OnePole.ar(ff1, coef);
 		
 		// write ff1 to delay2
 		BufWr.ar(ff1, buf2, phasor2, 1);
 		
 		// get and filter output of delay2
 		ff2 = BufRd.ar(1, buf2, phasor2 + (delayTime2 * sr) - (ControlDur.ir * sr) % maxFrames2, 1, 2);
-		ff2 = OnePole.ar(ff2);
+		ff2 = OnePole.ar(ff2, coef);
 		
 		out = in + ff1 + ff2;
 		// feedback into delay1
