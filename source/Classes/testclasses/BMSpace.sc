@@ -70,8 +70,9 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 	}
 	
 	crossFeedIndices {
-		var flop; 
-		flop = map2.flop;
+		var flop, r2DelOneIndices;
+		r2DelOneIndices = this.r2DelOneIndices; 
+		flop = map2.flop.reject({|item, i| r2DelOneIndices.indexOf(i).notNil });
 		^map1.flop.collect({|room|
 			var rooms, one, a, b;
 			one = room.abs.indexOf(1);
@@ -92,9 +93,9 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 		var firstRefs, secondRefs, thirdRefs;
 		var spher;
 		
-		source = FloatArray.newClear(4);
+		source = Array.newClear(4);
 		
-		fdelay = FloatArray.newClear(6);
+		fdelay = Array.newClear(6);
 		
 		firstRefs = Array.new(6);
 		secondRefs = Array.new(18);
@@ -124,7 +125,7 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 		
 		// first order
 		6.do({|ir|
-			first = FloatArray.newClear(4);
+			first = Array.newClear(4);
 			x = this.cvs(map1[dimx][ir], sourceX, xsize) - listenerXOffset;
 			y = this.cvs(map1[dimy][ir], sourceY, ysize) - listenerYOffset;
 			z = this.cvs(map1[dimz][ir], sourceZ, zsize) - listenerZOffset;
@@ -141,8 +142,8 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 		// second and higher
 		i = 0;
 		18.do({|ir|
-			second = FloatArray.newClear(4);
-			third = FloatArray.newClear(4);
+			second = Array.newClear(4);
+			third = Array.newClear(4);
 		
 			// second
 			x = this.cvs(map2[dimx][ir], sourceX, xsize) - listenerXOffset;
@@ -181,13 +182,19 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 	
 	// cartesian to spherical
 	ctos { |x, y, z|
-		var az, el, r, rad;
+		var az, el, r, rad, offset;
+		
+		if(x.rate == 'scalar', { if(x == 0, {x = tiny})}, { x = x +(BinaryOpUGen('==', x, 0.0) * tiny)}); // no divide by 0
 		r = sqrt(x.squared + y.squared + z.squared);
 		el = asin(z/r) * dpr;
-		if(x == 0, {x = tiny});
+		//if(x == 0, {x = tiny});
+		
 		rad = atan(y/x);
-		if(x > 0, {az = 90 - (rad * dpr)});
-		if(x < 0, {az = 270 - (rad * dpr)});
+		//if(x > 0, {az = 90 - (rad * dpr)});
+//		if(x < 0, {az = 270 - (rad * dpr)});
+		
+		offset = if(x > 0, 90, 270);
+		az = offset - (rad * dpr);
 		^[az, el, r];
 	}
 	
@@ -250,12 +257,20 @@ BMSpatialReverberator {
 		crossFeedIndices = room.crossFeedIndices;
 		
 		// [az, el, delay, scale]
-		#firstReflecs, secondReflecs, thirdPlusReflecs = room.calcReflections(sourceAzi, sourceEle, sourceDist).collect(_.flop); 
+		#firstReflecs, secondReflecs, thirdPlusReflecs = room.calcReflections(sourceAzi, sourceEle, sourceDist); 
+		
+		// sort out direct second order
+		secondReflecsDir = secondReflecs.reject({|item, i| r2DelOneIndices.indexOf(i).notNil });
+		
+		firstReflecs = firstReflecs.flop;
+		secondReflecs = secondReflecs.flop;
+		thirdPlusReflecs = thirdPlusReflecs.flop;
+		secondReflecsDir = secondReflecsDir.flop;
 		
 		roomMaxDelay = room.maxDist * spm;
 		
 		sourceAtten = (sourceDist * refDistRecip).reciprocal;
-		delayedSource = BufRdDelay(input * sourceAtten, roomMaxDelay, sourceDist * spm);
+		delayedSource = BufRdDelay.ar(input * sourceAtten, roomMaxDelay, sourceDist * spm);
 		
 		// filter source to model absorption
 		filtered1 = OnePole.ar(input, coef);
@@ -267,30 +282,24 @@ BMSpatialReverberator {
 		
 		////// second order and R1 //////
 		
-		// sort out direct second order
-		secondReflecsDir = secondReflecs.copy;
-		
-		r2DelOneIndices.do({|ind| secondReflecsDir.removeAt(ind) });
-		
-		
 		// need to delay delay times...
 		secondRefDel = MultiBufRdDelay.ar(filtered2, roomMaxDelay * 2, secondReflecsDir[2]);
-		
+		\1.postln;
 		// could refine max delay time here
 		r1delays = R1.ar(secondRefDel, roomMaxDelay * 2, thirdPlusReflecs[2][r1DelIndices] - secondReflecs[2][r1DelIndices], coef);
 		
 		// pan second order this should be only the direct ones.
 		secondRefDel = VBAP.ar(numChans, secondRefDel + r1delays, vbapBuf, secondReflecsDir[0], secondReflecsDir[1], spread) * secondReflecsDir[3];
-		
+
 		
 		////// first order and R2 //////
 		
 		// need to delay delay times...
 		firstRefDel = MultiBufRdDelay.ar(filtered1, roomMaxDelay * 2, firstReflecs[2]);
-		
+		\2.postln;
 		// sum in the adjacent R1 streams
-		r2inputs = firstRefDel.collect({|delayed, i| delayed + Mix(r1delays[crossFeedIndices[i]]) });
-		
+		r2inputs = firstRefDel.collect({|delayed, i| delayed + Mix(r1delays[crossFeedIndices[i].postln]) });
+		\3.postln;
 		// could refine max delay time here
 		r2delays = R2.ar(r2inputs, roomMaxDelay * 2, secondReflecs[2][r2DelOneIndices] - firstReflecs[2], roomMaxDelay * 2, thirdPlusReflecs[2][r2DelOneIndices] - secondReflecs[2][r2DelOneIndices], coef);
 		
@@ -303,7 +312,7 @@ BMSpatialReverberator {
 }
 
 // pseudo Ugen for audio rate interp
-BufRdDelay {
+BufRdDelay  {
 	
 	*ar {|in, maxDelayTime, delayTime|
 		var buf, phasor, maxFrames, sr, out;
