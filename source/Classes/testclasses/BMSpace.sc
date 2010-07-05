@@ -245,7 +245,7 @@ BMSpatialReverberator {
 		var roomMaxDelay;
 		
 		refDistRecip = 1 / refDist;
-		r1DelIndices = room.r1DelIndeces;
+		r1DelIndices = room.r1DelIndices;
 		r2DelOneIndices = room.r2DelOneIndices;
 		crossFeedIndices = room.crossFeedIndices;
 		
