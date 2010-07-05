@@ -241,12 +241,13 @@ BMSpatialReverberator {
 		var source, delayedSource, filtered1, filtered2, sourceAtten, refDistRecip, coef = 0.5;
 		var firstReflecs, secondReflecs, secondReflecsDir , thirdPlusReflecs;
 		var firstRefDel, secondRefDel;
-		var r1delays, r2delays, r1DelIndices, r2DelOneIndices;
+		var r1delays, r2delays, r1DelIndices, r2DelOneIndices, crossFeedIndices, r2inputs;
 		var roomMaxDelay;
 		
 		refDistRecip = 1 / refDist;
 		r1DelIndices = room.r1DelIndeces;
 		r2DelOneIndices = room.r2DelOneIndices;
+		crossFeedIndices = room.crossFeedIndices;
 		
 		// [az, el, delay, scale]
 		#firstReflecs, secondReflecs, thirdPlusReflecs = room.calcReflections(sourceAzi, sourceEle, sourceDist).collect(_.flop); 
@@ -287,13 +288,16 @@ BMSpatialReverberator {
 		// need to delay delay times...
 		firstRefDel = MultiBufRdDelay.ar(filtered1, roomMaxDelay * 2, firstReflecs[2]);
 		
+		// sum in the adjacent R1 streams
+		r2inputs = firstRefDel.collect({|delayed, i| delayed + Mix(r1delays[crossFeedIndices[i]]) });
+		
 		// could refine max delay time here
-		r2delays = R2.ar(firstRefDel + r1delays, roomMaxDelay * 2, secondReflecs[2][r2DelOneIndices] - firstReflecs[2], roomMaxDelay * 2, thirdPlusReflecs[2][r2DelOneIndices] - secondReflecs[2][r2DelOneIndices], coef);
+		r2delays = R2.ar(r2inputs, roomMaxDelay * 2, secondReflecs[2][r2DelOneIndices] - firstReflecs[2], roomMaxDelay * 2, thirdPlusReflecs[2][r2DelOneIndices] - secondReflecs[2][r2DelOneIndices], coef);
 		
 		// pan first order
 		firstRefDel = VBAP.ar(numChans, firstRefDel + r2delays, vbapBuf, firstReflecs[0], firstReflecs[1], spread) * firstReflecs[3];
 		
-		
+		^firstRefDel + secondRefDel + source;
 	}
 	
 }
