@@ -227,7 +227,7 @@ BMSpatialReverberator {
 	// source coords relative to listener pos?
 	*ar {|input, sourceAzi, sourceEle, sourceDist, room, vbapBuf, numChans, spread = 1, refDist = 1|
 		var source, delayedSource, filtered, sourceAtten, refDistRecip, coef = 0.5;
-		var firstReflecs, secondReflecs, thirdPlusReflecs;
+		var firstReflecs, secondReflecs, secondReflecsDir , thirdPlusReflecs;
 		var firstRefDel, secondRefDel;
 		var r1delays, r2delays, r1DelIndices, r2DelOneIndices;
 		var roomMaxDelay;
@@ -258,14 +258,19 @@ BMSpatialReverberator {
 		
 		filtered = OnePole.ar(filtered, coef);
 		
-		// pan second order
+		// sort out direct second order
+		secondReflecsDir = secondReflecs.copy;
+		
+		r2DelOneIndices.do({|ind| secondReflecsDir.removeAt(ind) });
+		
+		// pan second order this should be only the direct ones.
 		secondRefDel = VBAP.ar(numChans, filtered, vbapBuf, secondReflecs[0], secondReflecs[1], spread) * secondReflecs[3];
 		
 		// need to delay delay times...
 		secondRefDel = MultiBufRdDelay.ar(secondRefDel, roomMaxDelay * 2, secondReflecs[2]);
 		
 		// could refine max delay time here
-		r2delays = R2.ar(firstRefDel, roomMaxDelay * 2, secondReflecs[2][r2DelOneIndices] - firstReflecs[2], roomMaxDelay * 2, thirdPlusReflecs[2] - secondReflecs[2], coef);
+		r2delays = R2.ar(firstRefDel, roomMaxDelay * 2, secondReflecs[2][r2DelOneIndices] - firstReflecs[2], roomMaxDelay * 2, thirdPlusReflecs[2][r2DelOneIndices] - secondReflecs[2][r2DelOneIndices], coef);
 		
 		// could refine max delay time here
 		r1delays = R1.ar(secondRefDel, roomMaxDelay * 2, thirdPlusReflecs[2][r1DelIndices] - secondReflecs[2][r1DelIndices], coef);
