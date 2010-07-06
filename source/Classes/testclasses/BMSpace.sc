@@ -271,7 +271,7 @@ BMSpatialReverberator {
 		
 		sourceAtten = (sourceDist * refDistRecip).reciprocal;
 		delayedSource = BufRdDelay.ar(input * sourceAtten, roomMaxDelay, sourceDist * spm);
-		
+		\1.postln;
 		// filter source to model absorption
 		filtered1 = OnePole.ar(input, coef);
 		filtered2 = OnePole.ar(filtered1, coef);
@@ -283,11 +283,11 @@ BMSpatialReverberator {
 		////// second order and R1 //////
 		
 		// need to delay delay times...
-		secondRefDel = MultiBufRdDelay.ar(filtered2, roomMaxDelay * 2, secondReflecsDir[2]);
-		\1.postln;
+		secondRefDel = MultiBufRdDelay.ar(filtered2, roomMaxDelay * 2, secondReflecsDir[2].postln);
+		\2.postln;
 		// could refine max delay time here
 		r1delays = R1.ar(secondRefDel, roomMaxDelay * 2, thirdPlusReflecs[2][r1DelIndices] - secondReflecs[2][r1DelIndices], coef);
-		
+		\3.postln;
 		// pan second order this should be only the direct ones.
 		secondRefDel = VBAP.ar(numChans, secondRefDel + r1delays, vbapBuf, secondReflecsDir[0], secondReflecsDir[1], spread) * secondReflecsDir[3];
 
@@ -296,10 +296,10 @@ BMSpatialReverberator {
 		
 		// need to delay delay times...
 		firstRefDel = MultiBufRdDelay.ar(filtered1, roomMaxDelay * 2, firstReflecs[2]);
-		\2.postln;
+		
 		// sum in the adjacent R1 streams
 		r2inputs = firstRefDel.collect({|delayed, i| delayed + Mix(r1delays[crossFeedIndices[i].postln]) });
-		\3.postln;
+		
 		// could refine max delay time here
 		r2delays = R2.ar(r2inputs, roomMaxDelay * 2, secondReflecs[2][r2DelOneIndices] - firstReflecs[2], roomMaxDelay * 2, thirdPlusReflecs[2][r2DelOneIndices] - secondReflecs[2][r2DelOneIndices], coef);
 		
@@ -356,7 +356,7 @@ BufRdDelay : PseudoMultiNewUGen {
 MultiBufRdDelay : PseudoMultiNewUGen {
 	
 	*ar {|in, maxDelayTime, delayTimes|
-		^this.multiNewList(['audio', in, maxDelayTime, delayTimes]);
+		^this.multiNewList(['audio', in, maxDelayTime, `delayTimes]);
 	}
 	
 	*new1 {|rate, in, maxDelayTime, delayTimes|
@@ -366,7 +366,7 @@ MultiBufRdDelay : PseudoMultiNewUGen {
 		buf = LocalBuf(maxFrames, 1);
 		phasor = Phasor.ar(0, 1, 0, maxFrames);
 		cd = ControlDur.ir;
-		out = delayTimes.collect({|delayTime|
+		out = delayTimes.dereference.collect({|delayTime|
 			BufRd.ar(1, buf, phasor + (delayTime * sr) - (cd * sr) % maxFrames, 1, 2);
 		});
 		BufWr.ar(in, buf, phasor, 1);
