@@ -184,10 +184,10 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 	ctos { |x, y, z|
 		var az, el, r, rad, offset;
 		
-		if(x.rate == 'scalar', { if(x == 0, {x = tiny})}, { x = x +(BinaryOpUGen('==', x, 0.0) * tiny)}); // no divide by 0
 		r = sqrt(x.squared + y.squared + z.squared);
 		el = asin(z/r) * dpr;
 		//if(x == 0, {x = tiny});
+		x = if(x.abs > 0, x, tiny); // no divide by 0
 		
 		rad = atan(y/x);
 		//if(x > 0, {az = 90 - (rad * dpr)});
@@ -311,10 +311,37 @@ BMSpatialReverberator {
 	
 }
 
+// correctly multichannel expand the pseudo UGens below
+// rate in new1 methods a hook for future kr versions
+PseudoMultiNewUGen {
+	
+	*multiNewList { arg args;
+		var size = 0, newArgs, results;
+		args = args.asUGenInput(this);
+		args.do({ arg item;
+			(item.class == Array).if({ size = max(size, item.size) });
+		});
+		if (size == 0) { ^this.new1( *args ) };
+		newArgs = Array.newClear(args.size);
+		results = Array.newClear(size);
+		size.do({ arg i;
+			args.do({ arg item, j;
+				newArgs.put(j, if (item.class == Array, { item.wrapAt(i) },{ item }));
+			});
+			results.put(i, this.multiNewList(newArgs));
+		});
+		^results
+	}
+}
+
 // pseudo Ugen for audio rate interp
-BufRdDelay  {
+BufRdDelay : PseudoMultiNewUGen {
 	
 	*ar {|in, maxDelayTime, delayTime|
+		^this.multiNewList(['audio', in, maxDelayTime, delayTime]);
+	}
+	
+	*new1 {|rate, in, maxDelayTime, delayTime|
 		var buf, phasor, maxFrames, sr, out;
 		sr = SampleRate.ir;
 		maxFrames = maxDelayTime * sr;
@@ -326,9 +353,13 @@ BufRdDelay  {
 	}
 }
 
-MultiBufRdDelay {
+MultiBufRdDelay : PseudoMultiNewUGen {
 	
 	*ar {|in, maxDelayTime, delayTimes|
+		^this.multiNewList(['audio', in, maxDelayTime, delayTimes]);
+	}
+	
+	*new1 {|rate, in, maxDelayTime, delayTimes|
 		var buf, phasor, maxFrames, sr, cd, out;
 		sr = SampleRate.ir;
 		maxFrames = maxDelayTime * sr;
@@ -345,9 +376,13 @@ MultiBufRdDelay {
 	
 
 // Kendall-Mertens comb units
-R1 {
+R1 : PseudoMultiNewUGen {
 	
-	*ar{|in, maxDelayTime, delayTime, coef = 0.5, fbScale = 0.9|
+	*ar {|in, maxDelayTime, delayTime, coef = 0.5, fbScale = 0.9|
+		^this.multiNewList(['audio', in, maxDelayTime, delayTime, coef = 0.5, fbScale = 0.9]);
+	}
+	
+	*new1 {|rate, in, maxDelayTime, delayTime, coef = 0.5, fbScale = 0.9|
 		var buf, phasor, maxFrames, sr, ff, out;
 		sr = SampleRate.ir;
 		maxFrames = maxDelayTime * sr;
@@ -361,9 +396,13 @@ R1 {
 	}
 }
 
-R2 {
+R2 : PseudoMultiNewUGen {
 	
-	*ar{|in, maxDelayTime1, delayTime1, maxDelayTime2, delayTime2, coef = 0.5, fbScale = 0.9|
+	*ar {|in, maxDelayTime1, delayTime1, maxDelayTime2, delayTime2, coef = 0.5, fbScale = 0.9|
+		^this.multiNewList(['audio', in, maxDelayTime1, delayTime1, maxDelayTime2, delayTime2, coef = 0.5, fbScale = 0.9]);
+	}
+	
+	*new1 {|rate, in, maxDelayTime1, delayTime1, maxDelayTime2, delayTime2, coef = 0.5, fbScale = 0.9|
 		var buf1, phasor1, maxFrames1, sr, ff1, out;
 		var buf2, phasor2, maxFrames2, ff2;
 		sr = SampleRate.ir;
