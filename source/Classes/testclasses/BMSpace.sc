@@ -245,7 +245,7 @@ BMSpatialReverberator {
 	
 	// source coords relative to listener pos?
 	*ar {|input, sourceAzi, sourceEle, sourceDist, room, vbapBuf, numChans, spread = 1, refDist = 1|
-		var source, delayedSource, filtered1, filtered2, sourceAtten, refDistRecip, coef = 0.5;
+		var source, delayedSource, filtered1, filtered2, sourceAtten, refDistRecip, coef = 0.99;
 		var firstReflecs, secondReflecs, secondReflecsDir , thirdPlusReflecs;
 		var firstRefDel, secondRefDel;
 		var r1delays, r2delays, r1DelIndices, r2DelOneIndices, crossFeedIndices, r2inputs;
@@ -271,7 +271,7 @@ BMSpatialReverberator {
 		
 		sourceAtten = (sourceDist * refDistRecip).reciprocal;
 		delayedSource = BufRdDelay.ar(input * sourceAtten, roomMaxDelay, sourceDist * spm);
-		\1.postln;
+
 		// filter source to model absorption
 		filtered1 = OnePole.ar(input, coef);
 		filtered2 = OnePole.ar(filtered1, coef);
@@ -283,11 +283,11 @@ BMSpatialReverberator {
 		////// second order and R1 //////
 		
 		// need to delay delay times...
-		secondRefDel = MultiBufRdDelay.ar(filtered2, roomMaxDelay * 2, secondReflecsDir[2].postln);
-		\2.postln;
+		secondRefDel = MultiBufRdDelay.ar(filtered2, roomMaxDelay * 2, secondReflecsDir[2]);
+		
 		// could refine max delay time here
 		r1delays = R1.ar(secondRefDel, roomMaxDelay * 2, thirdPlusReflecs[2][r1DelIndices] - secondReflecs[2][r1DelIndices], coef);
-		\3.postln;
+		
 		// pan second order this should be only the direct ones.
 		secondRefDel = VBAP.ar(numChans, secondRefDel + r1delays, vbapBuf, secondReflecsDir[0], secondReflecsDir[1], spread) * secondReflecsDir[3];
 
@@ -347,7 +347,8 @@ BufRdDelay : PseudoMultiNewUGen {
 		maxFrames = maxDelayTime * sr;
 		buf = LocalBuf(maxFrames, 1);
 		phasor = Phasor.ar(0, 1, 0, maxFrames);
-		out = BufRd.ar(1, buf, phasor + (delayTime * sr) - (ControlDur.ir * sr) % maxFrames, 1, 2);
+		//out = BufRd.ar(1, buf, phasor + (delayTime * sr) - (ControlDur.ir * sr) % maxFrames, 1, 2);
+		out = BufRd.ar(1, buf, phasor + (delayTime * sr) % maxFrames, 1, 2);
 		BufWr.ar(in, buf, phasor, 1);
 		^out
 	}
@@ -367,7 +368,8 @@ MultiBufRdDelay : PseudoMultiNewUGen {
 		phasor = Phasor.ar(0, 1, 0, maxFrames);
 		cd = ControlDur.ir;
 		out = delayTimes.dereference.collect({|delayTime|
-			BufRd.ar(1, buf, phasor + (delayTime * sr) - (cd * sr) % maxFrames, 1, 2);
+			//BufRd.ar(1, buf, phasor + (delayTime * sr) - (cd * sr) % maxFrames, 1, 2);
+			BufRd.ar(1, buf, phasor + (delayTime * sr) % maxFrames, 1, 2);
 		});
 		BufWr.ar(in, buf, phasor, 1);
 		^out
@@ -378,31 +380,31 @@ MultiBufRdDelay : PseudoMultiNewUGen {
 // Kendall-Mertens comb units
 R1 : PseudoMultiNewUGen {
 	
-	*ar {|in, maxDelayTime, delayTime, coef = 0.5, fbScale = 0.9|
-		^this.multiNewList(['audio', in, maxDelayTime, delayTime, coef = 0.5, fbScale = 0.9]);
+	*ar {|in, maxDelayTime, delayTime, coef = 0.99, fbScale = 0.9|
+		^this.multiNewList(['audio', in, maxDelayTime, delayTime, coef = 0.99, fbScale = 0.9]);
 	}
 	
-	*new1 {|rate, in, maxDelayTime, delayTime, coef = 0.5, fbScale = 0.9|
-		var buf, phasor, maxFrames, sr, ff, out;
+	*new1 {|rate, in, maxDelayTime, delayTime, coef = 0.99, fbScale = 0.9|
+		var buf, phasor, maxFrames, sr, ff;
 		sr = SampleRate.ir;
 		maxFrames = maxDelayTime * sr;
 		buf = LocalBuf(maxFrames, 1);
 		phasor = Phasor.ar(0, 1, 0, maxFrames);
-		ff = BufRd.ar(1, buf, phasor + (delayTime * sr) - (ControlDur.ir * sr) % maxFrames, 1, 2);
-		ff = OnePole.ar(ff, coef);
-		out = in + ff;
-		BufWr.ar(in + (ff * fbScale), buf, phasor, 1);
-		^out
+		//ff = BufRd.ar(1, buf, phasor + (delayTime * sr) - (ControlDur.ir * sr) % maxFrames, 1, 2);
+		ff = BufRd.ar(1, buf, phasor + (delayTime * sr) % maxFrames, 1, 2);
+		ff = OnePole.ar(ff, coef) * fbScale;
+		BufWr.ar(in + ff, buf, phasor, 1);
+		^ff
 	}
 }
 
 R2 : PseudoMultiNewUGen {
 	
-	*ar {|in, maxDelayTime1, delayTime1, maxDelayTime2, delayTime2, coef = 0.5, fbScale = 0.9|
-		^this.multiNewList(['audio', in, maxDelayTime1, delayTime1, maxDelayTime2, delayTime2, coef = 0.5, fbScale = 0.9]);
+	*ar {|in, maxDelayTime1, delayTime1, maxDelayTime2, delayTime2, coef = 0.99, fbScale = 0.9|
+		^this.multiNewList(['audio', in, maxDelayTime1, delayTime1, maxDelayTime2, delayTime2, coef = 0.99, fbScale = 0.9]);
 	}
 	
-	*new1 {|rate, in, maxDelayTime1, delayTime1, maxDelayTime2, delayTime2, coef = 0.5, fbScale = 0.9|
+	*new1 {|rate, in, maxDelayTime1, delayTime1, maxDelayTime2, delayTime2, coef = 0.99, fbScale = 0.9|
 		var buf1, phasor1, maxFrames1, sr, ff1, out;
 		var buf2, phasor2, maxFrames2, ff2;
 		sr = SampleRate.ir;
@@ -418,19 +420,21 @@ R2 : PseudoMultiNewUGen {
 		phasor2 = Phasor.ar(0, 1, 0, maxFrames2);
 		
 		// get and filter output of delay1
-		ff1 = BufRd.ar(1, buf1, phasor1 + (delayTime1 * sr) - (ControlDur.ir * sr) % maxFrames1, 1, 2);
-		ff1 = OnePole.ar(ff1, coef);
+		//ff1 = BufRd.ar(1, buf1, phasor1 + (delayTime1 * sr) - (ControlDur.ir * sr) % maxFrames1, 1, 2);
+		ff1 = BufRd.ar(1, buf1, phasor1 + (delayTime1 * sr) % maxFrames1, 1, 2);
+		ff1 = OnePole.ar(ff1, coef) * fbScale;
 		
 		// write ff1 to delay2
 		BufWr.ar(ff1, buf2, phasor2, 1);
 		
 		// get and filter output of delay2
-		ff2 = BufRd.ar(1, buf2, phasor2 + (delayTime2 * sr) - (ControlDur.ir * sr) % maxFrames2, 1, 2);
-		ff2 = OnePole.ar(ff2, coef);
+		//ff2 = BufRd.ar(1, buf2, phasor2 + (delayTime2 * sr) - (ControlDur.ir * sr) % maxFrames2, 1, 2);
+		ff2 = BufRd.ar(1, buf2, phasor2 + (delayTime2 * sr) % maxFrames2, 1, 2);
+		ff2 = OnePole.ar(ff2, coef) * fbScale;
 		
-		out = in + ff1 + ff2;
+		out = ff1 + ff2;
 		// feedback into delay1
-		BufWr.ar(in + (ff2 * fbScale), buf1, phasor1, 1);
+		BufWr.ar(in + ff2, buf1, phasor1, 1);
 		
 		^out
 	}
