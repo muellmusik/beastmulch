@@ -1,57 +1,112 @@
 {\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
 {\fonttbl\f0\fnil\fcharset0 Monaco;}
 {\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red0\green0\blue191;
-\red0\green36\blue181;\red138\green46\blue35;\red0\green44\blue178;}
+\red191\green0\blue0;\red0\green42\blue173;\red96\green96\blue96;\red191\green0\blue0;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
-\f0\fs18 \cf2 r = \cf3 BM3DBoxRoom\cf2 .new(20, 20, 10);\
+\f0\fs18 \cf2 // test coords, should match appendix B in paper\
 \
-~ref = r.calcReflections(90, 0, 4);\cf4 \
+\cf0 r = \cf3 BM3DBoxRoom\cf0 .new(5, 6, 7, 0, 1, -1);\
+\
+r.calcReflections(45, 30, 2)\
+\
+//\cf2 \
+\
+r = \cf4 BM3DBoxRoom\cf2 .new(20, 20, 10);\
+\
+~ref = r.calcReflections(90, 0, 4);\
 \
 \
-~ref[1].flop.collect(_.size)\
+~ref[1].flop.collect(\cf4 _\cf2 .size)\
 \
-~ref[1].flop\cf0 .reject(\{|item, i| r.r2DelOneIndices.indexOf(i).notNil \}).collect(_.size);\cf4 \
+~ref[1].flop.reject(\{\cf4 |item, i|\cf2  r.r2DelOneIndices.indexOf(i).notNil \}).collect(\cf4 _\cf2 .size);\
 \
-r.\cf0 r2DelOneIndices\
+r.r2DelOneIndices\
 \
 [\
 				[0, 0, 1,  0, -1, 0, 1, 2,  1,  0, -1, -2, -1,  0,  1,  0, -1,  0],\
 				[0, 1, 0, -1,  0, 2, 1, 0, -1, -2, -1,  0,  1,  1,  0, -1,  0,  0],\
 				[2, 1, 1,  1,  1, 0, 0, 0,  0,  0,  0,  0,  0, -1, -1, -1, -1, -2]\
-			].flop[\cf4 r.\cf0 r2DelOneIndices];\
+			].flop[r.r2DelOneIndices];\
 			\
 			\
 [\
 				[0, 0, 1,  0, -1, 0, 1, 2,  1,  0, -1, -2, -1,  0,  1,  0, -1,  0],\
 				[0, 1, 0, -1,  0, 2, 1, 0, -1, -2, -1,  0,  1,  1,  0, -1,  0,  0],\
 				[2, 1, 1,  1,  1, 0, 0, 0,  0,  0,  0,  0,  0, -1, -1, -1, -1, -2]\
-			].flop[\cf4 r.\cf0 r1DelIndices];\
+			].flop[r.r1DelIndices];\
 			\
 r.crossFeedIndices\
 \
 \
 \
-/// test a room\
+\cf5 /// test a room\cf2 \
 \
-r = \cf4 BM3DBoxRoom\cf0 .new(50, 50, 10);\
+(\
+r = \cf4 BM3DBoxRoom\cf2 .new(10, 15, 13);\
 \
-v = \cf5 VBAPSpeakerArray\cf0 .new(2, [-22.5, 22.5, -67.5, 67.5, -112.5, 112.5, -157.5, 157.5]);\cf6 \
+v = \cf4 VBAPSpeakerArray\cf2 .new(2, [-22.5, 22.5, -67.5, 67.5, -112.5, 112.5, -157.5, 157.5]);\
 \pard\pardeftab560\ql\qnatural
-\cf0 b = v.loadToBuffer;\
+\cf2 b = v.loadToBuffer;\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 \
+\cf0 ~buf = \cf6 Buffer\cf0 .read(s, \cf7 "sounds/a11wlk01.wav"\cf0 );\cf2 \
+)\
+\
 \{\
-	var in, out;\
-	in = \cf7 Decay2\cf0 .ar(\cf7 Impulse\cf0 .ar(1), 0.01, 0.001, PinkNoise.ar(0.2));\
-	out = \cf4 BMSpatialReverberator.ar(in, 0, 0, 19, r, b, 8\cf0 );\
-	Out.ar(2, out);\
+	\cf4 var\cf2  in, out;\
+	in = \cf4 Decay2\cf2 .ar(\cf4 Impulse\cf2 .ar(1), 0.01, 0.001, \cf4 PinkNoise\cf2 .ar(0.2));\
+	out = \cf4 BMSpatialReverberator\cf2 .ar(in, 0, 0, 19, r, b, 8);\
+	\cf4 Out\cf2 .ar(0, out);\
 \}.play\
 \
 \{\
-	var in, out;\
-	in = \cf7 Decay2\cf0 .ar(\cf7 Impulse\cf0 .ar(3), 0.01, 0.001, PinkNoise.ar(0.2));\
-	out = \cf4 BMSpatialReverberator.ar(in, MouseX.kr(-90, 90), 0, MouseY.kr(50, 1), r, b, 8\cf0 );\
-	Out.ar(2, out);\
+	\cf4 var\cf2  in, out;\
+	in = \cf4 Decay2\cf2 .ar(\cf4 Impulse\cf2 .ar(3), 0.01, 0.001, \cf4 PinkNoise\cf2 .ar(0.2));\
+	out = \cf4 BMSpatialReverberator\cf2 .ar(in, \cf4 MouseX\cf2 .kr(-90, 90), 0, \cf4 MouseY\cf2 .kr(50, 1), r, b, 8);\
+	\cf4 Out\cf2 .ar(0, out);\
 \}.play\
-	}
+\
+\cf0 \
+\
+\{\
+	\cf3 var\cf0  in, out;\
+	in = \cf6 PlayBuf\cf0 .ar(1, ~buf, \cf6 BufRateScale\cf0 .kr(~buf), loop: 1) * 0.1;\
+	out = \cf3 BMSpatialReverberator\cf0 .ar(in, 0, 0, 19, r, b, 8);\
+	\cf3 Out\cf0 .ar(0, out);\
+\}.play\
+\cf2 \
+\cf0 \{\
+	\cf3 var\cf0  in, out;\
+	in = \cf6 PlayBuf\cf0 .ar(1, ~buf, \cf6 BufRateScale\cf0 .kr(~buf), loop: 1);\
+	out = \cf3 BMSpatialReverberator\cf0 .ar(in, \cf3 MouseX\cf0 .kr(-90, 90), 0, \cf3 MouseY\cf0 .kr(50, 1), r, b, 8);\
+	\cf3 Out\cf0 .ar(0, out);\
+\}.play\
+\
+\{\
+	\cf3 var\cf0  in, out;\
+	in = \cf6 PlayBuf\cf0 .ar(1, ~buf, \cf6 BufRateScale\cf0 .kr(~buf), loop: 1);\
+	out = \cf3 BMSpatialReverberator\cf0 .ar(in, \cf3 MouseX\cf0 .kr(-90, 90), 0, \cf3 Line\cf0 .kr(10, 2, 0.5), r, b, 8);\
+	\cf3 Out\cf0 .ar(0, out);\
+\}.play\cf2 \
+	\
+	\
+//////\
+\
+\cf0 \{\
+var \cf3 in, maxDelayTime = \cf0 2\cf3 , delayTime = \cf0 2\cf3 ;\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf3 var\cf0  buf, phasor, maxFrames, sr, out;\
+in = \cf6 PlayBuf\cf0 .ar(1, ~buf, \cf6 BufRateScale\cf0 .kr(~buf), loop: 1) * 0.1;\
+sr = \cf3 SampleRate\cf0 .ir;\
+maxFrames = maxDelayTime * sr;\
+buf = \cf3 LocalBuf\cf0 (maxFrames, 1).clear;\
+phasor = \cf3 Phasor\cf0 .ar(0, 1, 0, maxFrames);\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf8 //out = BufRd.ar(1, buf, phasor + (delayTime * sr) - (ControlDur.ir * sr) % maxFrames, 1, 2);\cf0 \
+\cf8 //out = BufRd.ar(1, buf, phasor + (delayTime * sr) % maxFrames, 1, 2);\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 out = \cf3 BufRd\cf0 .ar(1, buf, phasor - (delayTime * sr), 1, 2);\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf3 BufWr\cf0 .ar(in, buf, phasor, 1);\
+Out.ar(0, out);\
+\}.play}

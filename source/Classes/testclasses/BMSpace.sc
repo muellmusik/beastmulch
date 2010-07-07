@@ -30,7 +30,8 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 	var xsize, ysize, zsize, listenerXOffset, listenerYOffset, listenerZOffset;
 	
 	*new {|xsize, ysize, zsize, listenerXOffset = 0, listenerYOffset = 0, listenerZOffset = 0| 
-		^super.newCopyArgs(xsize, ysize, zsize, listenerXOffset, listenerYOffset, listenerZOffset);
+		// convert meters to seconds
+		^super.newCopyArgs(xsize * spm, ysize * spm, zsize * spm, listenerXOffset  * spm, listenerYOffset * spm, listenerZOffset * spm);
 	} 
 	
 	*initClass {
@@ -82,8 +83,8 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 		});	
 	}
 	
-	//maximum source to listener distance
-	maxDist { ^sqrt(xsize.squared + ysize.squared + zsize.squared) }
+	//maximum source to listener delay
+	maxDelay { ^sqrt(xsize.squared + ysize.squared + zsize.squared) }
 
 	// listener coords, roomDim, sourceAz, sourceEl, sourceRad
 	calcReflections { |az, el, r| 
@@ -92,6 +93,7 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 		var ix, iy, iz, i, j, k, iord;
 		var firstRefs, secondRefs, thirdRefs;
 		var spher;
+		var ord = #["3rd:", "4th:"];
 		
 		source = Array.newClear(4);
 		
@@ -105,16 +107,19 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 		source[eL] = el;
 		
 		// convert meters to seconds
-		listenerXOffset = listenerXOffset * spm;
-		listenerYOffset = listenerYOffset * spm;
-		listenerZOffset = listenerZOffset * spm;
-		xsize = xsize * spm;
-		ysize = ysize * spm;
-		zsize = zsize * spm;
+		// moved above to avoid repeatedly doing this
+//		listenerXOffset = listenerXOffset * spm;
+//		listenerYOffset = listenerYOffset * spm;
+//		listenerZOffset = listenerZOffset * spm;
+//		xsize = xsize * spm;
+//		ysize = ysize * spm;
+//		zsize = zsize * spm;
 		
 		// calc direct then shift origin
 		#sourceX, sourceY, sourceZ = this.stoc(az, el, r * spm);
 		source[delay] = sqrt(sourceX.squared + sourceY.squared + sourceZ.squared); // direct sound path
+		
+		"source: %, %, %, %\n".postf(source[aZ], source[eL], source[delay], refdist / r);
 		
 		// shift origin to room center
 		sourceX = sourceX + listenerXOffset;
@@ -122,6 +127,8 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 		sourceZ = sourceZ + listenerZOffset;
 		
 		// calc coords of image model virtual sources
+		"ix	iy	iz	order	az	el	delay	scale".postln;
+		
 		
 		// first order
 		6.do({|ir|
@@ -137,6 +144,9 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 			fdelay[ir] = r;
 			first[scale] = source[delay]/(source[delay] + first[delay]);
 			firstRefs = firstRefs.add(first); // az, el, delay, scale
+			
+			"%	%	%	".postf(map1[dimx][ir], map1[dimy][ir], map1[dimz][ir]);
+			"1st:		%	%	%	%\n".postf(first[aZ], first[eL], first[delay], first[scale]);
 		});
 		
 		// second and higher
@@ -153,8 +163,13 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 			second[aZ] = spher[0];
 			second[eL] = spher[1];
 			r = spher[2];
+			//"spher: %\n".postf(spher);
 			second[delay] = r - source[delay];
+			//"second[delay]: %\n".postf(second[delay]);
 			second[scale] = source[delay]/(source[delay] + second[delay]);
+			//"second[scale]: %\n".postf(second[scale]);
+			
+			"%	%	%	".postf(map2[dimx][ir], map2[dimy][ir], map2[dimz][ir]);
 			
 			// third +
 			x = this.cvs(map3[dimx][ir], sourceX, xsize) - listenerXOffset;
@@ -167,14 +182,21 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 			third[delay] = r - source[delay] - second[delay];
 			third[scale] = (source[delay] + second[delay])/(source[delay] + r);
 			iord = abs(map3[dimx][ir]) + abs(map3[dimy][ir]) + abs(map3[dimz][ir]) - 3;
+			// infinities happen in second[scale] here
 			if(iord == 0, {
+				//"fdelay[i]: %\n".postf(fdelay[i]);
 				second[delay] = second[delay] - fdelay[i];
+				//"second[delay]: %\n".postf(second[delay]);
 				second[scale] = fdelay[i]/(fdelay[i] + second[delay]);
 				i = i + 1;
 			});
-			
+			//"second[scale]: %\n".postf(second[scale]);
 			secondRefs = secondRefs.add(second); // az, el, delay, scale
 			thirdRefs = thirdRefs.add(third); // az, el, delay, scale
+			
+			"2nd:		%	%	%	%\n".postf(second[aZ], second[eL], second[delay], second[scale]);
+			"%	%	%	".postf(map3[dimx][ir], map3[dimy][ir], map3[dimz][ir]);
+			"%				%	%\n".postf(ord[iord], third[delay], third[scale]);
 		});
 		^[firstRefs, secondRefs, thirdRefs];
 	}
@@ -219,8 +241,8 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 		if(ic == 0, { vs = cs; }, {
 			if(abs(ic)%2 != 1, {vs = cs}, {
 				vs = cs.neg;
-				vs = ic * cr + vs;
 			});
+			vs = ic * cr + vs;
 		})
 		^vs;
 	}
@@ -267,9 +289,13 @@ BMSpatialReverberator {
 		thirdPlusReflecs = thirdPlusReflecs.flop;
 		secondReflecsDir = secondReflecsDir.flop;
 		
-		roomMaxDelay = room.maxDist * spm;
+		roomMaxDelay = room.maxDelay;
 		
 		sourceAtten = (sourceDist * refDistRecip).reciprocal;
+		
+		"del: %\n".postf(sourceDist * spm);
+		"sourceAtten: %\n".postf(sourceAtten);
+		"roomMaxDelay: %\n".postf(roomMaxDelay);
 		delayedSource = BufRdDelay.ar(input * sourceAtten, roomMaxDelay, sourceDist * spm);
 
 		// filter source to model absorption
@@ -345,11 +371,14 @@ BufRdDelay : PseudoMultiNewUGen {
 		var buf, phasor, maxFrames, sr, out;
 		sr = SampleRate.ir;
 		maxFrames = maxDelayTime * sr;
-		buf = LocalBuf(maxFrames, 1);
+		buf = LocalBuf(maxFrames, 1).clear;
 		phasor = Phasor.ar(0, 1, 0, maxFrames);
 		//out = BufRd.ar(1, buf, phasor + (delayTime * sr) - (ControlDur.ir * sr) % maxFrames, 1, 2);
-		out = BufRd.ar(1, buf, phasor + (delayTime * sr) % maxFrames, 1, 2);
-		BufWr.ar(in, buf, phasor, 1);
+		//out = BufRd.ar(1, buf, phasor + (delayTime * sr) % maxFrames, 1, 2);
+		//out = BufRd.ar(1, buf, phasor + (delayTime * sr), 1, 2);
+//		BufWr.ar(in, buf, phasor, 1);
+		out = BufRd.ar(1, buf, phasor, 1, 2);
+		BufWr.ar(in, buf, phasor + (delayTime * sr), 1);
 		^out
 	}
 }
@@ -364,12 +393,12 @@ MultiBufRdDelay : PseudoMultiNewUGen {
 		var buf, phasor, maxFrames, sr, cd, out;
 		sr = SampleRate.ir;
 		maxFrames = maxDelayTime * sr;
-		buf = LocalBuf(maxFrames, 1);
+		buf = LocalBuf(maxFrames, 1).clear;
 		phasor = Phasor.ar(0, 1, 0, maxFrames);
-		cd = ControlDur.ir;
+		//cd = ControlDur.ir;
 		out = delayTimes.dereference.collect({|delayTime|
 			//BufRd.ar(1, buf, phasor + (delayTime * sr) - (cd * sr) % maxFrames, 1, 2);
-			BufRd.ar(1, buf, phasor + (delayTime * sr) % maxFrames, 1, 2);
+			BufRd.ar(1, buf, phasor - (delayTime * sr), 1, 2);
 		});
 		BufWr.ar(in, buf, phasor, 1);
 		^out
@@ -388,12 +417,12 @@ R1 : PseudoMultiNewUGen {
 		var buf, phasor, maxFrames, sr, ff;
 		sr = SampleRate.ir;
 		maxFrames = maxDelayTime * sr;
-		buf = LocalBuf(maxFrames, 1);
+		buf = LocalBuf(maxFrames, 1).clear;
 		phasor = Phasor.ar(0, 1, 0, maxFrames);
 		//ff = BufRd.ar(1, buf, phasor + (delayTime * sr) - (ControlDur.ir * sr) % maxFrames, 1, 2);
-		ff = BufRd.ar(1, buf, phasor + (delayTime * sr) % maxFrames, 1, 2);
+		ff = BufRd.ar(1, buf, phasor, 1, 2);
 		ff = OnePole.ar(ff, coef) * fbScale;
-		BufWr.ar(in + ff, buf, phasor, 1);
+		BufWr.ar(in + ff, buf, phasor + (delayTime * sr), 1);
 		^ff
 	}
 }
@@ -411,30 +440,30 @@ R2 : PseudoMultiNewUGen {
 		
 		// delay1 params
 		maxFrames1 = maxDelayTime1 * sr;
-		buf1 = LocalBuf(maxFrames1, 1);
+		buf1 = LocalBuf(maxFrames1, 1).clear;
 		phasor1 = Phasor.ar(0, 1, 0, maxFrames1);
 		
 		// delay2 params
 		maxFrames2 = maxDelayTime2 * sr;
-		buf2 = LocalBuf(maxFrames2, 1);
+		buf2 = LocalBuf(maxFrames2, 1).clear;
 		phasor2 = Phasor.ar(0, 1, 0, maxFrames2);
 		
 		// get and filter output of delay1
 		//ff1 = BufRd.ar(1, buf1, phasor1 + (delayTime1 * sr) - (ControlDur.ir * sr) % maxFrames1, 1, 2);
-		ff1 = BufRd.ar(1, buf1, phasor1 + (delayTime1 * sr) % maxFrames1, 1, 2);
+		ff1 = BufRd.ar(1, buf1, phasor1, 1, 2);
 		ff1 = OnePole.ar(ff1, coef) * fbScale;
 		
 		// write ff1 to delay2
-		BufWr.ar(ff1, buf2, phasor2, 1);
+		BufWr.ar(ff1, buf2, phasor2 + (delayTime2 * sr), 1);
 		
 		// get and filter output of delay2
 		//ff2 = BufRd.ar(1, buf2, phasor2 + (delayTime2 * sr) - (ControlDur.ir * sr) % maxFrames2, 1, 2);
-		ff2 = BufRd.ar(1, buf2, phasor2 + (delayTime2 * sr) % maxFrames2, 1, 2);
+		ff2 = BufRd.ar(1, buf2, phasor2, 1, 2);
 		ff2 = OnePole.ar(ff2, coef) * fbScale;
 		
 		out = ff1 + ff2;
 		// feedback into delay1
-		BufWr.ar(in + ff2, buf1, phasor1, 1);
+		BufWr.ar(in + ff2, buf1, phasor1 + (delayTime1 * sr), 1);
 		
 		^out
 	}
