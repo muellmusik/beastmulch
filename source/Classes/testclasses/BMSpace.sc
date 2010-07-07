@@ -266,8 +266,8 @@ BMSpatialReverberator {
 	classvar spm = 0.0034;
 	
 	// source coords relative to listener pos?
-	*ar {|input, sourceAzi, sourceEle, sourceDist, room, vbapBuf, numChans, spread = 1, refDist = 1|
-		var source, delayedSource, filtered1, filtered2, sourceAtten, refDistRecip, coef = 0.99;
+	*ar {|input, sourceAzi, sourceEle, sourceDist, room, vbapBuf, numChans, coef = 0.99, fbScale = 0.9, spread = 1, refDist = 1|
+		var source, delayedSource, filtered1, filtered2, sourceAtten, refDistRecip;
 		var firstReflecs, secondReflecs, secondReflecsDir , thirdPlusReflecs;
 		var firstRefDel, secondRefDel;
 		var r1delays, r2delays, r1DelIndices, r2DelOneIndices, crossFeedIndices, r2inputs;
@@ -312,7 +312,7 @@ BMSpatialReverberator {
 		secondRefDel = MultiBufRdDelay.ar(filtered2, roomMaxDelay * 2, secondReflecsDir[2]);
 		
 		// could refine max delay time here
-		r1delays = R1.ar(secondRefDel, roomMaxDelay * 2, thirdPlusReflecs[2][r1DelIndices] - secondReflecs[2][r1DelIndices], coef);
+		r1delays = R1.ar(secondRefDel, roomMaxDelay * 2, thirdPlusReflecs[2][r1DelIndices] - secondReflecs[2][r1DelIndices], coef, fbScale);
 		
 		// pan second order this should be only the direct ones.
 		secondRefDel = VBAP.ar(numChans, secondRefDel + r1delays, vbapBuf, secondReflecsDir[0], secondReflecsDir[1], spread) * secondReflecsDir[3];
@@ -327,7 +327,7 @@ BMSpatialReverberator {
 		r2inputs = firstRefDel.collect({|delayed, i| delayed + Mix(r1delays[crossFeedIndices[i].postln]) });
 		
 		// could refine max delay time here
-		r2delays = R2.ar(r2inputs, roomMaxDelay * 2, secondReflecs[2][r2DelOneIndices] - firstReflecs[2], roomMaxDelay * 2, thirdPlusReflecs[2][r2DelOneIndices] - secondReflecs[2][r2DelOneIndices], coef);
+		r2delays = R2.ar(r2inputs, roomMaxDelay * 2, secondReflecs[2][r2DelOneIndices] - firstReflecs[2], roomMaxDelay * 2, thirdPlusReflecs[2][r2DelOneIndices] - secondReflecs[2][r2DelOneIndices], coef, fbScale);
 		
 		// pan first order
 		firstRefDel = VBAP.ar(numChans, firstRefDel + r2delays, vbapBuf, firstReflecs[0], firstReflecs[1], spread) * firstReflecs[3];
@@ -410,10 +410,10 @@ MultiBufRdDelay : PseudoMultiNewUGen {
 R1 : PseudoMultiNewUGen {
 	
 	*ar {|in, maxDelayTime, delayTime, coef = 0.99, fbScale = 0.9|
-		^this.multiNewList(['audio', in, maxDelayTime, delayTime, coef = 0.99, fbScale = 0.9]);
+		^this.multiNewList(['audio', in, maxDelayTime, delayTime, coef, fbScale]);
 	}
 	
-	*new1 {|rate, in, maxDelayTime, delayTime, coef = 0.99, fbScale = 0.9|
+	*new1 {|rate, in, maxDelayTime, delayTime, coef, fbScale|
 		var buf, phasor, maxFrames, sr, ff;
 		sr = SampleRate.ir;
 		maxFrames = maxDelayTime * sr;
@@ -430,10 +430,10 @@ R1 : PseudoMultiNewUGen {
 R2 : PseudoMultiNewUGen {
 	
 	*ar {|in, maxDelayTime1, delayTime1, maxDelayTime2, delayTime2, coef = 0.99, fbScale = 0.9|
-		^this.multiNewList(['audio', in, maxDelayTime1, delayTime1, maxDelayTime2, delayTime2, coef = 0.99, fbScale = 0.9]);
+		^this.multiNewList(['audio', in, maxDelayTime1, delayTime1, maxDelayTime2, delayTime2, coef, fbScale]);
 	}
 	
-	*new1 {|rate, in, maxDelayTime1, delayTime1, maxDelayTime2, delayTime2, coef = 0.99, fbScale = 0.9|
+	*new1 {|rate, in, maxDelayTime1, delayTime1, maxDelayTime2, delayTime2, coef, fbScale|
 		var buf1, phasor1, maxFrames1, sr, ff1, out;
 		var buf2, phasor2, maxFrames2, ff2;
 		sr = SampleRate.ir;
