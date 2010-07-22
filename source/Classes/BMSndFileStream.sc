@@ -1,4 +1,4 @@
-/* in progress
+///* in progress
 
 
 // VDiskIn cannot play backwards
@@ -35,7 +35,9 @@ BMSoundFileStream : BMSoundFilePlayer {
 	startListening {
 		resp = OSCresponderNode(this.server.addr,'/diskin',{ arg time,responder,msg;
 			if(msg[1] == synth.nodeID, {
-				this.changed(\time, msg.last * sampleDur + timeOffset, rate, time);
+				if(msg.last > info.numFrames, { this.stop }, {
+					this.changed(\time, msg.last * sampleDur + timeOffset, rate, time);
+				});
 			});
 		}).add;
 	}
@@ -245,4 +247,4 @@ BMSoundFileStream : BMSoundFilePlayer {
 	}
 }
 
-*/
+//*/
