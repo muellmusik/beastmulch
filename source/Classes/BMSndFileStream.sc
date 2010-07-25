@@ -35,7 +35,7 @@ BMSoundFileStream : BMSoundFilePlayer {
 	startListening {
 		resp = OSCresponderNode(this.server.addr,'/diskin',{ arg time,responder,msg;
 			if(msg[1] == synth.nodeID, {
-				if(msg.last > info.numFrames, { this.stop }, {
+				if(msg.last + timeOffset > info.numFrames, { \autoStopped.postln; this.stop }, {
 					this.changed(\time, msg.last * sampleDur + timeOffset, rate, time);
 				});
 			});
@@ -123,21 +123,25 @@ BMSoundFileStream : BMSoundFilePlayer {
 		
 		this.rate_(1.0);
 		(synth.isPlaying.not && blockPlay.not && synth.isNil && buffer.notNil).if({
+			\playing.postln;
 			Routine.run {
 				var condition, bundle;
 				condition = Condition.new;
 				bundle = server.makeBundle(false, { buffer.close; buffer.free });
 				server.sync(condition, bundle);
+				\freed.postln;
 				bundle = server.makeBundle(false, {
 					buffer = Buffer.cueSoundFile(server, info.path, startTime * info.sampleRate, info.numChannels);
 				});
 				server.sync(condition, bundle);
+				\cued.postln;
 				timeOffset = startTime;
 				this.startListening;
 				blockPlay = true;
 				server.makeBundle(nil, {
+					\makeBund.postln;
 					synth = Synth.head(group, this.hash.asString, 
-						[\out, out ? bus, \rate, rate.clip(0, inf)]);
+						[\out, out ? bus, \rate, rate.clip(0, inf)]).postln;
 					watcher = NodeWatcher.register(synth);
 					synth.addDependant(this);
 				});
@@ -193,7 +197,8 @@ BMSoundFileStream : BMSoundFilePlayer {
 		synth.isPlaying.if({
 			Routine.run {
 				this.stopAndCleanUp;
-				0.1.wait;
+				\stopped.postln;
+				0.2.wait;
 				this.play(time);
 			}
 		}, {
