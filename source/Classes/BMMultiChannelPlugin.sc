@@ -965,7 +965,7 @@ BMMultichannelPluginsRack : BMAbstractAudioChainElement {
 		dict = IdentityDictionary.new;
 		dict[\plugins] = plugins.collect({|plugin|
 			// could be a problem if pluginspec changes in the meantime
-			[plugin.spec.name, plugin.inputs, plugin.outputs, plugin.attributes, plugin.values];
+			[plugin.spec.name, plugin.inputs.keys, plugin.outputs.keys, plugin.attributes, plugin.values];
 		}); // these are in order
 		^dict;
 	}
@@ -975,12 +975,48 @@ BMMultichannelPluginsRack : BMAbstractAudioChainElement {
 		plugins = List.new;
 		dict = dict ? ();
 		dict[\plugins].do({|pluginArray|
-			var plugin;
-			plugin = BMMultichannelPlugin(pluginArray[0], pluginArray[1], pluginArray[2], server, 
+			var plugin, piIns, piOuts;
+			piIns = BMInOutArray.new;
+			pluginArray[1].do({|key|
+				var in;
+				in = ins[key];
+				in.isNil.if({
+					(
+						"Multichannel Plugin of type " ++ pluginArray[0]
+						++ " requested missing input: " ++ key
+						++ "\nContinuing with other inputs."
+					).warn;
+				}, {
+					in.isBMSpeaker.if({ piIns.add(in); }, { piIns.add(key->in) });
+				});
+			});
+			
+			piOuts = BMInOutArray.new;
+			pluginArray[2].do({|key|
+				var out;
+				out = outs[key];
+				out.isNil.if({
+					(
+						"Multichannel Plugin of type " ++ pluginArray[0]
+						++ " requested missing output: " ++ key
+						++ "\nContinuing with other outputs."
+					).warn;
+				}, {
+					out.isBMSpeaker.if({ piOuts.add(out); }, { piOuts.add(key->out) });
+				});
+			});
+			
+			
+			plugin = BMMultichannelPlugin(pluginArray[0], piIns, piOuts, server, 
 				pluginArray[3]);
 			plugin.notNil.if({
 				this.addPlugin(plugin);
 				pluginArray[4].keysValuesDo({|k, v| plugin.set(k, v)});
+			}, {
+				("Failed to create Multichannel Plugin of type " ++ pluginArray[0] ++ 
+					" with inputs " ++ pluginArray[1] ++
+					" and outputs " ++ pluginArray[2]
+				).warn;
 			});
 		});
 		this.changed;
