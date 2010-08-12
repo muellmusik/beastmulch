@@ -15,3 +15,11 @@ CircleRamp : Filter {
 	}
 
 }
+
++ SequenceableCollection {
+	
+	circleRamp { arg lagTime=0.1, circmin = -180, circmax = 180;
+		^this.multiChannelPerform(\circleRamp, lagTime, circmin, circmax)
+	}
+	
+}
