@@ -192,7 +192,7 @@ BMControllerAutomator : BMAbstractIndependentRateAutomator {
 	}
 	
 	removeSequence { |seq|
-		seq.isSymbol.if({seq = sequences[seq];});
+		seq.isKindOf(Symbol).if({seq = sequences[seq];});
 		sequences[seq.name] = nil;
 		seq.removeDependant(this);
 		this.changed(\sequencesChanged);
