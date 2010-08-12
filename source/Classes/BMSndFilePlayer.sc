@@ -31,6 +31,10 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 		}).add;
 	}
 	
+	duration {
+		^buffer.duration
+	}
+	
 	read {|path, action|
 		
 		Routine.run {

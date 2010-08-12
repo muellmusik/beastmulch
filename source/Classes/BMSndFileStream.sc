@@ -42,6 +42,10 @@ BMSoundFileStream : BMSoundFilePlayer {
 		}).add;
 	}
 	
+	duration {
+		^info.duration;
+	}
+	
 	read {|path, action|
 		// technically we cue when we play, but this confirms validity
 		Routine.run {
