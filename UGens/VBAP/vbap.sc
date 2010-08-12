@@ -70,6 +70,10 @@ VBAPSpeakerArray {
 		^Buffer.loadCollection(server, this.getSetsAndMatrices);
 	}
 	
+	sendToBuffer {|server|
+		^Buffer.sendCollection(server, this.getSetsAndMatrices);
+	}
+	
 	
 	     /* Selects the loudspeaker triplets, and
       calculates the inversion matrices for each selected triplet.
