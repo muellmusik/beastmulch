@@ -13,7 +13,274 @@ BMAbstractSpaceModel {
 	
 }
 
-BM2DBoxRoom : BMAbstractSpaceModel {
+BMAbstractRoom : BMAbstractSpaceModel {
+	classvar spm = 0.0034, dpr = 57.29578, tiny = 1.0e-30, dimx = 0, dimy = 1, dimz = 2;
+	classvar aZ = 0, eL = 1, delay = 2, scale = 3, refdist = 1;
+	
+	var xsize, ysize, zsize, listenerXOffset, listenerYOffset, listenerZOffset;
+	
+}
+
+BM2DBoxRoom : BMAbstractRoom {
+	
+	
+	classvar map1, map2, map3;
+	
+	*new {|xsize, ysize, listenerXOffset = 0, listenerYOffset = 0| 
+		// convert meters to seconds
+		^super.newCopyArgs(xsize * spm, ysize * spm, 0, listenerXOffset  * spm, listenerYOffset * spm, 0);
+	} 
+	
+	*initClass {
+		// vertical commented out
+		map1 = [ 
+			//[ 0, 0, 1 ], 
+			[ 0, 1, 0 ], 
+			[ 1, 0, 0 ], 
+			[ 0, -1, 0 ], 
+			[ -1, 0, 0 ], 
+			//[ 0, 0, -1 ] 
+		].flop;
+		
+		map2 = [ 
+			//[ 0, 0, 2 ], 
+			//[ 0, 1, 1 ], 
+			//[ 1, 0, 1 ], 
+			//[ 0, -1, 1 ], 
+			//[ -1, 0, 1 ], 
+			[ 0, 2, 0 ], 
+			[ 1, 1, 0 ], 
+			[ 2, 0, 0 ], 
+			[ 1, -1, 0 ], 
+			[ 0, -2, 0 ], 
+			[ -1, -1, 0 ], 
+			[ -2, 0, 0 ], 
+			[ -1, 1, 0 ], 
+			//[ 0, 1, -1 ], 
+			//[ 1, 0, -1 ], 
+			//[ 0, -1, -1 ], 
+			//[ -1, 0, -1 ], 
+			//[ 0, 0, -2 ]
+		].flop;
+		
+		map3 = [ 
+//			[ 0, 0, 3 ], 
+//			[ 0, 2, 2 ], 
+//			[ 2, 0, 2 ], 
+//			[ 0, -2, 2 ], 
+//			[ -2, 0, 2 ], 
+			[ 0, 3, 0 ], 
+			[ 2, 2, 0 ], 
+			[ 3, 0, 0 ], 
+			[ 2, -2, 0 ], 
+			[ 0, -3, 0 ], 
+			[ -2, -2, 0 ], 
+			[ -3, 0, 0 ], 
+			[ -2, 2, 0 ], 
+//			[ 0, 2, -2 ], 
+//			[ 2, 0, -2 ], 
+//			[ 0, -2, -2 ], 
+//			[ -2, 0, -2 ], 
+//			[ 0, 0, -3 ] 
+		].flop;
+	}
+	
+	r1DelIndices { 
+		var flop; 
+		flop = map3.flop;
+		^[[2, 2, 0], [-2, 2, 0], [-2, -2, 0], [2, -2, 0],
+			 //[0, 2, 2], [-2, 0, 2], [0, -2, 2], [2, 0, 2], [0, 2, -2], [-2, 0, -2], [0, -2, -2], [2, 0, -2]
+			 ]
+			.collect({|room|
+			 	flop.indexOfEqual(room);
+			});
+	}
+	
+	// awkward but safe
+	r2DelOneIndices { 
+		var flop; 
+		flop = map2.flop;
+		^map1.flop.collect({|room| room.collect({|coord| if(abs(coord) == 1, {coord + coord}, {coord}); }) })
+			.collect({|room|
+			 	flop.indexOfEqual(room);
+			});
+	}
+	
+	crossFeedIndices {
+		var flop, r2DelOneIndices;
+		r2DelOneIndices = this.r2DelOneIndices; 
+		flop = map2.flop.reject({|item, i| r2DelOneIndices.indexOf(i).notNil });
+		^map1.flop.collect({|room|
+			var rooms, one, a, b;
+			one = room.abs.indexOf(1);
+			// keep 'one' the same but get all permutations of the other two such that if a is zero b.abs = 1
+			rooms = all {: [a, b].insert(one, room[one]), a <-(-1..1), b <-(-1..1), (a + b).abs == 1 };
+			rooms.collect({|cfRoom| flop.indexOfEqual(cfRoom) });
+		});	
+	}
+	
+	//maximum source to listener delay
+	maxDelay { ^sqrt(xsize.squared + ysize.squared) }
+
+	// listener coords, roomDim, sourceAz, sourceRad
+	calcReflections { |az, r| 
+		var source, first, second, third, fourth, fdelay;
+		var x, y, sourceX, sourceY, sum, sum2, avg, sd;
+		var ix, iy, i, j, k, iord;
+		var firstRefs, secondRefs, thirdRefs;
+		var polar;
+		var ord = #["3rd:", "4th:"];
+		
+		source = Array.newClear(4);
+		
+		fdelay = Array.newClear(6);
+		
+		firstRefs = Array.new(6);
+		secondRefs = Array.new(18);
+		thirdRefs = Array.new(18);
+		
+		source[aZ] = az;
+		//source[eL] = el;
+		
+		// convert meters to seconds
+		// moved above to avoid repeatedly doing this
+//		listenerXOffset = listenerXOffset * spm;
+//		listenerYOffset = listenerYOffset * spm;
+//		listenerZOffset = listenerZOffset * spm;
+//		xsize = xsize * spm;
+//		ysize = ysize * spm;
+//		zsize = zsize * spm;
+		
+		// calc direct then shift origin
+		#sourceX, sourceY = this.ptoc(az, r * spm);
+		source[delay] = sqrt(sourceX.squared + sourceY.squared); // direct sound path
+		
+		"source: %, %, %\n".postf(source[aZ], source[delay], refdist / r);
+		
+		// shift origin to room center
+		sourceX = sourceX + listenerXOffset;
+		sourceY = sourceY + listenerYOffset;
+		
+		// calc coords of image model virtual sources
+		"ix	iy	iz	order	az	delay	scale".postln;
+		
+		
+		// first order
+		4.do({|ir|
+			first = Array.newClear(4);
+			x = this.cvs(map1[dimx][ir], sourceX, xsize) - listenerXOffset;
+			y = this.cvs(map1[dimy][ir], sourceY, ysize) - listenerYOffset;
+			polar = this.ctop(x, y);
+			first[aZ] = polar[0];
+			//first[eL] = spher[1];
+			first[eL] = 0;
+			r = polar[1];
+			first[delay] = r - source[delay];
+			fdelay[ir] = r;
+			first[scale] = source[delay]/(source[delay] + first[delay]);
+			firstRefs = firstRefs.add(first); // az, el(0) , delay, scale
+			
+			"%	%	".postf(map1[dimx][ir], map1[dimy][ir]);
+			"1st:		%	%	%\n".postf(first[aZ], first[delay], first[scale]);
+		});
+		
+		"second".postln;
+		
+		// second and higher
+		i = 0;
+		8.do({|ir|
+			second = Array.newClear(4);
+			third = Array.newClear(4);
+		
+			// second
+			x = this.cvs(map2[dimx][ir], sourceX, xsize) - listenerXOffset;
+			y = this.cvs(map2[dimy][ir], sourceY, ysize) - listenerYOffset;
+			polar = this.ctop(x, y);
+			second[aZ] = polar[0];
+			//second[eL] = spher[1];
+			second[eL] = 0;
+			r = polar[1];
+			//"spher: %\n".postf(spher);
+			second[delay] = r - source[delay];
+			//"second[delay]: %\n".postf(second[delay]);
+			second[scale] = source[delay]/(source[delay] + second[delay]);
+			//"second[scale]: %\n".postf(second[scale]);
+			
+			"%	%	".postf(map2[dimx][ir], map2[dimy][ir]);
+			
+			// third +
+			x = this.cvs(map3[dimx][ir], sourceX, xsize) - listenerXOffset;
+			y = this.cvs(map3[dimy][ir], sourceY, ysize) - listenerYOffset;
+			polar = this.ctop(x, y);
+			third[aZ] = polar[0];
+			//third[eL] = spher[1];
+			third[eL] = 0;
+			r = polar[1];
+			third[delay] = r - source[delay] - second[delay];
+			third[scale] = (source[delay] + second[delay])/(source[delay] + r);
+			iord = abs(map3[dimx][ir]) + abs(map3[dimy][ir]) - 2;
+			// infinities happen in second[scale] here
+			if(iord == 0, {
+				//"fdelay[i]: %\n".postf(fdelay[i]);
+				second[delay] = second[delay] - fdelay[i];
+				//"second[delay]: %\n".postf(second[delay]);
+				second[scale] = fdelay[i]/(fdelay[i] + second[delay]);
+				i = i + 1;
+			});
+			//"second[scale]: %\n".postf(second[scale]);
+			secondRefs = secondRefs.add(second); // az, el(0), delay, scale
+			thirdRefs = thirdRefs.add(third); // az, el(0), delay, scale
+			
+			"2nd:		%	%	%\n".postf(second[aZ], second[delay], second[scale]);
+			"%	%	".postf(map3[dimx][ir], map3[dimy][ir]);
+			"%				%	%\n".postf(ord[iord], third[delay], third[scale]);
+		});
+		^[firstRefs, secondRefs, thirdRefs];
+	}
+	//private
+	
+	// cartesian to polar
+	ctop { |x, y|
+		var az, r, rad, offset;
+		
+		r = sqrt(x.squared + y.squared);
+		//if(x == 0, {x = tiny});
+		x = if(x.abs > 0, x, tiny); // no divide by 0
+		
+		rad = atan(y/x);
+		//if(x > 0, {az = 90 - (rad * dpr)});
+//		if(x < 0, {az = 270 - (rad * dpr)});
+		
+		offset = if(x > 0, 90, 270);
+		az = offset - (rad * dpr);
+		^[az, r];
+	}
+	
+	// polar to cartesian
+	ptoc {|az, r|
+		var x,y;
+		x = cos((90 -az) / dpr) * r;
+		y = sin((90 - az) / dpr) * r;
+		^[x, y]
+	}
+		
+	cvs { |ic,cs, cr|
+		//ic = image room coordinate
+		//cs = coord of source (rel to room center)
+		//cr = room measure on the dimension passed
+		//vs = coord of virtual source
+		
+		var vs;
+		
+		if(ic == 0, { vs = cs; }, {
+			if(abs(ic)%2 != 1, {vs = cs}, {
+				vs = cs.neg;
+			});
+			vs = ic * cr + vs;
+		})
+		^vs;
+	}
+
 	
 }
 
@@ -21,13 +288,9 @@ BM2DBoxRoom : BMAbstractSpaceModel {
 // the first order virtual sources are contained in the virtual rooms having the coordinates (1, 0, 0), (0, 1, 0), (-1, 0, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1). 
 // The virtual room coordinates for those second order virtual sources (see FIGS. 4A, 4B, and 4C) are as follows: (1, 0, 1), (0, 1, 1), (-1, 0, 1), (0, -1, 1), (1, 1, 0), (-1, 1, 0), (-1, -1, 0), (1, -1, 0), (1, 0, -1), (0, 1, -1), (-1, 0, -1), (0, -1, -1).
 
-BM3DBoxRoom : BMAbstractSpaceModel {
+BM3DBoxRoom : BMAbstractRoom {
 	
-	classvar spm = 0.0034, dpr = 57.29578, tiny = 1.0e-30, dimx = 0, dimy = 1, dimz = 2;
-	classvar aZ = 0, eL = 1, delay = 2, scale = 3, refdist = 1;
 	classvar map1, map2, map3;
-	
-	var xsize, ysize, zsize, listenerXOffset, listenerYOffset, listenerZOffset;
 	
 	*new {|xsize, ysize, zsize, listenerXOffset = 0, listenerYOffset = 0, listenerZOffset = 0| 
 		// convert meters to seconds
@@ -35,20 +298,56 @@ BM3DBoxRoom : BMAbstractSpaceModel {
 	} 
 	
 	*initClass {
-		map1 = [	[0, 0, 1,  0, -1,  0], 
-				[0, 1, 0, -1,  0,  0], 
-				[1, 0, 0,  0,  0, -1]
-			];
-		map2 = [
-				[0, 0, 1,  0, -1, 0, 1, 2,  1,  0, -1, -2, -1,  0,  1,  0, -1,  0],
-				[0, 1, 0, -1,  0, 2, 1, 0, -1, -2, -1,  0,  1,  1,  0, -1,  0,  0],
-				[2, 1, 1,  1,  1, 0, 0, 0,  0,  0,  0,  0,  0, -1, -1, -1, -1, -2]
-			];
-		map3 = [
-				[0, 0, 2,  0, -2, 0, 2, 3,  2,  0, -2, -3, -2,  0,  2,  0, -2,  0],
-				[0, 2, 0, -2,  0, 3, 2, 0, -2, -3, -2,  0,  2,  2,  0, -2,  0,  0],
-				[3, 2, 2,  2,  2, 0, 0, 0,  0,  0,  0,  0,  0, -2, -2, -2, -2, -3]
-			];
+		map1 = [ 
+			[ 0, 0, 1 ], 
+			[ 0, 1, 0 ], 
+			[ 1, 0, 0 ], 
+			[ 0, -1, 0 ], 
+			[ -1, 0, 0 ], 
+			[ 0, 0, -1 ] 
+		].flop;
+		
+		map2 = [ 
+			[ 0, 0, 2 ], 
+			[ 0, 1, 1 ], 
+			[ 1, 0, 1 ], 
+			[ 0, -1, 1 ], 
+			[ -1, 0, 1 ], 
+			[ 0, 2, 0 ], 
+			[ 1, 1, 0 ], 
+			[ 2, 0, 0 ], 
+			[ 1, -1, 0 ], 
+			[ 0, -2, 0 ], 
+			[ -1, -1, 0 ], 
+			[ -2, 0, 0 ], 
+			[ -1, 1, 0 ], 
+			[ 0, 1, -1 ], 
+			[ 1, 0, -1 ], 
+			[ 0, -1, -1 ], 
+			[ -1, 0, -1 ], 
+			[ 0, 0, -2 ]
+		].flop;
+		
+		map3 = [ 
+			[ 0, 0, 3 ], 
+			[ 0, 2, 2 ], 
+			[ 2, 0, 2 ], 
+			[ 0, -2, 2 ], 
+			[ -2, 0, 2 ], 
+			[ 0, 3, 0 ], 
+			[ 2, 2, 0 ], 
+			[ 3, 0, 0 ], 
+			[ 2, -2, 0 ], 
+			[ 0, -3, 0 ], 
+			[ -2, -2, 0 ], 
+			[ -3, 0, 0 ], 
+			[ -2, 2, 0 ], 
+			[ 0, 2, -2 ], 
+			[ 2, 0, -2 ], 
+			[ 0, -2, -2 ], 
+			[ -2, 0, -2 ], 
+			[ 0, 0, -3 ] 
+		].flop;
 	}
 	
 	r1DelIndices { 
@@ -296,7 +595,9 @@ BMSpatialReverberator {
 		"del: %\n".postf(sourceDist * spm);
 		"sourceAtten: %\n".postf(sourceAtten);
 		"roomMaxDelay: %\n".postf(roomMaxDelay);
-		delayedSource = BufRdDelay.ar(input * sourceAtten, roomMaxDelay, sourceDist * spm);
+		
+		// source + az seems to crackle, could do without
+		delayedSource = BufRdDelay.ar(input * sourceAtten, roomMaxDelay, sourceDist * spm).postln;
 
 		// filter source to model absorption
 		filtered1 = OnePole.ar(input, coef);
@@ -304,6 +605,7 @@ BMSpatialReverberator {
 		
 		// should add distance filtering here
 		source = VBAP.ar(numChans, delayedSource, vbapBuf, sourceAzi, sourceEle, spread);
+		//source = VBAP.ar(numChans, input * sourceAtten, vbapBuf, sourceAzi, sourceEle, spread);
 		
 		
 		////// second order and R1 //////
@@ -333,6 +635,7 @@ BMSpatialReverberator {
 		firstRefDel = VBAP.ar(numChans, firstRefDel + r2delays, vbapBuf, firstReflecs[0], firstReflecs[1], spread) * firstReflecs[3];
 		
 		^firstRefDel + secondRefDel + source;
+		//^source
 	}
 	
 }
