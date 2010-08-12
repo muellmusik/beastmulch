@@ -32,7 +32,9 @@ BMSoundFilePlayer : BMAbstractAudioSource {
 	}
 	
 	duration {
-		^buffer.duration
+		buffer.notNil.if({
+			^buffer.duration
+		}, { ^nil });
 	}
 	
 	read {|path, action|

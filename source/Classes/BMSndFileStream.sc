@@ -43,7 +43,11 @@ BMSoundFileStream : BMSoundFilePlayer {
 	}
 	
 	duration {
-		^info.duration;
+		info.notNil.if({
+			^info.duration;
+		}, {
+			^nil
+		});
 	}
 	
 	read {|path, action|
@@ -180,7 +184,7 @@ BMSoundFileStream : BMSoundFilePlayer {
 	
 	pause { synth.isNil.not.if({ this.rate = 0; this.changed(\pause);}) } // this will continue to ping time vals
 	
-	freeBuffer { this.stop;  server.makeBundle(BMOptions.crossfade, {buffer.close; buffer.free;}); buffer = nil;
+	freeBuffer { this.stop;  server.makeBundle(BMOptions.crossfade, {buffer.close; buffer.free;}); buffer = nil; info = nil;
 		this.changed(\bufferFreed);
 	}
 	
