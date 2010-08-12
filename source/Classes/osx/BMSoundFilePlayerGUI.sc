@@ -47,7 +47,7 @@ BMSoundFilePlayerGUI : BMAbstractGUI {
 			player.path.notNil.if({{
 				info.string = player.path.basename; 
 				dur.string =  "Length:" + 
-					(player.buffer.numFrames / player.buffer.sampleRate).asTimeString
+					player.duration.asTimeString
 				}.defer 
 			});
 		}, {info.string = "Loading...";});
@@ -141,7 +141,7 @@ BMSoundFilePlayerGUI : BMAbstractGUI {
 				playButton.value = 0;
 				},
 			\loading, {info.string = "Loading...";},
-			\loaded, {info.string = player.path.basename; dur.string =  "Length:" + (player.buffer.numFrames / player.buffer.sampleRate).asTimeString },
+			\loaded, {info.string = player.path.basename; dur.string =  "Length:" + player.duration.asTimeString },
 			\time, { this.updateTimeDisplay(args.first.getTimeString) }
 		)
 		}.defer
