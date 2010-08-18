@@ -412,6 +412,10 @@ BMSnapShotSeq {
 			}
 		)
 	}
+	
+	initFromArchive {
+		this.snapshots.do({|ss| ss.addDependant(this)});
+	}
 
 }
 
