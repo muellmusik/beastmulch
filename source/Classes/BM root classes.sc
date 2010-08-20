@@ -119,6 +119,20 @@ BMAbstractController {
 		"///////////////////".postln;
 	}
 	
+	debug {
+		
+		bus.getn(action: {|vals|
+			"\n///////////////////\Debugging all Controller %\n\n".postf(name);
+			"getAllValues: ".post;
+			this.getAllValues.postcs;
+			"valueArray: ".post;
+			valueArray.postcs;
+			"bus values: ".post;
+			vals.postcs;
+			"\n///////////////////".postln;
+		});
+	}
+	
 	*getValueByName{|ctrlName|
 		^allControls[ctrlName].value;
 	}
