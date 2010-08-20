@@ -223,7 +223,8 @@ BMAmpControlMatrix : BMAbstractMatrix {
 				("Control mapping failed. Control" + input + "already controlling" + mappedTo.name).warn;
 				^this;
 			}, {
-				BMAbstractController.allControls[input].mappedTo_(this);
+				BMAbstractController.allControls[input]
+					.mappedTo_(this, [0, 1, 'cos', 0.0].asSpec);
 			});
 		});
 		
@@ -242,7 +243,7 @@ BMAmpControlMatrix : BMAbstractMatrix {
 		BMOptions.allowMultipleControlMappings.not.if({ 
 			mappedTo = BMAbstractController.allControls[input].mappedTo;
 			if(mappings[input].size == 0 && (mappedTo === this), {
-				BMAbstractController.allControls[input].mappedTo = nil;
+				BMAbstractController.allControls[input].mappedTo_(nil, nil);
 			});
 		});
 	}
@@ -258,7 +259,7 @@ BMAmpControlMatrix : BMAbstractMatrix {
 			inNames.do({|inName|
 				control = BMAbstractController.allControls[inName];
 				if(control.mappedTo === this, { 
-					control.mappedTo = nil 
+					control.mappedTo_(nil, nil); 
 				});
 			})
 		});

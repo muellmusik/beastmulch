@@ -1,6 +1,5 @@
 // a simple controller that allows for onscreen guis.
 // also allows for making user-level wrappers for arbitrary devices without subclassing
-// 'native' values for this are 0-1
 
 BMVirtualController : BMAbstractController {
 
@@ -40,6 +39,7 @@ BMVirtualController : BMAbstractController {
 		^valueArray[controlNum -1];
 	}
 	
+	// there's no need to do any mapping here, but any GUI sliders etc. controlling this should use the control's spec
 	setVal { |controlNum, val| 
 		var chan;
 		chan = controlNum - 1;

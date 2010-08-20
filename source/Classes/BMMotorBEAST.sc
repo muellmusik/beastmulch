@@ -34,7 +34,7 @@ BMMotorBEAST : BMAbstractController {
 		bus = Bus.control(server, numControls);
 		busIndex = bus.index;
 		calibrationRanges = Archive.global['MotorBEASTCal', name] ?? {this.initialCalibrations};
-		spec = [0, 1, 'cos', 0.0].asSpec;
+		//spec = [0, 1, 'cos', 0.0].asSpec;
 		this.startListening;
 		allControllers[name] = this;
 	}
@@ -48,9 +48,9 @@ BMMotorBEAST : BMAbstractController {
 		var transitionTime = 0.18, tries = 4;
 		var lowError = 0.003, hiError = 0.02;
 		
-		
-		lowError = spec.map(lowError).asInteger;
-		hiError = spec.map(hiError).asInteger;
+		//huh?
+		//lowError = spec.map(lowError).asInteger;
+		//hiError = spec.map(hiError).asInteger;
 		
 		// take worst of 4 tries
 		lows = 1 ! 32;
@@ -85,10 +85,11 @@ BMMotorBEAST : BMAbstractController {
 			
 			
 			});
+			// linlin with initialCalibrations here to show full vals
 			("Low Values: " ++ lows.collect({|val, i| 
-				spec.map(val.linlin(*calibrationRanges[i])) 
+				val.linlin(*calibrationRanges[i]) 
 			})).postln;
-			("\nHigh Values: " ++ highs.collect({|val, i| 				spec.map(val.linlin(*calibrationRanges[i])) 
+			("\nHigh Values: " ++ highs.collect({|val, i| 				val.linlin(*calibrationRanges[i]) 
 			})).postln;
 			calibrationRanges = Array.fill(32, {|i| 
 				[lows[i] + lowError, highs[i] - hiError, 0.0, 1.0] 
@@ -115,7 +116,7 @@ BMMotorBEAST : BMAbstractController {
 				var values;
 				values = msg.copyToEnd(1);
 				server.sendMsg("/c_setn", busIndex, 32, *(values.collect({|val, i| 
-					spec.map(val.linlin(*calibrationRanges[i]))
+					controls[i].controlSpec.map(val.linlin(*calibrationRanges[i]))
 				})));
 				valueArray= values;
 				this.changed(\faderVal);
@@ -127,20 +128,29 @@ BMMotorBEAST : BMAbstractController {
 	
 	// assumes fader 1 = 1 not 0
 	// returns value between 0 and 1
-	getVal { |controlNum| ^spec.map(valueArray[controlNum -1].linlin(*calibrationRanges[controlNum - 1])) }
+	getVal { |controlNum| ^controls[controlNum-1].controlSpec.map(valueArray[controlNum -1].linlin(*calibrationRanges[controlNum - 1])) }
 	
 	// we set the local value on loopback, so we're always in sync
 	setVal { |controlNum, val| 
 		var cal;
 		cal = calibrationRanges[controlNum - 1];
-		addr.sendMsg("/MF/" ++ (controlNum - 1), spec.unmap(val).linlin(*cal[[2, 3, 0, 1]]).asInteger) 
+		addr.sendMsg("/MF/" ++ (controlNum - 1),
+			controls[controlNum-1].controlSpec.unmap(val).linlin(*cal[[2, 3, 0, 1]]).asInteger) 
 	}
 	
-	getAllValues { ^valueArray.collect({|val, i| spec.map(val.linlin(*calibrationRanges[i]))}) }
+	getAllValues { 
+		^valueArray.collect({|val, i| 
+			controls[i].controlSpec.map(val.linlin(*calibrationRanges[i]))
+		})
+	}
 	
 	// 32 faders
 	setAllValues {|array|
-		addr.sendMsg("/MF", *(array.collect({|val, i| spec.unmap(val).linlin(*calibrationRanges[i][[2, 3, 0, 1]]).asInteger})))
+		addr.sendMsg("/MF", *(array.collect({|val, i| 
+			controls[i].controlSpec.unmap(val)
+				.linlin(*calibrationRanges[i][[2, 3, 0, 1]]).asInteger
+		}))
+		)
 	}
 
 	setLED {|controlNum, colour|

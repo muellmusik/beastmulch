@@ -43,7 +43,7 @@ BMVirtualControllerSliders : BMAbstractGUI {
 				label, 
 				displaySpec,
 				{|ez| var setVal;
-					setVal = displaySpec.unmap(ez.value);
+					setVal = control.controlSpec.map(displaySpec.unmap(ez.value));
 					virtualCont.setVal(i + 1, setVal);
 				}, initVal, labelWidth: labelWidth
 			);

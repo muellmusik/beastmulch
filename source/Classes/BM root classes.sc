@@ -97,7 +97,7 @@ BMAbstractAudioSource : BMAbstractAudioChainElement {
 BMAbstractController {
 	classvar <allControllers, <allControls;
 	var <name, <bus, <busIndex, valueArray, labelArray, <server, <numControls;
-	var spec;
+	var spec, <controls;
 	
 	*initClass {
 		allControllers = IdentityDictionary.new;
@@ -106,7 +106,7 @@ BMAbstractController {
 	}
 	
 	*cmdPeriod {
-		allControls.do({|v| v.mappedTo_(nil)});
+		allControls.do({|v| v.mappedTo_(nil, nil)});
 	}
 	
 	*dumpAllValues {
@@ -132,16 +132,22 @@ BMAbstractController {
 	}
 	
 	addControlsToIndex {
-		this.controlNames.do({|ctrlName, i|
+		var controlNames;
+		controlNames = this.controlNames;
+		controls = Array.newClear(controlNames.size);
+		controlNames.do({|ctrlName, i|
+			var control;
 			ctrlName = ctrlName.asSymbol;
-			allControls[ctrlName] = BMControl(ctrlName, this, i + 1);
+			control = BMControl(ctrlName, this, i + 1);
+			controls[i] = control;
+			allControls[ctrlName] = control;
 		});
 	}
 	
 	free {
 		this.controlNames.do({|ctrlName, i|
 			ctrlName = ctrlName.asSymbol;
-			allControls[ctrlName].mappedTo_(nil);
+			allControls[ctrlName].mappedTo_(nil, nil);
 			allControls[ctrlName] = nil;
 		});
 		allControllers[name] = nil;	
@@ -219,13 +225,13 @@ BMAbstractController {
 
 // don't make these yourself
 BMControl {
-	var <name, <controller, <ctrlNum, <mappedTo, <automator, <>lastAutomated;
+	var <name, <controller, <ctrlNum, <mappedTo, <automator, <>lastAutomated, controlSpec;
 	
 	*new {|name, controller, ctrlNum|
 		^super.newCopyArgs(name, controller, ctrlNum);
 	}
 	
-	mappedTo_ {|to| mappedTo = to; this.changed(\mappedTo) }
+	mappedTo_ {|to, spec| mappedTo = to; controlSpec = spec; this.changed(\mappedTo) }
 	
 	automator_ {|atmtr| automator = atmtr; this.changed(\automator) }
 	
@@ -234,6 +240,8 @@ BMControl {
 	value_ {|val| controller.setVal(ctrlNum, val) }
 	
 	controllerSpec { ^controller.spec }
+	
+	controlSpec { ^controlSpec ? BMNoOpSpec }
 	
 	// experimental
 	displaySpec { ^mappedTo.asSpec }

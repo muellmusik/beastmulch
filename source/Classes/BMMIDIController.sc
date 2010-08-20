@@ -37,7 +37,7 @@ BMAbstractMIDIController : BMAbstractController {
 			loopBack = false;
 			warn(name.asString + "has no midi out port. Automation and output disabled.");
 		});
-		spec = [0, 1, 'cos', 0.0].asSpec;
+		//spec = [0, 1, 'cos', 0.0].asSpec;
 		this.makeInputSpec;
 		this.updateAllValues(valueArray.copy);
 		allControllers[name] = this;
@@ -55,7 +55,7 @@ BMAbstractMIDIController : BMAbstractController {
 	updateValue { |ind, val|
 		var value;
 		valueArray[ind] = val;
-		value = spec.map(inputSpec.unmap(val)); // convert from midi to 0..1 and then add curve
+		value = controls[ind].controlSpec.map(inputSpec.unmap(val)); // convert from midi to 0..1 and then add curve
 		server.sendMsg("/c_set", busIndex + ind, value);
 		if(loopBack || acceptsAutomation, {this.loopback(ind, val)});
 	}
@@ -66,15 +66,22 @@ BMAbstractMIDIController : BMAbstractController {
 	
 	// assumes fader 1 = 1 not 0
 	// returns value between 0 and 1
-	getVal { |controlNum| ^spec.map(inputSpec.unmap(valueArray[controlNum -1])) }
+	getVal { |controlNum| 
+		^controls[controlNum -1].controlSpec.map(inputSpec.unmap(valueArray[controlNum -1])) 
+	}
 	
-	setVal { |controlNum, val| this.updateValue(controlNum -1, inputSpec.map(spec.unmap(val))) }
+	setVal { |controlNum, val| 
+		this.updateValue(controlNum -1, 
+			inputSpec.map(controls[controlNum-1].controlSpec.unmap(val)))
+	}
 	
-	getAllValues { ^valueArray.collect({|val| spec.map(inputSpec.unmap(val))}) }
+	getAllValues { 
+		^valueArray.collect({|val, i| controls[i].controlSpec.map(inputSpec.unmap(val))})
+	}
 	
 	setAllValues {|array| 
 		array.do({|item, i| 
-			this.updateValue(i, inputSpec.map(spec.unmap(item)))
+			this.updateValue(i, inputSpec.map(controls[i].controlSpec.unmap(item)))
 		});
 	}
 	
