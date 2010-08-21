@@ -3,7 +3,7 @@
 BMVirtualControllerSliders : BMAbstractGUI {
 	var virtualCont, sliders;
 	var needsRefresh = false;
-	var <>refreshInterval = 0.05;
+	var <>refreshInterval = 0.016666666666667;
 	var refreshLoopOn = false;
 	var specs;
 	
