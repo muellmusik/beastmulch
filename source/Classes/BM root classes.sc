@@ -166,6 +166,7 @@ BMAbstractController {
 		});
 		allControllers[name] = nil;	
 		bus.free;
+		this.changed(\controllerFreed);
 	}
 	
 	getVal { |controlNum| ^this.subclassResponsibility(thisMethod) }
@@ -259,6 +260,8 @@ BMControl {
 	
 	// experimental
 	displaySpec { ^mappedTo.asSpec }
+	
+	isMappableControl { ^true }
 }
 
 BMAbstractGUI {
