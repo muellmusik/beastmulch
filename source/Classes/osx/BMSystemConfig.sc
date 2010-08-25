@@ -86,7 +86,7 @@ BMSystemConfigAppGUI : BMAbstractGUI {
 		StaticText(window, Rect(10, 10, 200, 20)).font_(Font("Helvetica-Bold", 14)).string_(" Controllers");
 		
 		window.view.decorator.nextLine;
-		controllerClasses = BMAbstractController.allSubclasses.select({|class| class.name.asString.containsi("abstract").not });
+		controllerClasses = BMAbstractController.allSubclasses.select({|class| class.name.asString.containsi("abstract").not }).reject(_.isKindOf(BMPluginController));
 		
 		controllerTypes = SCScrollView(window, Rect(0, 0, 160, 254))
 			.hasHorizontalScroller_(false)
