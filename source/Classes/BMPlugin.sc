@@ -202,7 +202,7 @@ BMPluginSpec {
 // Class which manages resources for a plugin instance
 BMPlugin {
 	var <spec, <server, <attributes, <defName, <def, <specsDict;
-	var <synth, <values, defaultValues, numControls, controlNames, synthMappings;
+	var <synth, defaultValues, numControls, controlNames, synthMappings;
 	var <preset;
 	var controller, <name;
 	
@@ -219,6 +219,8 @@ BMPlugin {
 		values.keysValuesDo({|key, val| newplugin.set(key, val)});
 		^newplugin;
 	}
+	
+	values { ^controller.getAllValuesDict }
 	
 //	init { |argpluginSpecName, argserver, argattributes|
 //		spec = BMPluginSpec.specs[argpluginSpecName.asSymbol];
@@ -301,10 +303,10 @@ BMPlugin {
 //			server.sendBundle(nil,["/c_setn", bus.index + cn.index, 
 //				max(value.size, 1)] ++ value);
 //		});
-		defaultValues = controller.values.deepCopy;
-		synthMappings = controller.defControlNameObjs.values.collectAs({|cn| 
-			[cn.name, ("c" ++ (controller.busIndex + cn.index)).asSymbol];
-		}, Array).flat;
+		defaultValues = controller.getAllValuesDict;
+		controller.paramNameIndices.keysValuesDo({|cn, ind| 
+			synthMappings = synthMappings ++ [cn, ("c" ++ (controller.busIndex + ind)).asSymbol];
+		});
 	}
 
 	
@@ -335,7 +337,7 @@ BMPlugin {
 //	}
 
 	set {|key, value|
-		controller.setValByName(key, value);
+		controller.setValByParamName(key, value);
 	}
 	
 //	get {|key|
@@ -346,7 +348,7 @@ BMPlugin {
 //		}, {("Plugin " ++ spec.name ++ "has no Control named " ++ key).warn; ^nil; });
 //	}
 
-	get {|key| ^controller.getValByName(key) }
+	get {|key| ^controller.getValByParamName(key) }
 	
 //	debug {
 //		bus.getn(numControls, {|array|

@@ -3,8 +3,11 @@
 // would it make more sense to just have the plugin own some controls
 // need other BMVirtualController Methods? or make a BMAbstractVirtualController?
 
+// controlNames is global name, ctrllr.name-param
+// paramNameIndices is param only (subName)
+
 BMPluginController : BMAbstractController {
-	var plugin, <defControlNameObjs, <controlNames, <values, piSpec, specsDict;
+	var <plugin, <paramNameIndices, <controlNames, piSpec, specsDict;
 	
 	*new { |plugin|
 		^super.new.init(plugin).addControlsToIndex;
@@ -23,6 +26,49 @@ BMPluginController : BMAbstractController {
 //		allControllers[name] = this;
 //	}
 	
+//	init { |argplugin|
+//		var def, attributes;
+//		plugin = argplugin;
+//		name = plugin.name;
+//		server = plugin.server;
+//		attributes = plugin.attributes;
+//		
+//		piSpec = plugin.spec;
+//		specsDict = plugin.specsDict;
+//		values = ();
+//		paramNameIndices = ();
+//		def = plugin.def;
+//		def.allControlNames.reject({|cn| (cn.name == \i_in) || (cn.name == \cfgate)}).do({|cn, i| 
+//			var size, startVal, controlspec;
+//			size = cn.defaultValue.size;
+//			controlspec = specsDict[cn.name];
+//			// take defaults from the control name if no spec supplied. Hmm... maybe not?
+//			controlspec.isNil.if({Error("No spec for Control:" + cn.name).throw; });
+//			startVal = controlspec.default;
+//			(controlspec.units == " dB" && attributes[\usesLinearAmp]).if({ 
+//				startVal = startVal.dbamp;
+//			});
+//			if(size > startVal.size, {startVal = startVal ! size }); // not sure about this
+//			values[cn.name] = startVal;
+//			paramNameIndices[cn.name] = cn;
+//			controlNames = controlNames.add((name.asString ++ "-" ++ cn.name).asSymbol);
+//		});
+//		numControls = def.controls.size; 
+//		bus = Bus.control(server, numControls); // this is two larger than it needs to be
+//		busIndex = bus.index;
+//		valueArray = Array.fill(numControls, {0});
+//		paramNameIndices.keysValuesDo({|key, cn| 
+//			var value;
+//			valueArray[cn.index] = value = values[key];
+//			server.sendBundle(nil,(["/c_setn", busIndex + cn.index, 
+//				max(value.size, 1)] ++ value).postln);
+//		});
+//		
+//		labelArray = Array.fill(numControls, {""});
+//		
+//		allControllers[name] = this;
+//	}
+
 	init { |argplugin|
 		var def, attributes;
 		plugin = argplugin;
@@ -32,40 +78,36 @@ BMPluginController : BMAbstractController {
 		
 		piSpec = plugin.spec;
 		specsDict = plugin.specsDict;
-		values = ();
-		defControlNameObjs = ();
-		def = plugin.def;
-		def.allControlNames.reject({|cn| (cn.name == \i_in) || (cn.name == \cfgate)}).do({|cn, i| 
+		paramNameIndices = IdentityDictionary.new;
+		def = piSpec.ugenGraphFunc.def;
+		numControls = def.argNames.size - 2; // ignore plugin and input
+		valueArray = Array.newClear(numControls);
+		def.argNames.copyToEnd(2).do({|cn, i| // ignore plugin and input
 			var size, startVal, controlspec;
-			size = cn.defaultValue.size;
-			controlspec = specsDict[cn.name];
+			size = def.prototypeFrame[i + 2].size; // check default values
+			controlspec = specsDict[cn];
 			// take defaults from the control name if no spec supplied. Hmm... maybe not?
-			controlspec.isNil.if({Error("No spec for Control:" + cn.name).throw; });
+			controlspec.isNil.if({Error("No spec for Control:" + cn).throw; });
 			startVal = controlspec.default;
 			(controlspec.units == " dB" && attributes[\usesLinearAmp]).if({ 
 				startVal = startVal.dbamp;
 			});
 			if(size > startVal.size, {startVal = startVal ! size }); // not sure about this
-			values[cn.name] = startVal;
-			defControlNameObjs[cn.name] = cn;
-			controlNames = controlNames.add((name.asString ++ "-" ++ cn.name).asSymbol);
-		});
-		numControls = def.controls.size; 
-		bus = Bus.control(server, numControls); // this is two larger than it needs to be
+			valueArray[i] = startVal;
+			paramNameIndices[cn] = i;
+			controlNames = controlNames.add((name.asString ++ "-" ++ cn).asSymbol);
+		}); 
+		bus = Bus.control(server, numControls);
 		busIndex = bus.index;
-		valueArray = Array.fill(numControls, {0});
-		defControlNameObjs.keysValuesDo({|key, cn| 
-			var value;
-			valueArray[cn.index] = value = values[key];
-			server.sendBundle(nil,(["/c_setn", busIndex + cn.index, 
-				max(value.size, 1)] ++ value).postln);
+		valueArray.do({|value, i|
+			server.sendBundle(nil,(["/c_setn", busIndex + i, max(value.size, 1)] ++ value).postln);
 		});
 		
 		labelArray = Array.fill(numControls, {""});
 		
 		allControllers[name] = this;
 	}
-
+	
 	addControlsToIndex {
 		controls = Array.newClear(controlNames.size);
 		controlNames.do({|ctrlName, i|
@@ -73,40 +115,72 @@ BMPluginController : BMAbstractController {
 			subName = ctrlName.asString.drop(name.size).postln.asSymbol;
 			ctrlName = ctrlName.asSymbol;
 			control = BMPluginControl(ctrlName, this, i + 1, subName);
+			control.mappedTo_(plugin, specsDict[subName]);
 			controls[i] = control;
 			allControls[ctrlName] = control;
 		});
 	}
 	
-	setValByName {|key, value|
-		var cn;
-		cn = defControlNameObjs[key];
-		cn.notNil.if({
-			valueArray[cn.index] = value;
-			values[key] = value;
-			server.sendBundle(nil,["/c_setn", bus.index + cn.index, 
-				max(value.size, 1)] ++ value);
+	setVal { |controlNum, val| 
+		var chan;
+		chan = controlNum - 1;
+		server.sendBundle(nil,["/c_setn", busIndex + chan, max(val.size, 1)] ++ val);
+		valueArray[chan] = val; 
+		this.changed(\controlVal, chan, val);
+	}
+	
+	setValByParamName {|key, value|
+		var ind;
+		ind = paramNameIndices[key];
+		ind.notNil.if({
+			valueArray[ind] = value;
+			server.sendBundle(nil,["/c_setn", busIndex + ind, max(value.size, 1)] ++ value);
 		}, {("Plugin " ++ name ++ "has no Control named " ++ key).warn });
 	}
 	
-	getValByName {|key|
-		var cn;
-		cn = defControlNameObjs[key];
-		cn.notNil.if({
-			^values[key];
+	getVal { |controlNum|
+		^valueArray[controlNum -1];
+	}
+	
+	getValByParamName {|key|
+		var ind;
+		ind = paramNameIndices[key];
+		ind.notNil.if({
+			^valueArray[ind];
 		}, {("Plugin " ++ name ++ "has no Control named " ++ key).warn; ^nil; });
 	}
+	
+	getAllValues { ^valueArray; }
+	
+	getAllValuesDict {
+		^paramNameIndices.collect({|ind, key| valueArray[ind] });
+	}
+	
+	setAllValues {|array|  array.do({|item, i| this.setVal(i + 1, item);}); }
+	
+	setLabel { |fader, name|
+		labelArray[fader - 1] = name;
+		this.changed(\label, fader - 1, name);
+	}
+	
+	getLabel { |fader| ^labelArray[fader-1] }
+	
+	getAllLabels {  ^labelArray  }
+	
+	setAllLabels {|array| array.do({|item, i| this.setLabel(i+1, item);}); }
+
+	acceptsAutomation { ^true }
 	
 	debug {
 		bus.getn(numControls, {|array|
 			"Control Bus values:".postln;
-			defControlNameObjs.keysValuesDo({|key, cn| 
-				cn.name.postln;
+			paramNameIndices.keysValuesDo({|key, ind| 
+				key.postln;
 				"\t".post;
 				"clientside: ".post;
-				values[cn.name].post;
+				valueArray[ind].post;
 				" actual: ".post;
-				array[cn.index].postln;
+				array[ind].postln;
 			});
 			plugin.synth.notNil.if({
 				("\n" ++ piSpec.name + "plugin synth trace:").postln;
@@ -131,9 +205,5 @@ BMPluginControl : BMControl {
 	}
 	
 	isMappableControl { ^false }
-	
-	value {^controller.getValByName(subName) }
-	
-	value_ {|val| controller.setValByName(subName, val) }
 	
 }
