@@ -412,6 +412,7 @@ BMPlugin {
 //		}, {
 //			gui.front;
 //		});
+		^BMPluginSliderGUI(controller)
 	}
 	
 	// post pretty

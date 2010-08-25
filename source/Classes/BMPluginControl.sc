@@ -109,14 +109,15 @@ BMPluginController : BMAbstractController {
 	}
 	
 	addControlsToIndex {
-		controls = Array.newClear(controlNames.size);
-		controlNames.do({|ctrlName, i|
-			var control, subName;
-			subName = ctrlName.asString.drop(name.size).postln.asSymbol;
-			ctrlName = ctrlName.asSymbol;
-			control = BMPluginControl(ctrlName, this, i + 1, subName);
+		controls = Array.newClear(paramNameIndices.size);
+		paramNameIndices.keysValuesDo({|subName, ind|
+			var control, ctrlName;
+			"subName: %\n".postf(subName);
+			//subName = ctrlName.asString.drop(name.size).asSymbol.postln;
+			ctrlName = controlNames[ind];
+			control = BMPluginControl(ctrlName, this, ind + 1, subName);
 			control.mappedTo_(plugin, specsDict[subName]);
-			controls[i] = control;
+			controls[ind] = control;
 			allControls[ctrlName] = control;
 		});
 	}
@@ -205,5 +206,7 @@ BMPluginControl : BMControl {
 	}
 	
 	isMappableControl { ^false }
+	
+	displaySpec { ^BMNoOpSpec } // experimental
 	
 }

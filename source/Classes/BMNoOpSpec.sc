@@ -8,4 +8,6 @@ BMNoOpSpec {
 	
 	*unmap { |val| ^val }
 	
+	*asSpec { ^this }
+	
 }
