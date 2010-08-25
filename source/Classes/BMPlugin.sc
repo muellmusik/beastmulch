@@ -202,13 +202,15 @@ BMPluginSpec {
 // Class which manages resources for a plugin instance
 BMPlugin {
 	var <spec, <server, <attributes, <defName, <def, <specsDict;
-	var <synth, <values, defaultValues, <bus, numControls, controlNames, mappings;
+	var <synth, <values, defaultValues, numControls, controlNames, synthMappings;
 	var <preset;
-	var gui;
+	var controller;
 	
 	*new {|pluginSpecName, server, attributes|
 		^super.new.init(pluginSpecName, server ? Server.default, attributes);
 	}
+	
+	bus { ^controller.bus }
 	
 	copy {
 		var values, newplugin;
@@ -218,6 +220,52 @@ BMPlugin {
 		^newplugin;
 	}
 	
+	controllerName {
+		^spec.name; // should be something better
+	}
+	
+//	init { |argpluginSpecName, argserver, argattributes|
+//		spec = BMPluginSpec.specs[argpluginSpecName.asSymbol];
+//		spec.isNil.if({
+//			("Plugin spec" + argpluginSpecName + "does not exist!").warn;
+//			^nil;
+//		});
+//		specsDict = spec.specsDict.deepCopy;
+//		server = argserver;
+//		attributes = spec.defaultAttributes.copy;
+//		argattributes.notNil.if({attributes.putAll(argattributes)}); // local settings override
+//		spec.setupFunc.value(this);
+//		this.makeDef;
+//		values = ();
+//		controlNames = ();
+//		def.allControlNames.reject({|cn| (cn.name == \i_in) || (cn.name == \cfgate)}).do({|cn| 
+//			var size, startVal, controlspec;
+//			size = cn.defaultValue.size;
+//			controlspec = specsDict[cn.name];
+//			// take defaults from the control name if no spec supplied. Hmm... maybe not?
+//			controlspec.isNil.if({Error("No spec for Control:" + cn.name).throw; });
+//			startVal = controlspec.default;
+//			(controlspec.units == " dB" && attributes[\usesLinearAmp]).if({ 
+//				startVal = startVal.dbamp;
+//			});
+//			if(size > startVal.size, {startVal = startVal ! size }); // not sure about this
+//			values[cn.name] = startVal;
+//			controlNames[cn.name] = cn;
+//		});
+//		defaultValues = values.deepCopy;
+//		numControls = def.controls.size; 
+//		bus = Bus.control(server, numControls); // this is two larger than it needs to be
+//		controlNames.keysValuesDo({|key, cn| 
+//			var value;
+//			value = values[key];
+//			server.sendBundle(nil,["/c_setn", bus.index + cn.index, 
+//				max(value.size, 1)] ++ value);
+//		});
+//		mappings = controlNames.values.collectAs({|cn| 
+//			[cn.name, ("c" ++ (bus.index + cn.index)).asSymbol];
+//		}, Array).flat;
+//	}
+
 	init { |argpluginSpecName, argserver, argattributes|
 		spec = BMPluginSpec.specs[argpluginSpecName.asSymbol];
 		spec.isNil.if({
@@ -230,35 +278,38 @@ BMPlugin {
 		argattributes.notNil.if({attributes.putAll(argattributes)}); // local settings override
 		spec.setupFunc.value(this);
 		this.makeDef;
-		values = ();
-		controlNames = ();
-		def.allControlNames.reject({|cn| (cn.name == \i_in) || (cn.name == \cfgate)}).do({|cn| 
-			var size, startVal, controlspec;
-			size = cn.defaultValue.size;
-			controlspec = specsDict[cn.name];
-			// take defaults from the control name if no spec supplied. Hmm... maybe not?
-			controlspec.isNil.if({Error("No spec for Control:" + cn.name).throw; });
-			startVal = controlspec.default;
-			(controlspec.units == " dB" && attributes[\usesLinearAmp]).if({ 
-				startVal = startVal.dbamp;
-			});
-			if(size > startVal.size, {startVal = startVal ! size }); // not sure about this
-			values[cn.name] = startVal;
-			controlNames[cn.name] = cn;
-		});
-		defaultValues = values.deepCopy;
-		numControls = def.controls.size; 
-		bus = Bus.control(server, numControls); // this is two larger than it needs to be
-		controlNames.keysValuesDo({|key, cn| 
-			var value;
-			value = values[key];
-			server.sendBundle(nil,["/c_setn", bus.index + cn.index, 
-				max(value.size, 1)] ++ value);
-		});
-		mappings = controlNames.values.collectAs({|cn| 
-			[cn.name, ("c" ++ (bus.index + cn.index)).asSymbol];
+		controller = BMPluginController(this);
+		//values = ();
+//		controlNames = ();
+//		def.allControlNames.reject({|cn| (cn.name == \i_in) || (cn.name == \cfgate)}).do({|cn| 
+//			var size, startVal, controlspec;
+//			size = cn.defaultValue.size;
+//			controlspec = specsDict[cn.name];
+//			// take defaults from the control name if no spec supplied. Hmm... maybe not?
+//			controlspec.isNil.if({Error("No spec for Control:" + cn.name).throw; });
+//			startVal = controlspec.default;
+//			(controlspec.units == " dB" && attributes[\usesLinearAmp]).if({ 
+//				startVal = startVal.dbamp;
+//			});
+//			if(size > startVal.size, {startVal = startVal ! size }); // not sure about this
+//			values[cn.name] = startVal;
+//			controlNames[cn.name] = cn;
+//		});
+//		defaultValues = values.deepCopy;
+//		numControls = def.controls.size; 
+//		bus = Bus.control(server, numControls); // this is two larger than it needs to be
+//		controlNames.keysValuesDo({|key, cn| 
+//			var value;
+//			value = values[key];
+//			server.sendBundle(nil,["/c_setn", bus.index + cn.index, 
+//				max(value.size, 1)] ++ value);
+//		});
+		defaultValues = controller.values.deepCopy;
+		synthMappings = controller.controlNames.values.collectAs({|cn| 
+			[cn.name, ("c" ++ (controller.busIndex + cn.index)).asSymbol];
 		}, Array).flat;
 	}
+
 	
 	makeDef {
 		defName = spec.name; 
@@ -276,42 +327,50 @@ BMPlugin {
 		
 	}
 	
+//	set {|key, value|
+//		var cn;
+//		cn = controlNames[key];
+//		cn.notNil.if({
+//			values[key] = value;
+//			server.sendBundle(nil,["/c_setn", bus.index + cn.index, 
+//				max(value.size, 1)] ++ value);
+//		}, {("Plugin " ++ spec.name ++ "has no Control named " ++ key).warn });
+//	}
+
 	set {|key, value|
-		var cn;
-		cn = controlNames[key];
-		cn.notNil.if({
-			values[key] = value;
-			server.sendBundle(nil,["/c_setn", bus.index + cn.index, 
-				max(value.size, 1)] ++ value);
-		}, {("Plugin " ++ spec.name ++ "has no Control named " ++ key).warn });
+		controller.setValByName(key, value);
 	}
 	
-	get {|key|
-		var cn;
-		cn = controlNames[key];
-		cn.notNil.if({
-			^values[key];
-		}, {("Plugin " ++ spec.name ++ "has no Control named " ++ key).warn; ^nil; });
-	}
+//	get {|key|
+//		var cn;
+//		cn = controlNames[key];
+//		cn.notNil.if({
+//			^values[key];
+//		}, {("Plugin " ++ spec.name ++ "has no Control named " ++ key).warn; ^nil; });
+//	}
+
+	get {|key| ^controller.getValByName(key) }
 	
-	debug {
-		bus.getn(numControls, {|array|
-			"Control Bus values:".postln;
-			controlNames.keysValuesDo({|key, cn| 
-				cn.name.postln;
-				"\t".post;
-				"clientside: ".post;
-				values[cn.name].post;
-				" actual: ".post;
-				array[cn.index].postln;
-			});
-			synth.notNil.if({
-				("\n" ++ spec.name + "plugin synth trace:").postln;
-				synth.trace;
-			});
-		});
-		^("Debugging" + spec.name + "Plugin:\n");
-	}
+//	debug {
+//		bus.getn(numControls, {|array|
+//			"Control Bus values:".postln;
+//			controlNames.keysValuesDo({|key, cn| 
+//				cn.name.postln;
+//				"\t".post;
+//				"clientside: ".post;
+//				values[cn.name].post;
+//				" actual: ".post;
+//				array[cn.index].postln;
+//			});
+//			synth.notNil.if({
+//				("\n" ++ spec.name + "plugin synth trace:").postln;
+//				synth.trace;
+//			});
+//		});
+//		^("Debugging" + spec.name + "Plugin:\n");
+//	}
+
+	debug { ^controller.debug }
 	
 	preset_{|presetname|
 		var psdict;
@@ -328,24 +387,32 @@ BMPlugin {
 			Error("Target server does not match Plugin server.").throw;
 		});
 		synth.notNil.if({ synth.set(\cfgate, 0); });
-		synth = def.play(target, [i_in: in] ++ mappings, addAction);
+		synth = def.play(target, [i_in: in] ++ synthMappings, addAction);
 	}
 	
+//	release { 
+//		synth.set(\cfgate, 0); 
+//		synth = nil; bus.free; 
+//		bus = nil;
+//		gui.notNil.if({ gui.close });
+//		spec.cleanupFunc.value(this);
+//	} // I'm a lame duck...
+
 	release { 
 		synth.set(\cfgate, 0); 
-		synth = nil; bus.free; 
-		bus = nil;
-		gui.notNil.if({ gui.close });
+		synth = nil; 
+		controller.free;
+		//gui.notNil.if({ gui.close });
 		spec.cleanupFunc.value(this);
 	} // I'm a lame duck...
 	
 	gui {
-		gui.isNil.if({
-			gui = spec.guiFunc.value(this);
-			gui.onClose = gui.onClose.addFunc({ gui = nil });
-		}, {
-			gui.front;
-		});
+		//gui.isNil.if({
+//			gui = spec.guiFunc.value(this);
+//			gui.onClose = gui.onClose.addFunc({ gui = nil });
+//		}, {
+//			gui.front;
+//		});
 	}
 	
 	// post pretty
