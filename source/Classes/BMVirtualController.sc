@@ -45,7 +45,7 @@ BMVirtualController : BMAbstractController {
 		chan = controlNum - 1;
 		server.sendMsg("/c_set", busIndex + chan, val);
 		valueArray[chan] = val; 
-		this.changed(\faderVal, chan, val);
+		this.changed(\controlVal, chan, val);
 	}
 	
 	getAllValues { ^valueArray; }

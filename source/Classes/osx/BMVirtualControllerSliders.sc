@@ -74,7 +74,7 @@ BMVirtualControllerSliders : BMAbstractGUI {
 	
 	update {|changed, what, index, val|
 		switch(what,
-			\faderVal, {
+			\controlVal, {
 				needsRefresh = true;
 				this.startRefreshLoop;
 			},
