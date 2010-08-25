@@ -4,7 +4,7 @@
 // need other BMVirtualController Methods? or make a BMAbstractVirtualController?
 
 BMPluginController : BMAbstractController {
-	var plugin, <controlNames, <values, piSpec, specsDict;
+	var plugin, <defControlNameObjs, <controlNames, <values, piSpec, specsDict;
 	
 	*new { |plugin|
 		^super.new.init(plugin).addControlsToIndex;
@@ -26,16 +26,16 @@ BMPluginController : BMAbstractController {
 	init { |argplugin|
 		var def, attributes;
 		plugin = argplugin;
-		name = plugin.controllerName;
+		name = plugin.name;
 		server = plugin.server;
 		attributes = plugin.attributes;
 		
 		piSpec = plugin.spec;
 		specsDict = plugin.specsDict;
 		values = ();
-		controlNames = ();
+		defControlNameObjs = ();
 		def = plugin.def;
-		def.allControlNames.reject({|cn| (cn.name == \i_in) || (cn.name == \cfgate)}).do({|cn| 
+		def.allControlNames.reject({|cn| (cn.name == \i_in) || (cn.name == \cfgate)}).do({|cn, i| 
 			var size, startVal, controlspec;
 			size = cn.defaultValue.size;
 			controlspec = specsDict[cn.name];
@@ -47,13 +47,14 @@ BMPluginController : BMAbstractController {
 			});
 			if(size > startVal.size, {startVal = startVal ! size }); // not sure about this
 			values[cn.name] = startVal;
-			controlNames[cn.name] = cn;
+			defControlNameObjs[cn.name] = cn;
+			controlNames = controlNames.add((name.asString ++ "-" ++ cn.name).asSymbol);
 		});
 		numControls = def.controls.size; 
 		bus = Bus.control(server, numControls); // this is two larger than it needs to be
 		busIndex = bus.index;
 		valueArray = Array.fill(numControls, {0});
-		controlNames.keysValuesDo({|key, cn| 
+		defControlNameObjs.keysValuesDo({|key, cn| 
 			var value;
 			valueArray[cn.index] = value = values[key];
 			server.sendBundle(nil,(["/c_setn", busIndex + cn.index, 
@@ -65,15 +66,13 @@ BMPluginController : BMAbstractController {
 		allControllers[name] = this;
 	}
 
-	
 	addControlsToIndex {
-		var controlNames;
-		controlNames = this.controlNames;
 		controls = Array.newClear(controlNames.size);
 		controlNames.do({|ctrlName, i|
-			var control;
+			var control, subName;
+			subName = ctrlName.asString.drop(name.size).postln.asSymbol;
 			ctrlName = ctrlName.asSymbol;
-			control = BMPluginControl(ctrlName, this, i + 1);
+			control = BMPluginControl(ctrlName, this, i + 1, subName);
 			controls[i] = control;
 			allControls[ctrlName] = control;
 		});
@@ -81,7 +80,7 @@ BMPluginController : BMAbstractController {
 	
 	setValByName {|key, value|
 		var cn;
-		cn = controlNames[key];
+		cn = defControlNameObjs[key];
 		cn.notNil.if({
 			valueArray[cn.index] = value;
 			values[key] = value;
@@ -92,7 +91,7 @@ BMPluginController : BMAbstractController {
 	
 	getValByName {|key|
 		var cn;
-		cn = controlNames[key];
+		cn = defControlNameObjs[key];
 		cn.notNil.if({
 			^values[key];
 		}, {("Plugin " ++ name ++ "has no Control named " ++ key).warn; ^nil; });
@@ -101,7 +100,7 @@ BMPluginController : BMAbstractController {
 	debug {
 		bus.getn(numControls, {|array|
 			"Control Bus values:".postln;
-			controlNames.keysValuesDo({|key, cn| 
+			defControlNameObjs.keysValuesDo({|key, cn| 
 				cn.name.postln;
 				"\t".post;
 				"clientside: ".post;
@@ -121,7 +120,20 @@ BMPluginController : BMAbstractController {
 }
 
 BMPluginControl : BMControl {
+	var <subName;
+	
+	*new {|name, controller, ctrlNum, subName|
+		^super.new(name, controller, ctrlNum).init(subName);
+	}
+	
+	init {|argSN|
+		subName = argSN;
+	}
 	
 	isMappableControl { ^false }
+	
+	value {^controller.getValByName(subName) }
+	
+	value_ {|val| controller.setValByName(subName, val) }
 	
 }

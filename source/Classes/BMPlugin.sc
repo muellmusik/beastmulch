@@ -204,24 +204,20 @@ BMPlugin {
 	var <spec, <server, <attributes, <defName, <def, <specsDict;
 	var <synth, <values, defaultValues, numControls, controlNames, synthMappings;
 	var <preset;
-	var controller;
+	var controller, <name;
 	
-	*new {|pluginSpecName, server, attributes|
-		^super.new.init(pluginSpecName, server ? Server.default, attributes);
+	*new {|pluginSpecName, server, attributes, name|
+		^super.new.init(pluginSpecName, server ? Server.default, attributes, name);
 	}
 	
 	bus { ^controller.bus }
 	
-	copy {
+	copy {|name|
 		var values, newplugin;
 		values = this.values;
-		newplugin = BMPlugin(this.spec.name, this.server, this.attributes);
+		newplugin = BMPlugin(this.spec.name, this.server, this.attributes, name);
 		values.keysValuesDo({|key, val| newplugin.set(key, val)});
 		^newplugin;
-	}
-	
-	controllerName {
-		^spec.name; // should be something better
 	}
 	
 //	init { |argpluginSpecName, argserver, argattributes|
@@ -266,12 +262,13 @@ BMPlugin {
 //		}, Array).flat;
 //	}
 
-	init { |argpluginSpecName, argserver, argattributes|
+	init { |argpluginSpecName, argserver, argattributes, argName|
 		spec = BMPluginSpec.specs[argpluginSpecName.asSymbol];
 		spec.isNil.if({
 			("Plugin spec" + argpluginSpecName + "does not exist!").warn;
 			^nil;
 		});
+		name = argName ? (spec.name  ++ UniqueID.next).asSymbol;
 		specsDict = spec.specsDict.deepCopy;
 		server = argserver;
 		attributes = spec.defaultAttributes.copy;
@@ -305,7 +302,7 @@ BMPlugin {
 //				max(value.size, 1)] ++ value);
 //		});
 		defaultValues = controller.values.deepCopy;
-		synthMappings = controller.controlNames.values.collectAs({|cn| 
+		synthMappings = controller.defControlNameObjs.values.collectAs({|cn| 
 			[cn.name, ("c" ++ (controller.busIndex + cn.index)).asSymbol];
 		}, Array).flat;
 	}
