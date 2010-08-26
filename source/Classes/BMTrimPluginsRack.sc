@@ -135,8 +135,12 @@ BMTrimPluginsStrip {
 		dict[\trim] = trim;
 		dict[\plugins] = plugins.collect({|plugin|
 			// could be a problem if pluginspec changes in the meantime
-			[plugin.spec.name, plugin.attributes, plugin.values];
-		}); // these are in order
+			IdentityDictionary[
+				\specName -> plugin.spec.name, 
+				\attributes -> plugin.attributes, 
+				\name -> plugin.name, 
+				\values -> plugin.values];
+		});
 		^dict;
 	}
 	
@@ -145,12 +149,17 @@ BMTrimPluginsStrip {
 		plugins = List.new;
 		dict = dict ? ();
 		this.trim_(dict[\trim]);
-		dict[\plugins].do({|pluginArray|
+		dict[\plugins].do({|pluginDict|
 			var plugin;
-			plugin = BMPlugin(pluginArray[0], server, pluginArray[1]);
+			plugin = BMPlugin(
+				pluginDict[\specName], 
+				server, 
+				pluginDict[\attributes], 
+				pluginDict[\name]
+			);
 			plugin.notNil.if({
 				this.addPlugin(plugin);
-				pluginArray[2].keysValuesDo({|k, v| plugin.set(k, v)});
+				pluginDict[\values].keysValuesDo({|k, v| plugin.set(k, v)});
 			});
 		});
 		this.changed;

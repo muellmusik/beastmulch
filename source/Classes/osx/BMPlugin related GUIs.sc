@@ -30,7 +30,7 @@ BMTrimPluginsRackGUI : BMAbstractGUI {
 				.background_(Color.grey.alpha_(0.2))
 				.font_(Font("Helvetica-Bold", 12))
 				.dragLabel_(piName.asString)
-				.beginDragAction_({BMPlugin(piName)}) // one channel for now
+				.beginDragAction_({piName}) // one channel for now
 				.mouseDownAction_({
 					descriptionHelpText.string = piName ++ ": " ++ 
 						BMPluginSpec.specs[piName].description;
@@ -98,7 +98,7 @@ BMTrimPluginsRackGUI : BMAbstractGUI {
 
 // only in a larger GUI
 BMTrimPluginsStripGUI {
-	var <trimPluginsStrip, containerView, ezKnob, labelView, listView;
+	var <trimPluginsStrip, containerView, ezKnob, labelView, listView, name;
 	
 	*new { |trimPluginsStrip, parent, name, origin|
 		^super.new.init(trimPluginsStrip, parent).makeGUI(parent, name, origin ? 0@0);
@@ -109,8 +109,8 @@ BMTrimPluginsStripGUI {
 	 	trimPluginsStrip.addDependant(this);
 	 }
 	 
-	 makeGUI{|parent, name, origin|
-	 	
+	 makeGUI{|parent, argname, origin|
+	 	name = argname;
 	 	containerView = SCCompositeView(parent, Rect(origin.x, origin.y, 100, 500));
 	 	containerView.decorator = FlowLayout(containerView.bounds);
 	 	labelView = SCStaticText(containerView, Rect(0, 0, 100, 30))
@@ -147,22 +147,39 @@ BMTrimPluginsStripGUI {
 				listView.enterKeyAction.value;
 			});
 		};
-		listView.canReceiveDragHandler = { SCView.currentDrag.isKindOf(BMPlugin) };
-		listView.receiveDragHandler = { trimPluginsStrip.addPlugin(SCView.currentDrag) };
+		listView.canReceiveDragHandler = { BMPluginSpec.specs[SCView.currentDrag].notNil };
+		listView.receiveDragHandler = { this.addPluginBySpec(SCView.currentDrag) };
 		listView.beginDragAction = { 
 			listView.dragLabel = listView.item.asString;
 			trimPluginsStrip.plugins[listView.value].copy;
 		};
-	 }
+	}
 	 
-	 update {|tpv, what|
+	addPluginBySpec {|specName|
+		var plugin;
+		plugin = BMPlugin(specName, trimPluginsStrip.server, nil, this.newPluginName(specName));
+		trimPluginsStrip.addPlugin(plugin);
+	}
+	
+	newPluginName {|specName|
+		var startName, candidate, i = 0;
+		startName = candidate = (name.asString ++ "-" ++ specName).asSymbol;
+		// number em by type
+		while({BMAbstractController.allControllers[candidate].notNil }, {
+			i = i + 1;
+			candidate = (startName.asString ++ "-" ++ i).asSymbol
+		});
+		^candidate;
+	}
+	 
+	update {|tpv, what|
 	 	if(what == \trim, {ezKnob.value = trimPluginsStrip.trim;});
 	 	listView.items_(trimPluginsStrip.plugins.collect({|plugin| plugin.spec.name}));
 	 	switch(what,
 	 		\moveDown, {listView.value = listView.value + 1},
 	 		\moveUp, {listView.value = listView.value - 1}
 	 	)
-	 }
+	}
 
 }
 
