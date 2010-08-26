@@ -103,7 +103,7 @@ BMPluginController : BMAbstractController {
 			server.sendBundle(nil,(["/c_setn", busIndex + i, max(value.size, 1)] ++ value).postln);
 		});
 		
-		labelArray = Array.fill(numControls, {""});
+		labelArray = def.argNames.copyToEnd(2).collect(_.asString);
 		
 		allControllers[name] = this;
 	}
@@ -134,8 +134,7 @@ BMPluginController : BMAbstractController {
 		var ind;
 		ind = paramNameIndices[key];
 		ind.notNil.if({
-			valueArray[ind] = value;
-			server.sendBundle(nil,["/c_setn", busIndex + ind, max(value.size, 1)] ++ value);
+			this.setVal(ind + 1, value);
 		}, {("Plugin " ++ name ++ "has no Control named " ++ key).warn });
 	}
 	

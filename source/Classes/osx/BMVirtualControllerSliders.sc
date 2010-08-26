@@ -38,7 +38,8 @@ BMAbstractVirtualControllerGUI : BMAbstractGUI {
 				needsRefresh = true;
 				this.startRefreshLoop;
 			},
-			\label, {guiCtrls[index].labelView.string_(val.asString)}
+			\label, {guiCtrls[index].labelView.string_(val.asString)},
+			\controllerFreed, { this.close }
 		)
 	}
 	
@@ -98,7 +99,7 @@ BMPluginSliderGUI : BMAbstractVirtualControllerGUI {
 		font = Font("Helvetica-Bold", 10);
 		numSliders = specsDict.size;
 		window = SCWindow.new(name, 
-			Rect(300, 300, 652, (numSliders + 1) * 24), false); // 508
+			Rect(300, 300, 652, (numSliders + 1) * 24 + 24), false); // 508
 		window.view.decorator = FlowLayout(window.view.bounds);
 		window.view.background = Color.rand.alpha_(0.3);
 		guiCtrls = Array.newClear(numSliders);
@@ -106,25 +107,25 @@ BMPluginSliderGUI : BMAbstractVirtualControllerGUI {
 		labelWidth = virtualCont.controlNames.collect({|name| 
 			name.asString.bounds(font).width
 		}).maxItem;
-		specsDict.sortedKeysValuesDo({|controlName, cspec, i|
+		virtualCont.controlNames.do({|controlName, i|
 			var initVal, control, label, displaySpec;
 			label = virtualCont.getLabel(i + 1);
-			if(label.size == 0, {label =  controlName.asString }); 
+			if(label.size == 0, {label = controlName.asString }); 
 			control = BMAbstractController.allControls[controlName.asSymbol];
-			displaySpec = control.displaySpec;
-			initVal = plugin.get(controlName);
+			//displaySpec = control.displaySpec;
+			initVal = control.value;
 			guiCtrls[i] = EZSlider.new(window, 
 				640@20, 
 				label, 
-				displaySpec,
-				{|ez| var setVal;
-					setVal = control.controlSpec.map(displaySpec.unmap(ez.value));
-					virtualCont.setVal(i + 1, setVal);
+				control.controlSpec,
+				{|ez| 
+					"setting val: % - %\n".postf(i + 1, ez.value);
+					virtualCont.setVal(i + 1, ez.value);
 				}, initVal, labelWidth: labelWidth
 			);
 			guiCtrls[i].numberView.background = Color.white.alpha_(0.4);
 			guiCtrls[i].font = font;
-			displaySpecs[i] = displaySpec;
+			//displaySpecs[i] = displaySpec;
 		
 		}, {|a, b|
 			var argArray;
@@ -137,19 +138,25 @@ BMPluginSliderGUI : BMAbstractVirtualControllerGUI {
 		presetMenu.action = {
 			if(presetMenu.value > 1, {
 				plugin.preset_(presetMenu.items[presetMenu.value].asSymbol);
-				guiCtrls.keysValuesDo({|key, slid| 
-					var newVal;
-					newVal = plugin.get(key);
-					(slid.controlSpec.units == " dB" 
-						&& plugin.attributes[\usesLinearAmp]).if({ 
-						newVal = newVal.ampdb;
-					});
-					slid.value = newVal;
-				});
 			});
 		};
 		window.onClose = { virtualCont.removeDependant(this); onClose.value };
 		window.front;
+	}
+	
+	startRefreshLoop {
+		refreshLoopOn.not.if({
+			refreshLoopOn = true;
+			AppClock.sched(refreshInterval, {
+				var resched;
+				needsRefresh.if({resched = refreshInterval}, {refreshLoopOn = false});
+				virtualCont.getAllValues.do({|val, i| 
+					guiCtrls[i].value_(val);
+				});
+				needsRefresh = false;
+				resched;
+			});
+		});
 	}
 	
 }
