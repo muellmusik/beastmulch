@@ -264,6 +264,17 @@ BMPlugin {
 //		}, Array).flat;
 //	}
 
+	*newPluginName {|startName|
+		var candidate, i = 0;
+		candidate = startName;
+		// number em by type
+		while({BMAbstractController.allControllers[candidate].notNil }, {
+			i = i + 1;
+			candidate = (startName.asString ++ "-" ++ i).asSymbol
+		});
+		^candidate;
+	} 
+
 	init { |argpluginSpecName, argserver, argattributes, argName|
 		spec = BMPluginSpec.specs[argpluginSpecName.asSymbol];
 		spec.isNil.if({
@@ -271,6 +282,12 @@ BMPlugin {
 			^nil;
 		});
 		name = argName ? (spec.name  ++ UniqueID.next).asSymbol;
+		// protect against duplicate plugins
+		if(BMAbstractController.allControllers[name].notNil, {
+			warn("A plugin named " ++ name ++ " already exists");
+			name = BMPlugin.newPluginName(name);
+			"Using % instead\n\n".postf(name);
+		});
 		specsDict = spec.specsDict.deepCopy;
 		server = argserver;
 		attributes = spec.defaultAttributes.copy;
