@@ -202,9 +202,9 @@ BMPluginSpec {
 // Class which manages resources for a plugin instance
 BMPlugin {
 	var <spec, <server, <attributes, <defName, <def, <specsDict;
-	var <synth, defaultValues, numControls, controlNames, synthMappings;
+	var <synth, defaultValues, numControls, synthMappings;
 	var <preset;
-	var controller, <name;
+	var <controller, <name;
 	
 	*new {|pluginSpecName, server, attributes, name|
 		^super.new.init(pluginSpecName, server ? Server.default, attributes, name);
@@ -221,6 +221,8 @@ BMPlugin {
 	}
 	
 	values { ^controller.getAllValuesDict }
+	
+	controlNames { ^controller.controlNames }
 	
 //	init { |argpluginSpecName, argserver, argattributes|
 //		spec = BMPluginSpec.specs[argpluginSpecName.asSymbol];
