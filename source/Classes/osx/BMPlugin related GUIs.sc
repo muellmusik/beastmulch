@@ -157,19 +157,13 @@ BMTrimPluginsStripGUI {
 	 
 	addPluginBySpec {|specName|
 		var plugin;
-		plugin = BMPlugin(specName, trimPluginsStrip.server, nil, this.newPluginName(specName));
+		plugin = BMPlugin(
+			specName, 
+			trimPluginsStrip.server, 
+			nil, 
+			BMPlugin.newPluginName((name.asString ++ "-" ++ specName).asSymbol)
+		);
 		trimPluginsStrip.addPlugin(plugin);
-	}
-	
-	newPluginName {|specName|
-		var startName, candidate, i = 0;
-		startName = candidate = (name.asString ++ "-" ++ specName).asSymbol;
-		// number em by type
-		while({BMAbstractController.allControllers[candidate].notNil }, {
-			i = i + 1;
-			candidate = (startName.asString ++ "-" ++ i).asSymbol
-		});
-		^candidate;
 	}
 	 
 	update {|tpv, what|
