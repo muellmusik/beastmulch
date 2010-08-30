@@ -136,57 +136,41 @@ BMPluginSpec {
 		// read application directory for source code files of user plugins specs
 		// or maybe in app
 		});
-		defaultGuiFunc = {|plugin|
-			var numSliders, spec, specsDict, window, presetMenu, sliders;
+		defaultGuiFunc = {	|plugin, parent, gui|
+			var numSliders, spec, specsDict, guiCtrls, font, labelWidth, virtualCont;
+			virtualCont = gui.virtualCont;
 			spec = plugin.spec;
 			specsDict = plugin.specsDict;
+			font = gui.font;
 			numSliders = specsDict.size;
-			window = SCWindow.new("Plugin:" + spec.name, 
-				Rect(300, 300, 552, (numSliders + 1) * 24 + 24), false); // 508
-			window.view.decorator = FlowLayout(window.view.bounds);
-			window.view.background = Color.rand.alpha_(0.3);
-			sliders = ();
-			specsDict.sortedKeysValuesDo({|key, cspec|
-				var initVal;
-				initVal = plugin.get(key);
-				(cspec.units == " dB" && plugin.attributes[\usesLinearAmp]).if({ 
-					initVal = initVal.ampdb;
-				});
-				sliders[key] = EZSlider.new(window, 500@20, key.asString, cspec,
-					{|ez| var setVal;
-						setVal = ez.value;
-						(cspec.units == " dB" && plugin.attributes[\usesLinearAmp]).if({ 
-							setVal = setVal.dbamp;
-						});
-						plugin.set(key, setVal);
-					}, initVal, labelWidth: 70
+			guiCtrls = gui.guiCtrls;
+			//displaySpecs = gui.displaySpecs;
+			labelWidth = virtualCont.controlNames.collect({|name| 
+				name.asString.bounds(font).width
+			}).maxItem;
+			parent.bounds = parent.bounds.width_(652).height_(numSliders * 24);
+			parent.addFlowLayout;
+			virtualCont.controlNames.do({|controlName, i|
+				var initVal, control, label, displaySpec;
+				label = virtualCont.getLabel(i + 1);
+				if(label.size == 0, {label = controlName.asString }); 
+				control = BMAbstractController.allControls[controlName.asSymbol];
+				//displaySpec = control.displaySpec;
+				initVal = control.value;
+				guiCtrls[i] = EZSlider.new(parent, 
+					640@20, 
+					label, 
+					control.controlSpec,
+					{|ez| 
+						"setting val: % - %\n".postf(i + 1, ez.value);
+						virtualCont.setVal(i + 1, ez.value);
+					}, initVal, labelWidth: labelWidth
 				);
-				sliders[key].numberView.background = Color.white.alpha_(0.4);
-				SCStaticText(window, Rect(0,0,40,20)).string_(cspec.units);
+				guiCtrls[i].numberView.background = Color.white.alpha_(0.4);
+				guiCtrls[i].font = font;
+				//displaySpecs[i] = displaySpec;
 			
-			}, {|a, b|
-				var argArray;
-				argArray = plugin.spec.ugenGraphFunc.def.argNames;
-				argArray.indexOf(a) < argArray.indexOf(b)
 			});
-			window.view.decorator.nextLine.shift(10, 10);
-			presetMenu = SCPopUpMenu(window, Rect(0, 0, 100, 20));
-			presetMenu.items = ["presets", "-"] ++ spec.presets.keys;
-			presetMenu.action = {
-				if(presetMenu.value > 1, {
-					plugin.preset_(presetMenu.items[presetMenu.value].asSymbol);
-					sliders.keysValuesDo({|key, slid| 
-						var newVal;
-						newVal = plugin.get(key);
-						(slid.controlSpec.units == " dB" 
-							&& plugin.attributes[\usesLinearAmp]).if({ 
-							newVal = newVal.ampdb;
-						});
-						slid.value = newVal;
-					});
-				});
-			};
-			window.front; // this return value is stored in the plugin's gui var
 		}
 	}
 	
@@ -431,7 +415,7 @@ BMPlugin {
 //		}, {
 //			gui.front;
 //		});
-		^BMPluginSliderGUI(controller)
+		^BMPluginGUI(controller)
 	}
 	
 	// post pretty
