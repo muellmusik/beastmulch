@@ -1,8 +1,4 @@
-// SC3 granulator class in the style of Barry Truax POD system. Created Toronto 19.06.03
 
-// Consider having a private bus argument for internal stuff
-
-// thisThread.seconds should be Main.elapsedTime?
 
 BMSwarmGranulator {
 	classvar <>latency = 0.05;
