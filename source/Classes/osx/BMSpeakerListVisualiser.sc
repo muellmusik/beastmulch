@@ -1,7 +1,7 @@
 BMSpeakerListVisualiser : BMAbstractGUI {
 
 	var speakerList, radius = 12, lowerel = 0;
-	var maxXinv, lowX, hiX, hiY, lowY, hiZ, lowZ, zoom, labels, qcView;
+	var maxXinv, lowX, hiX, hiY, lowY, hiZ, lowZ, height, distance, labels, qcView;
 	var colours, floorZ, viewSpeakers;
 	
 	*new {|speakerList| ^super.new.init(speakerList).makeWindow }
@@ -28,17 +28,22 @@ BMSpeakerListVisualiser : BMAbstractGUI {
 		
 		window = SCWindow("Speakers", rect = Rect(400,200, 800, 800 * [hiY, lowY].abs.maxItem)).front;
 
-		zoom = SCSlider(window, Rect(0,0,rect.width, 20));
+		height = SCSlider(window, Rect(0,0,rect.width, 20));
+		distance = SCSlider(window, Rect(0,20,rect.width, 20));
 
-		qcView = SCQuartzComposerView(window, rect.moveTo(0,20));
+		qcView = SCQuartzComposerView(window, rect.resizeBy(0,-40).moveTo(0,40));
 		qcView.path = this.class.filenameSymbol.asString.dirname ++ "/QC/SpeakerVis.qtz";
 		qcView.showBoids = true;
 		qcView.resize_(5);
 		
 		//qcView.maxFPS_(20);
-		zoom.action = {qcView.zoom = zoom.value * (hiZ - floorZ) - (hiZ - floorZ);};
+		height.action = {qcView.height = height.value * (hiZ - floorZ) - (hiZ - floorZ);};
 		
-		zoom.doAction;
+		height.doAction;
+		
+		distance.action = {qcView.distance = (-1 + distance.value) * 1.5 };
+		distance.valueAction_(1.0);
+		
 		qcView.sphereScale = 0.02;
 		
 		colours = Pseq([Color.green.alpha_(1), Color.red.alpha_(1), Color.blue.alpha_(1), Color.yellow.alpha_(1), Color.white.alpha_(1), Color.magenta.alpha_(1), Color.cyan.alpha_(1)], inf).asStream;
