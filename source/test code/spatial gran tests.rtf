@@ -1,0 +1,81 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
+{\fonttbl\f0\fnil\fcharset0 Monaco;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red191\green0\blue0;\red0\green115\blue0;
+\red0\green0\blue191;\red96\green96\blue96;\red0\green0\blue191;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf2 s.boot;\
+\
+\pard\pardeftab560\ql\qnatural
+\cf3 // why doesn't radius match well?\cf2 \
+\
+l = [[0, \cf4 'C'\cf2  ], [45, \cf4 'FR'\cf2 ], [90, \cf4 'R'\cf2 ], [135, \cf4 'BR'\cf2 ], [180, \cf4 'B'\cf2 ], [-135, \cf4 'BL'\cf2 ], [-90, \cf4 'L'\cf2 ], [-45, \cf4 'FL'\cf2 ]].collectAs(\{\cf5 |el, i|\cf2 \
+	\cf5 BMSpeaker\cf2 .newFromSpherical(el[1], i, el[0], 0, 2);\
+\}, \cf5 BMInOutArray\cf2 );\
+\
+~vbp = \cf5 VBAPSpeakerArray\cf2 (2, l.collectAs(\cf5 _\cf2 .azi, \cf5 Array\cf2 ));\
+~vbuf = ~vbp.loadToBuffer;\
+\
+v = \cf5 BMSpeakerListVisualiser\cf2 (l); \cf3 // a gui to see the boids\cf2 \
+\
+c = \cf5 Buffer\cf2 .read(s, \cf6 "sounds/a11wlk01.wav"\cf2 );\
+\
+d = \cf5 SynthDef\cf2 (\cf6 "BMVBAPGrain"\cf2 ,\{ \cf5 arg\cf2  i_out=0, i_sampbufnum, pitchScale = 1.0, \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 	dur = 0.05, pointer, offset = 0.0, level = 1.0, loop, azi = 0;\
+	\cf5 var\cf2  thisStart, thisDur, grain;\
+	thisStart = pointer + \cf5 IRand\cf2 (0, offset);\
+	grain = \cf5 EnvGen\cf2 .ar(\cf5 Env\cf2 .sine, 1.0, level, 0.0, dur, 2) \
+		* \cf5 PlayBuf\cf2 .ar(1,i_sampbufnum,pitchScale * \cf5 BufRateScale\cf2 .ir(i_sampbufnum),\
+			1, thisStart,loop);\
+	grain = \cf5 VBAP\cf2 .ar(~vbp.numSpeakers, grain, ~vbuf, azi, 0, 1);\
+	\cf5 OffsetOut\cf2 .ar(i_out,grain);\
+\}).add;\
+\pard\pardeftab560\ql\qnatural
+\cf2 \
+(\
+b = (numGrains: 20, def: d, outFunc: 0, centre: 0, dev: 10, azis: \cf5 List\cf2 .new);\
+\
+b.nextLoc = \{  \
+	\cf5 var\cf2  pos;\
+	pos = b.centre.gauss(b.dev);\
+	b.azis = b.azis.add(pos).keep(b.numGrains.neg);\
+	[azi: pos];\
+\};\
+\
+b.positions = \{ \
+	b.azis.collectAs(\{\cf5 |az|\cf2  \cf5 var\cf2  pol; \
+		pol = \cf5 Polar\cf2 (1, 0.017453292519943 * az);\
+		[pol.imag, pol.real, 0]\
+	\}, \cf5 Array\cf2 )\
+\};\
+\
+\cf3 // this updates their positions in the GUI\cf2 \
+t = \cf5 Task\cf2 (\{\
+	loop(\{\
+		v.boidPositions = b.positions;\
+		0.05.wait;\
+	\})\
+\}, \cf5 AppClock\cf2 );\
+t.start;\
+)\
+g = \cf5 BMSpatialGranulator\cf2 .new(l, b, c);\
+g.play;\
+\
+b.dev = 1\
+b.dev = 3\
+b.dev = 50\
+\
+b.dev = 10\
+\
+b.centre = 45\
+\
+b.numGrains = 50\
+\
+\
+\cf0 b.nextLoc = \{  \
+	\cf7 var\cf0  pos;\
+	pos = b.centre + b.dev.bilinrand;\
+	b.azis = b.azis.add(pos).keep(b.numGrains.neg);\
+	[azi: pos];\
+\};}

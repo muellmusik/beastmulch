@@ -45,7 +45,7 @@ BMSpatialGranulator {
 		inaddAction = addAction;
 		speakerList = speakerList.select(_.isBMSpeaker);
 		numChan = speakerList.size;
-		targetDef = space.def ? "BMSpatialPodGrain";
+		targetDef = space.def.asDefName ? "BMSpatialPodGrain";
 		envDefName = "SmGranEnv" ++ speakerList.identityHash;
 		SynthDef(envDefName, {
 			arg attack, decay, amp = 1.0, gate = 1, i_in;
@@ -120,7 +120,7 @@ BMSpatialGranulator {
 						thisDur, "offset", (thisEnvir.offset.value * sRate), "pitchScale", 
 						thisEnvir.pitch.value, "level", thisEnvir.mul.value/
 						numGrains, "i_out", granBusIndex + 						thisEnvir.outFunc.value, "loop", thisEnvir.loopF.value] ++ 
-						thisEnvir.targetArgs.value ++ space.locArgs.value]);
+						thisEnvir.targetArgs.value ++ space.nextLoc.value]);
 					startBund = nil;
 					// used to be "i_out", (i%numChan)
 					// sendBundle can be timestamped, but no performance gain
