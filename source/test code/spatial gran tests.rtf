@@ -78,4 +78,34 @@ b.numGrains = 50\
 	pos = b.centre + b.dev.bilinrand;\
 	b.azis = b.azis.add(pos).keep(b.numGrains.neg);\
 	[azi: pos];\
-\};}
+\};\
+\
+b.elcentre = 0; b.eldev = 10; b.els = List.new;\
+b.nextLoc = \{  \
+	\cf7 var\cf0  az, el;\
+	az = b.centre + b.dev.bilinrand;\
+	el = b.elcentre + b.eldev.bilinrand;\
+	b.azis = b.azis.add(az).keep(b.numGrains.neg);\
+	b.els = b.els.add(el).keep(b.numGrains.neg);\
+	[azi: az, ele: el];\
+\};\
+\
+b.positions = \{ \
+	b.azis.collectAs(\{\cf7 |azi, i|\
+		\cf0 var azrad, elrad, deg2rad = 0.017453292519943, x, y, z, rad = 1;\
+		azrad = azi * deg2rad;\
+		elrad = b.els[i] * deg2rad;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 		x = rad * cos(elrad) * sin(azrad);\
+		y = rad * cos(elrad) * cos(azrad);\
+		z = rad * sin(elrad); \
+\pard\pardeftab560\ql\qnatural
+\cf0 		[x, y, z]\
+	\}, \cf7 Array\cf0 )\
+\};\
+\
+b.eldev = 40\
+\
+b.numGrains = 100;\
+\
+b.dev = 2}
