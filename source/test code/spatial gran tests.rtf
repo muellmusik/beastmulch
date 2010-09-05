@@ -108,4 +108,19 @@ b.eldev = 40\
 \
 b.numGrains = 100;\
 \
-b.dev = 2}
+b.dev = 2\
+\
+b.elcentre = 30;\
+\
+~elEnv = Env([0, 20], [10]).asStream;\
+~azEnv = Env([0, 20, -40], [3, 7], 4).asStream;\
+~azDev = Env([2, 10, 50], [7, 3], 4).asStream;\
+~elDev = Env([40, 20], [10], -4).asStream;\
+b.nextLoc = \{  \
+	\cf7 var\cf0  az, el;\
+	az = ~azEnv.next + ~azDev.next.bilinrand;\
+	el = ~elEnv.next + ~elDev.next.bilinrand;\
+	b.azis = b.azis.add(az).keep(b.numGrains.neg);\
+	b.els = b.els.add(el).keep(b.numGrains.neg);\
+	[azi: az, ele: el];\
+\};}
