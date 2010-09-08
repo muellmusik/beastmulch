@@ -1,7 +1,7 @@
 {\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
 {\fonttbl\f0\fnil\fcharset0 Monaco;}
-{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red191\green0\blue0;\red0\green115\blue0;
-\red0\green0\blue191;\red96\green96\blue96;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red191\green0\blue0;\red0\green0\blue191;
+\red96\green96\blue96;\red0\green115\blue0;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
 \f0\fs18 \cf2 s.boot;\
@@ -9,80 +9,91 @@
 \pard\pardeftab560\ql\qnatural
 \cf3 // why doesn't radius match well?\cf2 \
 \
-l = [[0, \cf4 'C'\cf2  ], [45, \cf4 'FR'\cf2 ], [90, \cf4 'R'\cf2 ], [135, \cf4 'BR'\cf2 ], [180, \cf4 'B'\cf2 ], [-135, \cf4 'BL'\cf2 ], [-90, \cf4 'L'\cf2 ], [-45, \cf4 'FL'\cf2 ]].collectAs(\{\cf5 |el, i|\cf2 \
-	\cf5 BMSpeaker\cf2 .newFromSpherical(el[1], i, el[0], 0, 2);\
-\}, \cf5 BMInOutArray\cf2 );\
+\cf3 //l = [[0, 'C' ], [45, 'FR'], [90, 'R'], [135, 'BR'], [180, 'B'], [-135, 'BL'], [-90, 'L'], [-45, 'FL']].collectAs(\{|el, i|\cf2 \
+\cf3 //	BMSpeaker.newFromSpherical(el[1], i, el[0], 0, 2);\cf2 \
+\cf3 //\}, BMInOutArray);\cf2 \
 \
-~vbp = \cf5 VBAPSpeakerArray\cf2 (2, l.collectAs(\cf5 _\cf2 .azi, \cf5 Array\cf2 ));\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 l = \cf4 Object\cf2 .readArchive(\cf5 "/Library/Application Support/SuperCollider/Extensions/BEASTMulch SVN/BM System extras/Sample Speaker Layouts/French 8 Channel"\cf2 );\
+\
+\
+l.do(\{\cf4 |speak|\cf2  speak.index = speak.index + 2\})\
+l = \cf4 BMInOutArray\cf2 [\cf4 BMSpeaker\cf2 .newFromSpherical(\cf6 \\MainL\cf2 , 0, -30, 0, 2), \cf4 BMSpeaker\cf2 .newFromSpherical(\cf6 \\MainR\cf2 , 1, 30, 0, 2)] ++ l;\
+\
+\pard\pardeftab560\ql\qnatural
+\cf2 \
+~vbp = \cf4 VBAPSpeakerArray\cf2 (2, l.collectAs(\cf4 _\cf2 .azi, \cf4 Array\cf2 ));\
 ~vbuf = ~vbp.loadToBuffer;\
 \
-v = \cf5 BMSpeakerListVisualiser\cf2 (l); \cf3 // a gui to see the grains\cf2 \
+v = \cf4 BMSpeakerListVisualiser\cf2 (l); \cf3 // a gui to see the grains\cf2 \
 \
-c = \cf5 Buffer\cf2 .read(s, \cf6 "sounds/a11wlk01.wav"\cf2 );\
+c = \cf4 Buffer\cf2 .read(s, \cf5 "sounds/a11wlk01.wav"\cf2 );\
 \
-d = \cf5 SynthDef\cf2 (\cf6 "BMVBAPGrain"\cf2 ,\{ \cf5 arg\cf2  i_out=0, i_sampbufnum, pitchScale = 1.0, \
+d = \cf4 SynthDef\cf2 (\cf5 "BMVBAPGrain"\cf2 ,\{ \cf4 arg\cf2  i_out=0, i_sampbufnum, pitchScale = 1.0, \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf2 	dur = 0.05, pointer, offset = 0.0, level = 1.0, loop, azi = 0;\
-	\cf5 var\cf2  thisStart, thisDur, grain;\
-	thisStart = pointer + \cf5 IRand\cf2 (0, offset);\
-	grain = \cf5 EnvGen\cf2 .ar(\cf5 Env\cf2 .sine, 1.0, level, 0.0, dur, 2) \
-		* \cf5 PlayBuf\cf2 .ar(1,i_sampbufnum,pitchScale * \cf5 BufRateScale\cf2 .ir(i_sampbufnum),\
+	\cf4 var\cf2  thisStart, thisDur, grain;\
+	thisStart = pointer + \cf4 IRand\cf2 (0, offset);\
+	grain = \cf4 EnvGen\cf2 .ar(\cf4 Env\cf2 .sine, 1.0, level, 0.0, dur, 2) \
+		* \cf4 PlayBuf\cf2 .ar(1,i_sampbufnum,pitchScale * \cf4 BufRateScale\cf2 .ir(i_sampbufnum),\
 			1, thisStart,loop);\
-	grain = \cf5 VBAP\cf2 .ar(~vbp.numSpeakers, grain, ~vbuf, azi, 0, 1);\
-	\cf5 OffsetOut\cf2 .ar(i_out,grain);\
+	grain = \cf4 VBAP\cf2 .ar(~vbp.numSpeakers, grain, ~vbuf, azi, 0, 1);\
+	\cf4 OffsetOut\cf2 .ar(i_out,grain);\
 \}).add;\
 \pard\pardeftab560\ql\qnatural
 \cf2 \
 (\
-b = (numGrains: 20, def: d, outFunc: 0, centre: 0, dev: 10, azis: \cf5 List\cf2 .new);\
+b = (numGrains: 20, def: d, outFunc: 0, centre: 0, dev: 10, azis: \cf4 List\cf2 .new);\
 \
 b.nextLoc = \{  \
-	\cf5 var\cf2  pos;\
+	\cf4 var\cf2  pos;\
 	pos = b.centre.gauss(b.dev);\
 	b.azis = b.azis.add(pos).keep(b.numGrains.neg);\
 	[azi: pos];\
 \};\
 \
 b.positions = \{ \
-	b.azis.collectAs(\{\cf5 |az|\cf2  \cf5 var\cf2  pol; \
-		pol = \cf5 Polar\cf2 (1, 0.017453292519943 * az);\
+	b.azis.collectAs(\{\cf4 |az|\cf2  \cf4 var\cf2  pol; \
+		pol = \cf4 Polar\cf2 (1, 0.017453292519943 * az);\
 		[pol.imag, pol.real, 0]\
-	\}, \cf5 Array\cf2 )\
+	\}, \cf4 Array\cf2 )\
 \};\
 \
 \cf3 // this updates their positions in the GUI\cf2 \
-t = \cf5 Task\cf2 (\{\
+t = \cf4 Task\cf2 (\{\
 	loop(\{\
 		v.boidPositions = b.positions;\
 		0.05.wait;\
 	\})\
-\}, \cf5 AppClock\cf2 );\
+\}, \cf4 AppClock\cf2 );\
 t.start;\
 )\
-g = \cf5 BMSpatialGranulator\cf2 .new(l, b, c);\
+g = \cf4 BMSpatialGranulator\cf2 .new(l, b, c);\
 g.play;\
 \
 b.dev = 1\
 b.dev = 3\
 b.dev = 50\
 \
+b.numGrains = 50\
+\
+b.dev = 180\
+\
 b.dev = 10\
 \
 b.centre = 45\
 \
-b.numGrains = 50\
-\
 \
 b.nextLoc = \{  \
-	\cf5 var\cf2  pos;\
+	\cf4 var\cf2  pos;\
 	pos = b.centre + b.dev.bilinrand;\
 	b.azis = b.azis.add(pos).keep(b.numGrains.neg);\
 	[azi: pos];\
 \};\
 \
-b.elcentre = 0; b.eldev = 10; b.els = \cf5 List\cf2 .new;\
+b.elcentre = 0; b.eldev = 10; b.els = \cf4 List\cf2 .new;\
 b.nextLoc = \{  \
-	\cf5 var\cf2  az, el;\
+	\cf4 var\cf2  az, el;\
 	az = b.centre + b.dev.bilinrand;\
 	el = b.elcentre + b.eldev.bilinrand;\
 	b.azis = b.azis.add(az).keep(b.numGrains.neg);\
@@ -91,8 +102,8 @@ b.nextLoc = \{  \
 \};\
 \
 b.positions = \{ \
-	b.azis.collectAs(\{\cf5 |azi, i|\cf2 \
-		\cf5 var\cf2  azrad, elrad, deg2rad = 0.017453292519943, x, y, z, rad = 1;\
+	b.azis.collectAs(\{\cf4 |azi, i|\cf2 \
+		\cf4 var\cf2  azrad, elrad, deg2rad = 0.017453292519943, x, y, z, rad = 1;\
 		azrad = azi * deg2rad;\
 		elrad = b.els[i] * deg2rad;\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
@@ -101,7 +112,7 @@ b.positions = \{ \
 		z = rad * sin(elrad); \
 \pard\pardeftab560\ql\qnatural
 \cf2 		[x, y, z]\
-	\}, \cf5 Array\cf2 )\
+	\}, \cf4 Array\cf2 )\
 \};\
 \
 b.eldev = 40\
@@ -112,12 +123,12 @@ b.dev = 2\
 \
 b.elcentre = 30;\
 \
-~elEnv = \cf5 Env\cf2 ([0, 20], [10]).asStream;\
-~azEnv = \cf5 Env\cf2 ([0, 20, -40], [3, 7], 4).asStream;\
-~azDev = \cf5 Env\cf2 ([2, 10, 50], [7, 3], 4).asStream;\
-~elDev = \cf5 Env\cf2 ([40, 20], [10], -4).asStream;\
+~elEnv = \cf4 Env\cf2 ([0, 20], [10]).asStream;\
+~azEnv = \cf4 Env\cf2 ([0, 20, -40], [3, 7], 4).asStream;\
+~azDev = \cf4 Env\cf2 ([2, 10, 50], [7, 3], 4).asStream;\
+~elDev = \cf4 Env\cf2 ([40, 20], [10], -4).asStream;\
 b.nextLoc = \{  \
-	\cf5 var\cf2  az, el;\
+	\cf4 var\cf2  az, el;\
 	az = ~azEnv.next + ~azDev.next.bilinrand;\
 	el = ~elEnv.next + ~elDev.next.bilinrand;\
 	b.azis = b.azis.add(az).keep(b.numGrains.neg);\
@@ -126,38 +137,38 @@ b.nextLoc = \{  \
 \};\
 \
 \cf3 /// with simple reverb\cf2 \
-~revBus = \cf5 Bus\cf2 .audio(s, 1);\
-~revSynth = \{\
-	\cf5 var\cf2  in;\
-	in = \cf5 In\cf2 .ar(~revBus, 1);\
-	in = \cf5 Array\cf2 .fill(l.size, \{\
-		\cf5 FreeVerb\cf2 .ar(in, 1, rrand(0.15, 0.16), rrand(0.5, 0.51));\
+~revBus = \cf4 Bus\cf2 .audio(s, 1);\
+~revSynth = \{\cf4 |masterScale = 0.2|\cf2 \
+	\cf4 var\cf2  in;\
+	in = \cf4 In\cf2 .ar(~revBus, 1) * masterScale;\
+	in = \cf4 Array\cf2 .fill(l.size, \{\
+		\cf4 FreeVerb\cf2 .ar(in, 1, rrand(0.15, 0.16), rrand(0.5, 0.51));\
 	\});\
-	\cf5 Out\cf2 .ar(0, in);\
+	\cf4 Out\cf2 .ar(0, in);\
 \}.play; \
 \
-d = \cf5 SynthDef\cf2 (\cf6 "BMVBAPReverbGrain"\cf2 ,\{ \cf5 arg\cf2  i_out=0, i_sampbufnum, pitchScale = 1.0, \
+d = \cf4 SynthDef\cf2 (\cf5 "BMVBAPReverbGrain"\cf2 ,\{ \cf4 arg\cf2  i_out=0, i_sampbufnum, pitchScale = 1.0, \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural\pardirnatural
-\cf2 	dur = 0.05, pointer, offset = 0.0, direct = 1.0, reverb = 0, loop, azi = 0;\
-	\cf5 var\cf2  thisStart, thisDur, grain;\
-	thisStart = pointer + \cf5 IRand\cf2 (0, offset);\
-	grain = \cf5 EnvGen\cf2 .ar(\cf5 Env\cf2 .sine, 1.0, 1.0, 0.0, dur, 2) \
-		* \cf5 PlayBuf\cf2 .ar(1,i_sampbufnum,pitchScale * \cf5 BufRateScale\cf2 .ir(i_sampbufnum),\
+\cf2 	dur = 0.05, pointer, offset = 0.0, direct = 1.0, level = 1.0, reverb = 0, loop, azi = 0;\
+	\cf4 var\cf2  thisStart, thisDur, grain;\
+	thisStart = pointer + \cf4 IRand\cf2 (0, offset);\
+	grain = \cf4 EnvGen\cf2 .ar(\cf4 Env\cf2 .sine, 1.0, level, 0.0, dur, 2) \
+		* \cf4 PlayBuf\cf2 .ar(1,i_sampbufnum,pitchScale * \cf4 BufRateScale\cf2 .ir(i_sampbufnum),\
 			1, thisStart,loop);\
-	\cf5 OffsetOut\cf2 .ar(~revBus, grain * reverb);		\
-	grain = \cf5 VBAP\cf2 .ar(~vbp.numSpeakers, grain * direct, ~vbuf, azi, 0, 1);\
-	\cf5 OffsetOut\cf2 .ar(i_out,grain);\
+	\cf4 OffsetOut\cf2 .ar(~revBus, grain * reverb);		\
+	grain = \cf4 VBAP\cf2 .ar(~vbp.numSpeakers, grain * direct, ~vbuf, azi, 0, 1);\
+	\cf4 OffsetOut\cf2 .ar(i_out,grain);\
 \}).add;\
 \pard\pardeftab560\ql\qnatural
-\cf2 \
-b = (numGrains: 20, def: d, outFunc: 0, centre: 0, dev: 10, azis: \cf5 List\cf2 .new, radii: \cf5 List\cf2 .new);\
+\cf2 (\
+b = (numGrains: 150, def: d, outFunc: 0, centre: 0, dev: 10, azis: \cf4 List\cf2 .new, radii: \cf4 List\cf2 .new);\
 \
-~azEnv = \cf5 Env\cf2 ([0, 20, -40], [3, 7], 4).asStream;\
-~radEnv = \cf5 Env\cf2 ([4, 1, 3], [5, 5]).asStream; \
-~azDev = \cf5 Env\cf2 ([2, 10, 50], [7, 3], 4).asStream;\
+~azEnv = \cf4 Env\cf2 ([0, 20, -40, 180], [3, 7, 5], 4).asStream;\
+~radEnv = \cf4 Env\cf2 ([4, 1, 3, 1, 1, 10], [5, 5, 5, 3, 5]).asStream; \
+~azDev = \cf4 Env\cf2 ([2, 10, 90, 360, 1], [7, 3, 5, 3.5]).asStream;\
 ~radDev = 0.3;\
 b.nextLoc = \{  \
-	\cf5 var\cf2  az, el, rad, direct, reverb;\
+	\cf4 var\cf2  az, el, rad, direct, reverb;\
 	az = ~azEnv.next + ~azDev.next.bilinrand;\
 	rad = ~radEnv.next + ~radDev.bilinrand;\
 	direct = 1 / rad;\
@@ -168,11 +179,13 @@ b.nextLoc = \{  \
 \};\
 \
 b.positions = \{ \
-	b.azis.collectAs(\{\cf5 |az, i|\cf2  \cf5 var\cf2  pol; \
-		pol = \cf5 Polar\cf2 (b.radii[i], 0.017453292519943 * az);\
+	b.azis.collectAs(\{\cf4 |az, i|\cf2  \cf4 var\cf2  pol; \
+		pol = \cf4 Polar\cf2 (b.radii[i], 0.017453292519943 * az);\
 		[pol.imag, pol.real, 0]\
-	\}, \cf5 Array\cf2 )\
+	\}, \cf4 Array\cf2 )\
 \};\
-\
-g = \cf5 BMSpatialGranulator\cf2 .new(l, b, c, ~revSynth, \cf4 \\addBefore\cf2 );\
-g.play;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 t.start;\
+\pard\pardeftab560\ql\qnatural
+\cf2 g = \cf4 BMSpatialGranulator\cf2 .new(l, b, c, ~revSynth, \cf6 \\addBefore\cf2 );\
+g.play;)}
