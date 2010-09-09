@@ -120,7 +120,7 @@ BMSpatialGranulator {
 						thisDur, "offset", (thisEnvir.offset.value * sRate), "pitchScale", 
 						thisEnvir.pitch.value, "level", thisEnvir.mul.value/
 						numGrains, "i_out", granBusIndex + 						thisEnvir.outFunc.value, "loop", thisEnvir.loopF.value] ++ 
-						thisEnvir.targetArgs.value ++ space.nextLoc.value]);
+						thisEnvir.targetArgs.value.asOSCArgArray ++ space.nextLoc.value.asOSCArgArray]);
 					startBund = nil;
 					// used to be "i_out", (i%numChan)
 					// sendBundle can be timestamped, but no performance gain
