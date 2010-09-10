@@ -105,10 +105,12 @@ BM2DBoxRoom : BMAbstractRoom {
 			 	flop.indexOfEqual(room);
 			});
 	}
-	
+	///******** here is the problem
 	crossFeedIndices {
 		var flop, r2DelOneIndices;
 		r2DelOneIndices = this.r2DelOneIndices; 
+		
+		"r2DelOneIndices: %\n".postf(r2DelOneIndices);
 		flop = map2.flop.reject({|item, i| r2DelOneIndices.indexOf(i).notNil });
 		^map1.flop.collect({|room|
 			var rooms, one, a, b;
@@ -384,6 +386,8 @@ BM3DBoxRoom : BMAbstractRoom {
 	
 	//maximum source to listener delay
 	maxDelay { ^sqrt(xsize.squared + ysize.squared + zsize.squared) }
+	
+	roomSymbol {|x, y, z| ^(x.asString ++ y.asString ++ z.asString).asSymbol } 
 
 	// listener coords, roomDim, sourceAz, sourceEl, sourceRad
 	calcReflections { |az, el, r| 
@@ -499,6 +503,121 @@ BM3DBoxRoom : BMAbstractRoom {
 		});
 		^[firstRefs, secondRefs, thirdRefs];
 	}
+	
+	calcReflectionsDict { |az, el, r| 
+		var source, first, second, third, fourth, fdelay;
+		var x, y, z, sourceX, sourceY, sourceZ, sum, sum2, avg, sd;
+		var ix, iy, iz, i, j, k, iord;
+		var firstRefs, secondRefs, thirdRefs;
+		var spher;
+		var ord = #["3rd:", "4th:"];
+		
+		source = Array.newClear(4);
+		
+		fdelay = Array.newClear(6);
+		
+		firstRefs = IdentityDictionary.new;
+		secondRefs = IdentityDictionary.new;
+		thirdRefs = IdentityDictionary.new;
+		
+		source[aZ] = az;
+		source[eL] = el;
+		
+		// convert meters to seconds
+		// moved above to avoid repeatedly doing this
+//		listenerXOffset = listenerXOffset * spm;
+//		listenerYOffset = listenerYOffset * spm;
+//		listenerZOffset = listenerZOffset * spm;
+//		xsize = xsize * spm;
+//		ysize = ysize * spm;
+//		zsize = zsize * spm;
+		
+		// calc direct then shift origin
+		#sourceX, sourceY, sourceZ = this.stoc(az, el, r * spm);
+		source[delay] = sqrt(sourceX.squared + sourceY.squared + sourceZ.squared); // direct sound path
+		
+		"source: %, %, %, %\n".postf(source[aZ], source[eL], source[delay], refdist / r);
+		
+		// shift origin to room center
+		sourceX = sourceX + listenerXOffset;
+		sourceY = sourceY + listenerYOffset;
+		sourceZ = sourceZ + listenerZOffset;
+		
+		// calc coords of image model virtual sources
+		"ix	iy	iz	order	az	el	delay	scale".postln;
+		
+		
+		// first order
+		6.do({|ir|
+			first = Array.newClear(4);
+			x = this.cvs(map1[dimx][ir], sourceX, xsize) - listenerXOffset;
+			y = this.cvs(map1[dimy][ir], sourceY, ysize) - listenerYOffset;
+			z = this.cvs(map1[dimz][ir], sourceZ, zsize) - listenerZOffset;
+			spher = this.ctos(x, y, z);
+			first[aZ] = spher[0];
+			first[eL] = spher[1];
+			r = spher[2];
+			first[delay] = r - source[delay];
+			fdelay[ir] = r;
+			first[scale] = source[delay]/(source[delay] + first[delay]);
+			firstRefs[this.roomSymbol(map1[dimx][ir], map1[dimy][ir], map1[dimz][ir])] = first; // az, el, delay, scale
+			
+			"%	%	%	".postf(map1[dimx][ir], map1[dimy][ir], map1[dimz][ir]);
+			"1st:		%	%	%	%\n".postf(first[aZ], first[eL], first[delay], first[scale]);
+		});
+		
+		// second and higher
+		i = 0;
+		18.do({|ir|
+			second = Array.newClear(4);
+			third = Array.newClear(4);
+		
+			// second
+			x = this.cvs(map2[dimx][ir], sourceX, xsize) - listenerXOffset;
+			y = this.cvs(map2[dimy][ir], sourceY, ysize) - listenerYOffset;
+			z = this.cvs(map2[dimz][ir], sourceZ, zsize) - listenerZOffset;
+			spher = this.ctos(x, y, z);
+			second[aZ] = spher[0];
+			second[eL] = spher[1];
+			r = spher[2];
+			//"spher: %\n".postf(spher);
+			second[delay] = r - source[delay];
+			//"second[delay]: %\n".postf(second[delay]);
+			second[scale] = source[delay]/(source[delay] + second[delay]);
+			//"second[scale]: %\n".postf(second[scale]);
+			
+			"%	%	%	".postf(map2[dimx][ir], map2[dimy][ir], map2[dimz][ir]);
+			
+			// third +
+			x = this.cvs(map3[dimx][ir], sourceX, xsize) - listenerXOffset;
+			y = this.cvs(map3[dimy][ir], sourceY, ysize) - listenerYOffset;
+			z = this.cvs(map3[dimz][ir], sourceZ, zsize) - listenerZOffset;
+			spher = this.ctos(x, y, z);
+			third[aZ] = spher[0];
+			third[eL] = spher[1];
+			r = spher[2];
+			third[delay] = r - source[delay] - second[delay];
+			third[scale] = (source[delay] + second[delay])/(source[delay] + r);
+			iord = abs(map3[dimx][ir]) + abs(map3[dimy][ir]) + abs(map3[dimz][ir]) - 3;
+			// infinities happen in second[scale] here
+			if(iord == 0, {
+				//"fdelay[i]: %\n".postf(fdelay[i]);
+				second[delay] = second[delay] - fdelay[i];
+				//"second[delay]: %\n".postf(second[delay]);
+				second[scale] = fdelay[i]/(fdelay[i] + second[delay]);
+				i = i + 1;
+			});
+			//"second[scale]: %\n".postf(second[scale]);
+			// az, el, delay, scale
+			secondRefs[this.roomSymbol(map2[dimx][ir], map2[dimy][ir], map2[dimz][ir])] = second;
+			thirdRefs[this.roomSymbol(map3[dimx][ir], map3[dimy][ir], map3[dimz][ir])] = third;			
+			"2nd:		%	%	%	%\n".postf(second[aZ], second[eL], second[delay], second[scale]);
+			"%	%	%	".postf(map3[dimx][ir], map3[dimy][ir], map3[dimz][ir]);
+			"%				%	%\n".postf(ord[iord], third[delay], third[scale]);
+		});
+		^[firstRefs, secondRefs, thirdRefs];
+	}
+
 	//private
 	
 	// cartesian to spherical
@@ -616,6 +735,8 @@ BMSpatialReverberator {
 		// could refine max delay time here
 		r1delays = R1.ar(secondRefDel, roomMaxDelay * 2, thirdPlusReflecs[2][r1DelIndices] - secondReflecs[2][r1DelIndices], coef, fbScale);
 		
+		"r1Delays: %\n".postf(r1delays);
+		
 		// pan second order this should be only the direct ones.
 		secondRefDel = VBAP.ar(numChans, secondRefDel + r1delays, vbapBuf, secondReflecsDir[0], secondReflecsDir[1], spread) * secondReflecsDir[3];
 
@@ -624,10 +745,10 @@ BMSpatialReverberator {
 		
 		// need to delay delay times...
 		firstRefDel = MultiBufRdDelay.ar(filtered1, roomMaxDelay * 2, firstReflecs[2]);
-		
+		\foo.postln;
 		// sum in the adjacent R1 streams
 		r2inputs = firstRefDel.collect({|delayed, i| delayed + Mix(r1delays[crossFeedIndices[i].postln]) });
-		
+		\bar.postln;
 		// could refine max delay time here
 		r2delays = R2.ar(r2inputs, roomMaxDelay * 2, secondReflecs[2][r2DelOneIndices] - firstReflecs[2], roomMaxDelay * 2, thirdPlusReflecs[2][r2DelOneIndices] - secondReflecs[2][r2DelOneIndices], coef, fbScale);
 		
