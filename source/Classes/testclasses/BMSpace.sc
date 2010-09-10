@@ -761,6 +761,137 @@ BMSpatialReverberator {
 	
 }
 
+	*arDict {|input, sourceAzi, sourceEle, sourceDist, room, vbapBuf, numChans, coef = 0.99, fbScale = 0.9, spread = 1, refDist = 1|
+		var source, delayedSource, filtered1, filtered2, sourceAtten, refDistRecip;
+		var firstReflecs, secondReflecs, secondReflecsDir, secondReflecsInDir, thirdPlusReflecs;
+		var firstRefDel, secondRefDel;
+		var horzR1delays, horzR2delays, r1DelIndices, r2DelOneIndices, horzR2inputs, horzR1inputs, horzR2coords, horzR1coords2;
+		var roomMaxDelay;
+		
+		refDistRecip = 1 / refDist;
+		r1DelIndices = room.r1DelIndices;
+		r2DelOneIndices = room.r2DelOneIndices;
+		
+		// [az, el, delay, scale]
+		#firstReflecs, secondReflecs, thirdPlusReflecs = room.calcReflectionsDict(sourceAzi, sourceEle, sourceDist); 
+		
+		// sort out direct second order
+		// those with "2" in them are behind first order rooms and will be represented with R2s
+		secondReflecsDir = secondReflecs.reject({|item, key| key.asString.contains("2") });
+		secondReflecsInDir = secondReflecs.select({|item, key| key.asString.contains("2") });
+		
+//		firstReflecs = firstReflecs.collect(|ref, k| ref.flop});
+//		secondReflecs = secondReflecs.collect(|ref, k| ref.flop});
+//		thirdPlusReflecs = thirdPlusReflecs.collect(|ref, k| ref.flop});
+//		secondReflecsDir = secondReflecsDir.collect(|ref, k| ref.flop});
+		
+		roomMaxDelay = room.maxDelay;
+		
+		sourceAtten = (sourceDist * refDistRecip).reciprocal;
+		
+		"del: %\n".postf(sourceDist * spm);
+		"sourceAtten: %\n".postf(sourceAtten);
+		"roomMaxDelay: %\n".postf(roomMaxDelay);
+		
+		// source + az seems to crackle, could do without
+		delayedSource = BufRdDelay.ar(input * sourceAtten, roomMaxDelay, sourceDist * spm).postln;
+		
+		// should add distance filtering here
+		source = VBAP.ar(numChans, delayedSource, vbapBuf, sourceAzi, sourceEle, spread);
+		//source = VBAP.ar(numChans, input * sourceAtten, vbapBuf, sourceAzi, sourceEle, spread);
+		
+		// filter source to model absorption for first and second order reflections
+		filtered1 = OnePole.ar(input, coef);
+		filtered2 = OnePole.ar(filtered1, coef);
+		
+		// delay the first order reflections
+		firstRefDel = MultiBufRdDelay.ar(filtered1, roomMaxDelay * 2, firstReflecs[2]);
+		firstRefDel = firstReflecs.collect({|ref, k| 
+			MultiBufRdDelay.ar(filtered1, roomMaxDelay * 2, ref[2]);
+		});
+		
+		// delay the direct second order reflections
+		secondRefDel = secondReflecsDir.collect({|ref, k| 
+			MultiBufRdDelay.ar(filtered2, roomMaxDelay * 2, ref[2]);
+		});
+		
+		///// Horizontal plane: R2s to R1s /////
+		horzR2inputs = firstRefDel.reject({|del, k| k.asString.last == $1 }); // reject non horizontal
+		
+		horzR2coords = (
+			'100': ['200', '300'],
+			'010': ['020', '030'],
+			'-100': ['-200', '-300'],
+			'0-10':['0-20', '0-30']
+		);
+		
+		// could refine max delay time here
+		horzR2delays = horzR2inputs.collect({|input, k|
+			var first, sec, third;
+			first = firstReflecs[k][2];
+			sec = secondReflecs[horzR2coords[k][0]][2];
+			third = thirdPlusReflecs[horzR2coords[k][1]][2];
+			R2.ar(input, roomMaxDelay * 2, sec - first, roomMaxDelay * 2, third - sec, coef, fbScale);
+		});
+		
+		horzR1coords = (
+			'110': ['010', '100'],
+			'-110': ['010', '-100'],
+			'-1-10' : ['-100', '0-10'],
+			'1-10' : ['0-10', '100']
+		); 
+		
+		horzR1coords2 = (
+			'110': '220',
+			'-110': '-220',
+			'-1-10' : '-2-20',
+			'1-10' : '2-20'
+		); 
+		// get direct second order inputs
+		horzR1inputs = secondRefDel.select({|del, k| k.asString.last == $0 });// only horizontal  
+			
+		horzR1delays = horzR1inputs.collect({|input, k|
+			var crossfeedinputs, sec, third;
+			crossfeedinputs = Mix(secondRefDel.atAll(horzR1coords[k]));
+			sec = secondReflecs[horzR1coords2[k]][2];
+			third = thirdPlusReflecs[horzR1coords2[k]][2];
+			R1.ar(input + crossfeedinputs, roomMaxDelay * 2, third - second, coef, fbScale);
+		});
+		
+		////// stopped here
+		// could refine max delay time here
+		r1delays = R1.ar(secondRefDel, roomMaxDelay * 2, thirdPlusReflecs[2][r1DelIndices] - secondReflecs[2][r1DelIndices], coef, fbScale);
+		
+		"r1Delays: %\n".postf(r1delays);
+		
+		// pan direct second order
+		secondRefDel = secondRefDel.collect({|del, k|
+			var ref;
+			ref = secondReflecsDir[k];
+			VBAP.ar(numChans, del + r1delays, vbapBuf, ref[0], ref[1], spread) * ref[3];
+		});
+
+		
+		////// first order and R2 //////
+		
+		
+		\foo.postln;
+		// sum in the adjacent R1 streams
+		r2inputs = firstRefDel.collect({|delayed, i| delayed + Mix(r1delays[crossFeedIndices[i].postln]) });
+		\bar.postln;
+		// could refine max delay time here
+		r2delays = R2.ar(r2inputs, roomMaxDelay * 2, secondReflecs[2][r2DelOneIndices] - firstReflecs[2], roomMaxDelay * 2, thirdPlusReflecs[2][r2DelOneIndices] - secondReflecs[2][r2DelOneIndices], coef, fbScale);
+		
+		// pan first order
+		firstRefDel = VBAP.ar(numChans, firstRefDel + r2delays, vbapBuf, firstReflecs[0], firstReflecs[1], spread) * firstReflecs[3];
+		
+		^firstRefDel.values + secondRefDel.values + source;
+		//^source
+	}
+	
+}
+
+
 // correctly multichannel expand the pseudo UGens below
 // rate in new1 methods a hook for future kr versions
 PseudoMultiNewUGen {
