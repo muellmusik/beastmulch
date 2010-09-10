@@ -1,15 +1,19 @@
 + Signal {
 	
-	crosscorrelate {|testSignal|
-		var testThis, testSize;
+	crosscorrelate {|testSignal, norm = false|
+		var testSize, result;
 		testSize = testSignal.size;
-		testThis = this.extend(this.size + testSize -1, 0);
-		^Signal.fill(this.size, {|i|
-			(testThis.copyRange(i, i + testSize - 1) * testSignal).sum;
+		//testThis = this.extend(this.size + testSize -1, 0);
+		result = Signal.fill(this.size, {|i|
+			(this.copyToEnd(i).extend(testSize, 0) * testSignal).sum;
 		});
+		norm.if({result = result / Signal.fill(1, {this.squared.sum})[0]});
+		^result
 	}
 	
-	crosscorrelateFD {|testSignal|
+	
+	// need to consider if this is really extending properly
+	crosscorrelateFD {|testSignal, norm = false|
 		var zeroPadded, fftThis, fftThat, size, cosTable, imagThis, imagThat, result;
 		
 		zeroPadded = this.extend((this.size + testSignal.size -1).nextPowerOfTwo);
@@ -21,7 +25,8 @@
 		testSignal = testSignal.extend(size, 0);
 		fftThat = fft(testSignal, imagThat, cosTable).conjugate;
 		result = fftThis * fftThat;
-		^ifft(result.real, result.imag, cosTable).real 
-		
+		result = ifft(result.real, result.imag, cosTable).real;
+		norm.if({result = result / Signal.fill(1, {this.squared.sum})[0]});
+		^result
 	}
 }
