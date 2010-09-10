@@ -765,7 +765,8 @@ BMSpatialReverberator {
 		var source, delayedSource, filtered1, filtered2, sourceAtten, refDistRecip;
 		var firstReflecs, secondReflecs, secondReflecsDir, secondReflecsInDir, thirdPlusReflecs;
 		var firstRefDel, secondRefDel;
-		var horzR1delays, horzR2delays, r1DelIndices, r2DelOneIndices, horzR2inputs, horzR1inputs, horzR2coords, horzR1coords2;
+		var horzR1delays, horzR1crossFeeds, horzR2delays, r1DelIndices, r2DelOneIndices, horzR2inputs, horzR1inputs, horzR2coords, horzR1coords2;
+		var fmCrossFeeds, fmR1inputs, fmR1delays;
 		var roomMaxDelay;
 		
 		refDistRecip = 1 / refDist;
@@ -834,7 +835,7 @@ BMSpatialReverberator {
 			R2.ar(input, roomMaxDelay * 2, sec - first, roomMaxDelay * 2, third - sec, coef, fbScale);
 		});
 		
-		horzR1coords = (
+		horzR1crossFeeds = (
 			'110': ['010', '100'],
 			'-110': ['010', '-100'],
 			'-1-10' : ['-100', '0-10'],
@@ -852,13 +853,34 @@ BMSpatialReverberator {
 			
 		horzR1delays = horzR1inputs.collect({|input, k|
 			var crossfeedinputs, sec, third;
-			crossfeedinputs = Mix(secondRefDel.atAll(horzR1coords[k]));
-			sec = secondReflecs[horzR1coords2[k]][2];
+			crossfeedinputs = Mix(secondRefDel.atAll(horzR1crossFeeds[k]));
+			sec = secondReflecs[k][2];
 			third = thirdPlusReflecs[horzR1coords2[k]][2];
 			R1.ar(input + crossfeedinputs, roomMaxDelay * 2, third - second, coef, fbScale);
 		});
 		
-		////// stopped here
+		///// Frontal and Median planes: R1s to R2s /////
+		// this is backwards
+		fmCrossFeeds = (
+			'101': ['100', '001'],
+			'10-1': ['100', '00-1'],
+			'-101': ['-100', '001'],
+			'-10-1': ['-100', '00-1'],
+			'011': ['001', '010],
+			'0-11' : ['001', '0-10'],
+			'0-1-1' : ['00-1', '0-10'],
+			'01-1' : ['00-1', '010']
+		);
+		
+		// remaining R1s
+		fmR1inputs = fmCrossFeeds.keys.collectAs({|k| k->secondRefDel[k] }, IdentityDictionary);			
+		fmR1delays = fmR1inputs.collect({|input, k|
+			var sec, third;
+			sec = secondReflecs[k][2];
+			third = thirdPlusReflecs[horzR1coords2[k]][2];
+			R1.ar(input + crossfeedinputs, roomMaxDelay * 2, third - second, coef, fbScale);
+		});
+		
 		// could refine max delay time here
 		r1delays = R1.ar(secondRefDel, roomMaxDelay * 2, thirdPlusReflecs[2][r1DelIndices] - secondReflecs[2][r1DelIndices], coef, fbScale);
 		
