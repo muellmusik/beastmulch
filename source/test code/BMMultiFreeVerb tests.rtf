@@ -1,0 +1,77 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
+{\fonttbl\f0\fnil\fcharset0 Monaco;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red0\green44\blue178;\red0\green22\blue189;
+\red96\green96\blue96;\red174\green26\blue25;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs18 \cf2 // perceived gain should be roughly equivalent\
+\
+\{\
+\
+Out.ar(2, BMMultiFreeVerb.ar(4, \cf3 Decay2\cf0 .ar(\cf3 Impulse\cf0 .ar(1), 0.001, 0.01, WhiteNoise.ar(1)), mul: 0.5))\
+\
+\}.play; \
+\
+\cf2 \{\
+\
+Out.ar(2, BMMultiFreeVerb.ar(6, \cf3 Decay2\cf0 .ar(\cf3 Impulse\cf0 .ar(1), 0.001, 0.01, WhiteNoise.ar(1)), mul: 0.5))\
+\
+\}.play; \
+\
+\cf2 x = \{\
+\
+Out.ar(2, BMMultiFreeVerb.ar(8, \cf3 Decay2\cf0 .ar(\cf3 Impulse\cf0 .ar(1), 0.001, 0.01, WhiteNoise.ar(1)), mul: 0.5))\
+\
+\}.play;\
+x.trace \
+\
+(\
+\cf2 \{\
+\
+BMMultiFreeVerb.ar(2, \cf3 Decay2\cf0 .ar(\cf3 Impulse\cf0 .ar(1), 0.001, 0.01, WhiteNoise.ar(1)), dev: 0.1, mul: 0.5);\
+\
+\}.loadToFloatArray(0.2, s, \{ \cf2 |array, buf|\cf0 \
+	\cf2 var\cf0  numChan = buf.numChannels;\
+	array = array.unlace(numChan);\
+	array[0].as(Signal).crosscorrelate(array[1].as(Signal), true)[0].postln\
+\}); \
+)\
+\
+(\
+\cf2 \{\
+\
+GVerb.ar(\cf3 Decay2\cf0 .ar(\cf3 Impulse\cf0 .ar(1), 0.001, 0.01, WhiteNoise.ar(1)), mul: 0.5);\
+\
+\}.loadToFloatArray(0.2, s, \{ \cf2 |array, buf|\cf0 \
+	\cf2 var\cf0  numChan = buf.numChannels;\
+	array = array.unlace(numChan);\
+	array[0].as(Signal).crosscorrelate(array[1].as(Signal), true)[0].postln\
+\}); \
+)\
+\
+\
+///\
+\pard\pardeftab560\ql\qnatural
+\cf0 (\
+s.waitForBoot \{\
+	d = \cf4 Buffer\cf0 .read(s,\cf5 "sounds/a11wlk01.wav"\cf0 );\cf5 \
+\cf0 \}\
+)\
+\
+\
+\pard\pardeftab560\ql\qnatural
+\cf6 //// crossfade between original and magmul-ed whitenoise\
+\pard\pardeftab560\ql\qnatural
+\cf0 (\
+x = \{ \cf4 var\cf0  in, in2, chain, chainB, chainC, chainD;\
+	in = \cf4 PlayBuf\cf0 .ar(1, d, \cf4 BufRateScale\cf0 .kr(d), loop: 1) * 2;\
+	in2 = \cf4 WhiteNoise\cf0 .ar;\
+	chain = \cf4 FFT\cf0 (\cf4 LocalBuf\cf0 (2048), in);\
+	chainB = \cf4 FFT\cf0 (\cf4 LocalBuf\cf0 (2048), in2);\
+	chainC = \cf4 PV_Copy\cf0 (chain, \cf4 LocalBuf\cf0 (2048));\
+	chainC = \cf4 PV_Copy\cf0 (chain, \cf4 LocalBuf\cf0 (2048));\
+	chainB = \cf4 PV_MagMul\cf0 (chainB, chainC);\
+	chainC = \cf2 PV_BrickWall\cf0 (chainC);\
+	\cf4 IFFT\cf0 ([chain, chainB, chainC]);\
+\}.play(s);\
+)}
