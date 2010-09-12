@@ -758,8 +758,6 @@ BMSpatialReverberator {
 		^firstRefDel + secondRefDel + source;
 		//^source
 	}
-	
-}
 
 	*arDict {|input, sourceAzi, sourceEle, sourceDist, room, vbapBuf, numChans, coef = 0.99, fbScale = 0.9, spread = 1, refDist = 1|
 		var source, delayedSource, filtered1, filtered2, sourceAtten, refDistRecip;
@@ -835,6 +833,7 @@ BMSpatialReverberator {
 			R2.ar(input, roomMaxDelay * 2, sec - first, roomMaxDelay * 2, third - sec, coef, fbScale);
 		});
 		
+		// these R1s do not feed into anything else
 		horzR1crossFeeds = (
 			'110': ['010', '100'],
 			'-110': ['010', '-100'],
@@ -856,59 +855,82 @@ BMSpatialReverberator {
 			crossfeedinputs = Mix(secondRefDel.atAll(horzR1crossFeeds[k]));
 			sec = secondReflecs[k][2];
 			third = thirdPlusReflecs[horzR1coords2[k]][2];
-			R1.ar(input + crossfeedinputs, roomMaxDelay * 2, third - second, coef, fbScale);
+			R1.ar(input + crossfeedinputs, roomMaxDelay * 2, third - sec, coef, fbScale);
 		});
 		
 		///// Frontal and Median planes: R1s to R2s /////
-		// this is backwards
+		//******** this is backwards
+		//fmCrossFeeds = (
+//			'101': ['100', '001'],
+//			'10-1': ['100', '00-1'],
+//			'-101': ['-100', '001'],
+//			'-10-1': ['-100', '00-1'],
+//			'011': ['001', '010],
+//			'0-11' : ['001', '0-10'],
+//			'0-1-1' : ['00-1', '0-10'],
+//			'01-1' : ['00-1', '010']
+//		);
+		// R1s are diagonals
 		fmCrossFeeds = (
-			'101': ['100', '001'],
-			'10-1': ['100', '00-1'],
-			'-101': ['-100', '001'],
-			'-10-1': ['-100', '00-1'],
-			'011': ['001', '010],
-			'0-11' : ['001', '0-10'],
-			'0-1-1' : ['00-1', '0-10'],
-			'01-1' : ['00-1', '010']
+			'001' : ['011', '0-11', '-101', '101'],
+			'00-1' : ['01-1', '0-1-1', '-10-1', '10-1'],
+			'010' : ['011', '01-1'],
+			'0-10' : ['0-1-1', '0-11']
 		);
-		
-		// remaining R1s
-		fmR1inputs = fmCrossFeeds.keys.collectAs({|k| k->secondRefDel[k] }, IdentityDictionary);			
-		fmR1delays = fmR1inputs.collect({|input, k|
-			var sec, third;
-			sec = secondReflecs[k][2];
-			third = thirdPlusReflecs[horzR1coords2[k]][2];
-			R1.ar(input + crossfeedinputs, roomMaxDelay * 2, third - second, coef, fbScale);
-		});
-		
-		// could refine max delay time here
-		r1delays = R1.ar(secondRefDel, roomMaxDelay * 2, thirdPlusReflecs[2][r1DelIndices] - secondReflecs[2][r1DelIndices], coef, fbScale);
-		
-		"r1Delays: %\n".postf(r1delays);
-		
-		// pan direct second order
-		secondRefDel = secondRefDel.collect({|del, k|
-			var ref;
-			ref = secondReflecsDir[k];
-			VBAP.ar(numChans, del + r1delays, vbapBuf, ref[0], ref[1], spread) * ref[3];
-		});
 
+// Gary correct		
+//		'001'Ê: ['011',Ê'0-11',Ê'101',Ê'-101'],
+//			'00-1' : ['01-1',Ê'0-1-1',Ê'10-1', '-10-1']
+//			'100' : ['101', '10-1' ]
+//			'-100' : ['-101', -10-1]
+//			'010'Ê: ['011',Ê'01-1'],
+//			'0-10'Ê: ['0-1-1',Ê'0-11']
 		
-		////// first order and R2 //////
+//		fmCrossFeeds = (
+//			'001' : ['011', '0-11'],
+//			'010' : ['011', '01-1'],
+//			'00-1' : ['01-1', '0-1-1'],
+//			'0-10' : ['0-1-1, '0-11]
+//		);
 		
-		
-		\foo.postln;
-		// sum in the adjacent R1 streams
-		r2inputs = firstRefDel.collect({|delayed, i| delayed + Mix(r1delays[crossFeedIndices[i].postln]) });
-		\bar.postln;
-		// could refine max delay time here
-		r2delays = R2.ar(r2inputs, roomMaxDelay * 2, secondReflecs[2][r2DelOneIndices] - firstReflecs[2], roomMaxDelay * 2, thirdPlusReflecs[2][r2DelOneIndices] - secondReflecs[2][r2DelOneIndices], coef, fbScale);
-		
-		// pan first order
-		firstRefDel = VBAP.ar(numChans, firstRefDel + r2delays, vbapBuf, firstReflecs[0], firstReflecs[1], spread) * firstReflecs[3];
-		
-		^firstRefDel.values + secondRefDel.values + source;
-		//^source
+//	
+//		// remaining R1s
+//		fmR1inputs = fmCrossFeeds.keys.collectAs({|k| k->secondRefDel[k] }, IdentityDictionary);			
+//		fmR1delays = fmR1inputs.collect({|input, k|
+//			var sec, third;
+//			sec = secondReflecs[k][2];
+//			third = thirdPlusReflecs[horzR1coords2[k]][2];
+//			R1.ar(input + crossfeedinputs, roomMaxDelay * 2, third - second, coef, fbScale);
+//		});
+//		
+//		// could refine max delay time here
+//		r1delays = R1.ar(secondRefDel, roomMaxDelay * 2, thirdPlusReflecs[2][r1DelIndices] - secondReflecs[2][r1DelIndices], coef, fbScale);
+//		
+//		"r1Delays: %\n".postf(r1delays);
+//		
+//		// pan direct second order
+//		secondRefDel = secondRefDel.collect({|del, k|
+//			var ref;
+//			ref = secondReflecsDir[k];
+//			VBAP.ar(numChans, del + r1delays, vbapBuf, ref[0], ref[1], spread) * ref[3];
+//		});
+//
+//		
+//		////// first order and R2 //////
+//		
+//		
+//		\foo.postln;
+//		// sum in the adjacent R1 streams
+//		r2inputs = firstRefDel.collect({|delayed, i| delayed + Mix(r1delays[crossFeedIndices[i].postln]) });
+//		\bar.postln;
+//		// could refine max delay time here
+//		r2delays = R2.ar(r2inputs, roomMaxDelay * 2, secondReflecs[2][r2DelOneIndices] - firstReflecs[2], roomMaxDelay * 2, thirdPlusReflecs[2][r2DelOneIndices] - secondReflecs[2][r2DelOneIndices], coef, fbScale);
+//		
+//		// pan first order
+//		firstRefDel = VBAP.ar(numChans, firstRefDel + r2delays, vbapBuf, firstReflecs[0], firstReflecs[1], spread) * firstReflecs[3];
+//		
+//		^firstRefDel.values + secondRefDel.values + source;
+//		//^source
 	}
 	
 }
