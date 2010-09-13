@@ -17,6 +17,21 @@ BMAbstractVirtualControllerGUI : BMAbstractGUI {
 	}
 	
 	// could be some jitter, but safer
+//	startRefreshLoop {
+//		refreshLoopOn.not.if({
+//			refreshLoopOn = true;
+//			AppClock.sched(refreshInterval, {
+//				var resched;
+//				needsRefresh.if({resched = refreshInterval}, {refreshLoopOn = false});
+//				virtualCont.getAllValues.do({|val, i| 
+//					guiCtrls[i].value_(displaySpecs[i].map(val));
+//				});
+//				needsRefresh = false;
+//				resched;
+//			});
+//		});
+//	}
+	
 	startRefreshLoop {
 		refreshLoopOn.not.if({
 			refreshLoopOn = true;
@@ -24,7 +39,7 @@ BMAbstractVirtualControllerGUI : BMAbstractGUI {
 				var resched;
 				needsRefresh.if({resched = refreshInterval}, {refreshLoopOn = false});
 				virtualCont.getAllValues.do({|val, i| 
-					guiCtrls[i].value_(displaySpecs[i].map(val));
+					guiCtrls[i].value_(val);
 				});
 				needsRefresh = false;
 				resched;
@@ -58,7 +73,7 @@ BMVirtualControllerSliders : BMAbstractVirtualControllerGUI {
 		window.view.decorator = FlowLayout(window.view.bounds);
 		window.view.background = Color.rand.alpha_(0.3);
 		guiCtrls = Array.newClear(numSliders);
-		displaySpecs = Array.newClear(numSliders);
+		//displaySpecs = Array.newClear(numSliders);
 		if(virtualCont.getAllLabels.collect(_.size).maxItem == 0, {
 			labelWidth = virtualCont.controlNames.collect({|name| 
 				name.asString.bounds(font).width
@@ -73,20 +88,19 @@ BMVirtualControllerSliders : BMAbstractVirtualControllerGUI {
 			label = virtualCont.getLabel(i + 1);
 			if(label.size == 0, {label =  controlName.asString }); 
 			control = BMAbstractController.allControls[controlName.asSymbol];
-			displaySpec = control.displaySpec;
-			initVal = displaySpec.map(virtualCont.getVal(i + 1));
+			//displaySpec = control.displaySpec;
+			initVal = control.value;
 			guiCtrls[i] = EZSlider.new(window, 
 				640@20, 
 				label, 
 				displaySpec,
-				{|ez| var setVal;
-					setVal = control.controlSpec.map(displaySpec.unmap(ez.value));
-					virtualCont.setVal(i + 1, setVal);
+				{|ez| 
+					virtualCont.setVal(i + 1, ez.value);
 				}, initVal, labelWidth: labelWidth
 			);
 			guiCtrls[i].numberView.background = Color.white.alpha_(0.4);
 			guiCtrls[i].font = font;
-			displaySpecs[i] = displaySpec;
+			//displaySpecs[i] = displaySpec;
 		
 		});
 		window.onClose = { virtualCont.removeDependant(this); onClose.value };
@@ -133,19 +147,19 @@ BMPluginGUI : BMAbstractVirtualControllerGUI {
 		window.front;
 	}
 	
-	startRefreshLoop {
-		refreshLoopOn.not.if({
-			refreshLoopOn = true;
-			AppClock.sched(refreshInterval, {
-				var resched;
-				needsRefresh.if({resched = refreshInterval}, {refreshLoopOn = false});
-				virtualCont.getAllValues.do({|val, i| 
-					guiCtrls[i].value_(val);
-				});
-				needsRefresh = false;
-				resched;
-			});
-		});
-	}
+//	startRefreshLoop {
+//		refreshLoopOn.not.if({
+//			refreshLoopOn = true;
+//			AppClock.sched(refreshInterval, {
+//				var resched;
+//				needsRefresh.if({resched = refreshInterval}, {refreshLoopOn = false});
+//				virtualCont.getAllValues.do({|val, i| 
+//					guiCtrls[i].value_(val);
+//				});
+//				needsRefresh = false;
+//				resched;
+//			});
+//		});
+//	}
 	
 }
