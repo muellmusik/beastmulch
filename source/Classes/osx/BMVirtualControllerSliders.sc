@@ -59,9 +59,15 @@ BMVirtualControllerSliders : BMAbstractVirtualControllerGUI {
 		window.view.background = Color.rand.alpha_(0.3);
 		guiCtrls = Array.newClear(numSliders);
 		displaySpecs = Array.newClear(numSliders);
-		labelWidth = virtualCont.controlNames.collect({|name| 
-			name.asString.bounds(font).width
-		}).maxItem;
+		if(virtualCont.getAllLabels.collect(_.size).maxItem == 0, {
+			labelWidth = virtualCont.controlNames.collect({|name| 
+				name.asString.bounds(font).width
+			}).maxItem;
+		}, {
+			labelWidth = virtualCont.getAllLabels.collect({|name| 
+				name.asString.bounds(font).width
+			}).maxItem;
+		});
 		virtualCont.controlNames.do({|controlName, i|
 			var initVal, control, label, displaySpec;
 			label = virtualCont.getLabel(i + 1);
