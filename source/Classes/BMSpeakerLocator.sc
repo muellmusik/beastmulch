@@ -1,6 +1,8 @@
 BMSpeakerLocator {
 	classvar <>originIn = 0, <>xin = 1, <>yin = 2, <>zin = 3, <>loopBackIn = 4;
-	classvar <>running = false, <>signal = \sweep, <>speedOfSound = 344;
+	classvar <>running = false, <>signal = \sweep, <>speedOfSound = 344, repeats = 3;
+	classvar <>waitTime = 0.5;
+	classvar rout;
 		
 	*calcCart {|rOrigin, rX, rY, rZ, d|
 		var x, y, z, dx, dy, dz;
@@ -17,7 +19,7 @@ BMSpeakerLocator {
 	}
 	
 	*run {|speakerList, micDeltas, okayFunc, server, onlyFullRange = true|
-		var target, buffer, duration, recordBuf, responders, min, diff;
+		var target, buffer, duration, recordBuf;
 		var sourceSig, sourceMax, sourceMaxInd, maxQual;
 		var metersPerSample;
 		running.if({
@@ -36,11 +38,11 @@ BMSpeakerLocator {
 			this.sendDef(server);
 			#sourceSig, buffer = this.sendTestSignal(server);
 			#sourceMaxInd, sourceMax, maxQual = this.quadInterpMax(sourceSig);
-			maxQual.sign.switch {
+			maxQual.sign.switch(
 				-1, {"good max found".postln },
 				1, {"min found (qual: %), aborting\n".postf(maxQual); ^nil },
 				0, {"bad estimate (qual: %), aborting\n".postf(maxQual); ^nil }
-			};
+			);
 			duration = buffer.duration;
 			recordBuf = Buffer.alloc(server, buffer.size * 1.2, 5);
 			server.sync;
@@ -49,61 +51,59 @@ BMSpeakerLocator {
 			speakerList.associationsDo({|speaker, index|
 				var synth, waiting, o, x, y, z, l;
 				var loopBackDelay, originDist, xDist, yDist, zDist;
-				var cart;
+				var cart, sphers, azi, ele, rad;
+				
 				if(speaker.isBMSpeaker and: {speaker.spec.fullRange || onlyFullRange.not}, {
-					synth = Synth("BMAutoLocate", 
-						[out: speaker, sigBuf: buffer, recBuf: recordBuf]
-					);
-					(duration + 0.5).wait;
-					waiting = Condition(false);
-					recordBuf.loadToFloatArray(action: {|col|
-						#o, x, y, z, l = col.unlace(4).collect(_.as(Signal));
-						waiting.unhang;
+					repeats.do({
+						synth = Synth("BMAutoLocate", 
+							[out: speaker, sigBuf: buffer, recBuf: recordBuf]
+						);
+						(duration + waitTime).wait;
+						waiting = Condition(false);
+						recordBuf.loadToFloatArray(action: {|col|
+							#o, x, y, z, l = col.unlace(4).collect(_.as(Signal));
+							waiting.unhang;
+						});
+						waiting.hang;
+						// look always for maxItem not abs to avoid big phase inverted ripples
+						loopBackDelay = this.quadInterpMax(l)[1];
+						originDist = this.quadInterpMax(o)[1] - loopBackDelay * metersPerSample;
+						xDist = (this.quadInterpMax(x)[1] - loopBackDelay) * metersPerSample;
+						yDist = (this.quadInterpMax(y)[1] - loopBackDelay) * metersPerSample;
+						zDist = (this.quadInterpMax(z)[1] - loopBackDelay) * metersPerSample;
+						
+						cart = this.calcCart(originDist, xDist, yDist, zDist, micDeltas);
+						sphers = sphers.add(this.cart2spher(*cart));
 					});
-					waiting.hang;
-					// look always for maxItem not abs to avoid big phase inverted ripples
-					loopBackDelay = this.quadInterpMax(l)[1];
-					originDist = this.quadInterpMax(o)[1] - loopBackDelay * metersPerSample;
-					xDist = (this.quadInterpMax(x)[1] - loopBackDelay) * metersPerSample;
-					yDist = (this.quadInterpMax(y)[1] - loopBackDelay) * metersPerSample;
-					zDist = (this.quadInterpMax(z)[1] - loopBackDelay) * metersPerSample;
 					
-					cart = this.calcCart(originDist, xDist, yDist, zDist, micDeltas);
-
 				}, {"% not a normal Speaker, skipping it...\n".postf(speaker.key)});
 				
+				// possibly check here for outliers and discard
+				
+				#azi, ele, rad = sphers.flop.mean; // azi, ele, rad
+				
+				speaker.azi = azi;
+				speaker.ele = ele;
+				speaker.rad = rad;
+				waitTime.wait;
+				
 			});
-			1.wait;
-			"\nChecking results".postln;
-			responders.keysValuesDo({|key, value|
-				"% failed\n".postf(key);
-				value.remove;
-			});
+			running = false;
 			
-			(responders.size == 0).if({
-				"Results Complete\n".postln;
-				"Normalizing".postln;
-				min = trimList.minItem; 
-				speakerList.do({|speaker| 
-					if(speaker.isBMSpeaker and: 
-						{speaker.spec.fullRange ? true || onlyFullRange.not}, {
-						diff = min - trimList[speaker.name];
-						if(diff <= 0, { 
-							trimList[speaker.name] = diff;
-							"Normalized Autotrim for %: % dBFS\n".postf(speaker.name, diff);
-						});
-					});
-				});
-				trimList.keysValuesDo({|name, trim|
-					speakerList[name].autoTrim = trim;
-				});
-				running = false;
-				okayFunc.value(speakerList);
-			});
-			"\n\\\\\\\\\\\\\\\ Auto Level Balance Done\n".postln;
+			"\n\\\\\\\\\\\\\\\ Auto Localise Done\n".postln;
+			okayFunc.value(speakerList);
 			
 		}.fork;
 	
+	}
+	
+	*cart2spher {|x, y, z|
+		var azi, ele, rad, rad2deg;
+		rad2deg = 360.0 / ( 2 * pi );
+		azi = atan2(x, y) * rad2deg;
+		rad = (x.squared + y.squared + z.squared).sqrt;
+		ele = atan2(z, hypot(x, y)) * rad2deg;
+		^[azi, ele, rad]
 	}
 	
 	// trims only copied at the end, so we can abort safely
@@ -145,7 +145,7 @@ BMSpeakerLocator {
 	*sendTestSignal {|server|
 		var sr, sig, buffer;
 		sr = server.sampleRate;
-		signal.switch {
+		signal.switch(
 			\sweep, {
 				var lowF = 400, hiF = 2000, dur = 0.1, phase = 0.0;
 				sig = Signal.newClear(sr * dur);
@@ -190,18 +190,18 @@ BMSpeakerLocator {
 				sig[1000] = 1;
 				buffer = Buffer.sendCollection(server, sig);
 			}
-		};
+		);
 		^[sig, buffer];
 	}
 
 	
 	*sendDef {|server|
 		SynthDef("BMAutoLocate", {|out, sigBuf, recBuf|
-			var ins, out;
+			var ins, output;
 			ins = [originIn, xin, yin, zin, loopBackIn].collect(SoundIn.ar(_));
 			RecordBuf.ar(ins, recBuf, loop: 0, doneAction: 2);
-			outs = PlayBuf.ar(1, sigBuf);			
-			Out.ar(i, outs);
+			output = PlayBuf.ar(1, sigBuf);			
+			Out.ar(out, output);
 		}).send(server);
 	
 	}
