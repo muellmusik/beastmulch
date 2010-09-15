@@ -18,7 +18,7 @@ BMSpeakerLocator {
 		^[x, y, z];
 	}
 	
-	*run {|speakerList, micDeltas, okayFunc, server, onlyFullRange = true|
+	*run {|speakerList, micDeltas, okayFunc, server, onlyFullRange = true, ignoreZ = false|
 		var target, buffer, duration, recordBuf;
 		var sourceSig, sourceMax, sourceMaxInd, maxQual;
 		var metersPerSample;
@@ -71,8 +71,9 @@ BMSpeakerLocator {
 						xDist = (this.quadInterpMax(x)[1] - loopBackDelay) * metersPerSample;
 						yDist = (this.quadInterpMax(y)[1] - loopBackDelay) * metersPerSample;
 						zDist = (this.quadInterpMax(z)[1] - loopBackDelay) * metersPerSample;
-						
 						cart = this.calcCart(originDist, xDist, yDist, zDist, micDeltas);
+						// radius and azi will be right, but ele wrong
+						ignoreZ.if({cart[2] = 0;}); 
 						sphers = sphers.add(this.cart2spher(*cart));
 					});
 					
@@ -85,6 +86,8 @@ BMSpeakerLocator {
 				speaker.azi = azi;
 				speaker.ele = ele;
 				speaker.rad = rad;
+				"% coords: azimuth - %, elevation - %, radius - %\n"
+					.postf(speaker.name, azi, ele, rad);
 				waitTime.wait;
 				
 			});
