@@ -430,7 +430,7 @@ BM3DBoxRoom : BMAbstractRoom {
 		sourceZ = sourceZ + listenerZOffset;
 		
 		// calc coords of image model virtual sources
-		"ix	iy	iz	order	az	el	delay	scale".postln;
+		"ix	iy	iz	order	az	el				delay				scale".postln;
 		
 		
 		// first order
@@ -684,82 +684,82 @@ BMSpatialReverberator {
 	classvar spm = 0.0034;
 	
 	// source coords relative to listener pos?
+//	*arOld {|input, sourceAzi, sourceEle, sourceDist, room, vbapBuf, numChans, coef = 0.99, fbScale = 0.9, spread = 1, refDist = 1|
+//		var source, delayedSource, filtered1, filtered2, sourceAtten, refDistRecip;
+//		var firstReflecs, secondReflecs, secondReflecsDir , thirdPlusReflecs;
+//		var firstRefDel, secondRefDel;
+//		var r1delays, r2delays, r1DelIndices, r2DelOneIndices, crossFeedIndices, r2inputs;
+//		var roomMaxDelay;
+//		
+//		refDistRecip = 1 / refDist;
+//		r1DelIndices = room.r1DelIndices;
+//		r2DelOneIndices = room.r2DelOneIndices;
+//		crossFeedIndices = room.crossFeedIndices;
+//		
+//		// [az, el, delay, scale]
+//		#firstReflecs, secondReflecs, thirdPlusReflecs = room.calcReflections(sourceAzi, sourceEle, sourceDist); 
+//		
+//		// sort out direct second order
+//		secondReflecsDir = secondReflecs.reject({|item, i| r2DelOneIndices.indexOf(i).notNil });
+//		
+//		firstReflecs = firstReflecs.flop;
+//		secondReflecs = secondReflecs.flop;
+//		thirdPlusReflecs = thirdPlusReflecs.flop;
+//		secondReflecsDir = secondReflecsDir.flop;
+//		
+//		roomMaxDelay = room.maxDelay;
+//		
+//		sourceAtten = (sourceDist * refDistRecip).reciprocal;
+//		
+//		"del: %\n".postf(sourceDist * spm);
+//		"sourceAtten: %\n".postf(sourceAtten);
+//		"roomMaxDelay: %\n".postf(roomMaxDelay);
+//		
+//		// source + az seems to crackle, could do without
+//		delayedSource = BufRdDelay.ar(input * sourceAtten, roomMaxDelay, sourceDist * spm).postln;
+//
+//		// filter source to model absorption
+//		filtered1 = OnePole.ar(input, coef);
+//		filtered2 = OnePole.ar(filtered1, coef);
+//		
+//		// should add distance filtering here
+//		source = VBAP.ar(numChans, delayedSource, vbapBuf, sourceAzi, sourceEle, spread);
+//		//source = VBAP.ar(numChans, input * sourceAtten, vbapBuf, sourceAzi, sourceEle, spread);
+//		
+//		
+//		////// second order and R1 //////
+//		
+//		// need to delay delay times...
+//		secondRefDel = MultiBufRdDelay.ar(filtered2, roomMaxDelay * 2, secondReflecsDir[2]);
+//		
+//		// could refine max delay time here
+//		r1delays = R1.ar(secondRefDel, roomMaxDelay * 2, thirdPlusReflecs[2][r1DelIndices] - secondReflecs[2][r1DelIndices], coef, fbScale);
+//		
+//		"r1Delays: %\n".postf(r1delays);
+//		
+//		// pan second order this should be only the direct ones.
+//		secondRefDel = VBAP.ar(numChans, secondRefDel + r1delays, vbapBuf, secondReflecsDir[0], secondReflecsDir[1], spread) * secondReflecsDir[3];
+//
+//		
+//		////// first order and R2 //////
+//		
+//		// need to delay delay times...
+//		firstRefDel = MultiBufRdDelay.ar(filtered1, roomMaxDelay * 2, firstReflecs[2]);
+//		\foo.postln;
+//		// sum in the adjacent R1 streams
+//		r2inputs = firstRefDel.collect({|delayed, i| delayed + Mix(r1delays[crossFeedIndices[i].postln]) });
+//		\bar.postln;
+//		// could refine max delay time here
+//		r2delays = R2.ar(r2inputs, roomMaxDelay * 2, secondReflecs[2][r2DelOneIndices] - firstReflecs[2], roomMaxDelay * 2, thirdPlusReflecs[2][r2DelOneIndices] - secondReflecs[2][r2DelOneIndices], coef, fbScale);
+//		
+//		// pan first order
+//		firstRefDel = VBAP.ar(numChans, firstRefDel + r2delays, vbapBuf, firstReflecs[0], firstReflecs[1], spread) * firstReflecs[3];
+//		
+//		^firstRefDel + secondRefDel + source;
+//		//^source
+//	}
+
 	*ar {|input, sourceAzi, sourceEle, sourceDist, room, vbapBuf, numChans, coef = 0.99, fbScale = 0.9, spread = 1, refDist = 1|
-		var source, delayedSource, filtered1, filtered2, sourceAtten, refDistRecip;
-		var firstReflecs, secondReflecs, secondReflecsDir , thirdPlusReflecs;
-		var firstRefDel, secondRefDel;
-		var r1delays, r2delays, r1DelIndices, r2DelOneIndices, crossFeedIndices, r2inputs;
-		var roomMaxDelay;
-		
-		refDistRecip = 1 / refDist;
-		r1DelIndices = room.r1DelIndices;
-		r2DelOneIndices = room.r2DelOneIndices;
-		crossFeedIndices = room.crossFeedIndices;
-		
-		// [az, el, delay, scale]
-		#firstReflecs, secondReflecs, thirdPlusReflecs = room.calcReflections(sourceAzi, sourceEle, sourceDist); 
-		
-		// sort out direct second order
-		secondReflecsDir = secondReflecs.reject({|item, i| r2DelOneIndices.indexOf(i).notNil });
-		
-		firstReflecs = firstReflecs.flop;
-		secondReflecs = secondReflecs.flop;
-		thirdPlusReflecs = thirdPlusReflecs.flop;
-		secondReflecsDir = secondReflecsDir.flop;
-		
-		roomMaxDelay = room.maxDelay;
-		
-		sourceAtten = (sourceDist * refDistRecip).reciprocal;
-		
-		"del: %\n".postf(sourceDist * spm);
-		"sourceAtten: %\n".postf(sourceAtten);
-		"roomMaxDelay: %\n".postf(roomMaxDelay);
-		
-		// source + az seems to crackle, could do without
-		delayedSource = BufRdDelay.ar(input * sourceAtten, roomMaxDelay, sourceDist * spm).postln;
-
-		// filter source to model absorption
-		filtered1 = OnePole.ar(input, coef);
-		filtered2 = OnePole.ar(filtered1, coef);
-		
-		// should add distance filtering here
-		source = VBAP.ar(numChans, delayedSource, vbapBuf, sourceAzi, sourceEle, spread);
-		//source = VBAP.ar(numChans, input * sourceAtten, vbapBuf, sourceAzi, sourceEle, spread);
-		
-		
-		////// second order and R1 //////
-		
-		// need to delay delay times...
-		secondRefDel = MultiBufRdDelay.ar(filtered2, roomMaxDelay * 2, secondReflecsDir[2]);
-		
-		// could refine max delay time here
-		r1delays = R1.ar(secondRefDel, roomMaxDelay * 2, thirdPlusReflecs[2][r1DelIndices] - secondReflecs[2][r1DelIndices], coef, fbScale);
-		
-		"r1Delays: %\n".postf(r1delays);
-		
-		// pan second order this should be only the direct ones.
-		secondRefDel = VBAP.ar(numChans, secondRefDel + r1delays, vbapBuf, secondReflecsDir[0], secondReflecsDir[1], spread) * secondReflecsDir[3];
-
-		
-		////// first order and R2 //////
-		
-		// need to delay delay times...
-		firstRefDel = MultiBufRdDelay.ar(filtered1, roomMaxDelay * 2, firstReflecs[2]);
-		\foo.postln;
-		// sum in the adjacent R1 streams
-		r2inputs = firstRefDel.collect({|delayed, i| delayed + Mix(r1delays[crossFeedIndices[i].postln]) });
-		\bar.postln;
-		// could refine max delay time here
-		r2delays = R2.ar(r2inputs, roomMaxDelay * 2, secondReflecs[2][r2DelOneIndices] - firstReflecs[2], roomMaxDelay * 2, thirdPlusReflecs[2][r2DelOneIndices] - secondReflecs[2][r2DelOneIndices], coef, fbScale);
-		
-		// pan first order
-		firstRefDel = VBAP.ar(numChans, firstRefDel + r2delays, vbapBuf, firstReflecs[0], firstReflecs[1], spread) * firstReflecs[3];
-		
-		^firstRefDel + secondRefDel + source;
-		//^source
-	}
-
-	*arDict {|input, sourceAzi, sourceEle, sourceDist, room, vbapBuf, numChans, coef = 0.99, fbScale = 0.9, spread = 1, refDist = 1|
 		var source, delayedSource, filtered1, filtered2, sourceAtten, refDistRecip;
 		var firstReflecs, secondReflecs, secondReflecsDir, secondReflecsInDir, thirdPlusReflecs;
 		var firstRefDel, secondRefDel, firstBuf, secondBuf;
@@ -790,12 +790,14 @@ BMSpatialReverberator {
 		// source + az seems to crackle, could do without
 		delayedSource = BufRdDelay.ar(input * sourceAtten, roomMaxDelay, sourceDist * spm).postln;
 		
+		//delayedSource = input * sourceAtten;
+		
 		// should add distance filtering here
 		source = VBAP.ar(numChans, delayedSource, vbapBuf, sourceAzi, sourceEle, spread);
 		//source = VBAP.ar(numChans, input * sourceAtten, vbapBuf, sourceAzi, sourceEle, spread);
 		
 		// filter source to model absorption for first and second order reflections
-		filtered1 = OnePole.ar(input, coef);
+		filtered1 = OnePole.ar(delayedSource, coef);
 		filtered2 = OnePole.ar(filtered1, coef);
 		
 		//write the above to delay lines
@@ -808,7 +810,7 @@ BMSpatialReverberator {
 //			MultiBufRdDelay.ar(filtered1, roomMaxDelay * 2, ref[2]) * ref[3];
 //		});
 		firstRefDel = firstReflecs.collect({|ref, k| 
-			DelTapRd.ar(firstBuf, filtered1, ref[2], 2, ref[3]);
+			DelTapRd.ar(firstBuf, filtered1, ref[2], 4, ref[3]);
 		});
 		
 		// delay the direct second order reflections
@@ -816,7 +818,7 @@ BMSpatialReverberator {
 //			MultiBufRdDelay.ar(filtered2, roomMaxDelay * 2, ref[2]) * ref[3];
 //		});
 		secondRefDel = secondReflecsDir.collect({|ref, k| 
-			DelTapRd.ar(secondBuf, filtered2, ref[2], 2, ref[3]);
+			DelTapRd.ar(secondBuf, filtered2, ref[2], 4, ref[3]);
 		});
 		
 		//// Now RUnits ////
