@@ -1,7 +1,7 @@
 BMSpeakerLocator {
-	classvar <>originIn = 0, <>xin = 1, <>yin = 2, <>zin = 3, <>loopBackIn = 4;
-	classvar <>running = false, <>signal = \sweep, <>speedOfSound = 344, repeats = 3;
-	classvar <>waitTime = 0.5;
+	classvar <>originIn = 0, <>xin = 1, <>yin = 2, <>zin = 3, <>loopOut = 0, <>loopBackIn = 4;
+	classvar <>running = false, <>signal = \impulse, <>speedOfSound = 344, repeats = 3;
+	classvar <>waitTime = 1;
 	classvar rout;
 		
 	*calcCart {|rOrigin, rX, rY, rZ, d|
@@ -28,23 +28,29 @@ BMSpeakerLocator {
 		});
 		if(micDeltas.size == 0, {micDeltas = micDeltas ! 3});
 		
-		metersPerSample = speedOfSound / server.sampleRate;
+		server = server ? Server.default;
+		target = server.asTarget;
 		
+		metersPerSample = speedOfSound / server.sampleRate;
+
 		speakerList = speakerList.deepCopy;
 		
-		target = server.asTarget;
+		
 		rout = {
 			running = true;
+			CmdPeriod.doOnce({this.stop});
 			this.sendDef(server);
 			#sourceSig, buffer = this.sendTestSignal(server);
 			#sourceMaxInd, sourceMax, maxQual = this.quadInterpMax(sourceSig);
 			maxQual.sign.switch(
 				-1, {"good max found".postln },
-				1, {"min found (qual: %), aborting\n".postf(maxQual); ^nil },
-				0, {"bad estimate (qual: %), aborting\n".postf(maxQual); ^nil }
+				1, {"min found (qual: %), aborting\n".postf(maxQual); this.stop;},
+				0, {"bad estimate (qual: %), aborting\n".postf(maxQual); this.stop; }
 			);
+			server.sync;
 			duration = buffer.duration;
-			recordBuf = Buffer.alloc(server, buffer.size * 1.2, 5);
+			recordBuf = Buffer.alloc(server, buffer.numFrames * 1.2, 5);
+			currentEnvironment[\foo] = recordBuf;
 			server.sync;
 			
 			"\n\\\\\\\\\\\\\\\ Auto Localise Starting\n".postln;
@@ -59,19 +65,21 @@ BMSpeakerLocator {
 							[out: speaker, sigBuf: buffer, recBuf: recordBuf]
 						);
 						(duration + waitTime).wait;
+						synth.free;
 						waiting = Condition(false);
 						recordBuf.loadToFloatArray(action: {|col|
-							#o, x, y, z, l = col.unlace(4).collect(_.as(Signal));
-							waiting.unhang;
+							#o, x, y, z, l = col.unlace(5).collect(_.as(Signal));
+							waiting.test = true; waiting.signal;
 						});
-						waiting.hang;
+						waiting.wait;
 						// look always for maxItem not abs to avoid big phase inverted ripples
-						loopBackDelay = this.quadInterpMax(l)[1];
-						originDist = this.quadInterpMax(o)[1] - loopBackDelay * metersPerSample;
-						xDist = (this.quadInterpMax(x)[1] - loopBackDelay) * metersPerSample;
-						yDist = (this.quadInterpMax(y)[1] - loopBackDelay) * metersPerSample;
-						zDist = (this.quadInterpMax(z)[1] - loopBackDelay) * metersPerSample;
-						cart = this.calcCart(originDist, xDist, yDist, zDist, micDeltas);
+						loopBackDelay = this.quadInterpMax(l)[0];
+						originDist = this.quadInterpMax(o)[0] - loopBackDelay * metersPerSample;
+						xDist = (this.quadInterpMax(x)[0] - loopBackDelay) * metersPerSample;
+						yDist = (this.quadInterpMax(y)[0] - loopBackDelay) * metersPerSample;
+						zDist = (this.quadInterpMax(z)[0] - loopBackDelay) * metersPerSample;
+						cart = this.calcCart(*([originDist, xDist, yDist, zDist, micDeltas]));
+						cart.postln;
 						// radius and azi will be right, but ele wrong
 						ignoreZ.if({cart[2] = 0;}); 
 						sphers = sphers.add(this.cart2spher(*cart));
@@ -81,7 +89,7 @@ BMSpeakerLocator {
 				
 				// possibly check here for outliers and discard
 				
-				#azi, ele, rad = sphers.flop.mean; // azi, ele, rad
+				#azi, ele, rad = sphers.postln.flop.collect(_.mean); // azi, ele, rad
 				
 				speaker.azi = azi;
 				speaker.ele = ele;
@@ -114,7 +122,7 @@ BMSpeakerLocator {
 		running.if({
 			rout.stop;
 			running = false;
-			"Auto Level Balance aborted".warn;
+			"Auto Localise aborted".warn;
 		});
 	}
 	
@@ -135,12 +143,12 @@ BMSpeakerLocator {
 		if (d2 != 0.0, { 
 			xe = xc - (d1/d2); 
 			ye = yc + (0.5*d1*(xe-xc)); 
-			if (abs(xc-xe)>1,{ result = [xe, ye, 0] }, // Reliability test 
+			if (abs(xc-xe)>1,{ result = [xe, ye, 0]; \bad.postln; }, // Reliability test 
 				{ result = [xe, ye, d2]});
 			}, { // Degenerate d2 
 				xe = xc; // This could be NAN 
 				ye = yc; // This could be NAN 
-				result = [xe, ye, 0]; 
+				result = [xe, ye, 0]; \bad.postln;
 			}); 
 		^result;
 	}	
@@ -202,9 +210,10 @@ BMSpeakerLocator {
 		SynthDef("BMAutoLocate", {|out, sigBuf, recBuf|
 			var ins, output;
 			ins = [originIn, xin, yin, zin, loopBackIn].collect(SoundIn.ar(_));
-			RecordBuf.ar(ins, recBuf, loop: 0, doneAction: 2);
-			output = PlayBuf.ar(1, sigBuf);			
+			RecordBuf.ar(ins, recBuf, doneAction: 2, loop: 0);
+			output = PlayBuf.ar(1, sigBuf) * 0.7;			
 			Out.ar(out, output);
+			Out.ar(loopOut, output);
 		}).send(server);
 	
 	}
