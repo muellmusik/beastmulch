@@ -788,7 +788,8 @@ BMSpatialReverberator {
 		"roomMaxDelay: %\n".postf(roomMaxDelay);
 		
 		// source + az seems to crackle, could do without
-		delayedSource = BufRdDelay.ar(input * sourceAtten, roomMaxDelay, sourceDist * spm).postln;
+		//delayedSource = BufRdDelay.ar(input * sourceAtten, roomMaxDelay, sourceDist * spm);
+		delayedSource = DelayC.ar(input * sourceAtten, roomMaxDelay, sourceDist * spm);
 		
 		//delayedSource = input * sourceAtten;
 		
@@ -800,26 +801,36 @@ BMSpatialReverberator {
 		filtered1 = OnePole.ar(delayedSource, coef);
 		filtered2 = OnePole.ar(filtered1, coef);
 		
-		//write the above to delay lines
-		filtered1 = DelTapWr.ar(firstBuf = LocalBuf(SampleRate.ir * roomMaxDelay), filtered1);
-		filtered2 = DelTapWr.ar(secondBuf = LocalBuf(SampleRate.ir * roomMaxDelay), filtered2);
-		
-		// delay the first order reflections
-//		//****** these multis are wrong
+//		//write the above to delay lines
+//		filtered1 = DelTapWr.ar(firstBuf = LocalBuf(SampleRate.ir * roomMaxDelay).clear, filtered1);
+//		filtered2 = DelTapWr.ar(secondBuf = LocalBuf(SampleRate.ir * roomMaxDelay).clear, filtered2);
+//		
+//		// delay the first order reflections
 //		firstRefDel = firstReflecs.collect({|ref, k| 
-//			MultiBufRdDelay.ar(filtered1, roomMaxDelay * 2, ref[2]) * ref[3];
+//			//Poll(ref[2] <= ControlDur.ir, ref[2], k);
+//			DelTapRd.ar(firstBuf, filtered1, max(ref[2], ControlDur.ir), 4, ref[3]);
 //		});
+//		
+//		// delay the direct second order reflections
+//
+//		secondRefDel = secondReflecsDir.collect({|ref, k| 
+//			//Poll(ref[2] <= ControlDur.ir, ref[2], k);
+//			DelTapRd.ar(secondBuf, filtered2, max(ref[2], ControlDur.ir), 4, ref[3]);
+//		});
+
+		// delay the first order reflections
 		firstRefDel = firstReflecs.collect({|ref, k| 
-			DelTapRd.ar(firstBuf, filtered1, ref[2], 4, ref[3]);
+			//Poll(ref[2] <= ControlDur.ir, ref[2], k);
+			DelayC.ar(filtered1, roomMaxDelay, ref[2], ref[3]);
 		});
 		
 		// delay the direct second order reflections
-		//secondRefDel = secondReflecsDir.collect({|ref, k| 
-//			MultiBufRdDelay.ar(filtered2, roomMaxDelay * 2, ref[2]) * ref[3];
-//		});
+
 		secondRefDel = secondReflecsDir.collect({|ref, k| 
-			DelTapRd.ar(secondBuf, filtered2, ref[2], 4, ref[3]);
+			DelayC.ar(filtered2, roomMaxDelay, ref[2], ref[3]);
 		});
+
+		
 		
 		//// Now RUnits ////
 		//// Need to create in this order to allow for crossfeeds
@@ -881,7 +892,8 @@ BMSpatialReverberator {
 		secondRefDel = secondRefDel.collect({|del, k|
 			var ref, input;
 			ref = secondReflecsDir[k];
-			input = Mix([del, rUnits[k]]);
+			//input = Mix([del, rUnits[k]]);
+			input = del;
 			VBAP.ar(numChans, input, vbapBuf, ref[0], ref[1], spread);
 		});
 		
@@ -889,7 +901,8 @@ BMSpatialReverberator {
 		firstRefDel = firstRefDel.collect({|del, k|
 			var ref, input;
 			ref = firstReflecs[k];
-			input = Mix([del, rUnits[k]]);
+			//input = Mix([del, rUnits[k]]);
+			input = del;
 			VBAP.ar(numChans, input, vbapBuf, ref[0], ref[1], spread);
 		});
 		
@@ -940,7 +953,7 @@ BufRdDelay : PseudoMultiNewUGen {
 		//out = BufRd.ar(1, buf, phasor + (delayTime * sr) % maxFrames, 1, 2);
 		//out = BufRd.ar(1, buf, phasor + (delayTime * sr), 1, 2);
 //		BufWr.ar(in, buf, phasor, 1);
-		out = BufRd.ar(1, buf, phasor, 1, 2);
+		out = BufRd.ar(1, buf, phasor, 1, 4);
 		BufWr.ar(in, buf, phasor + (delayTime * sr), 1);
 		^out
 	}
@@ -961,7 +974,7 @@ MultiBufRdDelay : PseudoMultiNewUGen {
 		//cd = ControlDur.ir;
 		out = delayTimes.dereference.collect({|delayTime|
 			//BufRd.ar(1, buf, phasor + (delayTime * sr) - (cd * sr) % maxFrames, 1, 2);
-			BufRd.ar(1, buf, phasor - (delayTime * sr), 1, 2);
+			BufRd.ar(1, buf, phasor - (delayTime * sr), 1, 4);
 		});
 		BufWr.ar(in, buf, phasor, 1);
 		^out
@@ -983,7 +996,7 @@ R1 : PseudoMultiNewUGen {
 		buf = LocalBuf(maxFrames, 1).clear;
 		phasor = Phasor.ar(0, 1, 0, maxFrames);
 		//ff = BufRd.ar(1, buf, phasor + (delayTime * sr) - (ControlDur.ir * sr) % maxFrames, 1, 2);
-		ff = BufRd.ar(1, buf, phasor, 1, 2);
+		ff = BufRd.ar(1, buf, phasor, 1, 4);
 		ff = OnePole.ar(ff, coef) * fbScale;
 		BufWr.ar(in + ff, buf, phasor + (delayTime * sr), 1);
 		^ff
@@ -1013,7 +1026,7 @@ R2 : PseudoMultiNewUGen {
 		
 		// get and filter output of delay1
 		//ff1 = BufRd.ar(1, buf1, phasor1 + (delayTime1 * sr) - (ControlDur.ir * sr) % maxFrames1, 1, 2);
-		ff1 = BufRd.ar(1, buf1, phasor1, 1, 2);
+		ff1 = BufRd.ar(1, buf1, phasor1, 1, 4);
 		ff1 = OnePole.ar(ff1, coef) * fbScale;
 		
 		// write ff1 to delay2
@@ -1021,7 +1034,7 @@ R2 : PseudoMultiNewUGen {
 		
 		// get and filter output of delay2
 		//ff2 = BufRd.ar(1, buf2, phasor2 + (delayTime2 * sr) - (ControlDur.ir * sr) % maxFrames2, 1, 2);
-		ff2 = BufRd.ar(1, buf2, phasor2, 1, 2);
+		ff2 = BufRd.ar(1, buf2, phasor2, 1, 4);
 		ff2 = OnePole.ar(ff2, coef) * fbScale;
 		
 		out = ff1 + ff2;
