@@ -671,7 +671,105 @@ BMPlaneSurface : BMAbstractSpaceModel {
 }
 
 // components can be used to efficiently combine
-BMEarlyReflections { }
+BMEarlyReflections {
+	
+	classvar spm = 0.0034;
+
+	*ar {|input, sourceAzi, sourceEle, sourceDist, room, vbapBuf, numChans, coef = 0.99, fbScale = 0.9, spread = 1, refDist = 1|
+		var source, delayedSource, filtered1, filtered2, sourceAtten, refDistRecip;
+		var firstReflecs, secondReflecs, secondReflecsDir, secondReflecsInDir, thirdPlusReflecs;
+		var firstRefDel, secondRefDel, firstBuf, secondBuf;
+		var rUnits, crossFeedInputs;
+		var fmCrossFeeds, fmR1inputs, fmR1delays;
+		var roomMaxDelay;
+		
+		refDistRecip = 1 / refDist;
+//		r1DelIndices = room.r1DelIndices;
+//		r2DelOneIndices = room.r2DelOneIndices;
+		
+		// k->[az, el, delay, scale]
+		#firstReflecs, secondReflecs, thirdPlusReflecs = room.calcReflectionsDict(sourceAzi, sourceEle, sourceDist); 
+		
+		// sort out direct second order
+		// those with "2" in them are behind first order rooms and will be represented with R2s
+		//secondReflecsDir = secondReflecs.reject({|item, key| key.asString.contains("2") });
+		//secondReflecsInDir = secondReflecs.select({|item, key| key.asString.contains("2") });
+		
+		roomMaxDelay = room.maxDelay;
+		
+		sourceAtten = (sourceDist * refDistRecip).reciprocal;
+		
+		"del: %\n".postf(sourceDist * spm);
+		"sourceAtten: %\n".postf(sourceAtten);
+		"roomMaxDelay: %\n".postf(roomMaxDelay);
+		
+		// source + az seems to crackle, could do without
+		//delayedSource = BufRdDelay.ar(input * sourceAtten, roomMaxDelay, sourceDist * spm);
+		delayedSource = DelayC.ar(input * sourceAtten, roomMaxDelay, sourceDist * spm);
+		
+		//delayedSource = input * sourceAtten;
+		
+		// should add distance filtering here
+		source = VBAP.ar(numChans, delayedSource, vbapBuf, sourceAzi, sourceEle, spread);
+		//source = VBAP.ar(numChans, input * sourceAtten, vbapBuf, sourceAzi, sourceEle, spread);
+		
+		// filter source to model absorption for first and second order reflections
+		filtered1 = OnePole.ar(delayedSource, coef);
+		filtered2 = OnePole.ar(filtered1, coef);
+		
+//		//write the above to delay lines
+//		filtered1 = DelTapWr.ar(firstBuf = LocalBuf(SampleRate.ir * roomMaxDelay).clear, filtered1);
+//		filtered2 = DelTapWr.ar(secondBuf = LocalBuf(SampleRate.ir * roomMaxDelay).clear, filtered2);
+//		
+//		// delay the first order reflections
+//		firstRefDel = firstReflecs.collect({|ref, k| 
+//			//Poll(ref[2] <= ControlDur.ir, ref[2], k);
+//			DelTapRd.ar(firstBuf, filtered1, max(ref[2], ControlDur.ir), 4, ref[3]);
+//		});
+//		
+//		// delay the direct second order reflections
+//
+//		secondRefDel = secondReflecsDir.collect({|ref, k| 
+//			//Poll(ref[2] <= ControlDur.ir, ref[2], k);
+//			DelTapRd.ar(secondBuf, filtered2, max(ref[2], ControlDur.ir), 4, ref[3]);
+//		});
+
+		// delay the first order reflections
+		firstRefDel = firstReflecs.collect({|ref, k| 
+			//Poll(ref[2] <= ControlDur.ir, ref[2], k);
+			DelayC.ar(filtered1, roomMaxDelay, ref[2], ref[3]);
+		});
+		
+		// delay the direct second order reflections
+
+		secondRefDel = secondReflecs.collect({|ref, k| 
+			DelayC.ar(filtered2, roomMaxDelay, ref[2], ref[3]);
+		});
+
+				
+		/// now pan everything...
+		
+		// pan direct second order + R1s
+		secondRefDel = secondRefDel.collect({|del, k|
+			var ref, input;
+			ref = secondReflecs[k];
+			input = del;
+			VBAP.ar(numChans, input, vbapBuf, ref[0], ref[1], spread);
+		});
+		
+		// pan first order + R2s
+		firstRefDel = firstRefDel.collect({|del, k|
+			var ref, input;
+			ref = firstReflecs[k];
+			input = del;
+			VBAP.ar(numChans, input, vbapBuf, ref[0], ref[1], spread);
+		});
+		
+		^Mix(firstRefDel.values) + Mix(secondRefDel.values) + source;
+		//^source
+	}
+	
+}
 
 BMDiffuseReverb { }
 
@@ -824,13 +922,15 @@ BMSpatialReverberator {
 			DelayC.ar(filtered1, roomMaxDelay, ref[2], ref[3]);
 		});
 		
+		//"frd: %\n".postf(firstRefDel);
+		
 		// delay the direct second order reflections
 
 		secondRefDel = secondReflecsDir.collect({|ref, k| 
 			DelayC.ar(filtered2, roomMaxDelay, ref[2], ref[3]);
 		});
 
-		
+		//"srd: %\n".postf(secondRefDel);
 		
 		//// Now RUnits ////
 		//// Need to create in this order to allow for crossfeeds
@@ -867,6 +967,7 @@ BMSpatialReverberator {
 			var input, first, secKey, thirdKey, sec, third;
 			input = [firstRefDel[k]] ++ crossFeedInputs[k].collect({|key| rUnits[key]});
 			input = Mix(input);
+			//"R2 In %\n".postf(input);
 			first = firstReflecs[k][2];
 			secKey = k.asString.tr($1, $2).asSymbol; // move out one room in the same direction
 			thirdKey = k.asString.tr($1, $3).asSymbol; // move out two rooms in the same direction
@@ -880,6 +981,7 @@ BMSpatialReverberator {
 			var input, sec, third, thirdKey;
 			input = [secondRefDel[k]] ++ crossFeedInputs[k].collect({|key| rUnits[key]});
 			input = Mix(input);
+			//"R1 In %\n".postf(input);
 			sec = secondReflecs[k][2];
 			thirdKey = k.asString.tr($1, $2).asSymbol; // move out one room in the same direction
 			third = thirdPlusReflecs[thirdKey][2];
@@ -892,8 +994,9 @@ BMSpatialReverberator {
 		secondRefDel = secondRefDel.collect({|del, k|
 			var ref, input;
 			ref = secondReflecsDir[k];
-			//input = Mix([del, rUnits[k]]);
-			input = del;
+			input = Mix([del, rUnits[k]]);
+			//input = del;
+			//"sec In %\n".postf(input);
 			VBAP.ar(numChans, input, vbapBuf, ref[0], ref[1], spread);
 		});
 		
@@ -901,12 +1004,13 @@ BMSpatialReverberator {
 		firstRefDel = firstRefDel.collect({|del, k|
 			var ref, input;
 			ref = firstReflecs[k];
-			//input = Mix([del, rUnits[k]]);
-			input = del;
+			input = Mix([del, rUnits[k]]);
+			//"first In %\n".postf(input);
+			//input = del;
 			VBAP.ar(numChans, input, vbapBuf, ref[0], ref[1], spread);
 		});
 		
-		^firstRefDel.values + secondRefDel.values + source;
+		^Mix(firstRefDel.values) + Mix(secondRefDel.values) + source;
 		//^source
 	}
 	
@@ -991,6 +1095,8 @@ R1 : PseudoMultiNewUGen {
 	
 	*new1 {|rate, in, maxDelayTime, delayTime, coef, fbScale|
 		var buf, phasor, maxFrames, sr, ff;
+		//Poll(delayTime <= ControlDur.ir, delayTime, 'R1');
+		delayTime = (max(delayTime, ControlDur.ir) + LFNoise2.kr(100).range(0, 0.0008)).poll(label: UniqueID.next.asString);
 		sr = SampleRate.ir;
 		maxFrames = maxDelayTime * sr;
 		buf = LocalBuf(maxFrames, 1).clear;
@@ -1013,6 +1119,10 @@ R2 : PseudoMultiNewUGen {
 		var buf1, phasor1, maxFrames1, sr, ff1, out;
 		var buf2, phasor2, maxFrames2, ff2;
 		sr = SampleRate.ir;
+		//Poll(delayTime1 <= ControlDur.ir, delayTime1, 'R2');
+		//Poll(delayTime2 <= ControlDur.ir, delayTime2, 'R2');
+		delayTime1 = max(delayTime1, ControlDur.ir)  + LFNoise2.kr(100).range(0, 0.0008);
+		delayTime2 = max(delayTime2, ControlDur.ir)  + LFNoise2.kr(100).range(0, 0.0008);
 		
 		// delay1 params
 		maxFrames1 = maxDelayTime1 * sr;
