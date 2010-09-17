@@ -574,7 +574,7 @@ void VBAP_next(VBAP *unit, int inNumSamples)
 	
 }
 
-
+// needs to check that numOutputs and x_ls_amount match!!
 void VBAP_Ctor(VBAP* unit)
 {
 	int numOutputs = unit->mNumOutputs, counter = 0, datapointer=0, setpointer=0, i;
