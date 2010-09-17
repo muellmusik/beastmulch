@@ -85,19 +85,19 @@ BMSpeakerLocator {
 						sphers = sphers.add(this.cart2spher(*cart));
 					});
 					
-				}, {"% not a normal Speaker, skipping it...\n".postf(speaker.key)});
+				
 				
 				// possibly check here for outliers and discard
 				
-				#azi, ele, rad = sphers.postln.flop.collect(_.mean); // azi, ele, rad
-				
-				speaker.azi = azi;
-				speaker.ele = ele;
-				speaker.rad = rad;
-				"% coords: azimuth - %, elevation - %, radius - %\n"
-					.postf(speaker.name, azi, ele, rad);
-				waitTime.wait;
-				
+					#azi, ele, rad = sphers.flop.collect(_.mean); // azi, ele, rad
+					
+					speaker.azi = azi;
+					speaker.ele = ele;
+					speaker.rad = rad;
+					"% coords: azimuth - %, elevation - %, radius - %\n"
+						.postf(speaker.name, azi, ele, rad);
+					waitTime.wait;
+				}, {"% not a normal Speaker, skipping it...\n".postf(speaker.key)});
 			});
 			running = false;
 			
