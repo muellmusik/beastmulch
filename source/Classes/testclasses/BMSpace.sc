@@ -675,13 +675,14 @@ BMEarlyReflections {
 	
 	classvar spm = 0.0034;
 
-	*ar {|input, sourceAzi, sourceEle, sourceDist, room, vbapBuf, numChans, coef = 0.99, fbScale = 0.9, spread = 1, refDist = 1|
+	*ar {|input, sourceAzi, sourceEle, sourceDist, room, vbapBuf, numChans, coef = 0.99, fbScale = 0.9, spread = 1, refDist = 1, split = false|
 		var source, delayedSource, filtered1, filtered2, sourceAtten, refDistRecip;
 		var firstReflecs, secondReflecs, secondReflecsDir, secondReflecsInDir, thirdPlusReflecs;
 		var firstRefDel, secondRefDel, firstBuf, secondBuf;
 		var rUnits, crossFeedInputs;
 		var fmCrossFeeds, fmR1inputs, fmR1delays;
 		var roomMaxDelay;
+		var final;
 		
 		refDistRecip = 1 / refDist;
 //		r1DelIndices = room.r1DelIndices;
@@ -765,7 +766,9 @@ BMEarlyReflections {
 			VBAP.ar(numChans, input, vbapBuf, ref[0], ref[1], spread);
 		});
 		
-		^Mix(firstRefDel.values) + Mix(secondRefDel.values) + source;
+		final = [source, Mix(firstRefDel.values), Mix(secondRefDel.values)];
+		^if(split, {final}, {Mix(final)});
+		
 		//^source
 	}
 	
@@ -957,7 +960,7 @@ BMSpatialReverberator {
 			sec = secondReflecs[k][2];
 			thirdKey = k.asString.tr($1, $2).asSymbol; // move out one room in the same direction
 			third = thirdPlusReflecs[thirdKey][2];
-			rUnits[k] = R1.ar(input, roomMaxDelay * 2, third - sec, coef, fbScale);
+			rUnits[k] = R1C.ar(input, roomMaxDelay * 2, third - sec, coef, fbScale);
 		});
 		
 
@@ -973,7 +976,7 @@ BMSpatialReverberator {
 			thirdKey = k.asString.tr($1, $3).asSymbol; // move out two rooms in the same direction
 			sec = secondReflecs[secKey][2];
 			third = thirdPlusReflecs[thirdKey][2];
-			rUnits[k] = R2.ar(input, roomMaxDelay * 2, sec - first, roomMaxDelay * 2, third - sec, coef, fbScale);
+			rUnits[k] = R2C.ar(input, roomMaxDelay * 2, sec - first, roomMaxDelay * 2, third - sec, coef, fbScale);
 		});
 
 		// R1s that are fed from the above
@@ -985,7 +988,7 @@ BMSpatialReverberator {
 			sec = secondReflecs[k][2];
 			thirdKey = k.asString.tr($1, $2).asSymbol; // move out one room in the same direction
 			third = thirdPlusReflecs[thirdKey][2];
-			rUnits[k] = R1.ar(input, roomMaxDelay * 2, third - sec, coef, fbScale);
+			rUnits[k] = R1C.ar(input, roomMaxDelay * 2, third - sec, coef, fbScale);
 		});
 		
 		/// now mix and pan everything...
@@ -1096,7 +1099,8 @@ R1 : PseudoMultiNewUGen {
 	*new1 {|rate, in, maxDelayTime, delayTime, coef, fbScale|
 		var buf, phasor, maxFrames, sr, ff;
 		//Poll(delayTime <= ControlDur.ir, delayTime, 'R1');
-		delayTime = (max(delayTime, ControlDur.ir) + LFNoise2.kr(100).range(0, 0.0008)).poll(label: UniqueID.next.asString);
+		//delayTime = (max(delayTime, ControlDur.ir) + LFNoise2.kr(100).range(0, 0.0008)).poll(label: UniqueID.next.asString);
+		//delayTime = (max(delayTime, ControlDur.ir));
 		sr = SampleRate.ir;
 		maxFrames = maxDelayTime * sr;
 		buf = LocalBuf(maxFrames, 1).clear;
@@ -1106,6 +1110,20 @@ R1 : PseudoMultiNewUGen {
 		ff = OnePole.ar(ff, coef) * fbScale;
 		BufWr.ar(in + ff, buf, phasor + (delayTime * sr), 1);
 		^ff
+	}
+}
+
+R1C : UGen {
+
+	*ar { arg in = 0.0, maxdelaytime = 0.2, delaytime = 0.2, coef = 0.99, fbScale = 0.9;
+		^this.multiNew('audio', in.asAudioRateInput, maxdelaytime, delaytime, coef, fbScale);
+	}
+}
+
+R2C : UGen {
+
+	*ar { arg in = 0.0, maxdelaytime1 = 0.2, delaytime1 = 0.2, maxdelaytime2 = 0.2, delaytime2 = 0.2, coef = 0.99, fbScale = 0.9;
+		^this.multiNew('audio', in.asAudioRateInput, maxdelaytime1, delaytime1, maxdelaytime2, delaytime2, coef, fbScale);
 	}
 }
 
@@ -1119,14 +1137,16 @@ R2 : PseudoMultiNewUGen {
 		var buf1, phasor1, maxFrames1, sr, ff1, out;
 		var buf2, phasor2, maxFrames2, ff2;
 		sr = SampleRate.ir;
-		//Poll(delayTime1 <= ControlDur.ir, delayTime1, 'R2');
-		//Poll(delayTime2 <= ControlDur.ir, delayTime2, 'R2');
-		delayTime1 = max(delayTime1, ControlDur.ir)  + LFNoise2.kr(100).range(0, 0.0008);
-		delayTime2 = max(delayTime2, ControlDur.ir)  + LFNoise2.kr(100).range(0, 0.0008);
+		Poll.ar(delayTime1 <= ControlDur.ir, delayTime1, 'R2-1');
+		Poll.ar(delayTime2 <= ControlDur.ir, delayTime2, 'R2-2');
+		//delayTime1 = max(delayTime1, ControlDur.ir)  + LFNoise2.kr(100).range(0, 0.0008);
+//		delayTime2 = max(delayTime2, ControlDur.ir)  + LFNoise2.kr(100).range(0, 0.0008);
+		//delayTime1 = max(delayTime1, ControlDur.ir);
+		//delayTime2 = max(delayTime2, ControlDur.ir);
 		
 		// delay1 params
 		maxFrames1 = maxDelayTime1 * sr;
-		buf1 = LocalBuf(maxFrames1, 1).clear;
+		buf1 = LocalBuf(maxFrames1, 1).clear; 
 		phasor1 = Phasor.ar(0, 1, 0, maxFrames1);
 		
 		// delay2 params
