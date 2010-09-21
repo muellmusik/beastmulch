@@ -68,8 +68,9 @@ BMVirtualControllerSliders : BMAbstractVirtualControllerGUI {
 		var numSliders, font, presetMenu, labelWidth;
 		font = Font("Helvetica-Bold", 10);
 		numSliders = virtualCont.numControls;
+		origin = origin ? (300@300);
 		window = SCWindow.new(name, 
-			Rect(300, 300, 652, (numSliders + 1) * 24), false); // 508
+			Rect(origin.x, origin.y, 652, (numSliders + 1) * 24), false); // 508
 		window.view.decorator = FlowLayout(window.view.bounds);
 		window.view.background = Color.rand.alpha_(0.3);
 		guiCtrls = Array.newClear(numSliders);
