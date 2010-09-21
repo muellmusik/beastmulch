@@ -1635,7 +1635,7 @@ inline void R2C_perform(R2X *unit, int inNumSamples, UnitCalcFunc resetFunc)
 	
 	if (PerformClass::checked) {
 		unit->m_numoutput += inNumSamples;
-		if ((unit->m_numoutput >= unit->m_idelaylen) || (unit->m_numoutput >= unit->m_idelaylen2))
+		if (unit->m_numoutput >= (unit->m_idelaylen + unit->m_idelaylen2))
 			unit->mCalcFunc = resetFunc;
 	}
 }
@@ -1689,7 +1689,7 @@ inline void R2C_perform_a(R2C *unit, int inNumSamples, UnitCalcFunc resetFunc)
 	if (PerformClass::checked)
 	{
 		unit->m_numoutput += inNumSamples;
-		if ((unit->m_numoutput >= unit->m_idelaylen) || (unit->m_numoutput >= unit->m_idelaylen2))
+		if (unit->m_numoutput >= (unit->m_idelaylen + unit->m_idelaylen2))
 			unit->mCalcFunc = resetFunc;
 	}
 }
