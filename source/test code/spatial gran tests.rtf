@@ -60,6 +60,7 @@ b.positions = \{ \
 	\}, \cf3 Array\cf0 )\
 \};\
 \
+\pard\pardeftab560\ql\qnatural
 \cf2 // this updates their positions in the GUI\cf0 \
 t = \cf3 Task\cf0 (\{\
 	loop(\{\
@@ -144,6 +145,9 @@ b.nextLoc = \{  \
 \};\
 )\
 \
+\
+// Cmd -.\
+\pard\pardeftab560\ql\qnatural
 \cf2 //// with location dependant paramaterisation\cf0 \
 (\
 d = \cf3 SynthDef\cf0 (\cf4 "BMVBAPReverbPitchGrain"\cf0 ,\{ \cf3 arg\cf0  i_out=0, i_sampbufnum, pitchScale = 1.0, \
@@ -153,8 +157,7 @@ d = \cf3 SynthDef\cf0 (\cf4 "BMVBAPReverbPitchGrain"\cf0 ,\{ \cf3 arg\cf0  i_out
 	thisStart = pointer + \cf3 IRand\cf0 (0, offset);\
 	grain = \cf3 EnvGen\cf0 .ar(\cf3 Env\cf0 .sine, 1.0, level, 0.0, dur, 2) \
 		* \cf3 PlayBuf\cf0 .ar(1,i_sampbufnum,pitchScale * pitch * \cf3 BufRateScale\cf0 .ir(i_sampbufnum),\
-			1, thisStart,loop);\
-	\cf3 OffsetOut\cf0 .ar(~revBus, grain * reverb);		\
+			1, thisStart,loop);		\
 	grain = \cf3 VBAP\cf0 .ar(~vbp.numSpeakers, grain * direct, ~vbuf, azi, 0, 1);\
 	\cf3 OffsetOut\cf0 .ar(i_out,grain);\
 \}).add;\
@@ -180,6 +183,7 @@ b.positions = \{ \
 	\}, \cf3 Array\cf0 )\
 \};\
 \
+\pard\pardeftab560\ql\qnatural
 \cf2 // this updates their positions in the GUI\cf0 \
 t = \cf3 Task\cf0 (\{\
 	loop(\{\
