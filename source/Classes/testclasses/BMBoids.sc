@@ -19,6 +19,16 @@ BMBoid {
 		pos = (pos + (vel * velScale));
 	}
 	
+	posSpher {
+		var x, y, z, azi, ele, rad, rad2deg;
+		#x, y, z = pos;
+		rad2deg = 360.0 / ( 2 * pi );
+		azi = atan2(x, y) * rad2deg;
+		rad = (x.squared + y.squared + z.squared).sqrt;
+		ele = atan2(z, hypot(x, y)) * rad2deg;
+		^[azi, ele, rad]
+	}
+	
 	cohere {|boids, countRecip|
 		var vec;
 		vec = 0.0 ! dim;
