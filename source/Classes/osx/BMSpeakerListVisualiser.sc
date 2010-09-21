@@ -42,7 +42,7 @@ BMSpeakerListVisualiser : BMAbstractGUI {
 		height.doAction;
 		
 		distance.action = {qcView.distance = (-1 + distance.value) * 1.5 };
-		distance.valueAction_(1.0);
+		distance.valueAction_(0.5);
 		
 		qcView.sphereScale = 0.02;
 		
