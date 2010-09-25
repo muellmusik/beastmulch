@@ -84,6 +84,9 @@ BMSpeaker {
 	
 	// update any changes in spec
 	initFromArchive { spec = BMSpeakerSpec.specs[spec.name] ?? BMSpeakerSpec.specs['Generic'] }
+	
+	// spoof a IOArray
+	asBMInOutArray { ^BMInOutArray[this] }
 }
 
 // Wrapper class for managing specs for different speaker models
