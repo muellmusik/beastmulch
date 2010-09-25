@@ -16,12 +16,14 @@ BMAbstractSpaceModel {
 BMAbstractRoom : BMAbstractSpaceModel {
 	classvar spm = 0.0034, dpr, rpd, tiny = 1.0e-30, dimx = 0, dimy = 1, dimz = 2;
 	classvar aZ = 0, eL = 1, delay = 2, scale = 3, refdist = 1;
+	classvar secsPerMeter;
 	
 	var xsize, ysize, zsize, listenerXOffset, listenerYOffset, listenerZOffset;
 	
 	*initClass { 
 		dpr = 360.0 / ( 2 * pi );
-		rpd = (2 * pi / 360);	
+		rpd = (2 * pi / 360);
+		secsPerMeter = 344.reciprocal;	
 	}
 }
 
@@ -300,7 +302,7 @@ BM3DBoxRoom : BMAbstractRoom {
 	
 	*new {|xsize, ysize, zsize, listenerXOffset = 0, listenerYOffset = 0, listenerZOffset = 0| 
 		// convert meters to seconds
-		^super.newCopyArgs(xsize * spm, ysize * spm, zsize * spm, listenerXOffset  * spm, listenerYOffset * spm, listenerZOffset * spm);
+		^super.newCopyArgs(xsize * secsPerMeter, ysize * secsPerMeter, zsize * secsPerMeter, listenerXOffset  * secsPerMeter, listenerYOffset * secsPerMeter, listenerZOffset * secsPerMeter);
 	} 
 	
 	*initClass {
@@ -393,8 +395,7 @@ BM3DBoxRoom : BMAbstractRoom {
 	
 	roomSymbol {|x, y, z| ^(x.asString ++ y.asString ++ z.asString).asSymbol } 
 
-	// use Dict version below...
-	// listener coords, roomDim, sourceAz, sourceEl, sourceRad
+	// before changing seconds per meter stuff	
 //	calcReflections { |az, el, r| 
 //		var source, first, second, third, fourth, fdelay;
 //		var x, y, z, sourceX, sourceY, sourceZ, sum, sum2, avg, sd;
@@ -407,9 +408,9 @@ BM3DBoxRoom : BMAbstractRoom {
 //		
 //		fdelay = Array.newClear(6);
 //		
-//		firstRefs = Array.new(6);
-//		secondRefs = Array.new(18);
-//		thirdRefs = Array.new(18);
+//		firstRefs = IdentityDictionary.new;
+//		secondRefs = IdentityDictionary.new;
+//		thirdRefs = IdentityDictionary.new;
 //		
 //		source[aZ] = az;
 //		source[eL] = el;
@@ -435,7 +436,7 @@ BM3DBoxRoom : BMAbstractRoom {
 //		sourceZ = sourceZ + listenerZOffset;
 //		
 //		// calc coords of image model virtual sources
-//		"ix	iy	iz	order	az	el				delay				scale".postln;
+//		"ix	iy	iz	order	az	el	delay	scale".postln;
 //		
 //		
 //		// first order
@@ -451,7 +452,7 @@ BM3DBoxRoom : BMAbstractRoom {
 //			first[delay] = r - source[delay];
 //			fdelay[ir] = r;
 //			first[scale] = source[delay]/(source[delay] + first[delay]);
-//			firstRefs = firstRefs.add(first); // az, el, delay, scale
+//			firstRefs[this.roomSymbol(map1[dimx][ir], map1[dimy][ir], map1[dimz][ir])] = first; // az, el, delay, scale
 //			
 //			"%	%	%	".postf(map1[dimx][ir], map1[dimy][ir], map1[dimz][ir]);
 //			"1st:		%	%	%	%\n".postf(first[aZ], first[eL], first[delay], first[scale]);
@@ -499,15 +500,16 @@ BM3DBoxRoom : BMAbstractRoom {
 //				i = i + 1;
 //			});
 //			//"second[scale]: %\n".postf(second[scale]);
-//			secondRefs = secondRefs.add(second); // az, el, delay, scale
-//			thirdRefs = thirdRefs.add(third); // az, el, delay, scale
-//			
+//			// az, el, delay, scale
+//			secondRefs[this.roomSymbol(map2[dimx][ir], map2[dimy][ir], map2[dimz][ir])] = second;
+//			thirdRefs[this.roomSymbol(map3[dimx][ir], map3[dimy][ir], map3[dimz][ir])] = third;			
 //			"2nd:		%	%	%	%\n".postf(second[aZ], second[eL], second[delay], second[scale]);
 //			"%	%	%	".postf(map3[dimx][ir], map3[dimy][ir], map3[dimz][ir]);
 //			"%				%	%\n".postf(ord[iord], third[delay], third[scale]);
 //		});
 //		^[firstRefs, secondRefs, thirdRefs];
 //	}
+
 	
 	calcReflections { |az, el, r| 
 		var source, first, second, third, fourth, fdelay;
@@ -538,7 +540,7 @@ BM3DBoxRoom : BMAbstractRoom {
 //		zsize = zsize * spm;
 		
 		// calc direct then shift origin
-		#sourceX, sourceY, sourceZ = this.stoc(az, el, r * spm);
+		#sourceX, sourceY, sourceZ = this.stoc(az, el, r * secsPerMeter);
 		source[delay] = sqrt(sourceX.squared + sourceY.squared + sourceZ.squared); // direct sound path
 		
 		"source: %, %, %, %\n".postf(source[aZ], source[eL], source[delay], refdist / r);
@@ -552,7 +554,26 @@ BM3DBoxRoom : BMAbstractRoom {
 		"ix	iy	iz	order	az	el	delay	scale".postln;
 		
 		
-		// first order
+//		// first order
+//		6.do({|ir|
+//			first = Array.newClear(4);
+//			x = this.cvs(map1[dimx][ir], sourceX, xsize) - listenerXOffset;
+//			y = this.cvs(map1[dimy][ir], sourceY, ysize) - listenerYOffset;
+//			z = this.cvs(map1[dimz][ir], sourceZ, zsize) - listenerZOffset;
+//			spher = this.ctos(x, y, z);
+//			first[aZ] = spher[0];
+//			first[eL] = spher[1];
+//			r = spher[2] * secsPerMeter;
+//			first[delay] = r - source[delay];
+//			fdelay[ir] = r;
+//			first[scale] = source[delay]/(source[delay] + first[delay]);
+//			firstRefs[this.roomSymbol(map1[dimx][ir], map1[dimy][ir], map1[dimz][ir])] = first; // az, el, delay, scale
+//			
+//			"%	%	%	".postf(map1[dimx][ir], map1[dimy][ir], map1[dimz][ir]);
+//			"1st:		%	%	%	%\n".postf(first[aZ], first[eL], first[delay], first[scale]);
+//		});
+
+				// first order
 		6.do({|ir|
 			first = Array.newClear(4);
 			x = this.cvs(map1[dimx][ir], sourceX, xsize) - listenerXOffset;
@@ -675,12 +696,23 @@ BMPlaneSurface : BMAbstractSpaceModel {
 	
 }
 
-// components can be used to efficiently combine
-BMEarlyReflections {
+BMAbstractSpaceModeler {
 	
-	classvar spm = 0.0034;
+	//classvar spm = 0.0034;
+	classvar spm;
+	
+	*initClass { 
+		//dpr = 360.0 / ( 2 * pi );
+//		rpd = (2 * pi / 360);
+		spm = 344.reciprocal;	
+	}
 
-	*ar {|input, sourceAzi, sourceEle, sourceDist, room, vbapBuf, numChans, coef = 0.99, fbScale = 0.9, spread = 1, refDist = 1, split = false|
+}
+
+// components can be used to efficiently combine
+BMEarlyReflections : BMAbstractSpaceModeler {
+
+	*ar {|input, sourceAzi, sourceEle, sourceDist, room, vbapBuf, numChans, coef = 0.99, fbScale = 0.9, spread = 0, refDist = 1, split = false|
 		var source, delayedSource, filtered1, filtered2, sourceAtten, refDistRecip;
 		var firstReflecs, secondReflecs, secondReflecsDir, secondReflecsInDir, thirdPlusReflecs;
 		var firstRefDel, secondRefDel, firstBuf, secondBuf;
@@ -810,9 +842,8 @@ BMDiffuseReverb { }
 BMSourceModeler { }
 
 // a la Kendall and Mertens
-BMSpatialReverberator {
+BMSpatialReverberator : BMAbstractSpaceModeler {
 	
-	classvar spm = 0.0034;
 	
 	// source coords relative to listener pos?
 //	*arOld {|input, sourceAzi, sourceEle, sourceDist, room, vbapBuf, numChans, coef = 0.99, fbScale = 0.9, spread = 1, refDist = 1|
@@ -1048,7 +1079,7 @@ BMSpatialReverberator {
 //		//^source
 //	}
 
-	*ar {|input, sourceAzi, sourceEle, sourceDist, room, vbapBuf, numChans, coef = 0.99, fbScale = 0.9, spread = 1, refDist = 1|
+	*ar {|input, sourceAzi, sourceEle, sourceDist, room, vbapBuf, numChans, coef = 0.99, fbScale = 0.9, spread = 0, refDist = 1|
 		var source, delayedSource, filtered1, filtered2, sourceAtten, refDistRecip;
 		var firstReflecs, secondReflecs, secondReflecsDir, secondReflecsInDir, thirdPlusReflecs;
 		var firstRefDel, secondRefDel, firstBuf, secondBuf;
