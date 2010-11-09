@@ -1187,7 +1187,9 @@ BMSpatialReverberator : BMAbstractSpaceModeler {
 			sec = secondReflecs[k][2];
 			thirdKey = k.asString.tr($1, $2).asSymbol; // move out one room in the same direction
 			third = thirdPlusReflecs[thirdKey][2];
-			rUnits[k] = R1C.ar(input, roomMaxDelay * 2, third - sec, coef, fbScale);
+			//rUnits[k] = R1C.ar(input, roomMaxDelay * 2, third - sec, coef, fbScale);
+			// try with third gain in between
+			rUnits[k] = R1C.ar(input, roomMaxDelay * 2, third - sec, coef, thirdPlusReflecs[thirdKey][3]);
 		});
 		
 
@@ -1340,6 +1342,8 @@ R1 : PseudoMultiNewUGen {
 	}
 }
 
+// need to sort out rates for these. coef and scales are currently kr and interpolated.
+
 R1C : UGen {
 
 	*ar { arg in = 0.0, maxdelaytime = 0.2, delaytime = 0.2, coef = 0.99, fbScale = 0.9;
@@ -1349,8 +1353,8 @@ R1C : UGen {
 
 R2C : UGen {
 
-	*ar { arg in = 0.0, maxdelaytime1 = 0.2, delaytime1 = 0.2, maxdelaytime2 = 0.2, delaytime2 = 0.2, coef = 0.99, fbScale = 0.9;
-		^this.multiNew('audio', in.asAudioRateInput, maxdelaytime1, delaytime1, maxdelaytime2, delaytime2, coef, fbScale);
+	*ar { arg in = 0.0, maxdelaytime1 = 0.2, delaytime1 = 0.2, maxdelaytime2 = 0.2, delaytime2 = 0.2, coef1 = 0.99, scale1 = 0.9, coef2 = 0.99, scale2 = 0.9;
+		^this.multiNew('audio', in.asAudioRateInput, maxdelaytime1, delaytime1, maxdelaytime2, delaytime2, coef1, scale1, coef2, scale2);
 	}
 }
 

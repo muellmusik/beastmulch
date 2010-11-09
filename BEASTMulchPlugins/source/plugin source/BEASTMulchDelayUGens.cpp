@@ -1,4 +1,28 @@
 /*
+ 
+ BEASTmulch UGens
+ Copyright (C) 2010 Scott Wilson
+ 
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License version 2 as published by
+ the Free Software Foundation.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA 
+ 
+ http://www.beast.bham.ac.uk/research/mulch.shtml
+ beastmulch-info@contacts.bham.ac.uk
+ 
+ The BEASTmulch project was supported by a grant from the Arts and Humanities Research Council of the UK: http://www.ahrc.ac.uk
+ 
+ */
+/*
 	SuperCollider real time audio synthesis system
     Copyright (c) 2002 James McCartney. All rights reserved.
 	http://www.audiosynth.com
@@ -823,8 +847,9 @@ struct R1C_helper
 		} else {
 			writeval = y1 = value + coef * (y1 + value);
 		}
+		writeval = feedbk * writeval;
 		unit->m_y1 = zapgremlins(y1); // inefficient but fix it later...
-		bufData[iwrphase & mask] = insamp + feedbk * writeval;
+		bufData[iwrphase & mask] = insamp + writeval;
 		ZXP(out) = writeval + insamp;
 		iwrphase++;
 	}
@@ -876,8 +901,9 @@ struct R1C_helper<true>
 			} else {
 				writeval = y1 = value + coef * (y1 + value);
 			}
+			writeval = feedbk * writeval;
 			unit->m_y1 = zapgremlins(y1); // inefficient but fix it later...
-			bufData[iwrphase & mask] = insamp + feedbk * writeval;
+			bufData[iwrphase & mask] = insamp + writeval;
 			ZXP(out) = writeval + insamp;
 		}
 		iwrphase++;
@@ -891,8 +917,8 @@ struct R2C_helper
 {
 static const bool checked = false;
 
-static inline void perform(const float *& in, float *& out, float * bufData, float * bufData2,
-						   long & iwrphase, long & iwrphase2, long idsamp, long idsamp2, float frac, float frac2, long mask, long mask2, float feedbk, float coef, R2C *unit)
+static inline void perform(const float *& in, float *& out, float * bufData, float * bufData2, long & iwrphase, long & iwrphase2, long idsamp, long idsamp2, 
+						   float frac, float frac2, long mask, long mask2, float scale1, float coef1, float scale2, float coef2, R2C *unit)
 {
 	float insamp = ZXP(in);
 	
@@ -910,11 +936,12 @@ static inline void perform(const float *& in, float *& out, float * bufData, flo
 	float del2in;
 	float y1 = unit->m_y1;
 	// skip slope for modulating coef for now
-	if (coef >= 0.f) {
-		del2in = y1 = value + coef * (y1 - value);
+	if (coef1 >= 0.f) {
+		del2in = y1 = value + coef1 * (y1 - value);
 	} else {
-		del2in = y1 = value + coef * (y1 + value);
+		del2in = y1 = value + coef1 * (y1 + value);
 	}
+	del2in = del2in * scale1;
 	unit->m_y1 = zapgremlins(y1); // inefficient but fix it later...
 	
 	// del 2
@@ -931,16 +958,17 @@ static inline void perform(const float *& in, float *& out, float * bufData, flo
 	float del2Out;
 	float y1_2 = unit->m_y1_2;
 	// skip slope for modulating coef for now
-	if (coef >= 0.f) {
-		del2Out = y1_2 = value2 + coef * (y1_2 - value2);
+	if (coef2 >= 0.f) {
+		del2Out = y1_2 = value2 + coef2 * (y1_2 - value2);
 	} else {
-		del2Out = y1_2 = value2 + coef * (y1_2 + value2);
+		del2Out = y1_2 = value2 + coef2 * (y1_2 + value2);
 	}
+	del2Out = del2Out * scale2;
 	unit->m_y1_2 = zapgremlins(y1_2); // inefficient but fix it later...
 	
 	// not sure about writing after, but it's analogous to the single delay versions
 	// write to del1
-	bufData[iwrphase & mask] = insamp + (feedbk * del2Out);
+	bufData[iwrphase & mask] = insamp + del2Out;
 	
 	// write to del2
 	bufData2[iwrphase2 & mask2] = del2in;
@@ -956,8 +984,8 @@ struct R2C_helper<true>
 {
 	static const bool checked = true;
 	
-	static inline void perform(const float *& in, float *& out, float * bufData, float * bufData2,
-							   long & iwrphase, long & iwrphase2, long idsamp, long idsamp2, float frac, float frac2, long mask, long mask2, float feedbk, float coef, R2C *unit)
+	static inline void perform(const float *& in, float *& out, float * bufData, float * bufData2, long & iwrphase, long & iwrphase2, long idsamp, long idsamp2, 
+							   float frac, float frac2, long mask, long mask2, float scale1, float coef1, float scale2, float coef2, R2C *unit)
 	{
 		long irdphase1 = iwrphase - idsamp;
 		long irdphase2 = irdphase1 - 1;
@@ -1001,11 +1029,12 @@ struct R2C_helper<true>
 			float del2In;
 			float y1 = unit->m_y1;
 			// skip slope for modulating coef for now
-			if (coef >= 0.f) {
-				del2In = y1 = value + coef * (y1 - value);
+			if (coef1 >= 0.f) {
+				del2In = y1 = value + coef1 * (y1 - value);
 			} else {
-				del2In = y1 = value + coef * (y1 + value);
+				del2In = y1 = value + coef1 * (y1 + value);
 			}
+			del2In = del2In * scale1;
 			unit->m_y1 = zapgremlins(y1); // inefficient but fix it later...
 			
 			// del 2
@@ -1039,16 +1068,17 @@ struct R2C_helper<true>
 				float del2Out;
 				float y1_2 = unit->m_y1_2;
 				// skip slope for modulating coef for now
-				if (coef >= 0.f) {
-					del2Out = y1_2 = value2 + coef * (y1_2 - value2);
+				if (coef2 >= 0.f) {
+					del2Out = y1_2 = value2 + coef2 * (y1_2 - value2);
 				} else {
-					del2Out = y1_2 = value2 + coef * (y1_2 + value2);
+					del2Out = y1_2 = value2 + coef2 * (y1_2 + value2);
 				}
+				del2Out = del2Out * scale2;
 				unit->m_y1_2 = zapgremlins(y1_2); // inefficient but fix it later...
 			
 				// not sure about writing after, but it's analogous to the single delay versions
 				// write to del1
-				bufData[iwrphase & mask] = insamp + (feedbk * del2Out);
+				bufData[iwrphase & mask] = insamp + del2Out;
 				
 				// write to del2
 				bufData2[iwrphase2 & mask2] = del2In;
@@ -1579,8 +1609,10 @@ inline void R2C_perform(R2X *unit, int inNumSamples, UnitCalcFunc resetFunc)
 	const float *in = ZIN(0);
 	float delaytime = ZIN0(2);
 	float delaytime2 = ZIN0(4);
-	float coef = ZIN0(5);
-	float feedbk = ZIN0(6);
+	float coef1 = ZIN0(5);
+	float scale1 = ZIN0(6);
+	float coef2 = ZIN0(7);
+	float scale2 = ZIN0(8);
 	
 	// del1
 	float *dlybuf = unit->m_dlybuf;
@@ -1601,14 +1633,15 @@ inline void R2C_perform(R2X *unit, int inNumSamples, UnitCalcFunc resetFunc)
 		float frac2 = dsamp2 - idsamp2;
 		
 		LOOP1(inNumSamples,
-			  PerformClass::perform(in, out, dlybuf, dlybuf2, iwrphase, iwrphase2, idsamp, idsamp2, frac, frac2, mask, mask2, feedbk, coef, unit);
+			  PerformClass::perform(in, out, dlybuf, dlybuf2, iwrphase, iwrphase2, idsamp, idsamp2, frac, frac2, mask, mask2, scale1, coef1, scale2, coef2, unit);
 			  );
 	} else {
 		float next_dsamp = CalcDelay(unit, delaytime);
 		float dsamp_slope = CALCSLOPE(next_dsamp, dsamp);
 		
 		//float next_feedbk = sc_CalcFeedback(delaytime, decaytime);
-		float feedbk_slope = CALCSLOPE(feedbk, unit->m_feedbk);
+		float feedbk_slope1 = CALCSLOPE(scale1, unit->m_feedbk);
+		float feedbk_slope2 = CALCSLOPE(scale2, unit->m_feedbk2);
 		
 		float next_dsamp2 = CalcDelay2(unit, delaytime2);
 		float dsamp_slope2 = CALCSLOPE(next_dsamp2, dsamp2);
@@ -1616,14 +1649,16 @@ inline void R2C_perform(R2X *unit, int inNumSamples, UnitCalcFunc resetFunc)
 		LOOP1(inNumSamples,
 			  dsamp += dsamp_slope;
 			  dsamp2 += dsamp_slope2;
-			  feedbk += feedbk_slope;
+			  scale1 += feedbk_slope1;
+			  scale2 += feedbk_slope2;
 			  long idsamp = (long)dsamp;
 			  float frac = dsamp - idsamp;
 			  long idsamp2 = (long)dsamp2;
 			  float frac2 = dsamp2 - idsamp2;
-			  PerformClass::perform(in, out, dlybuf, dlybuf2, iwrphase, iwrphase2, idsamp, idsamp2, frac, frac2, mask, mask2, feedbk, coef, unit);
+			  PerformClass::perform(in, out, dlybuf, dlybuf2, iwrphase, iwrphase2, idsamp, idsamp2, frac, frac2, mask, mask2, scale1, coef1, scale2, coef2, unit);
 			  );
-		unit->m_feedbk = feedbk;
+		unit->m_feedbk = scale1;
+		unit->m_feedbk2 = scale2;
 		unit->m_dsamp = dsamp;
 		unit->m_dsamp2 = dsamp2;
 		unit->m_delaytime = delaytime;
@@ -1649,8 +1684,10 @@ inline void R2C_perform_a(R2C *unit, int inNumSamples, UnitCalcFunc resetFunc)
 	const float *in = ZIN(0);
 	float * delaytime = ZIN(2);
 	float * delaytime2 = ZIN(4);
-	float coef = ZIN0(5);
-	float feedbk = ZIN0(6);
+	float coef1 = ZIN0(5);
+	float scale1 = ZIN0(6);
+	float coef2 = ZIN0(7);
+	float scale2 = ZIN0(8);
 	
 	// del 1
 	float *dlybuf = unit->m_dlybuf;
@@ -1680,7 +1717,7 @@ inline void R2C_perform_a(R2C *unit, int inNumSamples, UnitCalcFunc resetFunc)
 		  long idsamp2 = (long)dsamp2;
 		  float frac2 = dsamp2 - idsamp2;
 		  
-		  PerformClass::perform(in, out, dlybuf, dlybuf2, iwrphase, iwrphase2, idsamp, idsamp2, frac, frac2, mask, mask2, feedbk, coef, unit);
+		  PerformClass::perform(in, out, dlybuf, dlybuf2, iwrphase, iwrphase2, idsamp, idsamp2, frac, frac2, mask, mask2, scale1, coef1, scale2, coef2, unit);
 		  );
 	
 	unit->m_iwrphase = iwrphase;
