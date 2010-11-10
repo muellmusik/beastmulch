@@ -1,0 +1,695 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf320
+{\fonttbl\f0\fnil\fcharset0 Monaco;\f1\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green115\blue0;\red0\green0\blue191;
+\red96\green96\blue96;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs26 \cf2 // volume on amp - 24db\cf0 \
+\cf2 //7.1 Surround (-1)\cf0 \
+\
+l = [[\cf3 'FL'\cf0 , -30], [\cf3 'FR'\cf0 , 30], [\cf3 'SL'\cf0 , -90], [\cf3 'SR'\cf0 , 90], [\cf3 'BL'\cf0 , -150], [\cf3 'BR'\cf0 , 150], [\cf3 'C'\cf0 , 0]].collectAs(\{\cf4 |spk, i|\cf0  \cf4 BMSpeaker\cf0 .newFromSpherical(spk[0], i, spk[1], 0, 1, spk[2] ? \cf3 'Generic'\cf0 ) \}, \cf4 BMInOutArray\cf0 );\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\fs18 \cf2 // 8 channel\cf0 \
+(\
+l = \cf4 Object\cf0 .readArchive(\cf5 "/Library/Application Support/SuperCollider/Extensions/BEASTMulch SVN/BM System extras/Sample Speaker Layouts/French 8 Channel"\cf0 );\
+\
+\
+l.do(\{\cf4 |speak|\cf0  speak.index = speak.index + 2\});\
+\cf2 //l = BMInOutArray[BMSpeaker.newFromSpherical(\\MainL, 0, -30, 0, 2), BMSpeaker.newFromSpherical(\\MainR, 1, 30, 0, 2)] ++ l;\cf0 \
+)
+\fs26 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf4 BMSpeakerListVisualiser\cf0 (l);\
+\
+~out = 2;\
+\cf2 //l.do(\{|speak| speak.index = speak.index + ~out\});\cf0 \
+\
+s.boot;\
+\
+(\
+\cf4 SystemClock\cf0 .sched(4, \{\
+\cf4 BMSpeakerLocator.\cf0 loopOut_(7).run(l.reject(\{|spk| spk.name == \\C\}), 0.2, \{\cf4 |list|\cf0  \{\cf4 BMSpeakerListVisualiser\cf0 (list.postcs)\}.defer\}, ignoreZ: \cf4 true\cf0 );\
+\});\
+\
+)\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\fs38 \cf2 // Matrix
+\fs26 \cf0 \
+\pard\pardeftab560\ql\qnatural
+\cf0 \
+\pard\pardeftab560\ql\qnatural
+\cf2 // something to route\cf0 \
+(\
+b = \cf4 Bus\cf0 .audio(s, 8);\
+x = \{ \cf4 Out\cf0 .ar(b, \{\cf4 |i|\cf0  \cf4 Ringz\cf0 .ar(\cf4 Dust\cf0 .ar(3, 0.1), 300 * (i + 1), 2, 0.1)\} ! 8) \}.play;\
+)\
+\
+\cf2 // make a matrix\cf0 \
+m = \cf4 BMAudioMatrix\cf0 (b.asBMInOutArray(\cf3 \\ringzes\cf0 ), l);\
+\
+s.meter; \cf2 // so we can watch\cf0 \
+\
+m.connect(\cf3 'ringzes-1'\cf0 , [\cf3 'FL'\cf0 ]);\
+\
+m.connect(\cf3 'ringzes-2'\cf0 , [\cf3 'FL'\cf0 ]);\
+\
+m.connect(\cf3 'ringzes-3'\cf0 , [\cf3 'SL'\cf0 ]);\
+\
+m.disconnect(\cf3 'ringzes-1'\cf0 , [\cf3 'FL'\cf0 ]);\
+\
+m.connect(\cf3 'ringzes-1'\cf0 , [\cf3 'BR'\cf0 ]);\
+\
+m.mappings;\
+\
+m.gui; \cf2 // Use a GUI. Be sure to click 'View Matrix' for alternate view.\cf0 \
+\
+m.clear(3); \cf2 // fade out connections\cf0 \
+\
+m.free; b.free; x.free;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 ///// route to sub\cf0 \
+\
+\pard\pardeftab560\ql\qnatural
+\cf0 m = \cf4 BMAudioMatrix\cf0 (l, \cf4 BMSpeaker\cf0 (\cf3 'LFE'\cf0 , 7, 0, 0, 0, \cf3 'Generic Sub'\cf0 ));\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 \
+m.gui;\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\fs38 \cf2 // VBAP
+\fs26 \cf0 \
+\
+\pard\pardeftab560\ql\qnatural
+\cf0 ~vbp = \cf4 VBAPSpeakerArray\cf0 (2, l.reject(\{\cf4 |spk|\cf0  spk.name == \cf3 'LFE'\cf0 \}).collectAs(\cf4 _\cf0 .azi, \cf4 Array\cf0 ));\
+~vbuf = ~vbp.loadToBuffer;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural\pardirnatural
+\cf4 SynthDef\cf0 (\cf5 "VBAP Stereo File AmpMove"\cf0 , \{\cf4 |az = 0, el = 0, vbapbuf, rate = 1, buf, mul = 1, spread = 60, out = 0, loop = 0, seed = 1, freqScale = 10|\cf0 \
+	\cf4 var\cf0  in, output, amp;\
+	\cf4 RandSeed\cf0 .kr(\cf4 Impulse\cf0 .kr(0), seed);\
+	in = \cf4 PlayBuf\cf0 .ar(2, buf, \cf4 BufRateScale\cf0 .kr(buf) * rate, loop: loop);\
+	amp = \cf4 Amplitude\cf0 .kr(\cf4 Mix\cf0 (in), 0.01, 1, mul: 10);\
+	\cf4 FreeSelfWhenDone\cf0 .kr(in);\
+	output = \cf4 VBAP\cf0 .ar(~vbp.numSpeakers, in * mul, ~vbuf, \cf4 Integrator\cf0 .kr(az + \cf4 LFNoise2\cf0 .kr(freqScale, 180 * amp) + [spread.neg, spread]).circleRamp, 0, 1);\
+	\cf4 Out\cf0 .ar(out, \cf4 Mix\cf0 (output));\
+\}).add;\
+\
+\cf4 SynthDef\cf0 (\cf5 "VBAP Stereo File AmpMove Cr"\cf0 , \{\cf4 |az = 0, el = 0, vbapbuf, rate = 1, buf, mul = 1, spread = 60, out = 0, loop = 0, seed = 1, freqScale = 10, attack= 1, ampscale = 100|\cf0 \
+	\cf4 var\cf0  in, output, amp;\
+	\cf4 RandSeed\cf0 .kr(\cf4 Impulse\cf0 .kr(0), seed);\
+	in = \cf4 PlayBuf\cf0 .ar(2, buf, \cf4 BufRateScale\cf0 .kr(buf) * rate, loop: loop);\
+	amp = \cf4 Amplitude\cf0 .kr(\cf4 Mix\cf0 (in), 0.01, 1, ampscale: 100);\
+	\cf4 FreeSelfWhenDone\cf0 .kr(in);\
+	in = in * \cf4 EnvGen\cf0 .kr(\cf4 Env\cf0 ([0, 1], [attack], 2));\
+	output = \cf4 VBAP\cf0 .ar(~vbp.numSpeakers, in * mul, ~vbuf, (\cf4 Integrator\cf0 .kr(\cf4 LFNoise2\cf0 .kr(freqScale * amp, amp)) + [spread.neg, spread]).circleRamp, 0, 1);\
+	\cf4 Out\cf0 .ar(out, \cf4 Mix\cf0 (output));\
+\}).add;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 \
+\pard\pardeftab560\ql\qnatural
+\cf0 ~noisyScrapesT60_1 = \cf4 Buffer\cf0 .read(s, \cf5 "/Users/scottw/Berlin/SC Code/../Audio/ECR bose/Noisy scrapes T60-1.aif"\cf0 );\
+\
+~loopGliss = \cf4 Buffer\cf0 .read(s, \cf5 "/Users/scottw/Berlin/SC Code/../Audio/ECR bose/looping glisses T99.aif"\cf0 );\
+\
+~wildScrape = \cf4 Buffer\cf0 .read(s, \cf5 "/Users/scottw/Berlin/SC Code/../Audio/HP/wild scrape (end) T35.aif"\cf0 );\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf4 Synth\cf0 (\cf5 "VBAP Stereo File AmpMove"\cf0 , [out: ~out, buf: ~noisyScrapesT60_1, az: 60, el: 0, mul: 0.5, rate: 0.5, seed: 1, spread: 10]);\
+\pard\pardeftab560\ql\qnatural
+\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf0 \
+\pard\pardeftab560\ql\qnatural
+\cf4 Synth\cf0 (\cf5 "VBAP Stereo File AmpMove"\cf0 , [out: ~out, buf: ~loopGliss, az: 60, el: 0, mul: 0.33, rate: 1, seed: 81, freqScale: 1]);\
+\
+\cf4 Synth\cf0 (\cf5 "VBAP Stereo File AmpMove Cr"\cf0 , [out: ~out, buf: ~wildScrape, az: 0, el: 0, mul: 0.4, rate: 1, seed: 2, freqScale: 3, attack: 13, spread: 60, ampscale: 0.5]);\
+\
+\
+\pard\pardeftab560\ql\qnatural
+
+\fs38 \cf2 ///// Loris
+\fs26 \cf0 \
+\
+\
+\
+~mute9Buf = \cf4 Buffer\cf0 .read(s, \cf5 "/Users/scottw/Berlin/Audio/muted/stereo/mute 9.aiff"\cf0 );\
+~mute9Buf.play(mul: 0.2)\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural
+\cf0 f = \cf4 RBE_SDIF_File\cf0 (\cf5 "/Users/scottw/Berlin/Audio/muted/SDIF/mute 9.sdif"\cf0 ); \cf2 // open a SDIF file with RBEP frames\cf0 \
+\pard\pardeftab560\ql\qnatural
+\cf0 p = \cf4 BEPartials\cf0 (f);\
+f.close;\
+\
+\pard\pardeftab560\ql\qnatural
+\cf2 // thin partialList by keeping only loud partials\cf0 \
+p.partialList = p.partialList.select(\{\cf4 |part|\cf0  part.amps.maxItem > 0.003 \});\
+\
+~lorisArray = l.copy[\cf3 'LFE'\cf0 ] = \cf4 nil\cf0 ;\
+~lorisNumOuts = ~lorisArray.size; \
+~lorisSpinLow = 16 / ~lorisNumOuts * 0.1;\
+~lorisSpinHi = 16 / ~lorisNumOuts;\
+\
+(\
+\pard\pardeftab560\ql\qnatural
+\cf4 SynthDef\cf0 (\cf5 "mute 9 mono"\cf0 , \{ \cf4 arg\cf0  stretch = 1, pitch = 1, bw = 1, mul = 1, gate = 1, attack=0, release=0.1, out=0;\
+\cf4 var\cf0  outmix, envs;\
+\
+\pard\pardeftab560\ql\qnatural
+\cf2 // returns [[freqEnvGen, a LorisPhaseGen, bandwidthEnvGen, ampEnvGen] * numPartials]\cf0 \
+envs = p.ar(stretch, pitch, bw); \
+\
+\cf2 // pan each partial and mix\cf0 \
+outmix = \cf4 Mix\cf0 (\cf4 BEOsc\cf0 .ar(*envs)) * \cf4 EnvGen\cf0 .ar(\cf4 Env\cf0 .linen(attack, p.dur * stretch, release), gate, mul, doneAction: 2);\
+	\
+\pard\pardeftab560\ql\qnatural
+\cf4 Out\cf0 .ar(out, \cf4 Pan2\cf0 .ar(outmix)); \
+\}).load(s);\
+\
+\cf4 SynthDef\cf0 (\cf5 "mute 9 diffuse"\cf0 , \{ \cf4 arg\cf0  stretch = 1, pitch = 1, bw = 1, mul = 1, gate = 1, attack=0, release=0.1, out=0;\
+\cf4 var\cf0  outmix, envs;\
+\
+\pard\pardeftab560\ql\qnatural
+\cf2 // returns [[freqEnvGen, a LorisPhaseGen, bandwidthEnvGen, ampEnvGen] * numPartials]\cf0 \
+envs = p.ar(stretch, pitch, bw); \
+\
+\cf2 // pan each partial and mix\cf0 \
+outmix = \cf4 Mix\cf0 (\cf4 PanAz\cf0 .ar(~lorisArray.size, \cf4 BEOsc\cf0 .ar(*envs), \{\cf4 Rand\cf0 (-1, 1)\} ! p.size)) \
+		* \cf4 EnvGen\cf0 .ar(\cf4 Env\cf0 .linen(attack, p.dur * stretch, release), gate, mul, doneAction: 2);\
+	\
+\pard\pardeftab560\ql\qnatural
+\cf4 Out\cf0 .ar(out, outmix); \
+\}).load(s);\
+\
+\cf4 SynthDef\cf0 (\cf5 "mute 9 spin"\cf0 , \{ \cf4 arg\cf0  stretch = 1, pitch = 1, bw = 1, mul = 1, gate = 1, attack=0, release=0.1, out=0;\
+\cf4 var\cf0  outmix, envs;\
+\
+\pard\pardeftab560\ql\qnatural
+\cf2 // returns [[freqEnvGen, a LorisPhaseGen, bandwidthEnvGen, ampEnvGen] * numPartials]\cf0 \
+envs = p.ar(stretch, pitch, bw); \
+\
+\cf2 // pan each partial and mix\cf0 \
+outmix = \cf4 Mix\cf0 (\cf4 PanAz\cf0 .ar(~lorisArray.size, \cf4 BEOsc\cf0 .ar(*envs), \{\cf4 Rand\cf0 (-1, 1) + \cf4 LFSaw\cf0 .ar(\cf4 Rand\cf0 (~lorisSpinLow, ~lorisSpinHi))\} ! p.size)) \
+		* \cf4 EnvGen\cf0 .ar(\cf4 Env\cf0 .linen(attack, p.dur * stretch, release), gate, mul, doneAction: 2);\
+	\
+\pard\pardeftab560\ql\qnatural
+\cf4 Out\cf0 .ar(out, outmix); \
+\}).load(s);\
+\
+\cf4 SynthDef\cf0 (\cf5 "mute 9 spin front"\cf0 , \{ \cf4 arg\cf0  stretch = 1, pitch = 1, bw = 1, mul = 1, gate = 1, attack=0, release=0.1, out=0;\
+\cf4 var\cf0  outmix, envs;\
+\
+\pard\pardeftab560\ql\qnatural
+\cf2 // returns [[freqEnvGen, a LorisPhaseGen, bandwidthEnvGen, ampEnvGen] * numPartials]\cf0 \
+envs = p.ar(stretch, pitch, bw); \
+\
+\cf2 // pan each partial and mix\cf0 \
+outmix = \cf4 Mix\cf0 (\cf4 PanAz\cf0 .ar(3, \cf4 BEOsc\cf0 .ar(*envs), \{\cf4 Rand\cf0 (-1, 1) + \cf4 LFSaw\cf0 .ar(\cf4 Rand\cf0 (~lorisSpinLow, ~lorisSpinHi).neg)\} ! p.size)) \
+		* \cf4 EnvGen\cf0 .ar(\cf4 Env\cf0 .linen(attack, p.dur * stretch, release), gate, mul, doneAction: 2);\
+	\
+[0, 1, 6].do(\{\cf4 |ind, i|\cf0  \cf4 Out\cf0 .ar(ind, outmix[i])\}); \
+\}).load(s);\
+\
+\pard\pardeftab560\ql\qnatural
+\cf4 SynthDef\cf0 (\cf5 "mute 9 spin back"\cf0 , \{ \cf4 arg\cf0  stretch = 1, pitch = 1, bw = 1, mul = 1, gate = 1, attack=0, release=0.1, out=0;\
+\cf4 var\cf0  outmix, envs;\
+\
+\pard\pardeftab560\ql\qnatural
+\cf2 // returns [[freqEnvGen, a LorisPhaseGen, bandwidthEnvGen, ampEnvGen] * numPartials]\cf0 \
+envs = p.ar(stretch, pitch, bw); \
+\
+\cf2 // pan each partial and mix\cf0 \
+outmix = \cf4 Mix\cf0 (\cf4 PanAz\cf0 .ar(4, \cf4 BEOsc\cf0 .ar(*envs), \{\cf4 Rand\cf0 (-1, 1) + \cf4 LFSaw\cf0 .ar(\cf4 Rand\cf0 (~lorisSpinLow, ~lorisSpinHi).neg)\} ! p.size)) \
+		* \cf4 EnvGen\cf0 .ar(\cf4 Env\cf0 .linen(attack, p.dur * stretch, release), gate, mul, doneAction: 2);\
+	\
+[2, 3, 4, 5].do(\{\cf4 |ind, i|\cf0  \cf4 Out\cf0 .ar(ind, outmix[i])\});\
+\}).load(s);\
+\
+);\
+\
+\pard\pardeftab560\ql\qnatural
+\cf4 Synth\cf0 (\cf5 "mute 9 mono"\cf0 , [pitch: 2, stretch: 20, bw:44, out: ~out]);\
+\cf4 Synth\cf0 (\cf5 "mute 9 diffuse"\cf0 , [pitch: 2, stretch: 20, bw:44, out: ~out]);\
+\
+\cf4 Synth\cf0 (\cf5 "mute 9 diffuse"\cf0 , [pitch: 2, stretch: 20, bw:44, out: ~out]); \cf2 // different\cf0 \
+\
+\cf4 Synth\cf0 (\cf5 "mute 9 spin"\cf0 , [pitch: 2, stretch: 20, bw:44, out: ~out]);\
+\
+\cf4 Synth\cf0 (\cf5 "mute 9 spin front"\cf0 , [pitch: 2, stretch: 20, bw:44]);\
+\
+\cf4 Synth\cf0 (\cf5 "mute 9 spin back"\cf0 , [pitch: 3, stretch: 10, bw:44]);\
+\
+\
+\
+\pard\pardeftab560\ql\qnatural
+
+\fs38 \cf2 /////////////// Spatial Granulation
+\fs26 \cf0 \
+\
+(\
+v = \cf4 BMSpeakerListVisualiser\cf0 (l); \cf2 // a gui to see the grains\cf0 \
+\
+c = \cf4 Buffer\cf0 .read(s, \cf5 "sounds/a11wlk01.wav"\cf0 );\
+\
+d = \cf4 SynthDef\cf0 (\cf5 "BMVBAPGrain"\cf0 ,\{ \cf4 arg\cf0  i_out=0, i_sampbufnum, pitchScale = 1.0, \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural\pardirnatural
+\cf0 	dur = 0.05, pointer, offset = 0.0, level = 1.0, loop, azi = 0;\
+	\cf4 var\cf0  thisStart, thisDur, grain;\
+	thisStart = pointer + \cf4 IRand\cf0 (0, offset);\
+	grain = \cf4 EnvGen\cf0 .ar(\cf4 Env\cf0 .sine, 1.0, level, 0.0, dur, 2) \
+		* \cf4 PlayBuf\cf0 .ar(1,i_sampbufnum,pitchScale * \cf4 BufRateScale\cf0 .ir(i_sampbufnum),\
+			1, thisStart,loop);\
+	grain = \cf4 VBAP\cf0 .ar(~vbp.numSpeakers, grain, ~vbuf, azi, 0, 1);\
+	\cf4 OffsetOut\cf0 .ar(i_out,grain);\
+\}).add;\
+)\
+\pard\pardeftab560\ql\qnatural
+\cf0 \
+(\
+b = (numGrains: 50, def: d, outFunc: 0, centre: 0, dev: 10, azis: \cf4 List\cf0 .new);\
+\
+b.nextLoc = \{  \
+	\cf4 var\cf0  pos;\
+	pos = b.centre.gauss(b.dev);\
+	b.azis = b.azis.add(pos).keep(b.numGrains.neg);\
+	[azi: pos];\
+\};\
+\
+b.positions = \{ \
+	b.azis.collectAs(\{\cf4 |az|\cf0  \cf4 var\cf0  pol; \
+		pol = \cf4 Polar\cf0 (1, 0.017453292519943 * az);\
+		[pol.imag, pol.real, 0]\
+	\}, \cf4 Array\cf0 )\
+\};\
+\
+\pard\pardeftab560\ql\qnatural
+\cf2 // this updates their positions in the GUI\cf0 \
+t = \cf4 Task\cf0 (\{\
+	loop(\{\
+		v.boidPositions = b.positions;\
+		0.05.wait;\
+	\})\
+\}, \cf4 AppClock\cf0 );\
+t.start;\
+)\
+g = \cf4 BMSpatialGranulator\cf0 .new(l, b, c);\
+g.play;\
+\
+b.centre = 30\
+b.dev = 1\
+b.dev = 3\
+b.dev = 10\
+b.dev = 50\
+\
+b.dev = 180\
+\
+\
+\
+\
+b.dev = 40\
+(\
+\cf2 // different distribution without outliers\cf0 \
+b.nextLoc = \{  \
+	\cf4 var\cf0  pos;\
+	pos = b.centre + b.dev.bilinrand;\
+	b.azis = b.azis.add(pos).keep(b.numGrains.neg);\
+	[azi: pos];\
+\};\
+)\
+\
+(\
+\cf2 // with elevation\cf0 \
+b.elcentre = 0; b.eldev = 10; b.els = \cf4 List\cf0 .new;\
+b.nextLoc = \{  \
+	\cf4 var\cf0  az, el;\
+	az = b.centre + b.dev.bilinrand;\
+	el = b.elcentre + b.eldev.bilinrand;\
+	b.azis = b.azis.add(az).keep(b.numGrains.neg);\
+	b.els = b.els.add(el).keep(b.numGrains.neg);\
+	[azi: az, ele: el];\
+\};\
+\
+\
+b.positions = \{ \
+	b.azis.collectAs(\{\cf4 |azi, i|\cf0 \
+		\cf4 var\cf0  azrad, elrad, deg2rad = 0.017453292519943, x, y, z, rad = 1;\
+		azrad = azi * deg2rad;\
+		elrad = b.els[i] ? 0 * deg2rad;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural\pardirnatural
+\cf0 		x = rad * cos(elrad) * sin(azrad);\
+		y = rad * cos(elrad) * cos(azrad);\
+		z = rad * sin(elrad); \
+\pard\pardeftab560\ql\qnatural
+\cf0 		[x, y, z]\
+	\}, \cf4 Array\cf0 )\
+\};\
+)\
+\
+b.eldev = 40\
+\
+b.numGrains = 100;\
+\
+b.dev = 2\
+\
+b.elcentre = 30;\
+(\
+\pard\pardeftab560\ql\qnatural
+\cf2 // have an envelope to control movement\cf0 \
+~elEnv = \cf4 Env\cf0 ([0, 20], [10]).asStream;\
+~azEnv = \cf4 Env\cf0 ([30, 50, -40], [3, 7], 4).asStream;\
+~azDev = \cf4 Env\cf0 ([2, 10, 70], [7, 3], 4).asStream;\
+~elDev = \cf4 Env\cf0 ([40, 20], [10], -4).asStream;\
+b.nextLoc = \{  \
+	\cf4 var\cf0  az, el;\
+	az = ~azEnv.next + ~azDev.next.bilinrand;\
+	el = ~elEnv.next + ~elDev.next.bilinrand;\
+	b.azis = b.azis.add(az).keep(b.numGrains.neg);\
+	b.els = b.els.add(el).keep(b.numGrains.neg);\
+	[azi: az, ele: el];\
+\};\
+)\
+\
+\
+\cf2 // Cmd -.\cf0 \
+\cf2 //// with location dependant paramaterisation\cf0 \
+(\
+d = \cf4 SynthDef\cf0 (\cf5 "BMVBAPReverbPitchGrain"\cf0 ,\{ \cf4 arg\cf0  i_out=0, i_sampbufnum, pitchScale = 1.0, \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural\pardirnatural
+\cf0 	dur = 0.05, pointer, offset = 0.0, direct = 1.0, level = 1.0, reverb = 0, loop, pitch = 1, azi = 0;\
+	\cf4 var\cf0  thisStart, thisDur, grain;\
+	thisStart = pointer + \cf4 IRand\cf0 (0, offset);\
+	grain = \cf4 EnvGen\cf0 .ar(\cf4 Env\cf0 .sine, 1.0, level, 0.0, dur, 2) \
+		* \cf4 PlayBuf\cf0 .ar(1,i_sampbufnum,pitchScale * pitch * \cf4 BufRateScale\cf0 .ir(i_sampbufnum),\
+			1, thisStart,loop);		\
+	grain = \cf4 VBAP\cf0 .ar(~vbp.numSpeakers, grain * direct, ~vbuf, azi, 0, 1);\
+	\cf4 OffsetOut\cf0 .ar(i_out,grain);\
+\}).add;\
+\pard\pardeftab560\ql\qnatural
+\cf0 )\
+(\
+b = (numGrains: 20, def: d, outFunc: 0, centre: 0, dev: 110, azis: \cf4 List\cf0 .new);\
+\
+b.nextLoc = \{  \
+	\cf4 var\cf0  pos, dev, pitch;\
+	dev = b.dev.bilinrand;\
+	pitch = dev.abs / b.dev;\
+	pitch = [1, 1.01, 1.125, 1.5, 2][(pitch * 4).round];\
+	pos = b.centre + dev;\
+	b.azis = b.azis.add(pos).keep(b.numGrains.neg);\
+	[azi: pos, pitch: pitch];\
+\};\
+\
+b.positions = \{ \
+	b.azis.collectAs(\{\cf4 |az|\cf0  \cf4 var\cf0  pol; \
+		pol = \cf4 Polar\cf0 (1, 0.017453292519943 * az);\
+		[pol.imag, pol.real, 0]\
+	\}, \cf4 Array\cf0 )\
+\};\
+\
+\pard\pardeftab560\ql\qnatural
+\cf2 // this updates their positions in the GUI\cf0 \
+t = \cf4 Task\cf0 (\{\
+	loop(\{\
+		v.boidPositions = b.positions;\
+		0.05.wait;\
+	\})\
+\}, \cf4 AppClock\cf0 );\
+t.start;\
+)\
+g = \cf4 BMSpatialGranulator\cf0 .new(l, b, c);\
+g.play;\
+\
+\cf2 //Cmd-.\cf0 \
+\cf2 /// with simple reverb\cf0 \
+(\
+d = \cf4 SynthDef\cf0 (\cf5 "BMVBAPReverbGrain"\cf0 ,\{ \cf4 arg\cf0  i_out=0, i_revout, i_sampbufnum, pitchScale = 1.0, \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural\pardirnatural
+\cf0 	dur = 0.05, pointer, offset = 0.0, direct = 1.0, level = 1.0, reverb = 0, loop, azi = 0;\
+	\cf4 var\cf0  thisStart, thisDur, grain;\
+	thisStart = pointer + \cf4 IRand\cf0 (0, offset);\
+	grain = \cf4 EnvGen\cf0 .ar(\cf4 Env\cf0 .sine, 1.0, level, 0.0, dur, 2) \
+		* \cf4 PlayBuf\cf0 .ar(1,i_sampbufnum,pitchScale * \cf4 BufRateScale\cf0 .ir(i_sampbufnum),\
+			1, thisStart,loop);\
+	\cf4 OffsetOut\cf0 .ar(i_revout, grain * reverb);		\
+	grain = \cf4 VBAP\cf0 .ar(~vbp.numSpeakers, grain * direct, ~vbuf, azi, 0, 1);\
+	\cf4 OffsetOut\cf0 .ar(i_out,grain);\
+\}).add;\
+)\
+\
+\pard\pardeftab560\ql\qnatural
+\cf0 ~revBus = \cf4 Bus\cf0 .audio(s, 1); \
+\
+~revSynth = \{\cf4 |revScale = 1|\cf0 \
+	\cf4 var\cf0  in;\
+	in = \cf4 In\cf0 .ar(~revBus, 1);\
+	in = \cf4 BMMultiFreeVerb\cf0 .ar(l.size, in, 0.6, 0.5, decor: 1, mul: revScale);\
+	\
+	\cf4 Out\cf0 .ar(0, in.postln);\
+\}.play; \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural\pardirnatural
+\cf0 \
+\pard\pardeftab560\ql\qnatural
+\cf0 (\
+b = (numGrains: 150, def: d, outFunc: 0, centre: 0, dev: 10, azis: \cf4 List\cf0 .new, radii: \cf4 List\cf0 .new);\
+\
+~azEnv = \cf4 Env\cf0 ([0, 20, -40, 180], [3, 7, 5], 4).asStream;\
+~radEnv = \cf4 Env\cf0 ([4, 1, 3, 1, 1, 13], [5, 5, 5, 3, 6]).asStream; \
+~azDev = \cf4 Env\cf0 ([2, 10, 90, 360, 1], [7, 3, 5, 4]).asStream;\
+~radDev = 0.3;\
+b.nextLoc = \{  \
+	\cf4 var\cf0  az, el, rad, direct, reverb;\
+	az = ~azEnv.next + ~azDev.next.bilinrand;\
+	rad = ~radEnv.next + ~radDev.bilinrand;\
+	direct = 1 / rad;\
+	reverb = 1 / rad.sqrt;\
+	b.azis = b.azis.add(az).keep(b.numGrains.neg);\
+	b.radii = b.radii.add(rad).keep(b.numGrains.neg);\
+	[azi: az, ele: el, direct: direct, reverb: reverb, i_revout: ~revBus];\
+\};\
+\
+b.positions = \{ \
+	b.azis.collectAs(\{\cf4 |az, i|\cf0  \cf4 var\cf0  pol; \
+		pol = \cf4 Polar\cf0 (b.radii[i], 0.017453292519943 * az);\
+		[pol.imag, pol.real, 0]\
+	\}, \cf4 Array\cf0 )\
+\};\
+t = \cf4 Task\cf0 (\{\
+	loop(\{\
+		v.boidPositions = b.positions;\
+		0.05.wait;\
+	\})\
+\}, \cf4 AppClock\cf0 );\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural\pardirnatural
+\cf0 t.start;\
+\pard\pardeftab560\ql\qnatural
+\cf0 g = \cf4 BMSpatialGranulator\cf0 .new(l, b, c, ~revSynth, \cf3 \\addBefore\cf0 );\
+g.play;)\
+\
+\
+\
+\
+\
+\
+\
+\pard\pardeftab560\ql\qnatural
+\cf2 //Cmd-.\cf0 \
+\cf2 /// swarm\cf0 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f1\fs24 \cf0 {{\NeXTGraphic Pasted Graphic 6.pdf \width8860 \height8380 \noorient
+}¬}\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs26 \cf0 \
+\pard\pardeftab560\ql\qnatural
+\cf0 \
+\
+\
+\
+\
+~revSynth = \{\cf4 |revScale = 1|\cf0 \
+	\cf4 var\cf0  in;\
+	in = \cf4 In\cf0 .ar(~revBus, 1);\
+	in = \cf4 BMMultiFreeVerb\cf0 .ar(l.size, in, 0.6, 0.5, decor: 1, mul: revScale);\
+	\
+	\cf4 Out\cf0 .ar(0, in.postln);\
+\}.play; \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural\pardirnatural
+\cf0 \
+\pard\pardeftab560\ql\qnatural
+\cf0 (\
+b = (numGrains: 70, def: d, outFunc: 0, centre: 0, dev: 10, azis: \cf4 List\cf0 .new, radii: \cf4 List\cf0 .new);\
+\
+~bspace = \cf4 BMBoidSpace\cf0 (3, 20, \cf4 nil\cf0 , l, 1, 13, 0.1);\
+~bspace.avoidD = \cf4 true\cf0 ;\
+b.nextLoc = \{  \
+	\cf4 var\cf0  az, el, rad, direct, reverb;\
+	#az, el, rad = ~bspace.next.posSpher;\
+	rad = rad * 2;\
+	direct = 1 / rad;\
+	reverb = 1 / rad.sqrt;\
+	b.azis = b.azis.add(az).keep(b.numGrains.neg);\
+	b.radii = b.radii.add(rad).keep(b.numGrains.neg);\
+	[azi: az, ele: el, direct: direct, reverb: reverb, i_revout: ~revBus];\
+\};\
+\
+b.positions = \{ \
+	b.azis.collectAs(\{\cf4 |az, i|\cf0  \cf4 var\cf0  pol; \
+		pol = \cf4 Polar\cf0 (b.radii[i], 0.017453292519943 * az);\
+		[pol.imag, pol.real, 0]\
+	\}, \cf4 Array\cf0 )\
+\};\
+t = \cf4 Task\cf0 (\{\
+	loop(\{\
+		v.boidPositions = b.positions;\
+		0.05.wait;\
+	\})\
+\}, \cf4 AppClock\cf0 );\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural\pardirnatural
+\cf0 t.start;\
+\pard\pardeftab560\ql\qnatural
+\cf0 g = \cf4 BMSpatialGranulator\cf0 .new(l, b, c, ~revSynth, \cf3 \\addBefore\cf0 );\
+g.play;)\
+\
+~bspace.minDist = 0.05;\
+\
+~bspace.velScale = 70;\
+\
+~bspace.avoidD = \cf4 false\cf0 ;\
+\
+\
+\pard\pardeftab560\ql\qnatural
+
+\fs38 \cf2 ////// Reverbs\cf0 \
+\pard\pardeftab560\ql\qnatural
+
+\fs26 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 s.options.memSize = 32768 * 40;\
+s.options.blockSize = 16;\
+s.options.numWireBufs = 2048;\
+s.options.numOutputBusChannels = 20; s.reboot;\
+\
+\pard\pardeftab560\ql\qnatural
+\cf0 ~vbp = \cf4 VBAPSpeakerArray\cf0 (2, l.reject(\{\cf4 |spk|\cf0  spk.name == \cf3 'LFE'\cf0 \}).collectAs(\cf4 _\cf0 .azi, \cf4 Array\cf0 ));\
+~vbuf = ~vbp.loadToBuffer;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 \
+~out = 0;\
+~coef = 0.23681937613123; ~fbScale = 0.1; \
+r = \cf4 BM3DBoxRoom\cf0 .new(30, 15, 20, 0, -2, 0);\
+\
+(\
+~splay = \{\{ \cf4 Splay\cf0 .ar(\cf4 In\cf0 .ar(2, 7)) \}.play \};\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf4 ServerTree\cf0 .add(~splay);\
+~splay.value;\
+\
+)\
+\
+\{\
+	\cf4 var\cf0  in, out, rate = 1;\
+	rate = \cf4 SinOsc\cf0 .kr(0.2).range(0.25, 1);\
+	in = \cf4 Mix\cf0 (\cf4 RLPF\cf0 .ar(\cf4 LFPulse\cf0 .ar(80, [0,0.1], 0.1), 200, 0.1).clip2(0.4)) * 0.5;\
+	out = \cf4 BMEarlyReflections\cf0 .ar(in, \cf4 LFSaw\cf0 .ar(rate, 0).range(-180, 180), 0, \cf4 SinOsc\cf0 .ar(rate, 0.5pi).range(3, 11), r, ~vbuf, ~vbp.numSpeakers, ~coef, ~fbScale, split: \cf4 true\cf0 );\
+\
+	\cf4 Out\cf0 .ar(~out, out[0] + (\cf4 MouseX\cf0 .kr * \cf4 Mix\cf0 (out[[1, 2]])) );\
+\}.play\
+\
+\
+\{\
+	\cf4 var\cf0  in, out, rate = 1, dist;\
+	rate = \cf4 SinOsc\cf0 .kr(0.2).range(0.25, 1);\
+	in = \cf4 Mix\cf0 (\cf4 RLPF\cf0 .ar(\cf4 LFPulse\cf0 .ar([80, 160], [0,0.1], 0.1), 200, 0.1).clip2(0.4)) * 0.5;\
+	dist = \cf4 SinOsc\cf0 .ar(rate, 0.5pi).range(3, 11);\
+	out = \cf4 BMEarlyReflections\cf0 .ar(in, \cf4 LFSaw\cf0 .ar(rate, 0).range(-180, 180), 0, dist, r, ~vbuf, ~vbp.numSpeakers, ~coef, ~fbScale, split: \cf4 true\cf0 );\
+	out = [out[0], (\cf4 MouseX\cf0 .kr * \cf4 Mix\cf0 (out[[1, 2]]))];\
+	out = \cf4 Mix\cf0 (out) + (\cf4 FreeVerb\cf0 .ar(out[0] * dist.reciprocal, 1, 0.7, 0.0) * \cf4 MouseY\cf0 .kr(0, 3));\
+	\cf4 Out\cf0 .ar(~out, out.postln);\
+\}.play\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f1\fs24 \cf0 {{\NeXTGraphic Pasted Graphic 4.tiff \width10540 \height9460 \noorient
+}¬}\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\fs32 \cf0 \
+\
+\
+\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\fs24 \cf0 {{\NeXTGraphic Pasted Graphic 5.tiff \width14840 \height17960 \noorient
+}¬}\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs26 \cf0 \
+\
+\
+\
+(\
+~coef = 0.23681937613123; ~fbScale = 0.05;\
+r = \cf4 BM3DBoxRoom\cf0 .new(20, 25, 18, 0, -6, 0);\
+~buf = \cf4 Buffer\cf0 .read(s, \cf5 "sounds/a11wlk01.wav"\cf0 );\
+)\
+\
+x = \{\
+	\cf4 var\cf0  in, out;\
+	in = \cf4 PlayBuf\cf0 .ar(1, ~buf, \cf4 BufRateScale\cf0 .kr(~buf), loop: 1) * 0.1;\
+	out = \cf4 BMSpatialReverberator\cf0 .ar(in, 10, 0, 18, r, ~vbuf, ~vbp.numSpeakers, ~coef, ~fbScale);\
+	\cf4 Out\cf0 .ar(~out, out);\
+\}.play\
+\
+x = \{\
+	\cf4 var\cf0  in, out;\
+	in = \cf4 PlayBuf\cf0 .ar(1, ~buf, \cf4 BufRateScale\cf0 .kr(~buf), loop: 1) * 0.1;\
+	out = \cf4 BMSpatialReverberator\cf0 .ar(in, -40, 0, 10, r, ~vbuf, ~vbp.numSpeakers, ~coef, ~fbScale);\
+	\cf4 Out\cf0 .ar(~out, out);\
+\}.play\
+\
+\
+x = \{\
+	\cf4 var\cf0  in, out;\
+	in = \cf4 PlayBuf\cf0 .ar(1, ~buf, \cf4 BufRateScale\cf0 .kr(~buf), loop: 1) * 0.1;\
+	out = \cf4 BMSpatialReverberator\cf0 .ar(in, 2, 0, \cf4 Line\cf0 .ar(18, 0.5, 8), r, ~vbuf, ~vbp.numSpeakers, ~coef, ~fbScale);\
+	\cf4 Out\cf0 .ar(~out, out);\
+\}.play\
+\
+x = \{\
+	\cf4 var\cf0  in, out;\
+	in = \cf4 PlayBuf\cf0 .ar(1, ~buf, \cf4 BufRateScale\cf0 .kr(~buf), loop: 1) * 0.1;\
+	out = \cf4 BMSpatialReverberator\cf0 .ar(in, \cf4 K2A\cf0 .ar(\cf4 MouseX\cf0 .kr(-90, 90)), 0, \cf4 K2A\cf0 .ar(\cf4 MouseY\cf0 .kr(0.5, 10)), r, ~vbuf, ~vbp.numSpeakers, ~coef, ~fbScale);\
+	\cf4 Out\cf0 .ar(~out, out);\
+\}.play\
+\
+(\
+r = \cf4 BM3DBoxRoom\cf0 .new(12, 30, 8, 0, -2, 0);\
+~coef = 0.8; ~fbScale = 0.1;\
+x = \{\
+	\cf4 var\cf0  in, out;\
+	\cf2 //in = PlayBuf.ar(1, ~buf, BufRateScale.kr(~buf), loop: 1) * 0.1;\cf0 \
+	in = \cf4 Decay2\cf0 .ar(\cf4 Impulse\cf0 .ar(\cf4 SinOsc\cf0 .kr(0.1, 1.5pi).range(1, 10), 0.25), 0.05, 0.2, \cf4 Saw\cf0 .ar(600, 0.2));\
+	out = \cf4 BMSpatialReverberator\cf0 .ar(in, \cf4 Line\cf0 .ar(0, -125, 10), 0, \cf4 Line\cf0 .ar(10, 1, 8), r, ~vbuf, ~vbp.numSpeakers, ~coef, ~fbScale);\
+	\cf4 Out\cf0 .ar(~out, out);\
+\}.play\
+)\
+\
+\
+~refl = r.calcReflectionsDict(0, 0, 1);\
+\
+~refl[0].collect(\{\cf4 |ref|\cf0  ref[2]\});}
