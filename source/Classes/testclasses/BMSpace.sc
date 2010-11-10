@@ -1205,7 +1205,7 @@ BMSpatialReverberator : BMAbstractSpaceModeler {
 			thirdKey = k.asString.tr($1, $3).asSymbol; // move out two rooms in the same direction
 			sec = secondReflecs[secKey][2];
 			third = thirdPlusReflecs[thirdKey][2];
-			rUnits[k] = R2C.ar(input, roomMaxDelay * 2, sec - first, roomMaxDelay * 2, third - sec, coef, fbScale);
+			rUnits[k] = R2C.ar(input, roomMaxDelay * 2, sec - first, roomMaxDelay * 2, third - sec, coef, secondReflecs[secKey][3], coef, thirdPlusReflecs[thirdKey][3]);
 		});
 
 		// R1s that are fed from the above
@@ -1217,7 +1217,7 @@ BMSpatialReverberator : BMAbstractSpaceModeler {
 			sec = secondReflecs[k][2];
 			thirdKey = k.asString.tr($1, $2).asSymbol; // move out one room in the same direction
 			third = thirdPlusReflecs[thirdKey][2];
-			rUnits[k] = R1C.ar(input, roomMaxDelay * 2, third - sec, coef, fbScale);
+			rUnits[k] = R1C.ar(input, roomMaxDelay * 2, third - sec, coef, thirdPlusReflecs[thirdKey][3]);
 		});
 		
 		/// now mix and pan everything...
