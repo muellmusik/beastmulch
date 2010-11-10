@@ -36,7 +36,7 @@ BMSpeakerListVisualiser : BMAbstractGUI {
 		qcView.showBoids = true;
 		qcView.resize_(5);
 		
-		//qcView.maxFPS_(20);
+		qcView.maxFPS_(20);
 		height.action = {qcView.height = height.value * (hiZ - floorZ) - (hiZ - floorZ);};
 		
 		height.doAction;
