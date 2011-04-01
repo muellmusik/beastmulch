@@ -4,13 +4,202 @@
 \red0\green115\blue0;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
-\f0\fs18 \cf2 // test coords, should match appendix B in paper\cf0 \
+\f0\fs18 \cf2 /// test a room\cf0 \
+s.options.memSize = 32768 * 40;\
+s.options.blockSize = 8;\
+s.options.numWireBufs = 2048;\
+s.options.numOutputBusChannels = 20; s.reboot;\
+(\
+~out = 2; \
+\cf2 //~out = (2..8) ++ [16, 17]; \cf0 \
+~coef = 0.23681937613123; ~fbScale = 0.1;\
+r = \cf3 BM3DBoxRoom\cf0 .new(30, 10, 11, 0, -2, 0);\
+\cf2 //r = BM2DBoxRoom.new(20, 13);\cf0 \
+\
+v = \cf3 VBAPSpeakerArray\cf0 .new(2, [-22.5, 22.5, -67.5, 67.5, -112.5, 112.5, -157.5, 157.5]);\
+\cf2 //v = VBAPSpeakerArray.new(3, [ [ -67.5, 0 ], [ 67.5, 0 ], [ -112.5, 0 ], [ 112.5, 0 ], [ -157.5, 0 ], [ 157.5, 0 ] , [ -22.5, 40 ], [ 22.5, 40 ], [ -67.5, 40 ], [ 67.5, 40 ], [ -112.5, 40 ], [ 112.5, 40 ], [ -157.5, 40 ], [ 157.5, 40 ], [ -22.5, 0 ], [ 22.5, 0 ] ]); // ECR tannoys and Kefs\cf0 \
+\cf2 //v = VBAPSpeakerArray.new(3, [ [ -67.5, 0 ], [ 67.5, 0 ], [ -112.5, 0 ], [ 112.5, 0 ], [ -157.5, 0 ], [ 157.5, 0 ] , [ 22.5, 40 ], [ -22.5, 0 ], [ 22.5, 0 ] ]);\cf0 \
+\pard\pardeftab560\ql\qnatural
+\cf0 b = v.loadToBuffer;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 ~buf = \cf3 Buffer\cf0 .read(s, \cf4 "sounds/a11wlk01.wav"\cf0 );\
+)\
+\
+(\
+~splay = \{\{ \cf3 Splay\cf0 .ar(\cf3 In\cf0 .ar(2, 8)) \}.play \};\
+\cf3 ServerTree\cf0 .add(~splay);\
+~splay.value;\
+\
+)\
+\
+\cf2 // play with coef and feedback\cf0 \
+\
+x = \{\
+	\cf3 var\cf0  in, out;\
+	in = \cf3 PlayBuf\cf0 .ar(1, ~buf, \cf3 BufRateScale\cf0 .kr(~buf), loop: 1) * 0.1;\
+	out = \cf3 BMSpatialReverberator\cf0 .ar(in, 10, 0, 5, r, b, v.numSpeakers, ~coef, ~fbScale);\
+	\cf3 Out\cf0 .ar(~out, out);\
+\}.play\
+\
+\{\
+	\cf3 var\cf0  in, out;\
+	in = \cf3 PlayBuf\cf0 .ar(1, ~buf, \cf3 BufRateScale\cf0 .kr(~buf), loop: 1) * 0.1;\
+	out = \cf3 BMSpatialReverberator\cf0 .ar(in, 0, 0, \cf3 Line\cf0 .ar(12, 1, 6), r, b, v.numSpeakers, ~coef, ~fbScale);\
+	\cf3 Out\cf0 .ar(~out, out);\
+\}.play\
+\
+\{\
+	\cf3 var\cf0  in, out;\
+	in = \cf3 PlayBuf\cf0 .ar(1, ~buf, \cf3 BufRateScale\cf0 .kr(~buf), loop: 1) * 0.05;\
+	out = \cf3 BMSpatialReverberator\cf0 .ar(in, 0, 0, \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 ([4, 2], [0.2]).delay(0.5)), r, b, v.numSpeakers, ~coef, ~fbScale);\
+	\cf3 Out\cf0 .ar(~out, out);\
+\}.play\
+\
+\
+\{\
+	\cf3 var\cf0  in, out;\
+	in = \cf3 PlayBuf\cf0 .ar(1, ~buf, \cf3 BufRateScale\cf0 .kr(~buf), loop: 1) * 0.1;\
+	out = \cf3 BMSpatialReverberator\cf0 .ar(in, \cf3 LFSaw\cf0 .ar(0.1, 0).range(-180, 180), 0, 5, r, b, v.numSpeakers, ~coef, ~fbScale);\
+	\cf3 Out\cf0 .ar(~out, out);\
+\}.play\
+\
+\{\
+	\cf3 var\cf0  in, out, rate = 1;\
+	rate = \cf3 SinOsc\cf0 .kr(0.5).range(0.5, 1.5);\
+	\cf2 //in = PlayBuf.ar(1, ~buf, BufRateScale.kr(~buf), loop: 1) * 0.1;\cf0 \
+	in = \cf3 Mix\cf0 (\cf3 RLPF\cf0 .ar(\cf3 LFPulse\cf0 .ar(21, [0,0.1], 0.1), 100, 0.1).clip2(0.4)) * 0.5;\
+	out = \cf3 BMSpatialReverberator\cf0 .ar(in, \cf3 LFSaw\cf0 .ar(rate, 0).range(-180, 180), 0, \cf3 SinOsc\cf0 .ar(rate, 0.5pi).range(3, 18), r, b, v.numSpeakers, ~coef, ~fbScale);\
+	\cf3 Out\cf0 .ar(~out, out);\
+\}.play\
+\
+\
+\{\
+	\cf3 var\cf0  in, out;\
+	in = \cf3 PlayBuf\cf0 .ar(1, ~buf, \cf3 BufRateScale\cf0 .kr(~buf), loop: 1) * 0.1;\
+	out = \cf3 BMSpatialReverberator\cf0 .ar(in, 0, \cf3 SinOsc\cf0 .ar(0.2).range(0, 90), 9, r, b, v.numSpeakers, ~coef, ~fbScale);\
+	\cf3 Out\cf0 .ar(~out, out);\
+\}.play\
+\
+\cf2 ////////\cf0 \
+\
+\
+~coef = 0.23681937613123; ~fbScale = 0.1;\
+r = \cf3 BM3DBoxRoom\cf0 .new(30, 15, 20, 0, -2, 0);\
+\
+\cf2 // would be good just early reflections demo\cf0 \
+\{\
+	\cf3 var\cf0  in, out, rate = 0.51;\
+	rate = \cf3 SinOsc\cf0 .kr(0.5).range(0.25, 1);\
+	\cf2 //in = PlayBuf.ar(1, ~buf, BufRateScale.kr(~buf), loop: 1) * 0.1;\cf0 \
+	in = \cf3 Mix\cf0 (\cf3 RLPF\cf0 .ar(\cf3 LFPulse\cf0 .ar(21, [0,0.1], 0.1), 200, 0.1).clip2(0.4)) * 0.5;\
+	out = \cf3 BMSpatialReverberator\cf0 .ar(in, \cf3 LFSaw\cf0 .ar(rate, 0).range(-180, 180), 0, \cf3 SinOsc\cf0 .ar(rate, 0.5pi).range(3, 11), r, b, v.numSpeakers, ~coef, ~fbScale);\
+	\cf3 Out\cf0 .ar(~out, out);\
+\}.play\
+\
+\{\
+	\cf3 var\cf0  in, out, rate = 1;\
+	rate = \cf3 SinOsc\cf0 .kr(0.4).range(0.25, 1.5);\
+	\cf2 //in = PlayBuf.ar(1, ~buf, BufRateScale.kr(~buf), loop: 1) * 0.1;\cf0 \
+	in = \cf3 Mix\cf0 (\cf3 RLPF\cf0 .ar(\cf3 LFPulse\cf0 .ar(80, [0,0.1], 0.1), 200, 0.1).clip2(0.4)) * 0.5;\
+	out = \cf3 BMEarlyReflections\cf0 .ar(in, \cf3 LFSaw\cf0 .ar(rate, 0).range(-180, 180), 0, \cf3 SinOsc\cf0 .ar(rate, 0.5pi).range(3, 11), r, b, v.numSpeakers, ~coef, ~fbScale, split: \cf3 true\cf0 );\
+	\cf3 Out\cf0 .ar(~out, out[0] + (\cf3 MouseX\cf0 .kr * \cf3 Mix\cf0 (out[[1, 2]])) );\
+\}.play\
+\
+\{\
+	\cf3 var\cf0  in, out, rate = 1;\
+	rate = \cf3 SinOsc\cf0 .kr(0.5).range(0.25, 1);\
+	\cf2 //in = PlayBuf.ar(1, ~buf, BufRateScale.kr(~buf), loop: 1) * 0.1;\cf0 \
+	in = \cf3 Mix\cf0 (\cf3 RLPF\cf0 .ar(\cf3 LFPulse\cf0 .ar(21, [0,0.1], 0.1), 100, 0.1).clip2(0.4)) * 0.5;\
+	out = \cf3 BMEarlyReflections\cf0 .ar(in, \cf3 LFSaw\cf0 .ar(rate, 0).range(-180, 180), \cf3 LFNoise2\cf0 .kr(100, 0.1), \cf3 SinOsc\cf0 .ar(rate, 0.5pi).range(3, 11), r, b, v.numSpeakers, \cf3 MouseX\cf0 .kr, ~fbScale);\
+	\cf3 Out\cf0 .ar(~out, out.postln);\
+\}.play\
+\
+// ***\
+\{\
+	\cf3 var\cf0  in, out, rate = 1;\
+	rate = \cf3 SinOsc\cf0 .kr(0.4).range(0.25, 1.5);\
+	\cf2 //in = PlayBuf.ar(1, ~buf, BufRateScale.kr(~buf), loop: 1) * 0.1;\cf0 \
+	in = \cf3 Mix\cf0 (\cf3 RLPF\cf0 .ar(\cf3 LFPulse\cf0 .ar([80, 160], [0,0.1], 0.1), 200, 0.1).clip2(0.4)) * 0.5;\
+	out = \cf3 BMEarlyReflections\cf0 .ar(in, \cf3 LFSaw\cf0 .ar(rate, 0).range(-180, 180), 0, \cf3 SinOsc\cf0 .ar(rate, 0.5pi).range(3, 11), r, b, v.numSpeakers, ~coef, ~fbScale, split: \cf3 true\cf0 );\
+	//\cf2 out = out[0] + (MouseX.kr * Mix(out[[1, 2]])) + (BMMultiFreeVerb.arA(v.numSpeakers,Mix(out[0]), 0.9, 1.0, decor: 1) * MouseY.kr);\
+	//out = out[0] + (MouseX.kr * Mix(out[[1, 2]])) + (FreeVerb.ar(out[0], 1, 0.7, 0.1) * MouseY.kr(0, 2));\
+	\cf0 out = out[0] + (\cf3 MouseX\cf0 .kr * \cf3 Mix\cf0 (out[[1, 2]]));\
+	out = out + (FreeVerb.ar(out, 1, 0.7, 0.0) * MouseY.kr(0, 2));\cf2 \
+	//out = \cf0 FreeVerb.ar(out[0], 1, 0.7, 0.1);\
+	\cf3 Out\cf0 .ar(~out, out.postln);\
+\}.play\
+\
+\cf2 /////////// NRT\cf0 \
+\
+s.options.memSize = 32768 * 45;\
+s.options.numOutputBusChannels = 20;\
+s.options.numWireBufs = 4096;\
+o = s.options;\
+\cf3 Server\cf0 .default = s = \cf3 Server\cf0 (\cf5 \\score\cf0 , \cf3 ScoreNetAddr\cf0 (\cf4 "127.0.0.1"\cf0 , 57110), o);\
+s.reboot;\
+\
+ \
+(\
+s.addr.reset;\
+~out = 2; \
+\cf2 //~out = (2..8) ++ [16, 17]; \cf0 \
+~coef = 0.99; ~fbScale = 0.5;\
+r = \cf3 BM3DBoxRoom\cf0 .new(20, 20, 13);\
+\
+v = \cf3 VBAPSpeakerArray\cf0 .new(2, [-22.5, 22.5, -67.5, 67.5, -112.5, 112.5, -157.5, 157.5]);\
+\cf2 //v = VBAPSpeakerArray.new(3, [ [ -67.5, 0 ], [ 67.5, 0 ], [ -112.5, 0 ], [ 112.5, 0 ], [ -157.5, 0 ], [ 157.5, 0 ] , [ -22.5, 40 ], [ 22.5, 40 ], [ -67.5, 40 ], [ 67.5, 40 ], [ -112.5, 40 ], [ 112.5, 40 ], [ -157.5, 40 ], [ 157.5, 40 ], [ -22.5, 0 ], [ 22.5, 0 ] ]); // ECR tannoys and Kefs\cf0 \
+\cf2 //v = VBAPSpeakerArray.new(3, [ [ -67.5, 0 ], [ 67.5, 0 ], [ -112.5, 0 ], [ 112.5, 0 ], [ -157.5, 0 ], [ 157.5, 0 ] , [ 22.5, 40 ], [ -22.5, 0 ], [ 22.5, 0 ] ]);\cf0 \
+\pard\pardeftab560\ql\qnatural
+\cf0 b = v.loadToBuffer;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 //~buf = Buffer.read(s, "sounds/a11wlk01.wav");\cf0 \
+~coef = 0.23681937613123; ~fbScale = 0.6;\
+r = \cf3 BM3DBoxRoom\cf0 .new(70, 41, 40, 0, 0, 0);\
+\
+\cf2 // would be good just early reflections demo\cf0 \
+\{\
+	\cf3 var\cf0  in, out, rate = 1;\
+	rate = \cf3 SinOsc\cf0 .kr(0.5).range(0.25, 1);\
+	\cf2 //in = PlayBuf.ar(1, ~buf, BufRateScale.kr(~buf), loop: 1) * 0.1;\cf0 \
+	in = \cf3 Mix\cf0 (\cf3 RLPF\cf0 .ar(\cf3 LFPulse\cf0 .ar(21, [0,0.1], 0.1), 100, 0.1).clip2(0.4)) * 0.5;\
+	out = \cf3 BMSpatialReverberator\cf0 .ar(in, \cf3 LFSaw\cf0 .ar(rate, 0).range(-180, 180), 0, \cf3 SinOsc\cf0 .ar(rate, 0.5pi).range(6, 18), r, b, v.numSpeakers, ~coef, ~fbScale);\
+	\cf3 Out\cf0 .ar(~out, out);\
+\}.play\
+)\
+\
+s.addr.msgList.size\
+\
+s.addr.msgList.last\
+\
+s.addr.msgList.add([20, [\cf5 \\c_set\cf0 , 0, 0]]);\
+\
+\cf3 Score\cf0 .recordNRT(s.addr.msgList, \cf4 "/tmp/loris-oscFile"\cf0 , \cf4 "/tmp/test.aiff"\cf0 , sampleRate: 96000, sampleFormat: \cf5 'int24'\cf0 , options: s.options.copy.blockSize_(1));\
+\
+\cf2 ///////////\cf0 \
+\
+\
+\cf2 // test coords, should match appendix B in paper\cf0 \
 \
 r = \cf3 BM3DBoxRoom\cf0 .new(5, 6, 7, 0, 1, -1);\
 \
-r.calcReflections(45, 30, 2)\
+r.calcReflections(45, 30, 3)\
 \
-\cf2 //\cf0 \
+r.stoc(45, 30, 2)\
+~testSpeak = BMSpeaker.newFromSpherical(\\test, 0, 45, 30, 2);\
+~testSpeak.dump\
+\cf2 //\
+\
+\cf0 r = \cf3 BM3DBoxRoom\cf0 .new(5, 6, 7, 0, 1, -1);\
+\
+#x, y, z = r.stoc(47, 30, 2.2);\cf2 \
+\cf0 \
+sqrt(x.squared + y.squared + z.squared) * 344.reciprocal\
+\
+#x, y, z = r.stoc(47, 30, 2.2 * 344.reciprocal);\cf2 \
+\cf0 \
+sqrt(x.squared + y.squared + z.squared) \
+\
+\
 \
 r = \cf3 BM3DBoxRoom\cf0 .new(20, 20, 10);\
 \
@@ -45,13 +234,14 @@ r.crossFeedIndices\
 \
 \cf2 /// test a room\cf0 \
 s.options.memSize = 32768 * 40;\
+s.options.dump.blockSize = 32;\
 s.options.numOutputBusChannels = 20; s.boot;\
 (\
 ~out = 2; \
 \cf2 //~out = (2..8) ++ [16, 17]; \cf0 \
-~coef = 0.99; ~fbScale = 0.5;\
-//r = \cf3 BM3DBoxRoom\cf0 .new(20, 20, 13);\
-r = \cf3 BM2DBoxRoom\cf0 .new(20, 13);\
+~coef = 0.23681937613123; ~fbScale = 0.2;\
+r = \cf3 BM3DBoxRoom\cf0 .new(40, 21, 22, 0, -2, 0);\
+\cf2 //r = BM2DBoxRoom.new(20, 13);\cf0 \
 \
 v = \cf3 VBAPSpeakerArray\cf0 .new(2, [-22.5, 22.5, -67.5, 67.5, -112.5, 112.5, -157.5, 157.5]);\
 \cf2 //v = VBAPSpeakerArray.new(3, [ [ -67.5, 0 ], [ 67.5, 0 ], [ -112.5, 0 ], [ 112.5, 0 ], [ -157.5, 0 ], [ 157.5, 0 ] , [ -22.5, 40 ], [ 22.5, 40 ], [ -67.5, 40 ], [ 67.5, 40 ], [ -112.5, 40 ], [ 112.5, 40 ], [ -157.5, 40 ], [ 157.5, 40 ], [ -22.5, 0 ], [ 22.5, 0 ] ]); // ECR tannoys and Kefs\cf0 \
@@ -61,6 +251,15 @@ v = \cf3 VBAPSpeakerArray\cf0 .new(2, [-22.5, 22.5, -67.5, 67.5, -112.5, 112.5, 
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf0 ~buf = \cf3 Buffer\cf0 .read(s, \cf4 "sounds/a11wlk01.wav"\cf0 );\
 )\
+\
+\cf2 // play with coef and feedback\cf0 \
+\
+\{\
+	\cf3 var\cf0  in, out;\
+	in = \cf3 PlayBuf\cf0 .ar(1, ~buf, \cf3 BufRateScale\cf0 .kr(~buf), loop: 1) * 0.1;\
+	out = \cf3 BMSpatialReverberator\cf0 .ar(in, 10, 0, 9, r, b, v.numSpeakers, ~coef, ~fbScale);\
+	\cf3 Out\cf0 .ar(~out, out);\
+\}.play\
 \
 \{\
 	\cf3 var\cf0  in, out;\
@@ -88,7 +287,7 @@ v = \cf3 VBAPSpeakerArray\cf0 .new(2, [-22.5, 22.5, -67.5, 67.5, -112.5, 112.5, 
 \{\
 	\cf3 var\cf0  in, out;\
 	in = \cf3 PlayBuf\cf0 .ar(1, ~buf, \cf3 BufRateScale\cf0 .kr(~buf), loop: 1) * 0.1;\
-	out = \cf3 BMSpatialReverberator\cf0 .ar(in, \cf3 MouseX\cf0 .kr(-90, 90), 0, \cf3 MouseY\cf0 .kr(9, 1), r, b, v.numSpeakers, ~coef, ~fbScale);\
+	out = \cf3 BMSpatialReverberator\cf0 .ar(in, \cf3 K2A\cf0 .ar(\cf3 MouseX\cf0 .kr(-90, 90, lag: 0.5)), 0, \cf3 K2A\cf0 .ar(\cf3 MouseY\cf0 .kr(9, 1, lag: 0.5)), r, b, v.numSpeakers, ~coef, ~fbScale);\
 	\cf3 Out\cf0 .ar(~out, out);\
 \}.play\
 \
@@ -110,7 +309,7 @@ v = \cf3 VBAPSpeakerArray\cf0 .new(2, [-22.5, 22.5, -67.5, 67.5, -112.5, 112.5, 
 \{\
 	\cf3 var\cf0  in, out;\
 	in = \cf3 PlayBuf\cf0 .ar(1, ~buf, \cf3 BufRateScale\cf0 .kr(~buf), loop: 1) * 0.1;\
-	out = \cf3 BMSpatialReverberator\cf0 .ar(in, \cf3 LFSaw\cf0 .kr(0.2, 0).range(-180, 180), 0, 9, r, b, v.numSpeakers, ~coef, ~fbScale);\
+	out = \cf3 BMSpatialReverberator\cf0 .ar(in, \cf3 LFSaw\cf0 .ar(0.2, 0).range(-180, 180), 0, 9, r, b, v.numSpeakers, ~coef, ~fbScale);\
 	\cf3 Out\cf0 .ar(~out, out);\
 \}.play\
 \
@@ -122,7 +321,6 @@ v = \cf3 VBAPSpeakerArray\cf0 .new(2, [-22.5, 22.5, -67.5, 67.5, -112.5, 112.5, 
 	\cf3 Out\cf0 .ar(~out, out);\
 \}.play\
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf2 // play with coef and feedback\cf0 \
 \
 \{\
@@ -131,6 +329,7 @@ v = \cf3 VBAPSpeakerArray\cf0 .new(2, [-22.5, 22.5, -67.5, 67.5, -112.5, 112.5, 
 	out = \cf3 BMSpatialReverberator\cf0 .ar(in, 0, 0, 9, r, b, v.numSpeakers, \cf3 MouseX\cf0 .kr(0, 1), \cf3 MouseY\cf0 .kr(0.000001, 0.9999));\
 	\cf3 Out\cf0 .ar(~out, out);\
 \}.play\
+\
 \
 \{\
 	\cf3 var\cf0  in, out;\
@@ -162,7 +361,6 @@ s.options.memSize = 32768 * 45;\
 s.options.numOutputBusChannels = 20;\
 s.options.numWireBufs = 4096;\
 o = s.options;\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf3 Server\cf0 .default = s = \cf3 Server\cf0 (\cf5 \\score\cf0 , \cf3 ScoreNetAddr\cf0 (\cf4 "127.0.0.1"\cf0 , 57110), o);\
 s.reboot;\
 \
@@ -170,7 +368,6 @@ s.reboot;\
 (\
 s.addr.reset;\
 ~out = 0; \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf2 //~out = (2..8) ++ [16, 17]; \cf0 \
 ~coef = 0.99; ~fbScale = 0.5;\
 r = \cf3 BM3DBoxRoom\cf0 .new(20, 20, 13);\
@@ -198,11 +395,9 @@ s.addr.msgList.add([10, [\cf5 \\c_set\cf0 , 0, 0]]);\
 \
 \cf3 Score\cf0 .recordNRT(s.addr.msgList, \cf4 "/tmp/loris-oscFile"\cf0 , \cf4 "/tmp/test.aiff"\cf0 , sampleRate: 96000, sampleFormat: \cf5 'int24'\cf0 , options: s.options);\
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf2 //////\cf0 \
 \
 \{\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf3 var\cf0  in, maxDelayTime = 2, delayTime = 2;\
 \cf3 var\cf0  buf, phasor, maxFrames, sr, out;\
 in = \cf3 PlayBuf\cf0 .ar(1, ~buf, \cf3 BufRateScale\cf0 .kr(~buf), loop: 1) * 0.1;\
@@ -210,11 +405,10 @@ sr = \cf3 SampleRate\cf0 .ir;\
 maxFrames = maxDelayTime * sr;\
 buf = \cf3 LocalBuf\cf0 (maxFrames, 1).clear;\
 phasor = \cf3 Phasor\cf0 .ar(0, 1, 0, maxFrames);\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf2 //out = BufRd.ar(1, buf, phasor + (delayTime * sr) - (ControlDur.ir * sr) % maxFrames, 1, 2);\cf0 \
 \cf2 //out = BufRd.ar(1, buf, phasor + (delayTime * sr) % maxFrames, 1, 2);\cf0 \
 out = \cf3 BufRd\cf0 .ar(1, buf, phasor - (delayTime * sr), 1, 2);\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf3 BufWr\cf0 .ar(in, buf, phasor, 1);\
 \cf3 Out\cf0 .ar(0, out);\
-\}.play}
+\}.play\
+}
