@@ -998,9 +998,11 @@ struct R2C_helper<true>
 		long irdphase3_2 = irdphase1_2 - 2;
 		long irdphase0_2 = irdphase1_2 + 1;
 		
-		if (irdphase0 < 0) { // del1 has not yet output so just write and output 0
-			bufData[iwrphase & mask] = ZXP(in);
-			ZXP(out) = 0.f;
+		if (irdphase0 < 0) { // del1 has not yet output so just write and output insamp
+			float insamp = ZXP(in);
+			bufData[iwrphase & mask] = insamp;
+			bufData2[iwrphase2 & mask2] = 0.f;
+			ZXP(out) = insamp;
 		} else {
 			float insamp = ZXP(in);
 			
@@ -1038,10 +1040,10 @@ struct R2C_helper<true>
 			unit->m_y1 = zapgremlins(y1); // inefficient but fix it later...
 			
 			// del 2
-			if (irdphase0_2 < 0) { // del2 has not yet output so just write and output 0
+			if (irdphase0_2 < 0) { // del2 has not yet output so just write and output del2In + insamp
 				bufData2[iwrphase2 & mask2] = del2In;
 				bufData[iwrphase & mask] = insamp;
-				ZXP(out) = 0.f;
+				ZXP(out) = del2In + insamp;
 			} else {
 				
 				float d0_2, d1_2, d2_2, d3_2;
@@ -1085,9 +1087,10 @@ struct R2C_helper<true>
 				
 				ZXP(out) = del2In + del2Out + insamp;
 		}
-		iwrphase++;
-		iwrphase2++;
+		
 	}
+	iwrphase++;
+	iwrphase2++;
 };
 
 };
