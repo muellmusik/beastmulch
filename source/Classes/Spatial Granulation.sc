@@ -22,15 +22,17 @@ BMSpatialGranulator {
 //	}
 	
 	*initClass {
-		SynthDef.writeOnce("BMSpatialPodGrain",{ arg i_out=0, i_sampbufnum, pitchScale = 1.0, 
-			dur = 0.05, pointer, offset = 0.0, level = 1.0, loop;
-			var thisStart, thisDur, grain;
-			thisStart = pointer + IRand(0, offset);
-			grain = EnvGen.ar(Env.sine, 1.0, level, 0.0, dur, 2) 
-				* PlayBuf.ar(1,i_sampbufnum,pitchScale * BufRateScale.ir(i_sampbufnum),
-					1, thisStart,loop);
-			OffsetOut.ar(i_out,grain);
-		});
+		StartUp.add({
+			SynthDef.writeOnce("BMSpatialPodGrain",{ arg i_out=0, i_sampbufnum, pitchScale = 1.0, 
+				dur = 0.05, pointer, offset = 0.0, level = 1.0, loop;
+				var thisStart, thisDur, grain;
+				thisStart = pointer + IRand(0, offset);
+				grain = EnvGen.ar(Env.sine, 1.0, level, 0.0, dur, 2) 
+					* PlayBuf.ar(1,i_sampbufnum,pitchScale * BufRateScale.ir(i_sampbufnum),
+						1, thisStart,loop);
+				OffsetOut.ar(i_out,grain);
+			});
+		})
 	
 	}
 	

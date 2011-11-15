@@ -18,6 +18,7 @@ BMSwarmGranulator {
 //	}
 	
 	*initClass {
+		StartUp.add({
 		SynthDef.writeOnce("BMSwarmPodGrain",{ arg i_out=0, i_sampbufnum, pitchScale = 1.0, 
 			dur = 0.05, pointer, offset = 0.0, level = 1.0, loop;
 			var thisStart, thisDur, grain;
@@ -27,6 +28,7 @@ BMSwarmGranulator {
 					1, thisStart,loop);
 			OffsetOut.ar(i_out,grain);
 		});
+		})
 	
 	}
 	

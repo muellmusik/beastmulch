@@ -70,10 +70,12 @@ OverlapAddPlayer {
 	}
 	
 	*initClass {
+		StartUp.add({
 		SynthDef.writeOnce("system-OverlapAddPartial", { arg i_out, freq, amp, frameTime, pos;
 			var osc;
 			osc = FSinOsc.ar(freq, 0, amp) * EnvGen.kr(Env.sine(1,1), 1.0, 1.0, 0, frameTime, 2);
 			Out.ar(i_out, Pan2.ar(osc, pos));
+		});
 		});
 	}
 	
@@ -289,6 +291,7 @@ OverlapAddRes {
 	}
 	
 	*initClass {
+		StartUp.add({
 		SynthDef.writeOnce("system-OverlapAddResPartial", { arg i_out, i_in, ring, 
 				freq, amp, frameTime, pos;
 			var osc;
@@ -327,6 +330,7 @@ OverlapAddRes {
 		SynthDef.writeOnce("PPR-ClipNoise", {
 			arg i_out, mul = 0.25;
 			Out.ar(i_out, ClipNoise.ar(mul));
+		});
 		});
 	}
 	
@@ -689,12 +693,14 @@ OverlapAddBWPlayer : OverlapAddPlayer {
 	}
 	
 	*initClass {
+		StartUp.add({
 		SynthDef.writeOnce("system-OverlapAddBWPartial", { arg i_out, freq, amp, bw, fT, 
 			pos;
 			var osc;
 			osc = BEOsc.ar(freq, 0, bw, EnvGen.ar(Env.sine(1,1), 1.0, amp, 0, fT, 2));
 			Out.ar(i_out, Pan2.ar(osc, pos));
 		});
+		})
 	}
 	
 	play { arg freq = 1, frameTime = 0.05, bw = 1, mul = 1, overlap = 3, out = 0, endFunc, 

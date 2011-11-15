@@ -56,11 +56,13 @@ LorisOAPlayer {
 	}
 		
 	*initClass {
+		StartUp.add({
 		SynthDef.writeOnce("system-OverlapAddBWPartial", { arg i_out, freq, amp, bw, fT, 
 			pos;
 			var osc;
 			osc = BEOsc.ar(freq, 0, bw, EnvGen.ar(Env.sine(1,1), 1.0, amp, 0, fT, 2));
 			Out.ar(i_out, Pan2.ar(osc, pos));
+		});
 		});
 	}
 	
