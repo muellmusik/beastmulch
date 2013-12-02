@@ -43,7 +43,7 @@ BMAutoBalancer {
 					});
 
 				}, {"% not a normal Speaker, skipping it...\n".postf(speaker.key)});
-				
+
 			});
 			1.wait;
 			"\nChecking results".postln;
@@ -51,16 +51,16 @@ BMAutoBalancer {
 				"% failed\n".postf(key);
 				value.remove;
 			});
-			
+
 			(responders.size == 0).if({
 				"Results Complete\n".postln;
 				"Normalizing".postln;
-				min = trimList.minItem; 
-				speakerList.do({|speaker| 
-					if(speaker.isBMSpeaker and: 
+				min = trimList.minItem;
+				speakerList.do({|speaker|
+					if(speaker.isBMSpeaker and:
 						{speaker.spec.fullRange ? true || onlyFullRange.not}, {
 						diff = min - trimList[speaker.name];
-						if(diff <= 0, { 
+						if(diff <= 0, {
 							trimList[speaker.name] = diff;
 							"Normalized Autotrim for %: % dBFS\n".postf(speaker.name, diff);
 						});
@@ -73,11 +73,11 @@ BMAutoBalancer {
 				okayFunc.value(speakerList);
 			});
 			"\n\\\\\\\\\\\\\\\ Auto Level Balance Done\n".postln;
-			
+
 		}.fork;
-	
+
 	}
-	
+
 	// trims only copied at the end, so we can abort safely
 	*stop {
 		running.if({
@@ -86,7 +86,7 @@ BMAutoBalancer {
 			"Auto Level Balance aborted".warn;
 		});
 	}
-	
+
 	*sendDef {|server|
 		SynthDef("BMAutoBalance", {|out, in = 0, amp = 0.3, id|
 			var max, trig;
@@ -97,27 +97,27 @@ BMAutoBalancer {
 			SendReply.ar(DelayN.ar(trig, 0.3, 0.3), 'BM-AutoBalance', [max], id);
 			FreeSelf.kr(DelayN.ar(trig, 0.35, 0.35)); // slightly later
 		}).send(server);
-	
+
 	}
 
 }
 
 BMAutoBalancerGUI : BMAbstractGUI {
-	
+
 	var speakerList, okayFunc, server;
-	
+
 	*new {| speakerList, okayFunc, server, name, origin |
 		  ^super.new.init(speakerList, okayFunc, server, name)
 		  	.makeWindow(origin ? (400@600));
 	}
-	
+
 	init {|argspeakerList, argokayFunc, argserver, argname|
 		speakerList = argspeakerList;
 		okayFunc = argokayFunc;
 		server = argserver ? Server.default;
 		name = argname;
 	}
-	
+
 	makeWindow {|origin|
 		var inChan, onlyFull, startButt;
 		okayFunc = okayFunc.addFunc({ {startButt.value = 0;}.defer});
@@ -125,7 +125,7 @@ BMAutoBalancerGUI : BMAbstractGUI {
 		window.addFlowLayout;
 		inChan = EZNumber(window, 290@20, "Microphone Input Channel ", [1, server.options.numInputBusChannels, \lin, 1, 1].asSpec, numberWidth: 40);
 		window.view.decorator.nextLine.nextLine;
-		SCStaticText(window, 60@20);
+		StaticText(window, 60@20);
 		onlyFull = RoundButton(window, 142.5@20)
 			.extrude_(false)
 			.canFocus_(false)
