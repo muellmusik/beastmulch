@@ -2,6 +2,8 @@
 objects should be an array of BM objects
 would be nice to support other objects, but maybe tricky
 
+maybe should use nowExecutingPath by default and save next to doc rather than app support directory?
+
 can be recursive
 */
 
@@ -35,12 +37,18 @@ BMPresetManager {
 			presetDict = IdentityDictionary.new;
 			presetDict['BMLib Version'] = BMOptions.version;
 			presetDict['BMPresetManager Name'] = name;
+			presetDict['Object Names'] = objects.keys;
 		});
 	}
 	
-	// need to add non-bm object support
-	addPreset {|presetname|
+	store {|presetname|
 		presetDict[presetname] = objects.collect({|object| object.name->object.mappings });
+		
+		archived.if({presetDict.writeArchive(path)});
+	}
+	
+	remove {|presetname|
+		presetDict[presetname] = nil;
 		
 		archived.if({presetDict.writeArchive(path)});
 	}
@@ -49,16 +57,32 @@ BMPresetManager {
 		presetDict.writeArchive(expath)
 	}
 	
-	removePreset {|presetname|}
+	import {|impath|
+		var newDict;
+		try {
+			newDict = Object.readArchive(impath);
+			if(newDict.isKindOf(Dictionary).not || {newDict['Object Names'] != objects.keys}, {newDict.throw});
+			presetDict = newDict;
+			archived.if({presetDict.writeArchive(path)});
+		} {	|thrown|
+			"BMPresetManager import failed".error;
+			"with file at path %:\n".postf(impath);
+			thrown.postcs;
+		}
+	}
 	
-	addObject {|object|}
-	
-	removeObject {|object|}
+//	addObject {|object|}
+//	
+//	removeObject {|object|}
 	
 	// hook for future use
 	convertDict {}
 	
-	mappings {}
+	// for recursive objects
+	mappings { ^presetDict }
 	
-	mappings_ {}
+	mappings_ {|newDict|
+		presetDict = newDict;
+		archived.if({presetDict.writeArchive(path)});	
+	}
 }
