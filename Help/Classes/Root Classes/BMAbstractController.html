@@ -19,23 +19,23 @@ p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco
 p.p10 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
 p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
 p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p13 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #594948; min-height: 12.0px}
+p.p13 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #574948; min-height: 12.0px}
 p.p14 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p15 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #2663e5}
+span.s2 {color: #2c66e3}
 span.s3 {color: #000000}
 span.s4 {color: #007300}
 span.s5 {color: #0000bf}
-span.s6 {color: #2060e7}
-span.s7 {color: #0000ff}
-span.s8 {color: #004ef1}
+span.s6 {color: #2663e5}
+span.s7 {color: #001dfd}
+span.s8 {color: #0652ef}
 span.s9 {font: 9.0px Monaco}
 span.s10 {font: 12.0px Helvetica; color: #000000}
 span.s11 {color: #606060}
 span.s12 {color: #bf0000}
-span.s13 {color: #001dfd}
-span.s14 {color: #0049f3}
+span.s13 {color: #002afb}
+span.s14 {color: #004ef1}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -58,7 +58,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p1">It is sometimes useful to deal with one or the other representation depending on what one is trying to do, but in normal usage it is more common to deal with the controller instance. BMAbstractController has two classvars, <b>allControllers</b> and <b>allControls</b>, which contain dictionaries. These allow objects to query any individual control or controller by <b>name</b>, or to get global information about what controls or controllers currently exist.</p>
 <p class="p2"><br></p>
-<p class="p1">Each controller allocates a multichannel control rate bus for its controls. Objects in the library map to controls by mapping synth Controls to the corresponding bus. Bus values are assumed to be between 0 and 1. On Cmd-. all mappings are cleared.</p>
+<p class="p1">Each controller allocates a multichannel control rate bus for its controls. Objects in the library map to controls by mapping synth Controls to the corresponding bus. Bus values are assumed to be between 0 and 1. On Cmd-. all mappings are cleared. Subclasses of BMAbstractController must store current values in their valueArray in <i>native </i>format, e.g. 0-127 for a MIDI ctrl input.</p>
 <p class="p2"><br></p>
 <p class="p4"><b>Creation / Class Methods</b></p>
 <p class="p5"><br></p>
@@ -165,7 +165,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3"><span class="Apple-tab-span">	</span></span></p>
 <p class="p1"><span class="s9"><span class="Apple-tab-span">	</span></span><b>init (...)</b></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>This method should set the <b>numControls</b> instance var, allocate the controller's bus, populate its valueArray, and add this controller to <b>allControllers</b>.</p>
+<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>This method should set the <b>numControls</b> instance var, allocate the controller's bus, populate its valueArray with appropriate values in the controller's native format (e.g. for midi between 0 and 127), and add this controller to <b>allControllers</b>.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p8"><span class="s10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// example implementation from BMVirtualController</p>
 <p class="p9"><span class="s10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s3">init { </span>|argname, argserver, argnumControls|</p>
