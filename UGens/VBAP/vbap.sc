@@ -2,7 +2,7 @@
 VBAP created by Ville Pukki
 This version ported from ver 0.99 PD code by Scott Wilson
 Development funded in part by the AHRC http://www.ahrc.ac.uk
- 
+
 Copyright
 
 This software is being provided to you, the licensee, by Ville Pulkki,
@@ -19,28 +19,28 @@ use or for distribution:
 
 
  Written by Ville Pulkki 1999
- Helsinki University of Technology 
- and 
+ Helsinki University of Technology
+ and
  Unversity of California at Berkeley
- 
+
 */
 
 
 VBAPSpeakerArray {
 	classvar <>maxNumSpeakers = 55, minSideLength = 0.01;
 	var <dim, <speakers, <numSpeakers, sets;
-	
+
 	*new { |dim, directions|
 		^super.newCopyArgs(dim).initFromDirections(directions);
 	}
-	
+
 	initFromDirections { |directions|
 		if(dim == 2, {directions = directions.collect({|azi| [azi, 0]});});
 		numSpeakers = directions.size;
 		speakers = directions.collect({|dir| VBAPSpeaker.new(dir[0], dir[1]) });
 		this.anglesToCartesian;
 	}
-	
+
 	anglesToCartesian {
 		var atorad = (2 * 3.1415927 / 360);
 		speakers.do({ |spkr|
@@ -52,7 +52,7 @@ VBAPSpeakerArray {
 			spkr.z = sin(ele * atorad);
 		});
 	}
-	
+
 	getSetsAndMatrices {
 		/* calculate and print out chosen loudspeaker sets and corresponding  matrices */
 
@@ -65,33 +65,33 @@ VBAPSpeakerArray {
 		postln("Error in loudspeaker direction data");
 		^nil;
 	}
-	
+
 	loadToBuffer {|server|
 		^Buffer.loadCollection(server, this.getSetsAndMatrices);
 	}
-	
+
 	sendToBuffer {|server|
 		^Buffer.sendCollection(server, this.getSetsAndMatrices);
 	}
-	
-	
+
+
 	     /* Selects the loudspeaker triplets, and
       calculates the inversion matrices for each selected triplet.
      A line (connection) is drawn between each loudspeaker. The lines
-     denote the sides of the triangles. The triangles should not be 
-     intersecting. All crossing connections are searched and the 
+     denote the sides of the triangles. The triangles should not be
+     intersecting. All crossing connections are searched and the
      longer connection is erased. This yields non-intesecting triangles,
-     which can be used in panning. 
+     which can be used in panning.
      See theory in paper Pulkki, V. Lokki, T. "Creating Auditory Displays
      with Multiple Loudspeakers Using VBAP: A Case Study with
-     DIVA Project" in International Conference on 
+     DIVA Project" in International Conference on
      Auditory Displays -98.*/
-     
+
 	choose_ls_triplets {
 		var i1, j1, k1, m, li, table_size;
 		var vb1,vb2,tmp_vec; // instances of VBAPSpeaker
-		var connections; 
-		var angles; 
+		var connections;
+		var angles;
 		var sorted_angles;
 		var distance_table;
 		var distance_table_i;
@@ -105,7 +105,7 @@ VBAPSpeakerArray {
 		distance_table = Array.newClear((maxNumSpeakers * (maxNumSpeakers - 1)) / 2);
 		distance_table_i = Array.newClear((maxNumSpeakers * (maxNumSpeakers - 1)) / 2);
 		distance_table_j = Array.newClear((maxNumSpeakers * (maxNumSpeakers - 1)) / 2);
-  		
+
   		sets = nil;
 		for(0.0, numSpeakers -1, {|i|
 			for(i+1.0, numSpeakers -1, {|j|
@@ -123,12 +123,12 @@ VBAPSpeakerArray {
 				});
 			});
 		});
-   
+
 		/*calculate distancies between all lss and sorting them*/
-		table_size = ((numSpeakers - 1) * (numSpeakers)) / 2; 
+		table_size = ((numSpeakers - 1) * (numSpeakers)) / 2;
 		for(0, table_size -1, { |i| distance_table[i] = 100000.0 });
 		for(0.0, numSpeakers - 1, { |i|
-			for(i+1, numSpeakers - 1, {|j| 
+			for(i+1, numSpeakers - 1, {|j|
 				var k;
 				if(connections[i][j] == 1, {
 					distance = abs(this.vec_angle(speakers[i],speakers[j]));
@@ -174,29 +174,29 @@ VBAPSpeakerArray {
     			i1 = set.chanOffsets[0];
 			j1 = set.chanOffsets[1];
 			k1 = set.chanOffsets[2];
-			(connections[i1][j1] == 0) || (connections[i1][k1] == 0) || (connections[j1][k1] == 0) 
+			(connections[i1][j1] == 0) || (connections[i1][k1] == 0) || (connections[j1][k1] == 0)
 				|| this.any_ls_inside_triplet(i1,j1,k1);
 		});
 		//"triplet_amount after stripping: %\n".postf(sets.size);
 	}
-	
+
 	lines_intersect { |i, j, k, l|
-	     /* checks if two lines intersect on 3D sphere 
+	     /* checks if two lines intersect on 3D sphere
 	       */
 		var v1, v2, v3, neg_v3; // VBAPSpeaker
 		var angle;
-		var dist_ij,dist_kl,dist_iv3,dist_jv3,dist_inv3,dist_jnv3; 
+		var dist_ij,dist_kl,dist_iv3,dist_jv3,dist_inv3,dist_jnv3;
 		var dist_kv3,dist_lv3,dist_knv3,dist_lnv3;
-	
+
 		v1 = this.unq_cross_prod(speakers[i], speakers[j]);
 		v2 = this.unq_cross_prod(speakers[k], speakers[l]);
 		v3 = this.unq_cross_prod(v1, v2);
-		
+
 		neg_v3 = VBAPSpeaker.new;
 		neg_v3.x= 0.0 - v3.x;
 		neg_v3.y= 0.0 - v3.y;
 		neg_v3.z= 0.0 - v3.z;
-	
+
 		dist_ij = (this.vec_angle(speakers[i], speakers[j]));
 		dist_kl = (this.vec_angle(speakers[k], speakers[l]));
 		dist_iv3 = (this.vec_angle(speakers[i], v3));
@@ -207,13 +207,13 @@ VBAPSpeakerArray {
 		dist_lv3 = (this.vec_angle(v3, speakers[l]));
 		dist_knv3 = (this.vec_angle(speakers[k], neg_v3));
 		dist_lnv3 = (this.vec_angle(neg_v3, speakers[l]));
-	
+
 		/* if one of loudspeakers is close to crossing point, don't do anything*/
-		if((abs(dist_iv3) <= 0.01) || (abs(dist_jv3) <= 0.01) || 
+		if((abs(dist_iv3) <= 0.01) || (abs(dist_jv3) <= 0.01) ||
 			(abs(dist_kv3) <= 0.01) || (abs(dist_lv3) <= 0.01) ||
-			(abs(dist_inv3) <= 0.01) || (abs(dist_jnv3) <= 0.01) || 
+			(abs(dist_inv3) <= 0.01) || (abs(dist_jnv3) <= 0.01) ||
 			(abs(dist_knv3) <= 0.01) || (abs(dist_lnv3) <= 0.01), {^false});
-	
+
 		/* if crossing point is on line between both loudspeakers return 1 */
 		if (((abs(dist_ij - (dist_iv3 + dist_jv3)) <= 0.01 ) &&
 	       (abs(dist_kl - (dist_kv3 + dist_lv3))  <= 0.01)) ||
@@ -225,21 +225,21 @@ VBAPSpeakerArray {
 
 
   /* calculate volume of the parallelepiped defined by the loudspeaker
-     direction vectors and divide it with total length of the triangle sides. 
+     direction vectors and divide it with total length of the triangle sides.
      This is used when removing too narrow triangles. */
-	vol_p_side_lgth { |i, j, k| 
+	vol_p_side_lgth { |i, j, k|
 		var volper, lgth;
-		var xprod; 
-		
-		xprod = this.unq_cross_prod(speakers[i], speakers[j]); 
+		var xprod;
+
+		xprod = this.unq_cross_prod(speakers[i], speakers[j]);
 		volper = abs(this.vec_prod(xprod, speakers[k]));
-		lgth = (abs(this.vec_angle(speakers[i], speakers[j])) 
-          	+ abs(this.vec_angle(speakers[i], speakers[k])) 
+		lgth = (abs(this.vec_angle(speakers[i], speakers[j]))
+          	+ abs(this.vec_angle(speakers[i], speakers[k]))
           	+ abs(this.vec_angle(speakers[j], speakers[k])));
 		if(lgth > 0.00001, { ^(volper / lgth)}, { ^0.0 });
 	}
-	
-	//unq_cross_prod(t_ls v1,t_ls v2, t_ls *res) 
+
+	//unq_cross_prod(t_ls v1,t_ls v2, t_ls *res)
 	/* vector cross product */
 	unq_cross_prod { |v1, v2|
   		var length, result;
@@ -253,39 +253,39 @@ VBAPSpeakerArray {
 		result.z = result.z / length;
 		^result;
 	}
-	
+
 	vec_length { |v1|
 		/* length of a vector */
 		^(sqrt(v1.x.squared + v1.y.squared + v1.z.squared));
 	}
-	
+
 	vec_prod {|v1, v2|
 		/* vector dot product */
 		^((v1.x*v2.x) + (v1.y*v2.y) + (v1.z*v2.z));
 	}
-	
+
 	vec_angle{ |v1, v2|
 		/* angle between two loudspeakers */
   		var inner;
-  		inner = ((v1.x*v2.x) + (v1.y*v2.y) + (v1.z*v2.z)) / 
+  		inner = ((v1.x*v2.x) + (v1.y*v2.y) + (v1.z*v2.z)) /
   			(this.vec_length(v1) * this.vec_length(v2));
 		if(inner > 1.0, {inner = 1.0});
 		if (inner < -1.0, {inner = -1.0});
 		^abs(acos(inner));
 	}
-	
+
 	any_ls_inside_triplet { |a, b, c| // speakers, numSpeakers
    		/* returns true if there is loudspeaker(s) inside given ls triplet */
-  		var invdet; 
-		var lp1, lp2, lp3; 
-		var invmx; 
-		var tmp; 
+  		var invdet;
+		var lp1, lp2, lp3;
+		var invmx;
+		var tmp;
 		var any_ls_inside, this_inside;
 
 		lp1 =  speakers[a];
 		lp2 =  speakers[b];
 		lp3 =  speakers[c];
-		
+
 		invmx = Array.newClear(9);
 
 		/* matrix inversion */
@@ -323,39 +323,39 @@ VBAPSpeakerArray {
      /* Calculates the inverse matrices for 3D */
 
 		var invdet;
-		var lp1, lp2, lp3; 
-		var invmx; 
+		var lp1, lp2, lp3;
+		var invmx;
 		var triplet_amount = 0, pointer,list_length=0;
 		var result;
-  
+
 		if(sets.isNil, {
 	    		postln("define-loudspeakers: Not valid 3-D configuration");
 	    		^nil;
 		});
-	
+
  		triplet_amount = sets.size;
  		//"triplet_amount: %\n".postf(triplet_amount);
-		list_length = triplet_amount * 21 + 2; 
+		list_length = triplet_amount * 21 + 2;
 		result = FloatArray.newClear(list_length);
-  
+
 		result[0] = dim;
 		result[1] = numSpeakers;
 		pointer=2;
-  
+
 		sets.do({|set|
     			lp1 = speakers[set.chanOffsets[0]];
 			lp2 = speakers[set.chanOffsets[1]];
 			lp3 = speakers[set.chanOffsets[2]];
-			
+
 			invmx = FloatArray.newClear(9);
-			
+
 			//"lp1x: % lp1y: % lp1z: %\n".postf(lp1.x, lp1.y, lp1.z);
 			//"lp2x: % lp2y: % lp2z: %\n".postf(lp2.x, lp2.y, lp2.z);
 			//"lp3x: % lp3y: % lp3z: %\n".postf(lp3.x, lp3.y, lp3.z);
 			invdet = 1.0 / (  (lp1.x * ((lp2.y * lp3.z) - (lp2.z * lp3.y)))
                     - (lp1.y * ((lp2.x * lp3.z) - (lp2.z * lp3.x)))
                     + (lp1.z * ((lp2.x * lp3.y) - (lp2.y * lp3.x))));
-              
+
               //"invdet: %\n".postf(invdet);
 
 			invmx[0] = ((lp2.y * lp3.z) - (lp2.z * lp3.y)) * invdet;
@@ -387,9 +387,9 @@ VBAPSpeakerArray {
 			result[pointer] = lp3.z; pointer = pointer + 1;
 
 		});
-		^result; 
+		^result;
 	}
-	
+
 	choose_ls_tuplets {
      /* selects the loudspeaker pairs, calculates the inversion
         matrices and stores the data to a global array*/
@@ -399,7 +399,7 @@ VBAPSpeakerArray {
 		var sorted_lss;
 		var exist;
 		var amount=0;
-		var inv_mat;    
+		var inv_mat;
 		var ls_table;
 		var list_length;
 		var result;
@@ -407,7 +407,7 @@ VBAPSpeakerArray {
 
 		exist = Array.newClear(maxNumSpeakers);
 		inv_mat = Array.fill(maxNumSpeakers, {Array.newClear(4)});
-  
+
 		for(0, maxNumSpeakers - 1, {|i|
 			exist[i]=0;
 		});
@@ -418,7 +418,7 @@ VBAPSpeakerArray {
 		/* adjacent loudspeakers are the loudspeaker pairs to be used.*/
 		for(0, numSpeakers -2, {|i|
 			if((speakers[sorted_lss[i+1]].azi - speakers[sorted_lss[i]].azi) <= (180 - 10), {
-				if(this.calc_2D_inv_tmatrix(speakers[sorted_lss[i]].azi, 
+				if(this.calc_2D_inv_tmatrix(speakers[sorted_lss[i]].azi,
 					speakers[sorted_lss[i+1]].azi, inv_mat[i]),{
 					exist[i]=1;
 					amount = amount + 1;
@@ -426,11 +426,11 @@ VBAPSpeakerArray {
 			});
 		});
 
-		if(((6.283 - speakers[sorted_lss[numSpeakers-1]].azi) 
+		if(((6.283 - speakers[sorted_lss[numSpeakers-1]].azi)
 			+ speakers[sorted_lss[0]].azi) <= (180 -  10), {
-			if(this.calc_2D_inv_tmatrix(speakers[sorted_lss[numSpeakers-1]].azi, 
-                           speakers[sorted_lss[0]].azi, 
-                           inv_mat[numSpeakers-1]), { 
+			if(this.calc_2D_inv_tmatrix(speakers[sorted_lss[numSpeakers-1]].azi,
+                           speakers[sorted_lss[0]].azi,
+                           inv_mat[numSpeakers-1]), {
 				exist[numSpeakers-1]=1;
 				amount = amount + 1;
 			});
@@ -439,11 +439,11 @@ VBAPSpeakerArray {
 		/* Output */
 		list_length= amount * 6 + 2;
 		result = Array.newClear(list_length);
-  
+
 		result[0] = dim;
 		result[1] = numSpeakers;
 		pointer=2;
-  
+
 		for(0, numSpeakers - 2, {|i|
 			if(exist[i] == 1, {
 				result[pointer] = sorted_lss[i]+1;
@@ -475,12 +475,12 @@ VBAPSpeakerArray {
 		var i,j,index;
 		var tmp, tmp_azi;
 		var rad2ang = 360.0 / ( 2 * pi );
-		
+
 		var x,y;
 		var sorted_lss;
-		
+
 		sorted_lss = Array.newClear(maxNumSpeakers);
-		
+
 		/* Transforming angles between -180 and 180 */
 		for (0, numSpeakers - 1, {|i|
 			speakers[i].azi = acos( speakers[i].x) * rad2ang;
@@ -513,11 +513,11 @@ VBAPSpeakerArray {
 	calc_2D_inv_tmatrix { |azi1, azi2, inv_mat|
 	/* calculate inverse 2x2 matrix */
 
-		var x1,x2,x3,x4; 
+		var x1,x2,x3,x4;
 		var y1,y2,y3,y4;
 		var det;
 		var rad2ang = 360.0 / ( 2  * 3.141592 );
-  
+
 		x1 = cos(azi1 / rad2ang);
 		x2 = sin(azi1 / rad2ang);
 		x3 = cos(azi2 / rad2ang);
@@ -544,17 +544,17 @@ VBAPSpeakerArray {
 VBAPSpeaker {
 
 	// setters are 'private'
-	
+
 	var <>x, <>y, <>z;
-	
+
 	// spherical coords, angles (in degrees) from a central point
-	var <>azi; 	// from median plane +/- 180 deg 
+	var <>azi; 	// from median plane +/- 180 deg
 	var <>ele; 	// above azimuthal plane
-	
+
 	*new {|azi, ele|
 		^super.new.init(azi, ele);
 	}
-	
+
 	init{|azimuth, elevation, radius|
 		azi = azimuth;
 		ele = elevation;
@@ -562,15 +562,15 @@ VBAPSpeaker {
 }
 
 VBAPSpeakerSet { // triplet or pair
-	var <chanOffsets; 
-	var <>inv_mx; 
-  
+	var <chanOffsets;
+	var <>inv_mx;
+
 	*new {|chanOffsets|
   		^super.newCopyArgs(chanOffsets);
   	}
 }
 
-VBAP : Panner {
+VBAP : MultiOutUGen {
 	// spread 0 - 100
 	*ar { arg numChans, in, bufnum, azimuth = 0.0, elevation = 1.0, spread = 0.0;
 		^this.multiNew('audio', numChans, in, bufnum, azimuth, elevation, spread )
@@ -579,7 +579,7 @@ VBAP : Panner {
 		^this.multiNew('control', numChans, in, bufnum, azimuth, elevation, spread )
 	}
 	init { arg numChans ... theInputs;
-		inputs = theInputs;		
+		inputs = theInputs;
 		channels = Array.fill(numChans, { arg i; OutputProxy(rate,this, i) });
 		^channels
 	}
