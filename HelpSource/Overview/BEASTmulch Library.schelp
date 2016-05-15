@@ -1,0 +1,111 @@
+TITLE:: BEASTmulch Library
+summary:: Documentation BEASTmulch
+categories:: Overview
+
+Description::
+
+The BEASTmulch Library is a collection of SC objects designed for use in the creation, processing and presentation of complex multichannel signal chains.
+
+Objects includes sources (subclasses of Link::Classes/Root Classes/BMAbstractAudioSource::), such as Link::Classes/Other/BMSoundFilePlayer::, routers and mixers such as Link::Classes/Matrices/BMAudioMatrix:: and Link::Classes/Matrices/BMAmpControlMatrix::, and processors and spatialisers such as Link::Classes/Plugins/BMTrimPluginsRack:: and Link::Classes/Plugins/BMMultichannelPluginsRack::. There are also classes which represent controllers (subclasses of BMAbstractController) with examples including MIDI controllers, GUI Faders, EtherSense, etc., and support for automation of controllers (i.e automated mixing and diffusion).
+
+The library supports a number of standard spatialisation techniques, such as Ambisonics, and includes SC ports of Ville Pullki's Vector Base Amplitude Panning (VBAP), and the Loris analysis resynthesis method. It also supports some idiosyncratic techniques, such as Spatial Swarm Granulation, and provides utility classes for Speaker Array balancing and visualisation.
+
+Currently the library is not fully cross-platform: GUI classes and UGens are OSX only.
+
+http://www.beast.bham.ac.uk/research/mulch.shtml 
+beastmulch-info@contacts.bham.ac.uk
+
+Installation and Dependencies
+
+The library can be installed in one of the normal platform-specific folders for extensions. You can find out what these are by executing these two lines of code:
+
+	Platform.userExtensionDir;
+	Platform.systemExtensionDir;
+
+See Using-Extensions for further details.
+
+The library also has three dependencies which are required for full functionality. The first two are Wouter Snouei's wslib and Dan Stowell's KDTree, which are available as Quarks. You can install them by calling Quarks.gui, or executing the following and recompiling:
+
+	"wslib".include;
+	"KDTree".include;
+
+The third is Josh Parmenter's collection of ambisonics UGens. These are part of the sc3-plugins package, which is available from: http://sc3-plugins.sourceforge.net/.
+
+
+Library Overview
+
+Naming Conventions and Global Lookup
+
+Classes in the library are named with the prefix 'BM'. Abstract classes include the word 'Abstract' in their name. Looking through the help files of these and other basic classes can provide a good overview of the library and its capabilities. The most important objects are BMAbstractAudioChainElement, BMAbstractMatrix, BMAbstractAudioSource, BMAbstractController, BMAbstractGUI, BMAbstractAutomator, and BMInOutArray.
+
+Most objects in the library take a Symbol as a name, which allows for global lookup of objects, preset storing and recall, etc. Where it is necessary for users to be able to query all instances of a particular type, instances are stored in global dictionaries, using each object's name as a key. The most important of these are:
+
+	BMAbstractAudioChainElement.allChainElements;	// objects forming part of a signal chain
+	BMAbstractController.allControllers;	// objects representing a controller (e.g. fader box) 
+	BMAbstractController.allControls;	// objects representing a single control (e.g. a fader)
+	BMTimeReferences.timeReferences;		// objects which serve as clock sources
+
+GUI Classes
+
+Many objects have corresponding GUI classes, which can usually be created automatically using the gui method.
+
+	p = BMSoundFilePlayer(name:\foo);
+	p.bus = 0; // for the sake of example
+	p.gui.onClose_({p.free});
+		
+GUI objects (and other objects in the library) make heavy use of class Object's dependancy mechanism in order to stay in sync. This in combination with the global lookup facilities make it possible to design extremely flexible code, which can adapt to the resources available.
+
+Inputs, Outputs and Groups
+
+Input and output busses for objects are generally represented as instances of BMInOutArray, which is an ordered dictionary which matches keys (i.e. meaningful names) to bus indices or speakers (which include a bus, and are represented by the BMSpeaker class).
+
+Objects which create synths generally do so in a specific group (and have a like named getter method), and respond to the message asTarget by returning that group. This means that objects are generally compatible with 'object-style' SC programming, and can be passed as targets to methods like Synth:new, etc.
+
+Mappings
+
+Many objects in the library implement mappings and mappings_ methods, which allow you to capture or set their current state. Using an object's name as a key, one can easily construct dictionaries which can serve as presets for an entire chain of elements. For example
+
+	( // get a preset
+	~preset = BMAbstractAudioChainElement.allChainElements.collectAs({|element|
+		element.name->element.mappings;
+	}, IdentityDictionary);
+	)
+	
+	( // set a preset
+	~preset.keysValuesDo({|k, v|
+		BMAbstractAudioChainElement.allChainElements[k].mappings_(v);
+	});
+	)
+
+Browsing and Searching Documentation
+
+To browse all files in the library execute the following:
+
+	Help(".".resolveRelative).gui; // for general Library
+	Help("../UGens".resolveRelative).gui; // for UGens
+
+From there you can see sections on Root Classes, Automation (i.e. auto-mixing and diffusion), Controllers (e.g. hardware and software controllers), Inputs and Outputs (bus arrays, speakers, MIDI), Matrices (matrix routers and mixers, and controller assignment), Plugins (monophonic and multichannel processors), and Other (sound file player and utilities.)
+
+
+Acknowledgements
+
+BEASTmulch Library was programmed by Scott Wilson and Sergio Luque. Significant creative input was provided by Jonty Harrison, Eric Bumstead, James Carpenter and the numerous members and guests of the BEAST community who tried out the software in its various stages of development.
+
+The BEASTmulch project received funding from the Arts and Humanities Research Council of the UK, and was sponsored by the University of Birmingham.
+
+
+attachments/BEASTmulch Library/www.ahrc.ac.uk.png 
+
+http://www.ahrc.ac.uk
+
+
+
+attachments/BEASTmulch Library/www.bham.ac.uk.png
+
+http://www.bham.ac.uk
+
+
+
+BEAST
+
+http://www.beast.bham.ac.uk/research/mulch.shtml

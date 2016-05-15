@@ -1,0 +1,10 @@
+TITLE:: BMTimeReferences
+summary:: Documentation BEASTmulch
+categories:: UGens>Generators>Deterministic
+
+Description:
+
+BMTimeReferences provides a central registry and some utility functions for Time References in the BEASTmulch library. Time References are objects which can supply a current time for use with automation, etc.
+
+See also: link:: ../../Time References and Automation ::
+

@@ -1,0 +1,54 @@
+title:: BMTimeReferences
+summary:: Documentation BEASTmulch
+categories:: Class
+
+Description:
+
+BMTimeReferences provides a central registry and some utility functions for Time References in the BEASTmulch library. Time References are objects which can supply a current time for use with automation, etc.
+
+See also: link:: Overview/Time References and Automation ::
+
+CLASSMETHODS::
+
+subsection:: Document index
+
+method:: addReference
+Classes which can serve as time references should call this in their initialisation code (passing themselves as ref) in order to register themselves as an available time references.
+		
+argument:: ref
+The object to be added as a Time Reference.
+
+method:: removeReference (ref)
+Classes which can serve as time references should call this in their cleanup code (passing themselves as ref) in order to unregister themselves as an available time references.
+
+argument:: ref
+The Time Reference object to be removed.
+
+method:: timeReferences
+Returns a Set containing the names of all available time References as Symbols.
+
+code::		
+p = BMSoundFilePlayer(name:\foo); // this calls *addReference in its init code
+BMTimeReferences.timeReferences; // contains foo
+p.free; // free p's resources, calls *removeReference
+BMTimeReferences.timeReferences; // foo who?
+::
+
+method:: currentTime (ref)
+Calculate the current time in seconds for the Time Reference named ref. This will be based on the last available reference time and rate of change. This method can be used by classes which may need to update at a different rate than the time reference itself, such as automators.
+		
+argument:: ref
+The object whose time should be calculated.
+
+code::
+p = BMSoundFilePlayer(name:\foo);
+BMTimeReferences.currentTime(p); // 0
+p.read("sounds/a11wlk01.wav");
+(
+p.play(0, 0).rate_(0.1); // play at 1/10 normal speed
+SystemClock.sched(1, { BMTimeReferences.currentTime(p).postln; 1}); // changes slower than normal
+)
+p.free;
+::
+
+
