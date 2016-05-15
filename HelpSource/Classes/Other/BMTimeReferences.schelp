@@ -1,8 +1,8 @@
 title:: BMTimeReferences
 summary:: Documentation BEASTmulch
-categories:: Class
+categories:: Classes
 
-Description:
+Description::
 
 BMTimeReferences provides a central registry and some utility functions for Time References in the BEASTmulch library. Time References are objects which can supply a current time for use with automation, etc.
 
@@ -10,7 +10,7 @@ See also: link:: Overview/Time References and Automation ::
 
 CLASSMETHODS::
 
-subsection:: Document index
+subsection:: Class Methods
 
 method:: addReference
 Classes which can serve as time references should call this in their initialisation code (passing themselves as ref) in order to register themselves as an available time references.
