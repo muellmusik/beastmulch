@@ -1,0 +1,46 @@
+title:: BMAbstractIndependentRateAutomator
+summary:: Documentation BEASTmulch - independent update rate automator
+categories:: Classes
+
+Description::
+
+BMAbstractIndependentRateAutomator is the abstract superclass of automators that have an update rate which is independent from that of its time reference. In some cases it can be useful or necessary to automate at a separate rate, for instance when automating a GUI, which may cause hangs with a fast update rate.
+
+If the automation rate is different from that of the time reference a best guess of the current time is made using the last available rate and reference time.
+
+See also: link::Classes/Automation/BMControllerAutomator::, link::Classes/Automation/BMAbstractAutomator::, link::Overview/Time References and Automation::, link::Classes/Other/BMTimeReferences::
+
+INSTANCEMETHODS::
+
+method:: interval
+Get and Set the rate in seconds at which automation is updated.
+
+argument:: rate
+It must be in seconds.
+
+subsection:: Subclassing
+The following methods may need to be overrriden in subclasses. See also link::Classes/Automation/BMAbstractAutomator::.
+
+method:: startUpdateLoop
+This sets Strong::running:: to true and starts a while loop calling Strong::automate:: at this automator's Strong::interval::. The default implementation is as follows, but you can override to add any necessary initialisation:
+
+code::
+startUpdateLoop {
+	running = true;
+	Routine({
+	while({running}, {
+		this.automate;
+		interval.wait;
+	});
+	}).play;
+}
+::
+
+
+method:: stopUpdateLoop
+This stops the update loop and thus ends automation. The default implementation simply sets Strong::running:: to false, but you can override to add any necessary cleanup code.
+
+
+method:: reset
+This is called when the time reference sends a Strong::changed::: code::\stop:: to the automator. This resets the automator, and does any necessary cleanup. The default implementation does nothing.
+

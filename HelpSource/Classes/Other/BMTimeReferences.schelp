@@ -10,13 +10,12 @@ See also: link:: Overview/Time References and Automation ::
 
 CLASSMETHODS::
 
-subsection:: Class Methods
-
 method:: addReference
 Classes which can serve as time references should call this in their initialisation code (passing themselves as ref) in order to register themselves as an available time references.
-		
+
 argument:: ref
 The object to be added as a Time Reference.
+
 
 method:: removeReference
 Classes which can serve as time references should call this in their cleanup code (passing themselves as ref) in order to unregister themselves as an available time references.
@@ -24,19 +23,21 @@ Classes which can serve as time references should call this in their cleanup cod
 argument:: ref
 The Time Reference object to be removed.
 
+
 method:: timeReferences
 Returns a Set containing the names of all available time References as Symbols.
 
-code::		
+code::
 p = BMSoundFilePlayer(name:\foo); // this calls *addReference in its init code
 BMTimeReferences.timeReferences; // contains foo
 p.free; // free p's resources, calls *removeReference
 BMTimeReferences.timeReferences; // foo who?
 ::
 
+
 method:: currentTime
 Calculate the current time in seconds for the Time Reference named ref. This will be based on the last available reference time and rate of change. This method can be used by classes which may need to update at a different rate than the time reference itself, such as automators.
-		
+
 argument:: ref
 The object whose time should be calculated.
 
@@ -50,5 +51,3 @@ SystemClock.sched(1, { BMTimeReferences.currentTime(p).postln; 1}); // changes s
 )
 p.free;
 ::
-
-
