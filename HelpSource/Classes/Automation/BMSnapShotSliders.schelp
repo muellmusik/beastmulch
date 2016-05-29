@@ -1,0 +1,19 @@
+title:: BMSnapShotSliders
+summary:: Documentation BEASTmulch - a GUI for showing and editing the state of a BMSnapShot
+categories:: Classes
+
+Description::
+
+BMSnapShotSliders is a modal sheet for showing and editing the state of a BMSnapShot. This uses BMControl:displaySpec to determine the correct range and units for display based on what the control is mapped to. Normally you would not need to create one of these directly, but it is used by BMControllerAutomatorGUI.
+
+See also: link::Classes/Automation/BMSnapShot::, link::Classes/Automation/BMControllerAutomatorGUI::, link::Classes/Automation/BMControllerAutomator::
+
+CLASSMETHODS::
+
+method:: new
+
+argument:: snapshot
+The link::Classes/Automation/BMSnapShot:: whose state is to be represented.
+argument:: parent
+The parent window. Usually this would be the window of a link::Classes/Automation/BMControllerAutomatorGUI::.
+

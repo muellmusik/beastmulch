@@ -1,0 +1,89 @@
+title:: BMSnapShotSeq
+summary:: Documentation BEASTmulch - a sequence of automation snapshots
+categories:: Classes
+
+Description::
+
+BMSnapShotSeq is a time ordered sequence of automation snapshots. Under normal circumstances you will not need to make these directly, but will rather create them through an automator object, for example an instance of BMControllerAutomator.
+
+See also: link::Classes/Automation/BMAbstractSnapShot::, link::Classes/Automation/BMArbitraryStartSnapShot::, link::Classes/Automation/BMSnapShotSeq::, link::Classes/Automation/BMAbstractAutomator::, link::Classes/Root Classes/BMControl::, link::Classes/Root Classes/BMAbstractController::, link::Classes/Automation/BMSnapShotSliders::, link::Overview/Time References and Automation::
+
+CLASSMETHODS::
+
+method:: new
+Create a new snapshot sequence.
+
+argument:: name
+A Symbol indicating the name of this snapshot sequence.
+
+argument:: controls
+An Array of Symbols corresponding the names of the BMControl instances to be automated.
+
+argument:: firstSnapTime
+A time in seconds corresponding to the start time of this sequence. An initial snapshot will be made of the values of the controls and added at this time, and an arbitrary snapshot added 1 second before this time.
+
+argument:: curve
+A curve to use for interpolation segments. Valid values are the same as those for code::Env::. The default is 'lin'.
+
+
+INSTANCEMETHODS::
+
+method:: name
+Returns a Symbol indicating the name of this snapshot sequence.
+
+method:: snapshots
+Returns an Array containing this sequence's snapshots in time order.
+
+method:: start
+Returns the time of the first snapshot in this sequence in seconds. Since the first snapshot is arbitrary, this may be earlier than the firstSnapTime specified above.
+
+method:: end
+Returns the time of the last snapshot in this sequence in seconds.
+
+method:: curve
+Returns the curve used for interpolation segments. This will be one of those specified in the help file for code::Env::.
+
+method:: snapshotsDict
+Returns an code::IdentityDictionary:: in the form code::[snapshot1Name->snapshot1, snapshot2Name->snapshot2]::.
+
+
+method:: minSegSize
+Set or get the minimum size for an interpolation segment in seconds. This can be useful in preventing physical controllers from being overloaded.
+
+argument: newSize
+It must be in seconds.
+
+
+method:: duration
+Returns the duration of this sequence in seconds.
+
+
+method:: addSnapShot
+Add a new snapshot to this sequence. This will capture the current state of the controls.
+
+argument:: time
+The time at which to add this snapshot. This will be relative to a Time Reference. See link::Overview/Time References and Automation::.
+argument:: ssname
+A Symbol indicating the name of this snapshot.
+
+
+method:: removeSnapShot
+Remove a snapshot from this sequence.
+
+argument:: ssname
+A Symbol indicating the name of the snapshot to remove.
+
+
+method:: atTime
+Returns an IdentityDictionary in the form [ctrlname->valueAtTime, ...].
+
+argument:: time
+Explanation of time. Default value is nil. Other information.
+
+
+method:: containsTime
+Returns a Boolean indicating whether time is inclusively between this sequences start and end times.
+
+argument:: time
+The time in seconds to test.
+

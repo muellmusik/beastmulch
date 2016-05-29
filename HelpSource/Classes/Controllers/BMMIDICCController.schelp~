@@ -1,0 +1,65 @@
+title:: BMMIDICCController
+summary:: Documentation BEASTmulch - Generic MIDI Control Change Controller	
+categories:: Classes
+
+Description::
+
+This class implements a generic controller which receives MIDI control change messages.
+
+See also: link::Classes/Root Classes/BMAbstractController::, link::Classes/Controllers/BMAbstractMIDIController::, link::Classes/Controllers/BMMIDIBendController::
+
+CLASSMETHODS::
+
+method:: new
+Create a new BMMIDICCController.
+
+argument:: midiport
+An instance of link::Classes/Inputs and Outputs/BMMIDIPort::.
+argument:: name
+A Symbol indicating the name of this controller.
+argument:: chan
+The MIDI Channel to receive on. Note these start from 0.
+argument:: ccArray
+An Array of Integers indicating which control numbers constitute this object's controls, and the order in which they should occur.
+argument:: server
+An instance of Server. If you pass nil this will be the default Server.
+	
+code::	
+// initialise MIDI ports
+BMMIDIPort.init;
+// get a port
+p = BMMIDIPort.ports['IAC Bus 1'];
+b = BMMIDICCController.new(p, \bendController, 0, [7, 1], s); // volume and mod
+	
+b.free; // free my resources
+::
+
+method:: newFromParamDict
+Create a new instance using a parameter dictionary. (See link::Classes/Root Classes/BMAbstractController:: for more information.)
+
+argument:: dict
+A Dictionary or subclass with values for the following keys: code::\midiport:: -> An instance of link::Classes/Inputs and Outputs/BMMIDIPort::, code::\chan:: -> An Integer from 0 to 15, code::\ccArray:: -> An Int8Array, name -> A Symbol indicating the name of this controller.
+argument:: server
+An instance of Server. If you pass nil this will be the default Server.
+
+
+method:: parameterList
+See link::Classes/Root Classes/BMAbstractController:: for a discussion of this method. This is the implementation for BMMIDICCController:
+		
+code::
+*parameterList { 
+	var class;
+	class = this;
+	^(
+		name: [Symbol, {class.makeName}, "Name"],
+		midiport: [BMMIDIPort, nil, "MIDI Port"],
+		chan: [Integer, [1, 16, \linear, 1, 0].asSpec, "MIDI Channel"],
+		ccArray: [Int8Array, "", "CC numbers"]
+	); 
+}
+::
+
+method:: humanName
+Returns the String "MIDI CC Controller".
+
+

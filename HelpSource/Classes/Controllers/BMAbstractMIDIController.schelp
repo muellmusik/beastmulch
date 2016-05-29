@@ -1,0 +1,63 @@
+title:: BMAbstractMIDIController
+summary:: Documentation BEASTmulch - abstract superclass of MIDI controllers in the BM library	
+categories:: Classes
+
+Description::
+
+BMAbstractMIDIController is the abstract superclass of generic MIDI controllers in the BEASTmulch library.
+
+See also: link::Classes/Root Classes/BMAbstractController::, link::Classes/Controllers/BMMIDICCController::, link::Classes/Controllers/BMMIDIBendController::, link::Classes/Root Classes/BMControl::
+
+INSTANCEMETHODS::
+				
+method:: acceptsAutomation
+By default this is false, but can be set to true. Some MIDI controllers are motorised for instance, and thus automatable.
+				
+method:: loopBack
+Get or set a Boolean indicating whether incoming messages are echoed back out to the controller. Some more complex MIDI devices require this. The default is false.
+	
+method:: midiout
+Get this controller's MIDIOut object.
+				
+				
+method:: startListening
+This should add appropriate responder object(s) to update values when messages are received. It should call updateValue to do this.
+
+code::
+// sample implementation from BMMIDICCController
+startListening { 
+	responder = CCResponder({|src, chan, num, value|
+		this.updateValue(ccArray.indexOf(num), value);
+	}, uid, chan, ccArray);
+}
+::
+
+method:: makeInputSpec
+This should create a spec to convert from incoming values to 0..1.
+	
+code::	
+// sample implementation from BMMIDICCController
+makeInputSpec {
+	spec = [0, 127].asSpec;
+}
+::
+
+method:: setNumControls
+This should set the numControls instance var appropriately.
+	
+method:: loopback
+This should send incoming messages back to the controller if needed.
+		
+method:: updateValue
+Called by responders when a MIDI message is received to update control busses and call loopback if specified.
+
+argument:: ind
+Index of control to update. Starts from 0.
+argument:: val
+Value to update. This should be in native units (e.g. 0..127) rather than 0..1.
+
+method:: updateAllValues
+Update all values at once.
+
+argument:: array
+An array of values to update. These should be in native units (e.g. 0..127) rather than 0..1.

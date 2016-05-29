@@ -1,0 +1,9 @@
+title:: BMSnapShotSequenceSeg
+summary:: Documentation BEASTmulch - segment in an automation sequence
+categories:: Classes
+
+Description::
+
+This is a private class representing a segment in an automation sequence. You do not need to make these directly.
+
+See also: link::Classes/Automation/BMAbstractAutomator::, link::Classes/Automation/BMSnapShot::

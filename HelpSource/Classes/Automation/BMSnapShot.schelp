@@ -1,0 +1,11 @@
+title:: BMSnapShot
+summary:: Documentation BEASTmulch - represents an automation snapshot
+categories:: Classes
+
+Description::
+
+BMSnapShot represents a snapshot in an automation sequence. Its public methods are all defined in its superclass.
+
+Under normal circumstances you will not need to make these directly, but will rather create them through a link::Classes/Automation/BMSnapShotSeq::.
+
+See also: link::Classes/Automation/BMAbstractSnapShot::, link::Classes/Automation/BMArbitraryStartSnapShot::, link::Classes/Automation/BMSnapShotSeq::, link::Classes/Automation/BMAbstractAutomator::, link::Classes/Root Classes/BMControl::, link::Classes/Root Classes/BMAbstractController::, link::Classes/Automation/BMSnapShotSliders::, link::Overview/Time References and Automation::

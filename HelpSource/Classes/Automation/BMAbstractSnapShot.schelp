@@ -1,0 +1,58 @@
+title:: BMAbstractSnapShot
+summary:: Documentation BEASTmulch - abstract superclass of automation snapshots
+categories:: Classes
+
+Description::
+
+This is the abstract superclass of automation snapshots. Snapshots represent the momentary state of something being automated.
+
+See also: link::Classes/Automation/BMSnapShot::, link::Classes/Automation/BMArbitraryStartSnapShot::, link::Classes/Automation/BMSnapShotSeq::, link::Classes/Automation/BMAbstractAutomator::, link::Classes/Root Classes/BMControl::, link::Classes/Root Classes/BMAbstractController::, link::Overview/Time References and Automation::
+
+CLASSMETHODS::
+
+method:: new
+Make a new snapshot.
+
+argument:: controls
+An Array of Symbols corresponding the names of the BMControl instances to be automated.
+
+argument:: time
+Time in seconds for this snapshot. This will be relative to a Time Reference. See Time link::Overview/References and Automation::.
+
+argument:: name
+A Symbol indicating the name of this snapshot.
+
+
+INSTANCEMETHODS::
+
+method:: values
+Returns an IdentityDictionary in the form of [ctrlname1->value1, ctrlname2->value2, ...] indicating the values of the automated controls at this snapshot's time.
+
+method:: time
+Returns the time in seconds for this snapshot. This will be relative to a Time Reference. See link::Overview/Time References and Automation::.
+
+method:: name
+Returns a Symbol indicating the name of this snapshot.
+
+method:: controlNames
+Returns an Array of Symbols corresponding the names of the BMControl instances being automated.
+
+
+method:: time
+Set the time of this snapshot.
+
+argument:: newTime
+The new time in seconds.
+
+
+method:: isKnown
+Returns a Boolean indicating if this snapshot is arbitrary. Arbitrary snapshots are those whose state can only be determined when they become active in an interpolation segment. The default implementation returns true since most snapshots are not arbitrary. Subclasses can override this to return false if need be. See link::Classes/Automation/BMArbitraryStartSnapShot:: for more information.
+
+
+method:: setValue
+Sets the value for a particular control.
+
+argument:: ctrl
+A Symbol indicating the name of the control.
+argument:: value
+The new value, usually a Float.

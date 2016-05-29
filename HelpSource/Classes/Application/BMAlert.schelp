@@ -1,0 +1,7 @@
+title:: BMAbstractAutomator
+summary:: Documentation BEASTmulch - abstract superclass of all automators
+categories:: Classes
+
+Description::
+
+This is a private class used in the BEASTmulch System application. It is included here for example purposes only. This is a modified version of Wouter Snouei's SCAlert class from the wslib Quark.
