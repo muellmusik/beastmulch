@@ -1,0 +1,74 @@
+title:: BMSpeakerListVisualiser
+summary:: Documentation BEASTmulch - visualise the positions of a speaker list in a window
+categories:: Classes
+
+Description::
+
+BMSpeakerListVisualiser provides a 3D visualisation of the positions of a speaker list (a link::Classes/Inputs and Outputs/BMInOutArray::) in a space. You can rotate the visualisation trackball style with the mouse, and zoom vertically using the slider at the top.
+
+Speakers will be labelled on the back with their names, and colour coded according to subarray membership (using first subarray found).
+
+This class can also be used in conjunction with link::Classes/Other/Swarm Granulation/BMSwarmGranulator:: and link::Classes/Other/Swarm Granulation/BMBoidSpace:: to visualise grain boid positions.
+
+See also: link::Classes/Root Classes/BMAbstractGUI::, link::Classes/Inputs and Outputs/BMSpeaker::, link::Classes/Inputs and Outputs/BMInOutArray::, link::Classes/Other/Swarm Granulation/BMSwarmGranulator::, link::Classes/Other/Swarm Granulation/BMBoidSpace::
+
+CREATEMETHODS::
+
+method:: new	
+Create a new BMSpeakerListVisualiser.
+
+argument:: speakerList
+An instance of link::Classes/Inputs and Outputs/BMInOutArray::.
+
+
+INSTANCEMETHODS::
+				
+method:: showBoids
+Turn grain boid drawing on or off.
+
+argument:: bool
+A link::Classes/Boolean:: value.
+
+
+method:: boidPositions
+Set the positions at which to draw the grain boids. The x-axis is specified within the range of +/- 1. The y and z axes are sized proportionally. Normally these are derived using BMBoidSpace's positions method.
+
+argument:: boidsArray
+An Array of Arrays in the form [[x1, y1, z1], [x2, y2, z2], ...]
+
+
+Examples::
+
+code::
+////// 5.1 Array (-0.1)
+(
+// make a speaker list
+l = [[-30, 'L'], [30, 'R'], [0, 'C'], [-110, 'Ls'], [110, 'Rs']].collectAs({|el, i|
+	BMSpeaker.newFromSpherical(el[1], i, el[0], 0, 2);
+}, BMInOutArray);
+)
+v = BMSpeakerListVisualiser(l); // let's look at it
+
+
+////// American style 8 Channel Ring
+(
+l = [[0, 'F' ], [45, 'FR'], [90, 'R'], [135, 'BR'], [180, 'B'], [-135, 'BL'], [-90, 'L'], [-45, 'FL']].collectAs({|el, i|
+	BMSpeaker.newFromSpherical(el[1], i, el[0], 0, 2);
+}, BMInOutArray);
+)
+BMSpeakerListVisualiser(l); // let's look at it
+
+
+////// zig zag partial dome
+(
+l = [[-22.5, 40, 'Upper1'], [22.5, 40, 'Upper2'], [-67.5, 40, 'Upper3'], [67.5, 40, 'Upper4'], [-112.5, 40, 'Upper5'], [112.5, 40, 'Upper6'], [-157.5, 40, 'Upper7'], [157.5, 40, 'Upper8'], [-45, 0, 'Lower1'], [45, 0, 'Lower2'], [-90, 0, 'Lower3'], [90, 0, 'Lower4'], [-135, 0, 'Lower5'], [135, 0, 'Lower6'], [0, 0, 'Lower7'], [180, 0, 'Lower8']].collectAs({|el, i|
+	BMSpeaker.newFromSpherical(el[2], i, el[0], el[1], 2);
+}, BMInOutArray);
+l.defineSubArray(\upper, l.keys[(0..7)]);
+l.defineSubArray(\lower, l.keys[(8..15)]);
+)
+BMSpeakerListVisualiser(l); // note subArray colour coding
+
+////// Big BEAST Array
+BMSpeakerListVisualiser(Object.readArchive("BigSpeakerArray".resolveRelative));
+::

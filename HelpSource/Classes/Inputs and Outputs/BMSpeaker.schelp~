@@ -1,0 +1,162 @@
+title:: BMSpeaker
+summary:: Documentation BEASTmulch - represents a speaker connected to a hardware output bus
+categories:: Classes
+
+Description::
+
+BMSpeaker represents a speaker connected to one of a server's hardware outputs. In addition to the output bus index, it encapsulates information on location (in both Cartesian and spherical coordinates), speaker type, trim values, and directivity.
+
+See also: link::Classes/Inputs and Outputs/BMInOutArray::, link::Classes/Inputs and Outputs/BMSpeakerSpec::, link::Classes/Other/BMAutoBalancer::, link::Classes/Inputs and Outputs/BMSpeakerArrayGUI::, link::Classes/Inputs and Outputs/BMSpeakerListVisualiser::
+
+Section:: Compatibility and Polymorphism
+
+BMSpeaker responds to strong::asUGenInput::, strong::asControlInput::, strong::asOSCArgBundle::, and strong::asOSCArgArray:: by returning its bus index. It can thus be used directly in most places where you would pass such an index. For example:
+
+code::
+i = BMSpeaker(\right, 1);
+// make a Synth
+x = {Out.ar(i, SinOsc.ar(440, 0, 0.2))}.play; // pass BMSpeaker as bus arg
+x.free;
+::
+
+BMSpeaker masquerades as an Association, returning its name as key, and itself as value. The standard Collection class to use for speaker lists is link::Classes/Inputs and Outputs/BMInOutArray::.
+
+CLASSMETHODS::
+
+method:: new	
+Create a new BMSpeaker using Cartesian coordinates. (0,0,0) is generally considered to be head height at the centre of the listening area.
+
+argument:: name
+A link::Classes/Symbol:: corresponding to the name of this speaker.
+argument:: index
+The bus index corresponding to this speaker's hardware output.
+argument:: x
+x (left-right) coordinate in meters. Default value is 1. 
+argument:: y
+y (front-back) coordinate in meters. Default value is 1.
+argument:: z
+z (height) coordinate in meters. Default value is 1.
+argument:: spec
+A link::Classes/Symbol:: corresponding to the name of an existing link::Classes/Inputs and Outputs/BMSpeakerSpec::. Default value is 'Generic'.
+	
+code::
+b = BMSpeaker.new(\left, 0, -1, 1.732, 0, 'UREI-809'); // make a "new" Urei 809
+b.azi; // spherical coords automatically calculated
+::
+
+
+method:: newFromSpherical
+Create a new BMSpeaker using spherical coordinates, generally considered relative to (0,0,0) in Cartesian coordinates (see above).
+
+argument:: name
+A link::Classes/Symbol:: corresponding to the name of this speaker.
+argument:: index
+The bus index corresponding to this speaker's hardware output.
+argument:: azi
+Azimuth (horizon) angle in degrees. 0 is straight ahead (positive y-axis). Default value is 0.
+argument:: ele
+Elevation (height) angle in degrees above or below the azimuth plane. Default value is 0.
+argument:: rad
+Radius in meters from the centre point.
+argument:: spec
+A link::Classes/Symbol:: corresponding to the name of an existing link::Classes/Inputs and Outputs/BMSpeakerSpec::. Default value is 'Generic'.
+		
+code::
+b = BMSpeaker.newFromSpherical(\left, 0, -30, 0, 2, 'Kef-C20'); // make a "new" Kef C20
+b.x; // Cartesian coords automatically calculated
+::
+
+
+INSTANCEMETHODS::
+	
+method:: index
+Set or get this speaker's bus index.
+				
+method:: description
+Set or get a link::Classes/String:: to serve as a human readable description of this speaker. This can be more verbose than name. Default value is nil.
+				
+method:: name
+Set or get a link::Classes/Symbol:: to use as this speaker's name. In a link::Classes/Inputs and Outputs/BMInOutArray:: this will serve as this speaker's key.
+				
+method:: autoTrim
+Set or get value in dBFS to use as trim setting for this speaker. link::Classes/Plugins/BMTrimPluginsRack:: has an autoTrim method which queries this value. Generally this is populated using link::Classes/Other/BMAutoBalancer::. Default value is nil.
+				
+method:: spec
+Set or get an instance of link::Classes/Inputs and Outputs/BMSpeakerSpec:: which describes the characteristics of this speaker's model.
+				
+method:: directivity
+Set or get a link::Classes/Symbol:: used to describe this speaker's directivity, i.e. is it pointed towards the listener or reflected. Valid settings are 'direct' and 'reflected'. Default value is 'direct'.
+				
+
+Section:: Setting coordinates
+
+Setting any Cartesian coordinate will result in the spherical coordinates being updated, and vice versa. 
+
+Naturally users are free to use coordinates according to any reference desired. Cartesian coordinates and strong::rad:: can be in any units desired, but strong::azi:: and strong::ele:: must be in degrees since this is assumed in the update calculations. In general however other elements of the library assume that Cartesian coordinates are in meters and that both Cartesian and spherical coordinates are relative to the Cartesian point (0,0,0), which indicates head height at the centre of the listening area.
+
+INSTANCEMETHODS::
+
+method:: x
+Set or get this speaker's x coordinate (usually in meters).
+				
+method:: y
+Set or get this speaker's y coordinate (usually in meters).
+				
+method:: z
+Set or get this speaker's z coordinate (usually in meters).
+				
+method:: azi
+Set or get this speaker's azimuth angle in degrees.
+				
+method:: ele
+Set or get this speaker's azimuth angle in degrees.
+				
+method:: rad
+Set or get this speaker's radius  (usually in meters).
+				
+				
+method:: asUGenInput
+Returns this speaker's bus index.
+
+
+method:: asControlInput
+Returns this speaker's bus index.
+
+
+method:: isBMSpeaker
+Returns true. An extension to class link::Classes/Object:: defines this message to return false.
+
+
+method:: key
+This is a synonym for name, allowing a BMSpeaker to masquerade as an link::Classes/Association::.
+
+
+method:: isValidBMInOutArrayMember
+Returns true. An extension to class Association defines this message to return true. An extension to class Object defines this message to return false.
+
+
+Examples
+
+// 5.1 Array (-0.1)
+(
+l = [[-30, 'L'], [30, 'R'], [0, 'C'], [-110, 'Ls'], [110, 'Rs']].collectAs({|el, i|
+	BMSpeaker.newFromSpherical(el[1], i, el[0], 0, 2);
+}, BMInOutArray);
+)
+BMSpeakerListVisualiser(l); // let's look at it
+
+// 8 Channel Ring
+(
+l = [[0, 'C' ], [45, 'FR'], [90, 'R'], [135, 'BR'], [180, 'B'], [-135, 'BL'], [-90, 'L'], [-45, 'FL']].collectAs({|el, i|
+	BMSpeaker.newFromSpherical(el[1], i, el[0], 0, 2);
+}, BMInOutArray);
+)
+BMSpeakerListVisualiser(l); // let's look at it
+
+// zig zag partial dome
+(
+l = [[-22.5, 40, 'Upper1'], [22.5, 40, 'Upper2'], [-67.5, 40, 'Upper3'], [67.5, 40, 'Upper4'], [-112.5, 40, 'Upper5'], [112.5, 40, 'Upper6'], [-157.5, 40, 'Upper7'], [157.5, 40, 'Upper8'], [-45, 0, 'Lower1'], [45, 0, 'Lower2'], [-90, 0, 'Lower3'], [90, 0, 'Lower4'], [-135, 0, 'Lower5'], [135, 0, 'Lower6'], [0, 0, 'Lower7'], [180, 0, 'Lower8']].collectAs({|el, i|
+	BMSpeaker.newFromSpherical(el[2], i, el[0], el[1], 2);
+}, BMInOutArray);
+)
+BMSpeakerListVisualiser(l); // let's look at it

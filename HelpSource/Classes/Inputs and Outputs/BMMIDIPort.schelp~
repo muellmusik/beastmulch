@@ -1,0 +1,81 @@
+title:: BMMIDIPort
+summary:: Documentation BEASTmulch - represents a MIDI connection
+categories:: Classes
+
+Description::
+
+BMMIDIPort represents a single MIDI connection.
+
+See also: link::Classes/Controllers/BMAbstractMIDIController::, link::Classes/MIDI::, link::Classes/MIDIIn::, link::Classes/MIDIOut::
+
+Section:: Double-sided vs. Single-sided Ports
+
+When strong::*init:: is called it constructs an link::Classes/IdentityDictionary:: of all available ports. If a source has a matching destination this method will combine them into a single port, otherwise you can have ports with only a source or only a destination (i.e. only input or output).
+
+CLASSMETHODS::
+
+method:: init
+This constructs the list of available ports, calling MIDIIn.connectAll if MIDIClient has not been initialized.
+
+
+method:: new
+Create a new BMMIDIPort. Normally you would not do this directly; rather it is done automatically when you call strong::*init::.
+
+argument:: name
+A String corresponding to the name of this port.
+argument:: inuid
+The inuid. This should be the same as the corresponding source MIDIEndPoint.
+argument:: outuid
+The outuid. This should be the same as the corresponding destination MIDIEndPoint.
+argument:: device
+A String corresponding to the name of this port's device. This should be the same as the corresponding source MIDIEndPoint(s).
+argument:: outport
+The index of this port's destination MIDIEndPoint in MIDIClient.destinations.
+
+
+INSTANCEMETHODS::
+	
+method:: ports
+If argument::*init:: has been called this will return an IdentityDictionary containing all available ports. Keys are Symbols corresponding to each port's name.
+				
+method:: initialised
+Returns a link::Classes/Boolean:: indicating whether or not *init has been called.
+	
+method:: inuid
+This port's inuid. This should be the same as the corresponding source MIDIEndPoint.
+					
+method:: outuid
+This port's outuid. This should be the same as the corresponding destination MIDIEndPoint.
+				
+method:: device
+Returns a link::Classes/String:: indicating the name of this port's device.
+				
+method:: outport
+The index of this port's destination MIDIEndPoint in MIDIClient.destinations.
+				
+method:: name
+Returns a link::Classes/Symbol:: indicating the name of this port.
+				
+				
+Instance Methods
+	
+	initFromArchive
+	
+		Checks to see if *init has already been called, and if not, posts a warning.
+
+
+Examples
+
+// initialise
+BMMIDIPort.init;
+
+// all ports
+p = BMMIDIPort.ports;
+(
+EZPopUpMenu.new(nil, items: p.keys.collectAs({|k| k->{|men| 
+	("You selected " ++ p[men.widget.item]).postln; 
+	NoteOnResponder({ |src,chan,note,vel|
+		[src,chan,note,vel].postln;
+	}, p[men.widget.item].inuid)	
+}}, Array))
+)

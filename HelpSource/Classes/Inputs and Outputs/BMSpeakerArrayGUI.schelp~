@@ -1,0 +1,31 @@
+title:: BMSpeakerArrayGUI
+summary:: Documentation BEASTmulch - a GUI for creating a speaker array
+categories:: Classes
+
+Description::
+
+BMSpeakerArrayGUI provides a GUI for creating a speaker array. It provides all existing BMSpeakerSpecs as a draggable list, and allows users to specify subarrays.
+
+warning::N.B.:: In the GUI 'Hardware Outputs' start at 1, not 0. They will be converted to the correct SC bus numbers when the speakers are created.
+
+See also: link::Classes/Root Classes/BMAbstractGUI::, link::Classes/Inputs and Outputs/BMSpeaker::, link::Classes/Inputs and Outputs/BMInOutArray::, link::Classes/Inputs and Outputs/BMSpeakerSpec::
+
+CLASSMETHODS::
+
+method:: new
+Create a new BMSpeakerArrayGUI.
+
+argument:: startArray
+An optional instance of link::Classes/Inputs and Outputs/BMInOutArray:: to serve as a starting point.
+argument:: okayFunc
+argument:: A link::Classes/Function:: that will be evaluated when the window is closed. This will be passed the resulting link::Classes/Inputs and Outputs/BMInOutArray:: as an argument.
+argument:: name
+An optional link::Classes/String:: or link::Classes/Symbol:: indicating the title of the window. The default is "Define Speaker Array".
+argument:: origin
+An optional link::Classes/Point:: specifying the origin of the window, x@y.
+
+
+Examples
+
+BMSpeakerArrayGUI.new(nil, {|array| array.postln });
+

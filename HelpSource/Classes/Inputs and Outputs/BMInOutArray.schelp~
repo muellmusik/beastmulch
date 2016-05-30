@@ -1,0 +1,502 @@
+title:: BMInOutArray
+summary:: Documentation BEASTmulch - an ordered Dictionary of named inputs or outputs
+categories:: Classes
+
+Description::
+
+BMInOutArray is an ordered Dictionary of named inputs or outputs and is used to represent the input or output busses of objects in the BEASTmulch Library. Members of the collection should be either instances of Association, in the form name->busIndex, or instances of the link::Classes/Inputs and Outputs/BMSpeaker:: class, which mimics Association polymorphically.
+
+In most cases members can be accessed by either key or index. For this reason numbers are not valid keys for use in this class. (Symbols are the expected key class in most places in the library in any case.)
+
+BMInOutArray also provides support for named subarrays, specified as lists of keys.
+
+In the current implementation no distinction is made between audio and control busses, and it is assumed that users will distinguish appropriately.
+
+See also: link::Classes/Inputs and Outputs/BMSpeaker::, link::Classes/Association::, link::Classes/Inputs and Outputs/BMHardwareInputsProxy::, link::Classes/Bus::, link::Classes/List::, link::Classes/Dictionary::, link::Classes/Inputs and Outputs/BMSpeakerListVisualiser::
+
+Section:: Compatibility
+
+BMInOutArray responds to strong::asUGenInput::,  strong::asControlInput::, strong::asOSCArgBundle::, and strong::asOSCArgArray:: by returning an link::Classes/Array:: of its member's bus indices. It can thus be used directly in most places where you would pass such an Array. For example:
+
+code::
+// make a BMInOutArray with two members
+i = BMInOutArray.new;
+i.add(BMSpeaker(\left, 0));
+i.add(BMSpeaker(\right, 1));
+// make a Synth
+(
+x = {|outs = #[3, 4]| 
+	y = SinOsc.ar([440, 660], 0, 0.2);
+	outs.do({|out, i| Out.ar(out, y[i])});
+}.play;
+)
+x.set(\outs, i);
+::
+	
+Section:: asBMInOutArray
+
+Many classes in the BEASTMulch library which manage busses (e.g. audio sources, controllers) understand the message asBMInOutArray and return an array which corresponds to their outputs. The class link::Classes/Bus:: is extended to implement it as well as a convenience method, and takes a single name argument as the base name for its keys:
+
+code::
+b = Bus.audio(s, 12);
+a = b.asBMInOutArray(\myPrivateBusaho);
+::
+
+Similarly, Server is extended to include two methods: strong::insAsBMInOutArray::, and strong::outsAsBMInOutArray::. The former returns a link::Classes/Inputs and Outputs/BMHardwareInputsProxy::, and the latter a BMInOutArray corresponding to the server's hardware output busses.
+
+code::
+s.insAsBMInOutArray;
+s.outsAsBMInOutArray;
+::
+
+Section:: Implementation Notes
+
+BMInOutArray is a subclass of link::Classes/List::, rather than a subclass of link::Classes/Dictionary:: although it understands most methods of the latter. Its key list is lazily constructed. This keeps the implementation simpler, and also means that BMSpeakers in the array can change their names (keys) without needing the array to be updated, but means that for very large collections it will be notably slower than say an link::Classes/IdentityDictionary::. Since input and output collections are likely to be relatively small (i.e. < 100 elements), this should not pose a particular problem in normal usage.
+
+CLASSMETHODS::
+
+method:: new
+Create a new BMInOutArray. In many cases you can get these directly from other objects in the library.
+
+argument:: size
+An initial capacity for the object.
+
+code::		
+// make a new BMInOutArray
+i = BMInOutArray.new;
+i.add(\foo->1); // add an Association
+i.add(BMSpeaker(\bar, 2)); // add a BMSpeaker
+i[\foobar] = 3; // C-style syntax also works
+i[\foo];
+i[\bar];
+i[2]; // can also lookup values by index
+::
+
+method:: hardwareInputArray
+Returns an instance of link::Classes/Inputs and Outputs/BMHardwareInputsProxy:: corresponding to the hardware inputs for the specified server. The values of the Association pairs will be the indices of the hardware input busses.
+
+argument:: server
+The link::Classes/Server:: whose hardware inputs will be represented.
+argument:: name
+A link::Classes/String:: or like::Classes/Symbol:: to use as the base name. Default value is "Hardware In".
+
+code::
+BMInOutArray.hardwareInputArray(s, 'Inputs');
+::
+
+
+method:: privateBusBlock
+Allocate a new block of private audio busses and return them as a BMInOutArray. This uses the server's normal bus allocator. The link::Classes/Bus:: objects will be stored internally so that their indices can be freed later (see strong::freeBusObjects:: below).
+
+argument:: name
+A link::Classes/String:: or link::Classes/Symbol:: to use as the base name.
+argument:: size
+The number of busses to allocate.
+argument:: server
+The link::Classes/Server:: whose busses will be allocated.
+
+code::		
+p = BMInOutArray.privateBusBlock(\fooBus, 12, s);
+p.freeBusObjects; // release my bus indices
+::
+
+
+INSTANCEMETHODS::
+
+method:: keys
+Return this array's keys as an link::Classes/Array::.
+
+code::		
+a = s.outsAsBMInOutArray;
+a.keys;
+::
+
+method:: values
+Return this array's values as an link::Classes/Array::.
+		
+code::
+a = s.outsAsBMInOutArray;
+a.values;
+::
+
+
+method:: addPrivateBusBlock
+Add a block of private audio busses to this array. Bus objects will be stored internally so that their indices can be freed later (see strong::freeBusObjects:: below).
+		
+argument:: name
+A String or Symbol to use as the base name.
+argument:: size
+The number of busses to allocate.
+argument:: server
+The Server whose busses will be allocated.
+
+code::		
+a = s.outsAsBMInOutArray.addPrivateBusBlock(\private, 10, s);
+a.freeBusObjects; // release my bus indices
+::
+
+
+method:: freeBusObjects
+Free the indices for any Bus objects created using strong::addPrivateBusBlock:: or strong::*privateBusBlock::. You should only do this if you don't plan to use this array and/or its elements again.
+
+
+method:: add
+Add an link::Classes/Association:: or a link::Classes/Inputs and Outputs/BMSpeaker:: to the end of this array.
+
+argument:: assoc
+The Association or BMSpeaker to add.
+
+code::		
+i = BMInOutArray.new;
+i.add(\foo->1); // add an Association
+i.add(BMSpeaker(\bar, 2)); // add a BMSpeaker
+::
+
+
+method:: addFirst
+Insert an link::Classes/Association:: or a link::Classes/Inputs and Outputs/BMSpeaker:: at the start of this array.
+
+argument:: assoc
+The Association or BMSpeaker to insert.
+		
+code::
+i = BMInOutArray.new;
+i.add(\foo->1); // add an Association
+i.addFirst(BMSpeaker(\bar, 2)); // add a BMSpeaker before \foo
+::
+
+
+method:: insert
+Insert an link::Classes/Association:: or a link::Classes/Inputs and Outputs/BMSpeaker::.
+
+argument:: index
+The index at which to insert assoc.
+argument:: assoc
+The Association or BMSpeaker to insert.
+		
+code::
+i = BMInOutArray.new;
+i.add(\foo->1); // add an Association
+i.add(BMSpeaker(\bar, 2)); // add a BMSpeaker
+i.insert(1, BMSpeaker(\foobar, 3)); // insert a BMSpeaker inbetween
+::
+
+
+method:: removeAt
+Remove and return the value (i.e. bus index or link::Classes/Inputs and Outputs/BMSpeaker::) specified by key.
+
+argument:: key
+The key of the object to be removed.
+
+code::		
+i = BMInOutArray.new;
+i.add(\foo->1); // add an Association
+i.add(BMSpeaker(\bar, 2)); // add a BMSpeaker
+i.removeAt(\bar); // remove \bar
+::
+
+
+method:: at	
+Return the value (i.e. bus index or link::Classes/Inputs and Outputs/BMSpeaker::) specified by a key or index.
+
+argument:: keyOrIndex
+The key or index of the element to be accessed
+		
+code::
+i = BMInOutArray.new;
+i.add(\foo->1); // add an Association
+i.add(BMSpeaker(\bar, 2)); // add a BMSpeaker
+i.at(\foo); // key
+i.at(1); // index
+i[\foo]; // C-style syntax also works
+::
+
+	
+method:: put	
+Add the value (a bus index or link::Classes/Inputs and Outputs/BMSpeaker::) as an Association with key. In terms of order the Association will be added at the end of the array.
+
+argument:: key
+A Symbol to use as the key of the Association. If value is a BMSpeaker its name variable will be set to this.
+argument:: value
+The bus index or BMSpeaker to be added.
+		
+code::
+i = BMInOutArray.new;
+i.put(\foo, 1);
+i.put(\bar, BMSpeaker(\bar, 2));
+i[\foobar] = 3; // C-style syntax also works
+::
+
+
+method:: putAll
+Add all the elements of one or more dictionaries (usually also BMInOutArrays) to this array.
+
+argument:: dictionaries
+One or more dictionaries to be added.
+
+code::		
+i = BMInOutArray.new;
+j = BMInOutArray.privateBusBlock(\foo, 3, s);
+i.putAll(j, s.outsAsBMInOutArray);
+		
+j.freeBusObjects; // release my bus indices
+::
+
+
+method:: keysValuesDo
+Iterate over the elements of this array evaluating function.
+
+argument:: function
+The Function to be evaluated. This will be passed the key, value, and index of each element as arguments.
+		
+code::
+i = BMInOutArray.privateBusBlock(\foo, 3, s);
+i.keysValuesDo({|k, v, i| [k, v, i].postln });
+	
+i.freeBusObjects; // release my bus indices
+::
+
+
+method:: keysDo 
+Iterate over the elements of this array evaluating function.
+
+argument:: function
+The Function to be evaluated. This will be passed the key and index of each element as arguments.
+
+code::		
+i = BMInOutArray.privateBusBlock(\foo, 3, s);
+i.keysDo({|k, i| [k, i].postln });
+		
+i.freeBusObjects; // release my bus indices
+::
+		
+	
+method:: associationsDo
+Iterate over the elements of this array evaluating function.
+
+argument:: function
+The Function to be evaluated. This will be passed each element (an Association or a BMSpeaker) and the index as arguments.
+		
+code::
+i = BMInOutArray.privateBusBlock(\foo, 3, s);
+i.put(\bar, BMSpeaker(\bar, 2));
+i.associationsDo({|a, i| [a, i].postln });
+		
+i.freeBusObjects; // release my bus indices
+::
+
+
+method:: do	
+Iterate over the elements of this array evaluating function.
+
+argument:: function
+The Function to be evaluated. This will be passed the value and index of each element as arguments.
+		
+code::
+i = BMInOutArray.privateBusBlock(\foo, 3, s);
+i.put(\bar, BMSpeaker(\bar, 2));
+i.do({|v, i| [v, i].postln });
+		
+i.freeBusObjects; // release my bus indices
+::
+
+
+method:: collect	
+Iterate over the elements of this array evaluating function, and using the results to create a new BMInOutArray.
+
+argument:: function
+The Function to be evaluated. This will be passed the value, key, and index of each element as arguments. It should return the new value.
+		
+code::
+i = BMInOutArray.new;
+i.put(\foo, BMSpeaker(\foo, 0));
+i.put(\bar, BMSpeaker(\bar, 1));
+i[\foo].directivity;
+i = i.collect({|v, k, i| v.directivity = 'reflected' });
+i[\foo].directivity;
+::
+
+
+method:: select
+Iterate over the elements of this array evaluating function, adding those items for which function returns true to a new BMInOutArray.
+
+argument:: function
+The Function to be evaluated. This will be passed the value, key, and index of each element as arguments. It should return a Boolean indicating whether value should be added to the new BMInOutArray.
+
+code::
+i = BMInOutArray.new;
+i.put(\foo, BMSpeaker(\foo, 0).directivity = 'reflected');
+i.put(\bar, BMSpeaker(\bar, 1).directivity = 'direct');
+i = i.select({|v, k, i| v.directivity == 'direct' });
+::
+
+
+method:: reject	
+Iterate over the elements of this array evaluating function, adding those items for which function returns false to a new BMInOutArray.
+
+argument:: function
+The Function to be evaluated. This will be passed the value, key, and index of each element as arguments. It should return a Boolean indicating whether value should not be added to the new BMInOutArray.
+		
+code::
+i = BMInOutArray.new;
+i.put(\foo, BMSpeaker(\foo, 0).directivity = 'reflected');
+i.put(\bar, BMSpeaker(\bar, 1).directivity = 'direct');
+i = i.reject({|v, k, i| v.directivity == 'direct' });
+::
+
+
+method:: associationsCollectAs
+Iterate over the elements of this array evaluating function, and using the results to create a new instances of class.
+
+argument:: function
+The Function to be evaluated. This will be passed each element (an Association or a BMSpeaker) and the index as arguments.
+argument:: class
+The class of the new Collection.
+		
+code::
+i = BMInOutArray.new;
+i.put(\foo, BMSpeaker(\foo, 0));
+i.put(\bar, BMSpeaker(\bar, 1));
+i.put(\foobar, 2);
+j = i.associationsCollectAs({|assoc, i| assoc.key ++ " has a bus index of " ++ assoc.value.asUGenInput }, Array);
+::
+
+
+method:: species
+Returns the receiver's class, i.e. BMInOutArray.
+
+
+method:: ++	
+Concatenate the receiver with another BMInOutArray, returning a new BMInOutArray
+
+argument:: aBMInOutArray
+Explanation of aBMInOutArray. Default value is nil. Other information.
+		
+code::
+i =  s.outsAsBMInOutArray;
+j = BMInOutArray.privateBusBlock(\foo, 3, s);
+k = i ++ j;
+		
+j.freeBusObjects; // release my bus indices
+::
+
+
+method:: defineSubArray
+Define a subarray which can be accessed by name.
+
+argument:: name
+A Symbol indicating the name of the subarray.
+argument:: elementNames
+An Array of Symbols corresponding to the keys of the elements to be included in this subarray. 
+
+code::		
+i = Bus.audio(s, 12).asBMInOutArray(\myPrivateBusaho);
+i.defineSubArray(\firstTwo, ['myPrivateBusaho-1', 'myPrivateBusaho-2']);
+i.getSubArray(\firstTwo);
+::
+
+	
+method:: getSubArray
+Returns a new BMInOutArray corresponding to the subarray specified by name.
+
+argument:: name
+A Symbol indicating the subarray to retrieve.
+	
+code::	
+i = Bus.audio(s, 12).asBMInOutArray(\myPrivateBusaho);
+i.defineSubArray(\firstTwo, ['myPrivateBusaho-1', 'myPrivateBusaho-2']);
+i.getSubArray(\firstTwo);
+::
+
+
+	getSubArrayKeys (name)
+	
+		Returns an Array containing the keys of the elements contained in the subarray specified by name.
+		name - A Symbol indicating the subarray whose keys will be retrieved.
+		
+		i = Bus.audio(s, 12).asBMInOutArray(\myPrivateBusaho);
+		i.defineSubArray(\firstTwo, ['myPrivateBusaho-1', 'myPrivateBusaho-2']);
+		i.getSubArrayKeys(\firstTwo);
+
+
+	removeSubArray (name)
+	
+		Remove an existing subarray from the list of subarrays. (The elements themselves remain in the array).
+		name - A Symbol indicating the subarray to remove.
+		
+		i = Bus.audio(s, 12).asBMInOutArray(\myPrivateBusaho);
+		i.defineSubArray(\firstTwo, ['myPrivateBusaho-1', 'myPrivateBusaho-2']);
+		i.subArrays;
+		i.removeSubArray(\firstTwo);
+		i.subArrays;
+
+
+	addToSubArray (name, element)
+	
+		Add an element to an existing subarray.
+		name - A Symbol indicating the subarray to which the element will be added.
+		element - A Symbol corresponding to the key of the element to be added.
+		
+		i = Bus.audio(s, 12).asBMInOutArray(\myPrivateBusaho);
+		i.defineSubArray(\firstTwo, ['myPrivateBusaho-1', 'myPrivateBusaho-2']);
+		i.addToSubArray(\firstTwo, 'myPrivateBusaho-3');
+		i.getSubArrayKeys(\firstTwo);
+
+
+	removeFromSubArray (name, element)
+	
+		Remove an element from an existing subarray.
+		name - A Symbol indicating the subarray from which the element will be removed.
+		element - A Symbol corresponding to the key of the element to be removed.
+		
+		i = Bus.audio(s, 12).asBMInOutArray(\myPrivateBusaho);
+		i.defineSubArray(\firstTwo, ['myPrivateBusaho-1', 'myPrivateBusaho-2']);
+		i.removeFromSubArray(\firstTwo, 'myPrivateBusaho-1');
+		i.getSubArrayKeys(\firstTwo);
+
+
+	subArrays
+	
+		Returns an Array of Symbols corresponding to the names of all defined subarrays.
+		
+		i = Bus.audio(s, 12).asBMInOutArray(\myPrivateBusaho);
+		i.defineSubArray(\firstTwo, ['myPrivateBusaho-1', 'myPrivateBusaho-2']);
+		i.defineSubArray(\threeAndFour, ['myPrivateBusaho-3', 'myPrivateBusaho-4']);
+		i.subArrays;
+
+
+	boundaries
+	
+		Iterate over the array and calculate the smallest rectangular cuboid (aligned with the axes) which can contain all the BMSpeakers in the list. Associations are ignored. Returns an Array of two Arrays in the form [[minX, minY, minZ], [maxX, maxY, maxZ]]
+		
+		
+	isBMInOutArray
+	
+		Returns true. This method is defined in an extension to Object to return false and can thus be used for testing.
+
+
+	asBMInOutArray
+	
+		Returns the receiver.
+
+
+	asUGenInput
+	
+		Returns an Array consisting of the bus indices of the receiver's elements. 
+
+
+	asControlInput
+	
+		Returns an Array consisting of the bus indices of the receiver's elements. 
+		
+		
+	asOSCArgArray
+	
+		Returns an Array consisting of the bus indices of the receiver's elements. 
+		
+		
+	asOSCArgBundle
+	
+		Returns an Array consisting of the bus indices of the receiver's elements. 
+
+

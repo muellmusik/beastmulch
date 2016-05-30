@@ -1,0 +1,63 @@
+title:: BMMasterFader
+summary:: Documentation BEASTmulch - a master fader for a server
+categories:: Classes
+
+Description::
+
+See also: link::Classes/Root Classes/BMAbstractAudioChainElement::, link::Classes/Root Classes/BMMasterFaderGUI::
+
+CLASSMETHODS::
+
+method:: new
+Create a new master fader.
+
+argument:: target
+Target for this object's Group. If target is not a Group or Synth, it will be converted as follows: If it is a Server, it will be converted to the default_group of that server. If it is nil, to the default group of the default Server. Note: A Synth is not a valid target for code::\addToHead:: and code::\addToTail::.
+argument:: addAction
+one of the following Symbols:		
+code::\addToHead:: - add at the head of the group specified by target
+code::\addToTail:: - (the default) add at the tail of the group specified by target
+code::\addAfter:: - add immediately after target in its server's node order
+code::\addBefore:: - add immediately before target in its server's node order
+code::\addReplace:: - replace target and take its place in its server's node order
+argument:: name
+A Symbol indicating the name of this object. If not supplied one will be generated.
+
+
+INSTANCEMETHODS::
+	
+method:: maxLevel
+Set or get the maximum level in dBFS for this object. Default value is 0.
+				
+method:: level
+Set or get the level in dBFS for this object. Default value is -12.
+				
+method:: busIndex
+Get this object's control bus index.
+				
+method:: minLevel
+Set or get the maximum level in dBFS for this object. Default value is -inf.
+		
+		
+method:: mappings	
+Set or get this object's mappings. This should be a Dictionary in the form of [\level->dBFSLevel].
+		
+argument:: dict		
+	
+
+method:: gui
+Create and return a BMMasterFaderGUI using the receiver.
+
+
+method:: free
+Cleanup this object's resources.
+
+
+Examples::
+
+code::
+f = BMMasterFader.new;
+g = f.gui;
+f.level = -6;
+g.close; f.free;
+::

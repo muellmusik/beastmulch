@@ -1,0 +1,78 @@
+title:: BMSpeakerSpec
+summary:: Documentation BEASTmulch - specification for a speaker model
+categories:: Classes
+
+Description::
+
+BMSpeakerSpec represents specifications for a particular speaker model. In addition to information on things like frequency response and type of speaker, it can also specify plugin presets for use with a speaker model (e.g. LPF input to a subwoofer), and can be extended to include arbitrary keys. User code can query a speaker's spec to find out information about its characteristics. A number of specs are created on startup, but users can add more.
+
+See also: link::Classes/Inputs and Outputs/BMSpeaker::, link::Classes/Plugins/BMPlugin::, link::Classes/Plugins/BMTrimPluginsRack::
+
+Section:: Specifications Dictionary
+
+BMSpeakerSpecs take an link::Classes/IdentityDictionary:: or subclass (usually an link::Classes/Event::) to hold their specifications. Messages sent to BMSpeakerSpec which are not understood are forwarded to the specifications dictionary. Because of this BMSpeakerSpec can be generally treated as a link::Classes/Dictionary:: subclass, although it is not.
+
+The specifications dictionary's proto var will be set to the following Event, thus setting a few default values:
+
+code::
+(brand: 'Unknown', fullRange: true);
+::
+
+Standard keys used in the specifications dictionary are as follows:
+
+code::\brand::: A Symbol indicating the brand or manufacturer of this speaker model, e.g. 'Genelec'
+code::\minFreq::: Minimum frequency response (typically free field +/- 2dB, but manufacturer's practices vary)
+code::\maxFreq::: Maximum frequency response (typically free field +/- 2dB, but manufacturer's practices vary)
+code::\spl::: dB SPL (typically continuous 1W @ 1m for unpowered, maximum continuous @ 1m for powered)
+code::\powered::: A Boolean indicating if this speaker model is active or not
+code::\fullRange::: A Boolean indicating if this speaker model is nominally 'full frequency range' rather than a specialised model such as a subwoofer or tweeter array
+code::\plugins::: An Array of Arrays containing Symbols in the form [[\pluginName, \pluginPresetName], ...]. These are used in BMTrimPluginsRack's autoPlugins method. You will need to create the plugin presets themselves separately.
+	
+User code should use these keys rather than synonyms, but custom keys may be added as desired.
+
+Note that in principle many or all of these values may be nil, and that user code may need to allow for this. 
+
+CLASSMETHODS::
+
+method:: new	
+Create a new BMSpeakerSpec. This will overwrite any existing spec with the same name.
+
+argument:: name
+A link::Classes/Symbol:: indicating the name of this speaker spec, e.g. '8030A' or 'Generic Sub'.
+argument:: vals
+An link::Classes/IdentityDictionary:: or subclass containing keys and values for this model's specification.
+		
+code::
+BMSpeakerSpec('8030A', (brand: 'Genelec', minFreq: 58, maxFreq: 20000, spl: 97, powered: true, fullRange: true)); // make a spec for a Genelec 8030A
+::
+
+
+INSTANCEMETHODS::
+	
+method:: specs
+Returns an IdentityDictionary containing all existing specs with names as keys.
+	
+code::
+BMSpeakerSpec.specs.postln; // see all available
+BMSpeakerSpec.specs['UREI-809'] // get the Urei 809 spec
+::
+
+				
+method:: name
+Returns this spec's name as a link::Classes/Symbol::.
+
+method:: doesNotUnderstand
+Overrides the default method to forward any unimplemented method calls to the specifications dictionary.
+		
+argument:: selector
+argument:: args
+
+code::
+// make a new spec
+g = BMSpeakerSpec(\foo, (minFreq: 20, maxFreq: 20000, spl: 99, powered: true, fullRange: true));
+g.minFreq; // forwards to spec dictionary and returns 20
+g.brand; // we didn't specify so we get the value from proto
+g.brand = 'Foobar Industries'; // we can set too
+g.brand;
+::
+

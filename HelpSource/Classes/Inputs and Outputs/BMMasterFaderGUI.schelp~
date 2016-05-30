@@ -1,0 +1,29 @@
+title:: BMMasterFaderGUI
+summary:: Documentation BEASTmulch - GUI for a BMMasterFader
+categories:: Classes
+
+Description::
+
+
+
+
+Inherits from: Object : BMAbstractGUI
+
+See also: BMAbstractGUI, BMMasterFader
+
+Creation / Class Methods
+
+	*new (masterFader, name)
+	
+		Create a new BMMasterFaderGUI.
+		masterFader - An instance of BMMasterFader.
+		name - An optional String or Symbol indicating the title of the window. If nil is passed the name of masterFader will be used.
+
+
+Examples
+
+
+f = BMMasterFader.new;
+g = BMMasterFaderGUI(f, "MF");
+f.level = -6;
+g.close; f.free;

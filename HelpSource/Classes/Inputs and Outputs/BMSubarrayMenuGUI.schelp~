@@ -1,0 +1,36 @@
+title:: BMSubarrayMenuGUI
+summary:: Documentation BEASTmulch - a modal sheet for editing subarrays
+categories:: Classes
+
+Description::
+
+BMSubarrayMenuGUI is a modal sheet which allows you to create and edit subarrays in a link::Classes/Inputs and Outputs/BMInOutArray::. It is used in link::Classes/Inputs and Outputs/BMSpeakerArrayGUI::.
+
+See also: link::Classes/Inputs and Outputs/BMInOutArray::, link::Classes/Root Classes/BMAbstractGUI::, link::Classes/Inputs and Outputs/BMSpeakerArrayGUI::
+
+CLASSMETHODS::
+
+method:: new	
+Create a new BMSubarrayMenuGUI.
+
+argument:: parent
+The parent window to which this sheet will be attached.
+argument:: outputArray
+The link::Classes/Inputs and Outputs/BMInOutArray:: whose subarrays will be edited (in place).
+
+
+Examples::
+
+code::
+(
+// create a speaker list with a couple of subarrays
+l = [[-22.5, 40, 'Upper1'], [22.5, 40, 'Upper2'], [-67.5, 40, 'Upper3'], [67.5, 40, 'Upper4'], [-112.5, 40, 'Upper5'], [112.5, 40, 'Upper6'], [-157.5, 40, 'Upper7'], [157.5, 40, 'Upper8'], [-45, 0, 'Lower1'], [45, 0, 'Lower2'], [-90, 0, 'Lower3'], [90, 0, 'Lower4'], [-135, 0, 'Lower5'], [135, 0, 'Lower6'], [0, 0, 'Lower7'], [180, 0, 'Lower8']].collectAs({|el, i|
+	BMSpeaker.newFromSpherical(el[2], i, el[0], el[1], 2);
+}, BMInOutArray);
+l.defineSubArray(\upper, l.keys[(0..7)]);
+l.defineSubArray(\lower, l.keys[(8..15)]);
+
+w = Window("Dummy Parent", Rect(400, 400, 400, 400)).front; // a blank window to attach this to
+BMSubarrayMenuGUI(w, l);
+)
+::
