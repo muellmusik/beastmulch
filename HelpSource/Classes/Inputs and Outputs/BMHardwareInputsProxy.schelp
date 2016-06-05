@@ -1,0 +1,21 @@
+title:: BMHardwareInputsProxy
+summary:: Documentation BEASTmulch - represents the hardware inputs on a server
+categories:: Classes
+
+Description::
+
+This subclass of BMInOutArray represents the hardware input busses of a server. Normally you create instances by calling BMInOutArray.hardwareInputArray. It allows the hardware inputs to be represented in visualisations of an audio chain.
+
+See also: link::Classes/Inputs and Outputs/BMInOutArray::
+
+Section:: Some Important Issues Regarding BMHardwareInputsProxy (optional)
+
+Explanation of the issues. For more information see Nil and [some other help files].
+
+INSTANCEMETHODS::
+
+method:: name
+Returns the String "Hardware Inputs".
+		
+method:: gui
+Returns nil. This allows this object to serve in a chain of objects which do have guis.

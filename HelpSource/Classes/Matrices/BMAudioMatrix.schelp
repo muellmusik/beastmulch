@@ -1,0 +1,52 @@
+title:: BMAudioMatrix
+summary:: Documentation BEASTmulch - routes signals on audio input busses to audio output busses
+categories:: Classes
+
+Description::
+
+BMAudioMatrix is used to route audio signals from a set of input busses to a set of output busses. As such it can serve as a general purpose audio patch bay. These inputs and outputs are specified as instances of link::Classes/Inputs and Outputs/BMInOutArray::. 
+
+See link::Classes/Matrices/BMAbstractMatrix:: for creation methods, etc.
+
+See also: link::Classes/Inputs and Outputs/BMInOutArray::, link::Classes/Matrices/BMAbstractAudioChainElement::, link::Classes/Matrices/BMAudioMixerMatrix::
+
+Examples::
+
+code::
+// Audio matrix example
+(
+// make a speaker list
+l = [[-30, 'L'], [30, 'R'], [0, 'C'], [-110, 'Ls'], [110, 'Rs']].collectAs({|el, i|
+	BMSpeaker.newFromSpherical(el[1], i, el[0], 0, 2);
+}, BMInOutArray);
+)
+
+// something to route
+(
+b = Bus.audio(s, 8);
+x = { Out.ar(b, {|i| Ringz.ar(Dust.ar(3, 0.1), 300 * (i + 1), 2)} ! 8) }.play;
+)
+
+// make a matrix
+m = BMAudioMatrix(b.asBMInOutArray(\ringzes), l);
+
+s.meter; // so we can watch
+
+m.connect('ringzes-1', 'L');
+
+m.connect('ringzes-2', 'L');
+
+m.connect('ringzes-3', 'Ls', 'Rs');
+
+m.disconnect('ringzes-1', 'L');
+
+m.connect('ringzes-1', 'R');
+
+m.mappings;
+
+m.gui; // Use a GUI. Be sure to click 'View Matrix' for alternate view.
+
+m.clear(3); // fade out connections
+
+m.free; b.free; x.free;
+::

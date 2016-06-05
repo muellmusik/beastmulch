@@ -1,0 +1,84 @@
+title:: BMAmpControlMatrix
+summary:: Documentation BEASTmulch - a matrix assigning controls to scale audio bus signals
+categories:: Classes
+
+Description::
+	
+BMAmpControlMatrix assigns controls (its inputs) to scale the amplitude of signals on audio busses (its outputs). At this object's point in the node tree the bus's signal is read and replaced with a scaled version. Signals on unassigned busses are passed through unaltered.
+
+Instances of link::Classes/Root Classes/BMControl:: corresponding to this object's inputs will have their mappedTo var set to this object when connections are made. BMAbstractController.masterInOutArray can be used to get a BMInOutArray containing all available controls.
+
+Note that this is intended for active control. For simple static level scaling a BMTrimPluginsRack may be better.
+
+See link::Classes/Matrices/BMAbstractMatrix:: for creation methods, etc.
+
+See also: link::Classes/Matrices/BMAbstractMatrix::, link::Classes/Root Classes/BMAbstractController::, link::Classes/Root Classes/BMControl::, link::Classes/Root Classes/BMAbstractAudioChainElement::
+
+Section:: Exclusivity of Mapping
+
+Although a single input (control) can be assigned to scale many outputs (busses), a single output can only be connected to one input in this matrix type.
+
+By default a control can be mapped in only a single object at a time, so mapping it in a BMAmpControlMatrix will prevent it from being mapped elsewhere. You can override this behaviour by executing:
+
+code::
+BMOptions.allowMultipleControlMappings = true;
+::
+
+INSTANCEMETHODS::
+
+method:: connect
+Map a control to scale the amplitude of signals on one or more audio rate busses.
+
+argument:: input
+A Symbol indicating the name of the control to map.
+argument:: outputs
+One or more Symbols indicating the names of the outputs whose signals will be scaled according to the level of the strong::input::.
+
+
+method:: disconnect
+Disconnect an input from one or more outputs.
+argument:: input
+A Symbol indicating the name of the input to disconnect.
+argument:: outputs
+One or more Symbols indicating the names of the outputs from which the input will be disconnected.
+		
+	
+method:: takesControlsForInputs
+Returns true.
+
+
+Examples::
+
+code::
+(
+// make a speaker list
+l = [[-30, 'L'], [30, 'R'], [0, 'C'], [-110, 'Ls'], [110, 'Rs']].collectAs({|el, i|
+	BMSpeaker.newFromSpherical(el[1], i, el[0], 0, 2);
+}, BMInOutArray);
+)
+
+// something to scale
+x = { l.do({|spkr, i| Out.ar(spkr, Ringz.ar(Dust.ar(3, 0.1), 300 * (i + 1), 2))}) }.play;
+
+c = BMVirtualController(\sliders, s, 5);
+
+BMAbstractController.masterInOutArray; // now it's there
+
+// make a matrix
+m = BMAmpControlMatrix(c, l);
+
+s.meter; // so we can watch
+
+m.connect('sliders-1', 'L');
+m.connect('sliders-2', 'R');
+
+BMVirtualControllerSliders(c); // now try it out
+
+m.mappings;
+
+m.gui; // Use a GUI. Be sure to click 'View Matrix' for alternate view.
+
+m.clear(3); // fade out connections
+
+m.free; x.free;
+::

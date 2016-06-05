@@ -1,0 +1,67 @@
+title:: BMAudioMixerMatrix
+summary:: Documentation BEASTmulch - routes and scales signals from input busses to output busses
+categories:: Classes
+
+Description::
+	
+BMAudioMixerMatrix is used to route audio signals from a set of input busses to a set of output busses, while optionally scaling the signal sent to each output. As such it can serve as a general purpose audio patch bay and mixer. These inputs and outputs are specified as instances of link::Classes/Inputs and Outputs/BMInOutArray::. 
+
+Changes in amplitude are lagged over the time specified in strong::BMOptions.crossfade:: to avoid glitching.
+
+Although useful when straightforward matrix mixing is required, a combination of a link::Classes/Matrices/BMAudioMatrix:: with one or two link::Classes/Matrices/BMAmpControlMatrix:: instances can be more appropriate for some purposes, since it allows input and output signals to be scaled independently.
+
+See link::Classes/Matrices/BMAbstractMatrix:: for creation methods, etc.
+
+See also: link::Classes/Inputs and Outputs/BMInOutArray::, link::Classes/Root Classes/BMAbstractAudioChainElement::, link::Classes/Matrices/BMAudioMatrix::
+
+INSTANCEMETHODS::
+
+method:: connect
+Route a scaled version of an input to one or more outputs. If this indicates a connection which already exists, its amplitude will be changed to the new value.
+
+argument:: input
+A link::Classes/Symbol:: indicating the name of the input to connect.
+argument:: outputs
+One or more Arrays of link::Classes/Symbol:: and amplitude pairs indicating the names of the outputs to which the input will be connected, and the amplitude of the scaled input signal connected. This should be in the form [[output1, amp1], ...]. If an amplitude is not supplied a default value of 1 is used. Amplitudes are linear scaler values.
+
+Examples::
+
+code::
+s.boot;
+
+(
+// make a speaker list
+l = [[-30, 'L'], [30, 'R'], [0, 'C'], [-110, 'Ls'], [110, 'Rs']].collectAs({|el, i|
+	BMSpeaker.newFromSpherical(el[1], i, el[0], 0, 2);
+}, BMInOutArray);
+)
+
+// something to scale and route
+(
+b = Bus.audio(s, 8);
+x = { Out.ar(b, {|i| Ringz.ar(Dust.ar(3, 0.1), 300 * (i + 1), 2)} ! 8) }.play;
+)
+
+// make a matrix
+m = BMAudioMixerMatrix(b.asBMInOutArray(\ringzes), l);
+
+
+
+s.meter; // so we can watch
+
+m.connect('ringzes-1', ['L', 0.5]);
+
+m.connect('ringzes-2', [L: 0.2]); // key-value style also works
+
+m.connect('ringzes-1', ['L', 0.1]); // make 1 quieter
+
+m.disconnect('ringzes-1', 'L');
+
+m.connect('ringzes-1', ['R']); // default amp is 1
+
+m.mappings;
+
+m.clear(3); // fade out connections
+
+m.free; b.free; x.free;
+::

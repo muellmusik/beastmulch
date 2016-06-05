@@ -1,0 +1,54 @@
+title:: BMMatrixMenuGUI
+summary:: Documentation BEASTmulch - a menu GUI for matrix classes
+categories:: Classes
+
+Description::
+
+BMMenuMatrixGUI provides a GUI for subclasses of link::Classes/Matrices/BMAbstractMatrix::. It presents three lists: inputs, assigned outputs and unassigned outputs. It also provides a button to open a link::Classes/Matrices/BMMatrixGUI::, which provides an alternative view.
+
+See also: link::Classes/Matrices/BMAbstractMatrix::, link::Classes/Root Classes/BMAbstractGUI::, link::Classes/Matrices/BMMatrixGUI::
+
+CLASSMETHODS::
+
+method:: new
+Create a new matrix menu GUI.
+
+argument:: matrix
+An instance of a subclass of link::Classes/Matrices/BMAbstractMatrix::.
+argument:: name
+An optional link::Classes/String:: or link::Classes/Symbol:: indicating the title of the window. If nil is passed the name of matrix will be used.
+argument:: origin
+An optional link::Classes/Point:: specifying the origin of the window. Default is 40@200.
+
+
+INSTANCEMETHODS::
+	
+method:: matrixGUI
+Return this objects link::Classes/Matrices/BMMatrixGUI::, if it is currently open.
+				
+				
+Examples::
+
+code::
+(
+// make a speaker list
+l = [[-30, 'L'], [30, 'R'], [0, 'C'], [-110, 'Ls'], [110, 'Rs']].collectAs({|el, i|
+	BMSpeaker.newFromSpherical(el[1], i, el[0], 0, 2);
+}, BMInOutArray);
+)
+
+// something to route
+(
+b = Bus.audio(s, 8);
+x = { Out.ar(b, {|i| Ringz.ar(Dust.ar(3, 0.1), 300 * (i + 1), 2)} ! 8) }.play;
+)
+
+// make a matrix
+m = BMAudioMatrix(b.asBMInOutArray(\ringzes), l, name: 'Routing');
+
+s.meter; // so we can watch
+
+m.connect('ringzes-1', 'L'); // make one connection manually
+
+BMMatrixMenuGUI(m); // now play with the GUI
+::

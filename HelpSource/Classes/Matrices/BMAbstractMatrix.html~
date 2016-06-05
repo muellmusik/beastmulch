@@ -1,0 +1,129 @@
+title:: BMAbstractMatrix
+summary:: Documentation BEASTmulch - abstract superclass of audio and control matrices
+categories:: Classes
+
+Description::
+
+BMAbstractMatrix is the abstract superclass of all audio and control matrices in the BEASTmulch library. As such some important inherited methods are defined in this class.
+
+Matrices map inputs to outputs. In the case of audio matrices this means routing input busses to output busses. In the case of controller matrices this involves mapping controls to control an output; for example BMAmpControlMatrix maps controls to scale the amplitude of signals on audio busses.
+
+All subclasses of BMAbstractMatrix fadein and fadeout when connections are made, using the time stored in strong::BMOptions.crossfade::. Thus making or breaking connections will not cause glitches.
+
+See also: link::Classes/Root Classes/BMAbstractAudioChainElement::, link::Classes/Matrices/BMAudioMatrix::, link::Classes/Matrices/BMAmpControlMatrix::, link::Classes/Matrices/BMAudioMixerMatrix::, link::Classes/Other/BMOptions::
+
+CLASSMETHODS::
+
+method:: new	
+Create a new matrix.
+
+argument:: ins
+An instance of link::Classes/Inputs and Outputs/BMInOutArray::. If this is an audio matrix (e.g. BMAudioMatrix) this should contain objects with control rate buses, if it is a controller matrix (e.g. BMAmpControlMatrix) this should contain objects with control rate buses.
+
+argument:: outs
+An instance of link::Classes/Inputs and Outputs/BMInOutArray::.
+
+argument:: target
+Target for this object's link::Classes/Group::. If target is not a Group or link::Classes/Synth::, it will be converted as follows: If it is a link::Classes/Server::, it will be converted to the default_group of that server. If it is nil, to the default_group of the default Server. strong::Note::: A Synth is not a valid target for code::\addToHead:: and code::\addToTail::.
+
+argument:: addAction
+one of the following Symbols:		
+code::\addToHead:: - add at the head of the group specified by target
+code::\addToTail:: - (the default) add at the tail of the group specified by target
+code::\addAfter:: - add immediately after target in its server's node order
+code::\addBefore:: - add immediately before target in its server's node order
+code::\addReplace:: - replace target and take its place in its server's node order
+
+argument:: name
+A link::Classes/Symbol:: indicating the name of this object. If not supplied one will be generated.
+
+
+INSTANCEMETHODS::
+
+method:: connect
+Connect an input to one or more outputs.
+
+argument:: input
+A Symbol indicating the name of the input to connect.
+argument:: outputs
+One or more Symbols indicating the names of the outputs to which the input will be connected.
+
+
+method:: disconnect
+Disconnect an input from one or more outputs.
+
+argument:: input
+A link::Classes/Symbol:: indicating the name of the input to disconnect.
+argument:: outputs
+One or more Symbols indicating the names of the outputs from which the input will be disconnected.
+
+
+method:: clear
+Clear all connections.
+
+argument:: time
+A release (i.e. fadeout) time for this matrix's connecting nodes. Default value is 0.1.
+
+
+method:: free
+Clear the matrix and free this object's group. After this the object should not be used.
+
+
+method:: mappings
+Returns an link::Classes/IdentityDictionary:: containing the current values and labels for this controller, in the form IdentityDictionary[\input1->List[output1, ...], ...]. Subclasses may override this to include additional parameters.
+	
+	
+	mappings_ (mappingsDict)
+	
+		Sets this object's matrix connections.
+		mappingsDict - An IdentityDictionary containing the new values and labels for this controller, in the form IdentityDictionary[\input1->List[output1, ...], ...]. Subclasses may override this to include additional parameters.
+
+
+	gui
+	
+		Creates and returns a BMMatrixMenuGUI using the receiver.
+
+
+	takesControlsForInputs
+	
+		Returns false. Subclasses which do take controls for inputs should override this to return true.
+
+
+Examples
+
+// Audio matrix example
+(
+// make a speaker list
+l = [[-30, 'L'], [30, 'R'], [0, 'C'], [-110, 'Ls'], [110, 'Rs']].collectAs({|el, i|
+	BMSpeaker.newFromSpherical(el[1], i, el[0], 0, 2);
+}, BMInOutArray);
+)
+
+// something to route
+(
+b = Bus.audio(s, 8);
+x = { Out.ar(b, {|i| Ringz.ar(Dust.ar(3, 0.1), 300 * (i + 1), 2)} ! 8) }.play;
+)
+
+// make a matrix
+m = BMAudioMatrix(b.asBMInOutArray(\ringzes), l);
+
+s.meter; // so we can watch
+
+m.connect('ringzes-1', ['L']);
+
+m.connect('ringzes-2', ['L']);
+
+m.connect('ringzes-3', ['Ls']);
+
+m.disconnect('ringzes-1', ['L']);
+
+m.connect('ringzes-1', ['R']);
+
+m.mappings;
+
+m.gui; // Use a GUI. Be sure to click 'View Matrix' for alternate view.
+
+m.clear(3); // fade out connections
+
+m.free; b.free; x.free;
