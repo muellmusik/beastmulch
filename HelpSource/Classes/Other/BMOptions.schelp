@@ -1,0 +1,55 @@
+title:: BMOptions
+summary:: Documentation BEASTmulch - stores some global options for the BEASTmulch library
+categories:: Classes
+
+Description::
+
+BMOptions is a utility class which stores some global options and information for the BEASTmulch library.
+
+CLASSMETHODS::
+
+method:: defaultServerOptions
+Returns a new instance of link::Classes/ServerOptions:: using the server related class vars detailed below. These are tweaked for use with the library and may form a more practical starting point than the values found in ServerOptions itself.
+
+INSTANCEMETHODS::
+	
+method:: version
+Returns an Array in the form [majorVersion, minorVersion, subVersion]. Thus 1.0.0 is [1, 0, 0].
+		
+method:: crossfade
+Set or get the default crossfade time in seconds used throughout the library, for example whan adding or removing connections in matrix classes. Default value is 0.1.
+				
+method:: allowMultipleControlMappings
+Set or get a link::Classes/Boolean:: indicating whether BMControl instances can be mapped to more than one object at once. Default value is false.
+				
+				
+Section:: Class Variables for *defaultServerOptions
+
+INSTANCEMETHODS::
+
+The following setters and getters determine the values set in strong::*defaultServerOptions::. See link::Classes/ServerOptions:: for details on their meaning.
+
+method:: numInputBusChannels
+Default value is 8.
+				
+method:: numOutputBusChannels
+Default value is 8.
+				
+method:: numWireBufs
+Default value is 512.
+				
+method:: numAudioBusChannels
+Default value is 1024.
+				
+method:: memSize
+Default value is 131072.
+	
+Examples::
+
+code::
+// using defaultServerOptions
+o = BMOptions.defaultServerOptions;
+o.blockSize = 128; // vary one of the options
+s.options = o;
+s.boot;
+::

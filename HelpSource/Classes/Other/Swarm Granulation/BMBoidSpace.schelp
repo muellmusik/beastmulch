@@ -1,0 +1,147 @@
+title:: BMBoidSpace
+summary:: Documentation BEASTmulch - create an manage boids and their space
+categories:: Classes
+
+Description::
+
+BMBoidSpace encapsulates a swarm of boids and the artificial space in which they move. It manages boid creation, and the application of movement rules. For a discussion of Craig Reynolds' original boids algorithm see: strong::http://www.red3d.com/cwr/boids/::
+
+In the BEASTmulch library boids are used for Spatial Swarm Granulation, which is an idiosyncratic approach to multichannel spatialisation over large non-homogenous speaker arrays. It is particularly useful in cases where one might wish to utilise speakers at different distances. link::Classes/Inputs and Outputs/BMSpeakerListVisualiser:: provides facility for visualising boids in a space.
+
+For information on Spatial Swarm Granulation see the following ICMC 2008 paper: strong::http://eprints.bham.ac.uk/237/1/cr1690.pdf::
+
+BMBoidSpace implements rules for boid coherence, avoidance, velocity matching, attraction points, and space boundaries, as well as allowing for scaling and limiting boid velocity, and adding a special 'avoid desk' behaviour (see below).
+
+warning::This implementation is still experimental and should be considered subject to change in future versions of the library.::
+
+See also: link::Classes/Other/Swarm Granulation/BMBoid::, link::Classes/Other/Swarm Granulation/BMSwarmGranulator::, link::Classes/Inputs and Outputs/BMSpeakerListVisualiser::
+
+
+Section:: Coordinates and Position Updating
+
+The boundaries of the space will be normalised as follows: 
+
+list::
+##The centre point of the input coordinate space (e.g (0,0,0) in three dimensions) remains the centre point in the normalised coordinate space. 
+##Minimum X and maximum X are scaled such that whichever has the largest absolute value will have an absolute value of 1 in the new coordinates. 
+##All other axes are scaled proportionally. 
+::
+
+The intention of this approach is to allow boid positions to be specified in a general way that can be easily adapted to different spaces, while maintaining some sense of the proportions of a space and avoiding distorting velocity by normalising each axis separately. (In the current implementation it is assumed that positions correspond to real-world spatial locations.) Note that by convention (and in keeping with assumptions used in link::Classes/Inputs and Outputs/BMSpeaker::) it is generally assumed that in a three dimensional space (0,0,0) corresponds to head height at the centre of the listening area.
+
+BMBoidSpace updates boid positions based on every interval in seconds which passes. In the current implementation this is done lazily, i.e. only when the object is queried for boid positions or altered in some way. If long periods of time are likely to pass between queries this could result in hangs while numerous updates are calculated. In such cases it may be useful to create a thread which periodically calls moveBoids so that updating does not have to be done all at once.
+
+CLASSMETHODS::
+
+method:: new
+Create a new BMBoidSpace.
+
+argument:: dim
+The number of dimensions in the space. Default value is 3.
+argument:: numBoids
+The number of boids to create.
+argument:: centre
+An optional initial centre point around which the boids will swarm. This should be an Array in  the form [x, y, z, ...], sized to match strong::dim::. If nil the boids will roam freely.
+argument:: boundaries
+A boundary specification. This can be either an Array of two Arrays, each sized to match dim (e.g. for 3 dimensions [[minX, minY, minZ], [maxX, maxY, maxZ]]), or a link::Classes/Inputs and Outputs/BMInOutArray:: containing instances of link::Classes/Inputs and Outputs/BMSpeaker::. If the latter, the speaker positions will be used to determine the dimensions of the smallest rectangular cuboid (aligned with the axes) which can contain them.
+argument:: velMax
+A maximum velocity in units/second.
+argument:: velScale
+A value by which boid velocity will be scaled.
+argument:: minDist
+The minimum distance between boids before the avoidance rule comes into effect.
+argument:: avoidD
+A link::Classes/Boolean:: indicating whether boids will avoid the 'desk area', i.e. (0,0,0). This can be useful in Swarm Granulation as many speaker array layouts have no speakers in the centre of the listening area.
+
+
+INSTANCEMETHODS::
+	
+method:: velMax
+Set or get the maximum boid velocity in units/second. Setting this lower may help prevent 'outliers'.
+				
+method:: minDist
+Get or set the minimum distance between boids before the avoidance rule comes into effect.
+				
+method:: boids
+Returns an Array containing this boid space's link::Classes/Other/Swarm Granulation/BMBoid:: objects.
+				
+method:: centre
+Set or get the centring point to which boids will be attracted. This can be used to cause the swarm to move to, or cluster around, a particular location. This should be an Array in the form [x, y, z, ...], sized to match strong::dim::. If nil the boids will roam freely.
+				
+method:: interval
+Set or get the interval in seconds at which this boid space updates boid positions. The default is 0.05.
+				
+method:: dim
+Returns the number of dimensions in this boid space.
+				
+method:: numBoids
+Returns the number of boids in this boid space.
+				
+method:: velScale
+Set or get the value by which boid velocity will be scaled.
+				
+method:: lastMoved
+Returns the last time at which boid positions were changed, expressed as seconds since SuperCollider started (i.e. Main.elapsedTime). In combination with strong::interval:: and strong::Main.elapsedTime:: this can be used to check if boid positions have changed since a particular point in the past.
+				
+method:: avoidD
+Set or get a link::Classes/Boolean:: indicating whether boids will avoid the 'desk area', i.e. (0,0,0). This can be useful in Swarm Granulation as many speaker array layouts have no speakers in the centre of the listening area. The default is false.
+				
+				
+INSTANCEMETHODS::
+
+method:: next
+Calls to this method cycle through each link::Classes/Other/Swarm Granulation/BMBoid:: in turn. This can be useful if you wish to check their positions one at a time.
+
+
+method:: positions
+Returns an link::Classes/Array:: of Arrays of size dim, corresponding to the position of each boid, e.g. [[boid1x, boid1y, boid1z], [boid2x, boid2y, boid2z], ...].
+
+
+method:: moveBoids
+If strong::interval:: in seconds has passed since the boids were last moved, update the positions of all boids in this space.
+
+
+Examples::
+
+code::
+// some speakers
+l = Object.readArchive("../../Inputs and Outputs/BigSpeakerArray".resolveRelative);
+v = BMSpeakerListVisualiser(l); // a gui to see the boids
+
+(
+b = BMBoidSpace(3, 20, nil, l, 1, 13, 0.1);
+
+// this updates their positions in the GUI
+d = Task({
+	loop({
+		v.boidPositions = b.positions;
+		0.05.wait;
+	})
+}, AppClock);
+d.start;
+)
+
+b.minDist = 0.05; // cluster closer
+
+b.centre = [0,0,0]; // go to the middle
+
+b.centre = [1,0,0.5]; 
+
+b.centre = [-1,-1,-0.2];
+
+b.centre = nil; // wander freely
+
+b.velScale = 5; // slow down
+
+b.velScale = 135; // really fast
+
+b.velMax = 0.02; // don't flit too far
+
+b.avoidD = true; // don't go to the middle
+
+b.minDist = 0.1; // spread a little more
+
+b.velMax = 0.5; // wild and crazy
+
+d.stop;
+::
