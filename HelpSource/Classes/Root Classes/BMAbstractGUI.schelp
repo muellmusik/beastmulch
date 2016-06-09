@@ -1,0 +1,40 @@
+title:: BMAbstractGUI
+summary:: Documentation BEASTmulch - abstract superclass of all GUI classes in the BEASTmulch library
+categories:: Classes
+
+Description::
+
+BMAbstractGUI is the abstract superclass of all GUI classes in the BEASTmulch library. It implements a few inherited methods and defines an interface.
+
+You can see a list of all available subclasses by executing the following:
+
+code::
+BMAbstractGUI.dumpClassSubtree;
+::
+
+Their help files and source code provide many useful examples.
+
+See also: link::Classes/Window::, link::Classes/View::
+
+INSTANCEMETHODS::
+	
+method:: name
+The name displayed in the title bar of this object's link::Classes/Window:: as a link::Classes/String:: or link::Classes/Symbol::. Usually this corresponds to the name of the object it represents.
+				
+method:: window
+Returns this object's link::Classes/Window::.
+				
+				
+method:: onClose
+Register a link::Classes/Function:: to be executed when this object's window is closed.
+		
+argument:: func
+An instance of link::Classes/Function::. It will be passed the receiver as an argument.
+
+
+method:: makeWindow
+Subclasses should override this as needed to create a link::Classes/Window::.
+
+
+method:: close
+Close this object's window and call any function registered in strong::onClose::.

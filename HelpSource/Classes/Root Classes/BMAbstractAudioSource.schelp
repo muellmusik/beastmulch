@@ -1,0 +1,63 @@
+title:: BMAbstractAudioSource
+summary:: Documentation BEASTmulch - 
+categories:: Classes
+
+Description::
+
+BMAbstractAudioSource is the abstract superclass of all BEASTmulch Library objects which serve as sources in an audio chain. It inherits most of its methods from its superclass.
+
+See also: link::Classes/Root Classes/BMAbstractAudioChainElement::, link::Classes/Other/BMSoundFilePlayer::, link::Overview/Time References and Automation::
+
+Section:: BMAbstractAudioSources as Time References
+
+Most subclasses of BMAbstractAudioSource should be able to serve as time references, i.e. serve as clock sources for automation, etc. Other objects using instances as references can register as dependants, and thus be updated when changes in time, playing status, etc. occur. Details of how to handle this in subclass implementations are discussed below. See also link::Overview/Time References and Automation::.
+
+Section:: Subclassing
+
+The following methods should be implemented if this class is going to serve as a time reference. In the discussion below the term 'playback' should be taken to mean advancing the current time for this reference, rather than necessarily referring to a soundfile.
+
+INSTANCEMETHODS::
+
+method:: init
+In addition to doing any setup and calling strong::initNameAndTarget:: (see link::Classes/Root Classes/BMAbstractAudioChainElement::) this method should include the following:
+
+code::		
+BMTimeReferences.addReference(this);
+::
+	
+
+method:: play
+In addition to any subclass specific implementation needed to start 'playback' and start advancing time, this method should call:
+
+code::
+this.changed(\play);
+::
+
+
+method:: pause
+In addition to any subclass specific implementation needed to pause 'playback' and hold at the current time, this method should call:
+		
+code::
+this.changed(\pause);
+::
+
+
+method:: stop
+In addition to any subclass specific implementation needed to stop 'playback' and reset the current time to 0, this method should call:
+
+code::		
+this.changed(\stop);
+this.changed(\time, 0, 0, Main.elapsedTime);
+::
+
+method:: togglePlay
+This method should toggle between playing and pausing.
+
+
+method:: setTime
+This method should jump 'playback' to the specified strong::time::, and should call code::this.changed(\time, 0, playbackRate, Main.elapsedTime):: if this will not happen indirectly.
+
+
+Examples::
+
+See link::Classes/Other/BMSoundFilePlayer:: for some practical examples. 

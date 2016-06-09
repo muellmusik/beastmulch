@@ -1,0 +1,69 @@
+title:: BMControl
+summary:: Documentation BEASTmulch - represents a single control
+categories:: Classes
+
+Description::
+
+BMControl represents a single control, such as a hardware fader or knob. You should not create these directly; rather they are created for you by instances of link::Classes/Root Classes/BMAbstractController::.
+
+See also: link::Classes/Root Classes/BMAbstractController::
+
+Section:: Controllers vs. Controls
+
+The BEASTmulch library provides two ways of dealing with a given control:
+
+1) as a collection of controls - this will be a subclass of link::Classes/Root Classes/BMAbstractController:: and will generally represent a single hardware device and all of its controls. Controls should be numbered, and be accessible through strong::getVal:: and strong::setVal:: by index, usually starting with 1 for human readability.
+
+2) as an individual control - an instance of BMControl. These have a Symbol for a name, and their values can be accessed through BMAbstractController's class methods strong::*getValueByName:: and strong::*setValueByName::.
+
+It is sometimes useful to deal with one or the other representation depending on what one is trying to do, but in normal usage it is more common to deal with the controller instance. link::Classes/Root Classes/BMAbstractController:: has two classvars, strong::allControllers:: and strong::allControls::, which contain dictionaries. These allow objects to query any individual control or controller by name, or to get global information about what controls or controllers currently exist.
+
+Each controller allocates a multichannel control rate bus for its controls. Objects in the library map to controls by mapping synth Controls to the corresponding bus. Bus values are assumed to be between 0 and 1. On Cmd-. all mappings are cleared.
+
+Accessing Instance and Class Variables
+	
+	ctrlNum
+		
+		Returns the index of this control's control bus.
+				
+	mappedTo_
+	mappedTo
+		
+		If this control is mapped to control anything (e.g. in a BMAmpControlMatrix), the mapping object should be stored here. Otherwise this returns nil. Objects which map controls can use this to check if a control is available, and to avoid dual mapping.
+				
+	lastAutomated_
+	lastAutomated
+		
+		Set or get the last time (generally the logical time of a Time Reference) at which this control was automated. This can be used to check if this control has already been automated in this automation interval.
+				
+	automator_
+	automator
+		
+		Set or get the current automator for this control. In the current implementation controls can only have a single automator.
+				
+	name
+		
+		Return this control's name as a Symbol.
+				
+	controller
+		
+		Return the controller object of which this control is a part. This will be an instance of a subclass of BMAbstractController.
+				
+				
+Instance Methods
+
+	value
+	
+		Get the current value of this control. This will be between 0 and 1 inclusive.
+
+
+	value_ (val)
+	
+		Set the current value of this control.
+		val - The new value to set. This should be between 0 and 1 inclusive.
+
+
+	controllerSpec
+	
+		Return this control's controller's ControlSpec.
+
