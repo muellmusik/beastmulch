@@ -277,7 +277,7 @@ Set all the labels for this controller.
 argument:: array
 An link::Classes/Array:: of link::Classes/Strings:: containing new labels for this controller's controls in order.
 		
-Section::		
+Section:: Instance Methods	
 The following two methods should add or remove responders for controllers, and can be used to start or stop forwarding messages to the server. The default implementations do nothing, in order to allow for the use of the strong::*stopAllListening:: and strong::*startAllListening:: class methods (see above). See link::Classes/Controllers/BMEtherSense:: for an example implementation.
 
 INSTANCEMETHODS::

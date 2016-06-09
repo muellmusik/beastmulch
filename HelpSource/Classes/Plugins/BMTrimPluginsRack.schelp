@@ -58,7 +58,7 @@ method:: free
 Free this strip's plugins, group and other resources. After this you should not use this object.
 
 
-method:: delayCompensateDistance(bool)
+method:: delayCompensateDistance
 Enable or disable delay compensation for distance. This will check the location of all link::Classes/Inputs and Outputs/BMSpeaker:: instances in ins and add a delay plugin so that sound will arrive at {0,0,0} simultaneously for all speakers. This can be used to eliminate precedence effect.
 
 argument:: bool

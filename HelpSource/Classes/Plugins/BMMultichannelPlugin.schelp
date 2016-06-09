@@ -102,7 +102,7 @@ method:: debug
 Post the current values of all controls and then call strong::trace:: on this object's link::Classes/Synth::.
 
 
-method:: preset_
+method:: preset
 Load a preset, setting this plugin's controls to its values.
 
 argument:: presetname
