@@ -1,0 +1,51 @@
+title:: BMMultichannelPluginsRackGUI
+summary:: Documentation BEASTmulch - GUI class for a BMMultichannelPluginsRack
+categories:: Classes
+
+Description::
+
+BMMultichannelPluginsRackGUI is a GUI class for control of a link::Classes/Plugins/BMMultichannelPluginsRack::. If provides facility for plugin creation, and control.
+
+See also: link::Classes/Plugins/BMMultichannelPluginsRack::, link::Classes/Plugins/BMMultichannelPlugin::
+
+CLASSMETHODS::
+
+method:: new
+Create a new BMMultichannelPluginsRackGUI.
+
+argument:: pluginsRack
+An instance of link::Classes/Plugins/BMMultichannelPluginsRack::.
+argument:: name
+An optional link::Classes/String:: or link::Classes/Symbol:: indicating the title of the window. If nil is passed the name of strong::pluginsRack:: will be used.
+argument:: origin
+An optional link::Classes/Point:: specifying the origin of the window. Default is 40@200.
+
+
+Examples::
+
+code::
+s.boot;
+
+// 5.1 Array (-0.1)
+(
+l = [[-30, 'L'], [30, 'R'], [0, 'C'], [-110, 'Ls'], [110, 'Rs']].collectAs({|el, i|
+	BMSpeaker.newFromSpherical(el[1], i, el[0], 0, 2);
+}, BMInOutArray);
+)
+
+b = Bus.audio(s, 1);
+
+x = {Out.ar(b, PinkNoise.ar(0.2))}.play; // something to pan
+
+i = b.asBMInOutArray(\noiseBus);
+
+r = BMMultichannelPluginsRack(i, l, x, \addAfter, 'Plug em In');
+
+r.addPlugin(BMMultichannelPlugin('2D VBAP Auto Panner', i, l));
+
+s.meter;
+
+BMMultichannelPluginsRackGUI(r); // play with the GUI
+
+x.free; r.free; b.free;
+::

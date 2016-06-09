@@ -1,0 +1,87 @@
+title:: BMPluginSpec
+summary:: Documentation BEASTmulch - a single channel strip in a BMTrimPluginsRack
+categories:: Classes
+
+Description::
+
+BMTrimPluginsStrip manages trim and plugin settings for an individual channel of a link::Classes/Plugins/BMTrimPluginsRack::. Trim settings are applied to the input signal first, and then each plugin in the specified order.
+
+warning:: Under normal circumstances you would not create instances of these directly, rather they would be created for you by a BMTrimPluginsRack, and you would access them using its strong::at:: method. (See examples below). Thus only user-relevant methods are documented here.
+::
+
+See also: link::Classes/Plugins/BMTrimPluginsRack::, link::Classes/Plugins/BMPlugin::, link::Classes/Plugins/BMTrimPluginsStripGUI::
+
+INSTANCEMETHODS::
+	
+method:: trim
+Set or get this channel's trim value in dBFS. The inital setting for this is 0, i.e. full scale.
+				
+method:: plugins
+Returns a link::Classes/List:: containing this strip's link::Classes/Plugins/BMPlugin:: instances in the order in which they are applied to the signal.
+				
+
+method:: clear
+Remove all plugins from this strip.
+
+
+method:: addPlugin
+Add a plugin to this strip, at the end of its chain of plugins.
+
+argument:: plugin
+A link::Classes/Plugins/BMPlugin::.
+
+
+method:: removePlugin
+Remove a plugin from this strip's chain of plugins.
+
+argument:: indexOrPlugin
+Either the index of the plugin to remove or the link::Classes/Plugins/BMPlugin:: itself.
+
+
+method:: movePluginUp
+Move a plugin up one position in this strip's chain of plugins.
+
+argument:: index
+The index of the plugin to move.
+
+
+method:: movePluginDown
+Move a plugin down one position in this strip's chain of plugins.
+
+argument:: index
+The index of the plugin to move.
+
+
+Examples::
+
+code::
+// 5.1 Array
+(
+l = [[-30, 'L'], [30, 'R'], [0, 'C'], [-110, 'Ls'], [110, 'Rs']].collectAs({|el, i|
+	BMSpeaker.newFromSpherical(el[1], i, el[0], 0, 2);
+}, BMInOutArray);
+)
+
+r = BMTrimPluginsRack(l, name: 'Plug em In');
+
+r[\L]; // get the BMTrimPluginsStrip for 'L'
+
+// plugins are added at the end of the chain
+r[\L].addPlugin(BMPlugin('3 Band EQ'));
+r[\L].addPlugin(BMPlugin(\Highpass));
+r[\L].addPlugin(BMPlugin(\Lowpass));
+r[\L].plugins; // check order
+
+// but you can move them
+r[\L].movePluginUp(2);
+r[\L].movePluginDown(0);
+r[\L].plugins; // check order
+
+// remove by index
+r[\L].removePlugin(0);
+r[\L].plugins;
+
+r.gui; // play with the GUI
+
+r.free;
+::

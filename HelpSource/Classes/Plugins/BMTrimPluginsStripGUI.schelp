@@ -1,0 +1,9 @@
+title:: BMTrimPluginsStripGUI
+summary:: Documentation BEASTmulch - GUI for a single channel in a BMTrimPluginsStripGUI
+categories:: Classes
+
+Description::
+
+BMTrimPluginsStripGUI is a sub-GUI for a single channel in a link::Classes/Plugins/BMTrimPluginsRackGUI::. It has no publicly relevant methods.
+
+See also: link::Classes/Plugins/BMTrimPluginsRackGUI::, link::Classes/Plugins/BMTrimPluginsStrip::

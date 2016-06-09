@@ -1,0 +1,170 @@
+title:: BMPlugin
+summary:: Documentation BEASTmulch - a plugin instance
+categories:: Classes
+
+Description::
+
+BMPlugin provides a general interface for making and managing monophonic plugins (i.e. processors) in the BEASTmulch library. Generally speaking these will be managed by a link::Classes/Plugins/BMTrimPluginsRack:: or similar object, but they can be instantiated individually using the makeSynth and release methods. In this way they can function as resuable processing synths with automatically created GUIs.
+
+Plugins are made using a specification object, an instance of link::Classes/Plugins/BMPluginSpec::, which provides functions for such things as link::Classes/SynthDef:: and GUI creation, standard presets, etc. You can see a list of all available specs as follows:
+
+code::
+BMPluginSpec.specs.keys;
+::
+
+See also: link::Classes/Plugins/BMPluginSpec::, link::Classes/Plugins/BMTrimPluginsRack::, link::Classes/Plugins/BMTrimPluginsRackGUI::, link::Classes/Plugins/BMMultichannelPlugin::
+
+Section:: BMPlugin vs. BMMultichannelPlugin
+
+BMPlugin is monophonic, i.e. it has a single input and output, which are in fact the same bus. BMMultichannelPlugins can have variable numbers of inputs and outputs, which need not match. The exact number and configuration of inputs and outputs expected varies according to the multichannel plugin's spec.
+
+CLASSMETHODS::
+
+method:: new
+Create a new plugin.
+
+argument:: pluginSpecName
+A link::Classes/Symbol:: indicating the name of the link::Classes/Plugins/BMPluginSpec:: to use to create this plugin.
+argument:: server
+The link::Classes/Server:: to use for this plugin. Default value is nil, which results in the default server.
+argument:: attributes - Plugin specs can optionally provide a set of attributes which will can serve as settings to their strong::ugenGraphFunc::, strong::guiFunc::, strong::setupFunc::, and strong::cleanupFunc:: (see link::Classes/Plugins/BMPluginSpec::). You can pass a Dictionary or subclass here containing values to override the defaults.
+		
+code::
+// make a simple plugin
+s.boot;
+p = BMPlugin('Bandpass');
+x = {Out.ar(1, PinkNoise.ar(0.2))}.play; // something to filter
+p.makeSynth(1, x, \addAfter);
+p.gui;
+p.debug; // debug fun
+p.attributes; // see the attributes
+p.release;
+x.free;
+::
+
+
+INSTANCEMETHODS::
+	
+method:: synth
+Returns this object's link::Classes/Synth::, if it is active, nil otherwise.
+				
+method:: def
+Returns this object's link::Classes/SynthDef::.
+				
+method:: values
+Returns an link::Classes/IdentityDictionary:: containing this object's current control values as key-value pairs.
+				
+method:: attributes
+Returns a link::Classes/Dictionary:: or subclass containing this object's attributes.
+				
+method:: bus
+Returns this object's control link::Classes/Bus::, which is used for setting its controls.
+				
+method:: spec
+Returns this object's link::Classes/Plugins/BMPluginSpec::.
+		
+method:: specsDict
+Returns this object's specsDict, which is a dictionary matching controls as keys to instances of link::Classes/ControlSpec::.
+				
+method:: defName
+Returns a link::Classes/String:: or link::Classes/Symbol:: indicating the name of this object's link::Classes/SynthDef::.
+				
+method:: preset
+Returns a link::Classes/Symbol:: indicating the name of the current preset if there is one, nil otherwise.
+				
+method:: server
+Return this object's link::Classes/Server::.
+				
+
+method:: copy
+Returns a new link::Classes/Plugins/BMPlugin:: which is a copy of this object and its settings.
+
+
+method:: set
+Set a control to a value.
+
+argument:: key
+A link::Classes/Symbol:: indicating the name of the control to set.
+argument:: value
+The value to set the control to.
+
+code::		
+s.boot;
+p = BMPlugin('Bandpass');
+x = {Out.ar(1, PinkNoise.ar(0.2))}.play; // something to filter
+p.makeSynth(1, x, \addAfter);
+p.set(\freq, 880);
+p.release;
+x.free;
+::
+
+method:: get
+Get the current value of a control.
+
+argument:: key
+A link::Classes/Symbol:: indicating the name of the control to get.
+		
+code::
+s.boot;
+p = BMPlugin('Bandpass');
+x = {Out.ar(1, PinkNoise.ar(0.2))}.play; // something to filter
+p.makeSynth(1, x, \addAfter);
+p.get(\freq);
+p.release;
+x.free;
+::
+
+method:: debug
+Post the current values of all controls and then call trace on this object's link::Classes/Synth::.
+
+
+method:: preset
+Load a preset, setting this plugin's controls to its values.
+
+argument:: presetname
+A link::Classes/Symbol:: indicating the name of the preset to load.
+
+
+method:: makeSynth
+Make a synth for this plugin. If one already exists it will be removed and the new one added.
+
+argument:: in
+A link::Classes/Bus:: of bus index to use as the input signal to this plugin.
+argument:: target
+Target for this object's link::Classes/Synth::. If target is not a link::Classes/Group:: or link::Classes/Synth::, it will be converted as follows: If it is a link::Classes/Server::, it will be converted to the default_group of that server. If it is nil, to the default_group of the default Server. strong::Note::: A Synth is not a valid target for code::\addToHead:: and code::\addToTail::.
+argument:: addAction
+one of the following Symbols:		
+code::\addToHead:: - (the default) add at the head of the group specified by strong::target::
+code::\addToTail:: - add at the tail of the group specified by strong::target::
+code::\addAfter:: - add immediately after strong::target:: in its server's node order
+code::\addBefore:: - add immediately before strong::target:: in its server's node order
+code::\addReplace:: - replace strong::target:: and take its place in its server's node order
+
+
+method:: release
+Fade out and remove this plugin's synth, and call its spec's strong::cleanupFunc:: if one exists. After this you should not use this object.
+
+
+method:: gui
+Open a GUI for this plugin. If a GUI func was provided in this plugin's spec it will use that one to create it, otherwise it will use the strong::defaultGuiFunc:: defined in link::Classes/Plugins/BMPluginSpec::.
+
+
+Examples
+
+// for creation etc. see above
+// Here's an example with a BMTrimPluginsRack
+
+// 5.1 Array (-0.1)
+(
+l = [[-30, 'L'], [30, 'R'], [0, 'C'], [-110, 'Ls'], [110, 'Rs']].collectAs({|el, i|
+	BMSpeaker.newFromSpherical(el[1], i, el[0], 0, 2);
+}, BMInOutArray);
+)
+
+r = BMTrimPluginsRack(l, name: 'Plug em In');
+r[\C].addPlugin(BMPlugin('3 Band EQ'));
+r[\R].addPlugin(BMPlugin(\Highpass));
+
+r.gui; // play with the GUI
+
+r.free;
