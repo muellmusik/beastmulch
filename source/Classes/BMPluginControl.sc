@@ -190,22 +190,23 @@ BMPluginController : BMAbstractController {
 		^("Debugging" + piSpec.name + "Plugin:\n");
 	}
 
-	
+	*humanName { ^"Plugin Controller" }
+
 }
 
 BMPluginControl : BMControl {
 	var <subName;
-	
+
 	*new {|name, controller, ctrlNum, subName|
 		^super.new(name, controller, ctrlNum).init(subName);
 	}
-	
+
 	init {|argSN|
 		subName = argSN;
 	}
-	
+
 	isMappableControl { ^false }
-	
+
 	displaySpec { ^BMNoOpSpec } // experimental
-	
+
 }
