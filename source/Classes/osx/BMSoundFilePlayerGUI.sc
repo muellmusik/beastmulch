@@ -14,7 +14,6 @@ BMSoundFilePlayerGUI : BMAbstractGUI {
 
 	makeWindow {
 		window = Window.new(name, Rect(220, 700, 640, 100), false);
-		window.view.background_(Color.white.alpha_(0.2));
 		window.view.decorator = FlowLayout(window.view.bounds, Point(10, 10), Point(10, 10));
 
 		window.view.keyDownAction = { arg view,char,modifiers,unicode,keycode;
