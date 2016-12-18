@@ -193,7 +193,7 @@ startButton.action = {|view|
 // create controls for all parameters
 pinkWin.view.decorator.nextLine;
 
-outputControl = EZPopUpMenu(pinkWin, 230 @ 20, "Hardware Out: ", outputArray.asArray, {|ez|
+outputControl = EZPopUpMenu(pinkWin, 230 @ 20, "Hardware Out: ", outputArray.keys, {|ez|
 	synth.set("out", outputArray[ez.menu.item]);
 	outputNumber.string_("Channel:" + (outputArray[ez.menu.item].asControlInput + 1));
 
