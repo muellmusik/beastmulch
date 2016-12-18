@@ -49,7 +49,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		scrollView.background = Color.black;
 
 		sfView = SoundFileView.new(scrollView, Rect(0,20, width - 10, 300));
-		sfView.background = HiliteGradient(Color.blue, Color.cyan, steps: 256);
+		sfView.background = Color.blue;
 		this.setWaveColors;
 		sfView.timeCursorOn = true;
 		sfView.timeCursorColor = Color.red;

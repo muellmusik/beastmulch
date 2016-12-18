@@ -24,7 +24,7 @@ BMSoundFilePlayerGUI : BMAbstractGUI {
 
 		clockView = StaticText.new(window, Rect(0,0,200,45));
 		clockView.string = "00:00:00.0";
-		clockView.background = HiliteGradient(Color.black.alpha_(0.1), Color.black, \v, 256, 0.5);
+		clockView.background = Color.black;
 		clockView.font = Font("Helvetica-Bold", 18);
 		clockView.stringColor = Color.new255(106, 90, 205);
 		clockView.align = \center;
@@ -104,7 +104,7 @@ BMSoundFilePlayerGUI : BMAbstractGUI {
 			bigClock.onClose = { bigClock = nil; };
 			bigText = StaticText.new(bigClock, Rect(0, 0, 800, 180)).resize_(5);
 			bigText.string = "00:00:00.0";
-			bigText.background = HiliteGradient(Color.black.alpha_(0.3), Color.black, \v, 1024, 0.5);
+			bigText.background = Color.black;
 			bigText.font = Font("Helvetica-Bold", 120);
 			bigText.stringColor = Color.new255(106, 90, 205);
 			bigText.align = \center;
