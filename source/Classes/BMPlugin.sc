@@ -173,12 +173,9 @@ BMPluginSpec {
 			});
 		}
 	}
-	
-	// protect for now
-	guiFunc { 
-		if(GUI.id == \cocoa, {
-			^guiFunc ? defaultGuiFunc 
-		}, {^nil})
+
+	guiFunc {
+		^guiFunc ? defaultGuiFunc
 	}
 	
 }
