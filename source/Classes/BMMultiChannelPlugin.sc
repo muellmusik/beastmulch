@@ -749,7 +749,7 @@ BMMultichannelPluginSpec {
 			spec = plugin.spec;
 			specsDict = plugin.specsDict;
 			numSliders = specsDict.size;
-			window = SCWindow.new("Plugin:" + spec.name, 
+			window = Window.new("Plugin:" + spec.name,
 				Rect(300, 300, 552, (numSliders + 1) * 24 + 24), false); // 508
 			window.view.decorator = FlowLayout(window.view.bounds);
 			window.view.background = Color.rand.alpha_(0.3);
@@ -770,15 +770,15 @@ BMMultichannelPluginSpec {
 					}, initVal
 				);
 				sliders[key].numberView.background = Color.white.alpha_(0.4);
-				SCStaticText(window, Rect(0,0,40,20)).string_(cspec.units);
-			
+				StaticText(window, Rect(0,0,40,20)).string_(cspec.units);
+
 			}, {|a, b|
 				var argArray;
 				argArray = plugin.spec.ugenGraphFunc.def.argNames;
 				argArray.indexOf(a) < argArray.indexOf(b)
 			});
 			window.view.decorator.nextLine.shift(10, 10);
-			presetMenu = SCPopUpMenu(window, Rect(0, 0, 100, 20));
+			presetMenu = PopUpMenu(window, Rect(0, 0, 100, 20));
 			presetMenu.items = ["presets", "-"] ++ spec.presets.keys;
 			presetMenu.action = {
 				if(presetMenu.value > 1, {
