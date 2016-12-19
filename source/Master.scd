@@ -9,7 +9,6 @@ var concertManager, configManager, pieces, configurations;
 var chainFunc, chain, cond, configsGUI, configsGUIFunc;
 var controllerAutomator, bmMenu, configMenu, utilMenu, autoMenuItem, autoGUI, helpMenu;
 var pinkNoiseFunc, speakersWindow;
-var cocoaApp, cocoaMainMenu, showHideFunc;
 
 
 s.options = BMOptions.defaultServerOptions;
