@@ -213,20 +213,20 @@ BMSpeakerArrayGUI : BMAbstractGUI {
 					   .action_({| view |
 					   	switch(view.value,
 					   		// import speaker array
-					   		1, { CocoaDialog.getPaths({| path |
+					   		1, { Dialog.openPanel({| path |
 								var recalledstartArray;
 
-								recalledstartArray = Object.readTextArchive(path[0]);
+								recalledstartArray = Object.readTextArchive(path);
 								if (subarraysWindow.notNil) { subarraysWindow.window.close };
 								outputArray = recalledstartArray;
 								speakerList.items_(outputArray.keys.asArray);
 								speakerList.value_(0).doAction;
-								}, allowsMultiple: false);
+								});
 
 							 },
 
 					   		// export speaker array
-					   		2, { CocoaDialog.savePanel({| path |
+					   		2, { Dialog.savePanel({| path |
 							 	outputArray.writeTextArchive(path);
 							    })
 					  		 }

@@ -273,10 +273,10 @@ BMConcertGUI  {
 					   	  switch(view.value,
 					   	   	// Import Concert
 					   	   	1,
-					   	   	{ CocoaDialog.getPaths({| path |
+					   	   	{ Dialog.openPanel({| path |
 								var recalled;
 
-								recalled = Object.readTextArchive(path[0]);
+								recalled = Object.readTextArchive(path);
 								concertManager.concert.pieces = recalled.concert.pieces.deepCopy;
 
 								configManager.currentConfig_('all off', \concertEditor);
@@ -313,13 +313,13 @@ BMConcertGUI  {
 								if (selectable.not) { this.listViewSelection(true) };
 								concertListView.value_(0).doAction;
 								concertManager.storeSession(configManager);
-								}, allowsMultiple: false);
+								});
 
 							 },
 
 							 // Export Concert
 							 2,
-							 {  CocoaDialog.savePanel({| path |
+							 {  Dialog.savePanel({| path |
 							 	this.prepareForExport.writeTextArchive(path);
 							 	concertManager.storeSession(configManager);
 							    })
@@ -327,10 +327,10 @@ BMConcertGUI  {
 
 					  		 // Import Piece
 					  		 4,
-					  		 { CocoaDialog.getPaths({| path |
+					  		 { Dialog.openPanel({| path |
 								var piece, configuration, pieceAndConfig, completion;
 
-								pieceAndConfig = Object.readTextArchive(path[0]);
+								pieceAndConfig = Object.readTextArchive(path);
 								piece = pieceAndConfig.piece;
 								configuration = pieceAndConfig.config;
 								completion = { concertManager.add(piece, concertListView.value);
@@ -380,13 +380,13 @@ BMConcertGUI  {
 				   					}
 				   				}
 								)
-							 }, allowsMultiple: false)
+							 })
 							 },
 
 					  		 // Export Piece
 					  		 5,
 					  		 { if (selectable and: { concertListView.items.size > 0 })
-					  		 	  {  CocoaDialog.savePanel({| path |
+					  		 	  {  Dialog.savePanel({| path |
 					  		 	  		var piece, configuration, pieceAndConfig;
 
 					  		 	  		piece = concertManager.concert.pieces[concertListView.value].deepCopy;
@@ -407,10 +407,10 @@ BMConcertGUI  {
 
 							 // Import Configuration
 							 7,
-					  		 { CocoaDialog.getPaths({| path |
+					  		 { Dialog.openPanel({| path |
 								var configuration;
 
-								configuration = Object.readTextArchive(path[0]);
+								configuration = Object.readTextArchive(path);
 								this.makeNewNameWindow(
 									configuration.key,
 									configManager.names,
@@ -422,7 +422,7 @@ BMConcertGUI  {
 
 									}
 								)
-							 }, allowsMultiple: false)
+							 })
 							 },
 
 							 // Export Configuration
@@ -432,7 +432,7 @@ BMConcertGUI  {
 							   	 var configuration;
 
 							   	 configuration = configName -> configManager.dict[configName].deepCopy;
-							   	 CocoaDialog.savePanel({| path |
+							   	 Dialog.savePanel({| path |
 							   	 	configuration.writeTextArchive(path);
 							   	 	configManager.storeConfiguration(configuration.key);
 							   	 	concertManager.storeSession(configManager);
@@ -547,8 +547,8 @@ BMConcertGUI  {
 
 				   			window.close;
 				   			if (button.value == 0)
-				   			   { CocoaDialog.getPaths({| path |
-				   			   					   event.add(\path -> path[0]);
+				   			   { Dialog.openPanel({| path |
+				   			   					   event.add(\path -> path);
 												   this.makeNewPieceWindow(event, origin);
 											       },
 											       allowsMultiple: false
