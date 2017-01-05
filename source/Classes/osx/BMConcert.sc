@@ -118,7 +118,7 @@ BMConcertGUI  {
 
 		// Pieces List ---------------------
 
-		concertListView				= ListView(concertView, 180 @ 373)
+		concertListView				= ListView(concertView, 180 @ 360)
 									   .items_(concertManager.concert.pieces.collect{| x | x.name }.asArray);
 
 		concertListView.keyDownAction 	= { arg view,char,modifiers,unicode,keycode;
