@@ -46,7 +46,10 @@ BMSpeakerArrayGUI : BMAbstractGUI {
 	   speakerList	= ListView(speakerListCompView, 152 @ (508-35))
 	 					.items_(outputArray.keys.asArray)
 	 					.action_({| view |
-	 						var speaker	= outputArray[view.item];
+	 						var speaker;
+			if(view.items.size > 0, {
+
+				speaker	= outputArray[view.item];
 		 					if ((outputArray.size > 0))
 				    	  	    	   { if (speaker.isBMSpeaker)
 			 					   { instanceVarsBoxes
@@ -72,7 +75,8 @@ BMSpeakerArrayGUI : BMAbstractGUI {
 			 						 	instanceVarsBoxes[key].value = ""
 			 						 };
 			 				   }
-	 					});
+			});
+			});
 
 		// redirect to button actions
 	 	speakerList.keyDownAction = { arg view,char,modifiers,unicode,keycode;
