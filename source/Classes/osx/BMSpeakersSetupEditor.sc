@@ -275,14 +275,15 @@ BMSpeakerArrayGUI : BMAbstractGUI {
 		var newWindow, name, speakerNameField, okButton, speakerIndexField;
 
 		origin		= origin ?? { 490 @ 500 };
-		newWindow 	= Window("New Speaker", Rect(origin.x, origin.y, 260, 110 + 30), false);
+		newWindow 	= Window("New Speaker", Rect(origin.x, origin.y, 280, 110 + 30), false).front;
+		newWindow.alwaysOnTop = true;
 		newWindow.view.decorator = FlowLayout(newWindow.view.bounds, Point(10, 10), Point(10, 10));
 
-		StaticText(newWindow, 50 @ 20).string = "Name:";
+		StaticText(newWindow, 60 @ 20).string = "Name:";
 
 		speakerNameField	= TextField(newWindow, 180 @ 20);
 
-		StaticText(newWindow, 50 @ 20).string = "HW Out:";
+		StaticText(newWindow, 60 @ 20).string = "HW Out:";
 		speakerIndexField	= TextField(newWindow, 180 @ 20);
 
 		newWindow.view.decorator.shift(0, 30);

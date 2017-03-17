@@ -19,7 +19,7 @@ BMControllerConfigGUI : BMAbstractGUI {
 		var result, textFields;
 		result = ();
 		textFields = List.new;
-		window = Window("Configure Controller", Rect(30, 30, 300, params.size + 1 * 24 + 44));
+		window = Window("Configure Controller", Rect(30, 30, 300, params.size + 1 * 24 + 44)).front;
 		window.addFlowLayout;
 		StaticText(window, Rect(10, 10, 280, 20)).font_(Font("Helvetica-Bold", 12))
 			.string_("Configure" + class.humanName);
