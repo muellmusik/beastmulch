@@ -167,6 +167,7 @@ BMPluginSpec {
 					}, initVal, labelWidth: labelWidth
 				);
 				guiCtrls[i].numberView.background = Color.white.alpha_(0.4);
+				guiCtrls[i].numberView.maxDecimals_(3);
 				guiCtrls[i].font = font;
 				//displaySpecs[i] = displaySpec;
 			
