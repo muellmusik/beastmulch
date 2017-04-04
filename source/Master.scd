@@ -212,6 +212,13 @@ ampControl = EZSlider(pinkWin, 400 @ 24, "Amp", \db,
 pinkWin.view.decorator.nextLine;
 StaticText(pinkWin, Rect(0,0,300,80)).string_("Outputs are Hardware, not SC, i.e. 1 = 1");
 
+outputControl.menu.canFocus_(true);	outputControl.menu.focus(true);
+ampControl.sliderView.keyDownAction = {  arg view, char, modifiers, unicode, keycode, key;
+	if(key == 16777237 || (key == 16777235), {
+		outputControl.menu.focus(true);
+		^true;
+	}, { ^view });
+};
 
 // set start button to zero upon a cmd-period
 cmdPeriodFunc = { startButton.value = 0; };
