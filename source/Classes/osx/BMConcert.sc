@@ -458,8 +458,12 @@ BMConcertGUI  {
 		var piece;
 		if ((change == \currentConfig) and: { from == \configurationEditor })
 	    	  { 	if (selectable) { this.listViewSelection(false) } }
-		  {  if ((change != \storeSession) and: { change != \store })
-		  		{ concertListView.items = concertManager.concert.pieces.collect{| x | x.name }.asArray }
+		{  if ((change != \storeSession) and: { change != \store } and: { from != 'concertEditor'})
+		  		{ var oldItem = concertListView.item;
+
+				concertListView.items = concertManager.concert.pieces.collect{| x | x.name }.asArray;
+				concertListView.value = concertListView.items.indexOf(oldItem);
+			};
 		  };
 
 
