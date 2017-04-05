@@ -100,6 +100,13 @@ BMConfigurations {
 	loadConfig {| configName, from |
 		{
 		BMAbstractController.stopAllListening;
+		// first clear everything
+		BMAbstractAudioChainElement.allChainElements.keysValuesDo{| key, value |
+		 	BMAbstractAudioChainElement.allChainElements[key].mappings = nil;
+		 	0.01.wait;
+
+		};
+		// then load
 		BMAbstractAudioChainElement.allChainElements.keysValuesDo{| key, value |
 			//key.postln;
 		 	BMAbstractAudioChainElement.allChainElements[key].mappings = dict[configName][key];
