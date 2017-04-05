@@ -37,7 +37,7 @@ BMConcert {
 	// cause chain elements (i.e. soundfile players) to load any heavy resources
 	// asssociated with a piece
 	loadAt {| pieceEventIndex |
-		var pieceEvent, element;
+		var pieceEvent, element, ctrlState;
 		//this.changed(\loadPiece, concert.pieces[pieceEventIndex])
 
 		pieceEvent = concert.pieces[pieceEventIndex];
@@ -54,6 +54,11 @@ BMConcert {
 
  		configManager.currentConfig_(pieceEvent.config, \concertEditor);
 		controllerAutomator.mappings = pieceEvent.controllerAutomation;
+		ctrlState = pieceEvent.controllerState;
+		ctrlState.notNil.if({ctrlState.keysValuesDo({|name, vals|
+			var ctrlr = BMAbstractController.allControllers[name];
+			ctrlr.notNil.if({ctrlr.setAllValues(vals)}, {"State of controller % could not be set as it could not be found\n".format(name).warn;});
+		})});
 
 	}
 
@@ -204,9 +209,14 @@ BMConcertGUI  {
 								  };
 
 		concertView.decorator.shift(4, 0);
-		storeButton				= RoundButton(concertView, 46 @ 20).extrude_(false).canFocus_(false)
-					 			  .font_(Font("Arial", 11)).states_([["Store", Color.black,  Color.white.alpha_(0.8) ]])
-					 			  .action_{| view | concertManager.storeSession(configManager) };
+		storeButton				= RoundButton(concertView, 65 @ 20).extrude_(false).canFocus_(false)
+					 			  .font_(Font("Arial", 9)).states_([["Store Ctrllrs", Color.black,  Color.white.alpha_(0.8) ]])
+					 			  .action_{| view |
+
+			if(pieceLoaded, {concertManager.concert.pieces[concertListView.value].controllerState = BMAbstractController.allControllers.select({|ctrl| ctrl.acceptsAutomation }).collect({|ctrl| ctrl.getAllValues; })}, {"Please Load the Piece you wish to store".warn});
+			concertManager.storeSession(configManager);
+
+		};
 
 
 		// Second Column -------------
