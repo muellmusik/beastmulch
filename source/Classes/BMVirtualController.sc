@@ -47,9 +47,9 @@ BMVirtualController : BMAbstractController {
 		valueArray[chan] = val; 
 		this.changed(\controlVal, chan, val);
 	}
-	
-	getAllValues { ^valueArray; }
-	
+
+	getAllValues { ^valueArray.copy; }
+
 	setAllValues {|array|  array.do({|item, i| this.setVal(i + 1, item);}); }
 	
 	setLabel { |fader, name|

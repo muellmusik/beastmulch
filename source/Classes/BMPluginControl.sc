@@ -149,9 +149,9 @@ BMPluginController : BMAbstractController {
 			^valueArray[ind];
 		}, {("Plugin " ++ name ++ "has no Control named " ++ key).warn; ^nil; });
 	}
-	
-	getAllValues { ^valueArray; }
-	
+
+	getAllValues { ^valueArray.copy; }
+
 	getAllValuesDict {
 		^paramNameIndices.collect({|ind, key| valueArray[ind] });
 	}
