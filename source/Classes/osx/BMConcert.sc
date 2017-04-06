@@ -178,7 +178,7 @@ BMConcertGUI  {
 							    	  	    concertManager.removeAt(viewIndex);
 							    	  	    if ((viewIndex == (concertManager.concert.pieces.size)) and: { concertManager.concert.pieces.size > 0 })
 							    	  	    	   { concertListView.valueAction = viewIndex - 1 }
-							    	  	    	   { concertListView.action.value(viewIndex) }
+							    	  	    	   { concertListView.valueAction = viewIndex }
 							    	  	  }
 							       };
 
@@ -582,7 +582,7 @@ BMConcertGUI  {
 							concertManager.concert.pieces.collect{| e | e.name },
 							{| newName |
 							  event.add(\name -> newName);
-						   	  concertManager.add(event, concertListView.value);
+						   	  concertManager.add(event, concertListView.value ? 0);
 						   	  concertManager.storeSession(configManager);
 						   	  if (selectable.not) { this.listViewSelection(true) };
 						   	  concertListView.valueAction = concertListView.value + 1
