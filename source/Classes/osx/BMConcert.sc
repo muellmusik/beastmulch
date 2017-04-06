@@ -213,7 +213,9 @@ BMConcertGUI  {
 					 			  .font_(Font("Arial", 9)).states_([["Store Ctrllrs", Color.black,  Color.white.alpha_(0.8) ]])
 					 			  .action_{| view |
 
-			if(pieceLoaded, {concertManager.concert.pieces[concertListView.value].controllerState = BMAbstractController.allControllers.select({|ctrl| ctrl.acceptsAutomation }).collect({|ctrl| ctrl.getAllValues; })}, {"Please Load the Piece you wish to store".warn});
+			if(pieceLoaded, {concertManager.concert.pieces[concertListView.value].controllerState = BMAbstractController.allControllers.select({|ctrl| ctrl.acceptsAutomation }).collect({|ctrl| ctrl.getAllValues; });
+				concertManager.concert.pieces[concertListView.value].masterFaderLevel = BMAbstractAudioChainElement.allChainElements.detect({|el| el.isKindOf(BMMasterFader)}).level;
+			}, {"Please Load the Piece you wish to store".warn});
 			concertManager.storeSession(configManager);
 
 		};

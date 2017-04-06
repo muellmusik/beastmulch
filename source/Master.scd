@@ -82,7 +82,7 @@ chainFunc = {
 		BMTrimPluginsRack(outputArray ++ privateOuts, name: 'Post-Processing'),
 		BMMultichannelPluginsRack(inputArray ++ privateIns, outputArray, name: 'Multichannel'),
 		BMAudioMatrix(privateOuts, outputArray, name: 'Virtual Outputs'),
-		BMMasterFader(name: 'Master Fader')
+		BMMasterFader(name: 'Master Fader').acceptsMappings_(false);
 	]
 
 };
