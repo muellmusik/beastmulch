@@ -27,7 +27,7 @@ BMMasterFader : BMAbstractAudioChainElement {
 	
 	mappings_ { | dict |
 		dict = dict ? ();
-		level = dict[\level] ? -12;
+		this.level_(dict[\level] ? -12);
 	}
 	
 	// a little hacky but has worked ;-)
