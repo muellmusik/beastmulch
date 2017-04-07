@@ -520,6 +520,9 @@ BMConcertGUI  {
 		configsView 				= ListView(window, 200 @ 317).canReceiveDragHandler = false;
 		configsView.background_(Color.white).hiliteColor_(Color.new255(51, 111, 203, 255 * 0.95));
 		configsView.items 			= configManager.names.asArray;
+		configsView.mouseDownAction = {|view, x, y, mod, button, clickCount|
+			if(clickCount.postln == 2, { okButton.doAction });
+		};
 
 		RoundButton(window, 95 @ 20)
 			   .extrude_(false).canFocus_(false)
