@@ -192,7 +192,8 @@ BMConcertGUI  {
 								    if (index.notNil and: {index > 0 })
 								    	   { concertManager.concert.pieces = concertManager.concert.pieces.swap(index - 1, index);
 								    	     concertManager.changed;
-								    	     concertListView.valueAction = index - 1
+								    	     concertListView.valueAction = index - 1;
+				concertManager.storeSession(configManager);
 								    	   }
 							 	  };
 
@@ -205,7 +206,8 @@ BMConcertGUI  {
 								    if (index.notNil and: { index < (concertManager.concert.pieces.size - 1) })
 								    	  { concertManager.concert.pieces = concertManager.concert.pieces.swap(index, index + 1);
 								    	    concertManager.changed;
-								    	    concertListView.valueAction = index + 1
+								    	    concertListView.valueAction = index + 1;
+				concertManager.storeSession(configManager);
 								    	  }
 								  };
 
