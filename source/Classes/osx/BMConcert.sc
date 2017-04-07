@@ -176,6 +176,7 @@ BMConcertGUI  {
 							   	    if (concertListView.item.notNil)
 							    	  	  { viewIndex = concertListView.value;
 							    	  	    concertManager.removeAt(viewIndex);
+				concertManager.storeSession(configManager);
 							    	  	    if ((viewIndex == (concertManager.concert.pieces.size)) and: { concertManager.concert.pieces.size > 0 })
 							    	  	    	   { concertListView.valueAction = viewIndex - 1 }
 							    	  	    	   { concertListView.valueAction = viewIndex }
