@@ -139,7 +139,7 @@ BMConcertGUI  {
 									   pieceLoaded = false;
 
 								   	   if ((concertManager.concert.pieces.size > 0))
-									      { configText.string = concertManager.concert.pieces[concertListView.value].config;
+									      { configText.string = concertManager.concert.pieces[view.value ? 0].config;
 									        loadButton.states = loadButtonStates.loadSelected }
 									      { configText.string = "";
 									        loadButton.states = loadButtonStates.noPieces
@@ -474,10 +474,11 @@ BMConcertGUI  {
 		if ((change == \currentConfig) and: { from == \configurationEditor })
 	    	  { 	if (selectable) { this.listViewSelection(false) } }
 		{  if ((change != \storeSession) and: { change != \store } and: { from != 'concertEditor'})
-		  		{ var oldItem = concertListView.item;
-
+		  		{ var oldItem, newIndex;
+				if(concertListView.items.size > 0, {oldItem = concertListView.item;});
 				concertListView.items = concertManager.concert.pieces.collect{| x | x.name }.asArray;
-				concertListView.value = concertListView.items.indexOf(oldItem);
+				newIndex = if(oldItem.notNil, {concertListView.items.indexOf(oldItem)}, {0});
+				concertListView.value = newIndex;
 			};
 		  };
 
