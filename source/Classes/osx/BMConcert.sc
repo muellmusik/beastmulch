@@ -222,6 +222,7 @@ BMConcertGUI  {
 			concertManager.storeSession(configManager);
 
 		};
+		storeButton.toolTip = "Store Master Trim and initial controller state (if supported)";
 
 
 		// Second Column -------------
@@ -248,6 +249,7 @@ BMConcertGUI  {
 								   	 }
 								  };
 
+		loadButton.toolTip = "Click to (re-)load and recall any stored controller states";
 		buttonSection.decorator.shift(0, 10);
 
 		StaticText.new(buttonSection, 180 @ 20).string = "Piece Configuration:";
