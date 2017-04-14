@@ -204,7 +204,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			var tenSecs, thirtySecs, bounds;
 			bounds = timesView.bounds;
 			Pen.addRect(Rect(0, 0, bounds.width, 20));
-			Pen.fillColor = Color.new255(0, 0, 238);
+			Pen.fillColor = Color.new255(70, 130, 180);
 			Pen.fill;
 
 			tenSecs = timesView.bounds.width * durInv * 10;
