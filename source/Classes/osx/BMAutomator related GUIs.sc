@@ -188,7 +188,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	setWaveColors {
 		sfView.waveColors_(
 			Array.fill(sf.numChannels, {|i|
-				Color.cyan(0.7, 1).blend(Color.cyan(0.8, 1), 1 / (sf.numChannels - 1) * i)
+				Color.cyan(0.9, 1).blend(Color.cyan(1.0, 1), 1 / (sf.numChannels - 1) * i)
 			})
 		);
 	}
