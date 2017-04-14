@@ -242,12 +242,9 @@ BMConcertGUI  {
 
 		loadButton.action 			= {| view |
 								   if (selectable)
-								   	 { if (pieceLoaded.not)
-								   	 	  { concertManager.loadAt(concertListView.value);
+								   	 { concertManager.loadAt(concertListView.value);
 								   	 	    view.states = loadButtonStates.pieceLoaded;
 								   	 	    pieceLoaded = true
-								   	 	  }
-								   	 	  { ("The Piece \"" ++ concertListView.item ++ "\" has already been loaded").inform }
 								   	 }
 								  };
 
