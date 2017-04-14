@@ -61,11 +61,9 @@ controllersList = systemConfig.controllers.collectAs({|assoc|
 
 
 
-player = BMSoundFilePlayer.new(systemConfig.numSoundFilePlayerChans, name: 'Player');
-
 chainFunc = {
 	controllers = BMAbstractController.masterInOutArray;
-	inputs = [player, BMInOutArray.hardwareInputArray];
+	inputs = [player = BMSoundFilePlayer.new(systemConfig.numSoundFilePlayerChans, name: 'Player');, BMInOutArray.hardwareInputArray];
 	inputArray = BMInOutArray[];
 	inputs.do({|input| inputArray = inputArray ++ input.asBMInOutArray });
 	privateIns = BMInOutArray.privateBusBlock('Virtual In', systemConfig.numVirtIns);
