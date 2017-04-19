@@ -927,7 +927,7 @@ BMMultichannelPlugin {
 		});
 		^("Debugging" + spec.name + "Plugin:\n");
 	}
-	
+
 	preset_{|presetname|
 		var psdict;
 		psdict = spec.presets[presetname];
@@ -937,7 +937,7 @@ BMMultichannelPlugin {
 			psdict.keysValuesDo({|key, val| this.set(key, val)});
 		}, {("Plugin " ++ spec.name ++ " has no preset named " ++ presetname).warn });
 	}
-	
+
 	makeSynth {|target, addAction=\addToTail|
 		(target.asTarget.server != server).if({
 			Error("Target server does not match Plugin server.").throw;
@@ -945,15 +945,16 @@ BMMultichannelPlugin {
 		synth.notNil.if({ synth.set(\cfgate, 0); });
 		synth = def.play(target, mappings, addAction);
 	}
-	
-	release { 
-		synth.set(\cfgate, 0); 
-		synth = nil; bus.free; 
+
+	release {
+		synth.set(\cfgate, 0);
+		synth = nil; bus.free;
 		bus = nil;
 		gui.notNil.if({ gui.close });
 		spec.cleanupFunc.value(this);
+		SynthDef.removeAt(defName);
 	} // I'm a lame duck...
-	
+
 	gui {
 		gui.isNil.if({
 			gui = spec.guiFunc.value(this);
@@ -962,7 +963,7 @@ BMMultichannelPlugin {
 			gui.front;
 		});
 	}
-	
+
 	copy {
 		var values, newplugin;
 		values = this.values;
