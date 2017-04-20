@@ -84,6 +84,10 @@ BMConcert {
 	setSysConfig {|newSysConfig|
 		concert.system.sysconfig = newSysConfig;
 	}
+
+	setRemoteTimeDisplayAddresses {|addressList|
+		concert.system.remoteTimeDisplayAddresses = addressList;
+	}
 }
 
 

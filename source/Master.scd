@@ -9,6 +9,7 @@ var concertManager, configManager, pieces, configurations;
 var chainFunc, chain, cond, configsGUI, configsGUIFunc;
 var controllerAutomator, bmMenu, configMenu, utilMenu, autoMenuItem, autoGUI, helpMenu;
 var pinkNoiseFunc, speakersWindow;
+var remoteTimeDisplayAddresses;
 
 
 s.options = BMOptions.defaultServerOptions;
@@ -31,6 +32,7 @@ s.options.numInputBusChannels = systemConfig.numInChannels;
 
 pieces		= backupManager.rememberWorkspace([ \concert, \pieces ],  { List[] });
 configurations= backupManager.rememberWorkspace(\configurations,  { (dict:  IdentityDictionary[], names: List[ 'all off' ]) });
+remoteTimeDisplayAddresses = backupManager.rememberWorkspace([ \concert, \system, \remoteTimeDisplayAddresses ],  { List[] });
 
 // make sure we have enough output channels
 if(outputArray.size > 0, {
@@ -87,6 +89,12 @@ chainFunc = {
 
 chain = chainFunc.value;
 
+player.addDependant({|changer, what, time|
+	if(what == \time, {
+		remoteTimeDisplayAddresses.do({|addr| try { addr.sendMsg(\time, time) } });
+	});
+});
+
 controllerAutomator = BMControllerAutomator(BMAbstractController.masterInOutArray.keys, player);
 ~controllerAutomator = controllerAutomator;
 bmMenu = "BEASTmulch";
@@ -140,6 +148,39 @@ MainMenu.register(Action("Configure Speakers", {
    		}, "Speaker Array Definition", 129 @ 34);
    		speakersWindow.onClose_({ speakersWindow = nil })
    	})
+}), bmMenu, configMenu);
+
+MainMenu.register(Action("Configure Remote Time Display", {
+	var timeDispWin, listView, ip, port, add, delete, ok, cancel, resetValsFunc;
+	var localAddrsCopy;
+	localAddrsCopy = remoteTimeDisplayAddresses.copy;
+	timeDispWin = Window("Time Display Remotes").front.alwaysOnTop_(true).userCanClose_(false);
+			timeDispWin.layout = VLayout(listView = ListView(), HLayout(StaticText().string_("IP:"), [ip = TextField(), s:2], StaticText().string_("Port:"), [port = NumberBox(), s:1], add = Button().states_([["Add"]]), delete = Button().states_([["Delete"]])), HLayout(cancel = Button().states_([["Cancel"]]), ok = Button().states_([["OK"]])));
+	resetValsFunc = {
+		listView.items = localAddrsCopy.collect({|addr| "% : %".format(addr.ip, addr.port)});
+		ip.string = "";
+		port.string = "";
+	};
+	resetValsFunc.value;
+	port.maxDecimals = 0;
+	add.action = {
+		var addr;
+		try {
+			addr = NetAddr(ip.string, port.value.asInteger);
+			localAddrsCopy.add(addr);
+			resetValsFunc.value;
+		} { "Invalid Address".error };
+	};
+	delete.action = {
+		if(listView.selection.notNil, { localAddrsCopy.removeAt(listView.value); resetValsFunc.value; });
+	};
+	ok.action = {
+		concertManager.setRemoteTimeDisplayAddresses(localAddrsCopy);
+		concertManager.storeSession(configManager);
+		BMAlert("To change the remote time displays the system must be restarted.\nPress okay to do this now.", [["ok", Color.black, Color.new255(51, 111, 203, 255 * 0.95)]], [{thisProcess.recompile;}], background: Color.white, color: Color.red, border:false);
+	};
+	cancel.action = { timeDispWin.close; };
+
 }), bmMenu, configMenu);
 
 
