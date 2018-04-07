@@ -124,7 +124,7 @@ BMMatrixGUI : BMAbstractGUI {
 	var h = 700, v = 700, numIns = 10, numOuts = 10, dotSize = 10;
 	var hinterval, vinterval, userView;
 	var cellsize = 25, screenBounds; // maximum cellsize
-	var hoffset = 80, voffset = 100;
+	var hoffset = 80, voffset = 100, hRectHeight, vRectHeight;
 	var color, ringColor;
 	var lastx, lasty, on = false;
 	var ins, outs;
@@ -146,7 +146,7 @@ BMMatrixGUI : BMAbstractGUI {
 				BMAbstractController.allControls[inName].addDependant(this);
 			});
 		});
-		font = Font("Andale Mono", 12);
+		font = Font("Andale Mono", 11);
 	}
 
 	makeWindow {
@@ -158,8 +158,11 @@ BMMatrixGUI : BMAbstractGUI {
 		outs = matrix.outNames;
 		numOuts = outs.size;
 
-		hoffset = max(hoffset, ins.collect({|lbl| lbl.asString.bounds(font).width}).maxItem + 15);
-		voffset = max(voffset, outs.collect({|lbl| lbl.asString.bounds(font).width}).maxItem + 15);
+		hoffset = max(hoffset, ins.collect({|lbl| lbl.asString.bounds(font).width}).maxItem + 20);
+		voffset = max(voffset, outs.collect({|lbl| lbl.asString.bounds(font).width}).maxItem + 20);
+
+		hRectHeight = ins.collect({|lbl| lbl.asString.bounds(font).height}).maxItem;
+		vRectHeight = outs.collect({|lbl| lbl.asString.bounds(font).height}).maxItem;
 
 		// scale size to available monitor size
 		screenBounds = Window.screenBounds;
@@ -274,9 +277,9 @@ BMMatrixGUI : BMAbstractGUI {
 			outs.do({|item, i|
 
 				Pen.use({
-					Pen.translate((hoffset + hinterval + (hinterval * i)), (voffset / 2));
+					Pen.translate((hoffset + (hinterval * 1.5) + (hinterval * i)), 0);
 					Pen.rotate(0.5pi);
-					item.asString.drawCenteredIn(Rect.aboutPoint(0@0, 40, 10),
+					item.asString.drawRightJustIn(Rect.fromPoints(0@0, (voffset - 10)@vRectHeight),
 						font,
 						Color.black
 					);
@@ -295,8 +298,8 @@ BMMatrixGUI : BMAbstractGUI {
 
 
 				Pen.use({
-					Pen.translate((hoffset / 2), (voffset + vinterval + (vinterval * i)));
-					item.asString.drawCenteredIn(Rect.aboutPoint(0@0, 40, 10),
+					Pen.translate(0, (voffset + (vinterval * 0.5) + (vinterval * i)));
+					item.asString.drawRightJustIn(Rect.fromPoints(0@0, (hoffset - 10)@hRectHeight),
 						font,
 						inColor
 					);
