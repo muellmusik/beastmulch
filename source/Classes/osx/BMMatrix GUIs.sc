@@ -275,26 +275,35 @@ BMMatrixGUI : BMAbstractGUI {
 
 			};
 			outs.do({|item, i|
+				var inColor;
+
+				if(outs[i] == linex && (xpos > 0), {
+					inColor = Color.white;
+				}, { inColor = Color.black;});
 
 				Pen.use({
 					Pen.translate((hoffset + (hinterval * 1.5) + (hinterval * i)), 0);
 					Pen.rotate(0.5pi);
 					item.asString.drawRightJustIn(Rect.fromPoints(0@0, (voffset - 10)@vRectHeight),
 						font,
-						Color.black
+						inColor
 					);
 				});
 			});
 
 			ins.do({|item, i|
-				var inColor, mappedTo;
+				var inColor, tempColor, mappedTo;
+
+				if(ins[i] == liney && (ypos > 0), {
+					tempColor = Color.white;
+					}, { tempColor = Color.black;});
 
 				(matrix.takesControlsForInputs && BMOptions.allowMultipleControlMappings.not).if({
 					mappedTo = BMAbstractController.allControls[item].mappedTo;
 					if(mappedTo.notNil && (mappedTo !== matrix), {
 						inColor = Color.grey;
-					}, { inColor = Color.black;});
-				}, { inColor = Color.black;});
+					}, { inColor = tempColor;});
+				}, { inColor = tempColor;});
 
 
 				Pen.use({
