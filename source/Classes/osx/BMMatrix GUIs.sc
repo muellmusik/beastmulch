@@ -277,7 +277,7 @@ BMMatrixGUI : BMAbstractGUI {
 			outs.do({|item, i|
 				var inColor;
 
-				if(outs[i] == linex && (xpos > 0), {
+				if(item == linex && (xpos > 0), {
 					inColor = Color.white;
 				}, { inColor = Color.black;});
 
@@ -294,7 +294,7 @@ BMMatrixGUI : BMAbstractGUI {
 			ins.do({|item, i|
 				var inColor, tempColor, mappedTo;
 
-				if(ins[i] == liney && (ypos > 0), {
+				if(item == liney && (ypos > 0), {
 					tempColor = Color.white;
 					}, { tempColor = Color.black;});
 
