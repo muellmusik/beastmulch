@@ -36,58 +36,69 @@ l.keys.do(_.postln); // see if this looks correct...
 Dialog.savePanel({|path| l.writeArchive(path); }); // use the .spk extension
 
 // now we'll generate some basic configs with routing only
-(
-~numPlayerChans = 8;
-~numHardwareIns = 16;
-~hardwareInsOffset = 8;
+
+~numPlayerChans = 32;
+~numHardwareIns = 48;
+~hardwareInsOffset = 33;
 ~inputNames = ~numPlayerChans.collect({|i| ("Player-" ++ (i + 1)).asSymbol }) ++ ~numHardwareIns.collect({|i| ("Hardware In " ++ (i + 1)).asSymbol });
 
 // first collect the names and column nums of all configs. These are all that end with "Recv".
 ~configNames = IdentityDictionary.new;
+(
 x[0].do({|key, i|
-	if(key.containsi("Recv"), {
+	if(key.containsi("_Recv"), {
 		var loc;
-		loc = key.find("Recv", true);
+		loc = key.find("_Recv", true);
 		key = key.copyFromStart(loc - 1);
 		key = key.stripWhiteSpace; // drop leading or trailing spaces
 		~configNames[key.asSymbol] = i;
 	});
 });
+)
 
 // make a template with some sensible defaults supplied
 ~template = IdentityDictionary[ 'Audio Routing'->IdentityDictionary.new, 'Output Levels'->IdentityDictionary.new, 'Player'->IdentityDictionary.new, 'Input Levels'->IdentityDictionary.new, 'Master Fader'->IdentityDictionary.new, 'Pre-Processing'->IdentityDictionary.new, 'Virtual Outputs'->IdentityDictionary.new, 'Post-Processing'->IdentityDictionary.new, 'Virtual Inputs'->IdentityDictionary.new, 'Multichannel'->IdentityDictionary.new ];
 
+(
 l.keys.do({|name|
 	~template['Post-Processing'][name] = IdentityDictionary[ ('trim' -> 0), ('plugins' -> [  ]) ];
 });
+)
 
+(
 ~inputNames.do({|name|
 	~template['Pre-Processing'][name] = IdentityDictionary[ ('trim' -> 0), ('plugins' -> [  ]) ];
 	~template['Audio Routing'][name] = List.new;
 });
+)
 
 ~finalConfigs = IdentityDictionary.new;
 
 // now we iterate over the configs and collect the audio assigns
 
 // player
+(
 ~configNames.keysValuesDo({|key, ind|
 	var params, thisConfig;
 	thisConfig = ~template.deepCopy;
 	x.copyToEnd(1).do({|speak|
 		var name, assigns;
 		name = speak[1].asSymbol;
-		assigns = "[%]".format(speak[ind].stripWhiteSpace.tr(Char.space, $,)).interpret;
-		assigns = assigns.collect({|num| ("Player-" ++ num).asSymbol });
-		assigns.do({|assign|
-			if(~inputNames.includes(assign), {
-				thisConfig['Audio Routing'][assign].add(name);
+		if (speak[ind].isNil, {}, {
+			assigns = "[%]".format(speak[ind].stripWhiteSpace.tr(Char.space, $,)).interpret;
+			assigns = assigns.collect({|num| ("Player-" ++ num).asSymbol });
+			assigns.do({|assign|
+				if(~inputNames.includes(assign), {
+					thisConfig['Audio Routing'][assign].add(name);
+				});
 			});
 		});
 	});
 	~finalConfigs[key] = thisConfig;
 });
+)
 
+(
 // hardware
 ~configNames.keysValuesDo({|key, ind|
 	var params, thisConfig;
@@ -95,17 +106,18 @@ l.keys.do({|name|
 	x.copyToEnd(1).do({|speak|
 		var name, assigns;
 		name = speak[1].asSymbol;
-		assigns = "[%]".format(speak[ind].stripWhiteSpace.tr(Char.space, $,)).interpret;
-		assigns = assigns.collect({|num| ("Hardware In " ++ (num + ~hardwareInsOffset)).asSymbol });
-		assigns.do({|assign|
-			if(~inputNames.includes(assign), {
-				thisConfig['Audio Routing'][assign].add(name);
+		if (speak[ind].isNil, {}, {
+			assigns = "[%]".format(speak[ind].stripWhiteSpace.tr(Char.space, $,)).interpret;
+			assigns = assigns.collect({|num| ("Hardware In " ++ (num + ~hardwareInsOffset)).asSymbol });
+			assigns.do({|assign|
+				if(~inputNames.includes(assign), {
+					thisConfig['Audio Routing'][assign].add(name);
+				});
 			});
 		});
 	});
 	~finalConfigs[(key ++ " Hardware").asSymbol] = thisConfig;
 });
-
 )
 
 // save and write the configs to original dir
