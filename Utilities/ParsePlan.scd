@@ -1,7 +1,15 @@
 // first export excel file as TSV (Unix line endings) in beastmulch order, then...
 ~path = Dialog.openPanel({|path| ~path = path.postln; }); // select Tab separated values file. N.B. ensure Unix line endings
 
-x = TabFileReader.read(~path).postcs;
+(
+~numPlayerChans = 32;
+~numHardwareIns = 48;
+~hardwareInsOffset = 33;
+)
+
+(
+
+x = CSVFileReader.read(~path).postcs;
 
 /*
 Assumptions:
@@ -10,7 +18,6 @@ Row 1 is labels, so we skip that
 Columns are  speaker type, name, order (unused), output (normal not SC so subtract 1), ...
 */
 
-(
 l = x.copyToEnd(1).collectAs({|speak|
 	var spec, speaktype;
 	speaktype = speak[0];
@@ -29,22 +36,18 @@ l = x.copyToEnd(1).collectAs({|speak|
 	BMSpeaker(speak[1].asSymbol.postln, speak[3].interpret - 1, spec:spec ? 'Generic');
 
 }, BMInOutArray);
-)
 
-l.keys.do(_.postln); // see if this looks correct...
+// l.keys.do(_.postln); // see if this looks correct...
 
-Dialog.savePanel({|path| l.writeArchive(path); }); // use the .spk extension
+// Dialog.savePanel({|path| l.writeArchive(path); }); // use the .spk extension
 
 // now we'll generate some basic configs with routing only
 
-~numPlayerChans = 32;
-~numHardwareIns = 48;
-~hardwareInsOffset = 33;
 ~inputNames = ~numPlayerChans.collect({|i| ("Player-" ++ (i + 1)).asSymbol }) ++ ~numHardwareIns.collect({|i| ("Hardware In " ++ (i + 1)).asSymbol });
 
 // first collect the names and column nums of all configs. These are all that end with "Recv".
 ~configNames = IdentityDictionary.new;
-(
+
 x[0].do({|key, i|
 	if(key.containsi("_Recv"), {
 		var loc;
@@ -54,30 +57,30 @@ x[0].do({|key, i|
 		~configNames[key.asSymbol] = i;
 	});
 });
-)
+
 
 // make a template with some sensible defaults supplied
 ~template = IdentityDictionary[ 'Audio Routing'->IdentityDictionary.new, 'Output Levels'->IdentityDictionary.new, 'Player'->IdentityDictionary.new, 'Input Levels'->IdentityDictionary.new, 'Master Fader'->IdentityDictionary.new, 'Pre-Processing'->IdentityDictionary.new, 'Virtual Outputs'->IdentityDictionary.new, 'Post-Processing'->IdentityDictionary.new, 'Virtual Inputs'->IdentityDictionary.new, 'Multichannel'->IdentityDictionary.new ];
 
-(
+
 l.keys.do({|name|
 	~template['Post-Processing'][name] = IdentityDictionary[ ('trim' -> 0), ('plugins' -> [  ]) ];
 });
-)
 
-(
+
+
 ~inputNames.do({|name|
 	~template['Pre-Processing'][name] = IdentityDictionary[ ('trim' -> 0), ('plugins' -> [  ]) ];
 	~template['Audio Routing'][name] = List.new;
 });
-)
+
 
 ~finalConfigs = IdentityDictionary.new;
 
 // now we iterate over the configs and collect the audio assigns
 
 // player
-(
+
 ~configNames.keysValuesDo({|key, ind|
 	var params, thisConfig;
 	thisConfig = ~template.deepCopy;
@@ -96,9 +99,9 @@ l.keys.do({|name|
 	});
 	~finalConfigs[key] = thisConfig;
 });
-)
 
-(
+
+
 // hardware
 ~configNames.keysValuesDo({|key, ind|
 	var params, thisConfig;
@@ -116,14 +119,18 @@ l.keys.do({|name|
 			});
 		});
 	});
-	~finalConfigs[(key ++ " Hardware").asSymbol] = thisConfig;
+	~finalConfigs[(key ++ "-Hardware").asSymbol] = thisConfig;
 });
-)
+
 
 // save and write the configs to original dir
-(
+
+~newDirPath = ~path.dirname +/+ "config-exports";
+File.mkdir(~newDirPath);
+
 ~finalConfigs.associationsDo({|assoc|
-	assoc.writeArchive(~path.dirname +/+ assoc.key);
+	assoc.writeArchive(~newDirPath +/+ assoc.key ++ ".bmconf");
 })
+
 
 )
