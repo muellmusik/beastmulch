@@ -1,13 +1,10 @@
-// first export excel file as TSV (Unix line endings) in beastmulch order, then...
-~path = Dialog.openPanel({|path| ~path = path.postln; }); // select Tab separated values file. N.B. ensure Unix line endings
+// first export excel file as CSV (Unix line endings) in beastmulch order, then...
+~path = Dialog.openPanel({|path| ~path = path.postln; }); // select Comma separated values file. N.B. ensure Unix line endings
 
 (
 ~numPlayerChans = 32;
 ~numHardwareIns = 48;
 ~hardwareInsOffset = 33;
-)
-
-(
 
 x = CSVFileReader.read(~path).postcs;
 
