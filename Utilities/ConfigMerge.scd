@@ -1,5 +1,5 @@
 
-// choose the config from which data will be copied
+// choose the master config from which data will be copied
 Dialog.openPanel({|path| ~configMasterPath = path.postln; });
 
 // choose the config(s) to be updated
@@ -33,12 +33,12 @@ masterConfData = Object.readTextArchive(~configMasterPath).value;
 
 ~configsToUpdatePaths.do({|path, i|
 	var tempConf, tempConfData, tempConfKey;
-	path.postln;
+	// path.postln;
     tempConf = Object.readTextArchive(path);
 	tempConfData = tempConf.value;
 	tempConfKey = tempConf.key;
 	dataToCopy.do({|copyData|
-		"Copying % to %".format(copyData, tempConfKey).postln;
+		"Copying % to % config".format(copyData, tempConfKey).postln;
 		tempConfData.put(copyData, masterConfData.at(copyData));
 	});
 	outputConfigs[tempConfKey.asSymbol] = tempConfData;
