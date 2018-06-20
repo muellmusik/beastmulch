@@ -99,16 +99,16 @@ controllerAutomator = BMControllerAutomator(BMAbstractController.masterInOutArra
 ~controllerAutomator = controllerAutomator;
 bmMenu = "BEASTmulch";
 
-MainMenu.register(Action("SoundFile Display / Controller Automation", {
+MainMenu.register(MenuAction("SoundFile Display / Controller Automation", {
 	if(autoGUI.isNil, {~gui = autoGUI = controllerAutomator.gui.onClose_({autoGUI = nil})}, {
 		autoGUI.window.front;
 	});
 }), bmMenu);
 
 
-MainMenu.register(Action("Visualise Speakers", {BMSpeakerListVisualiser(outputArray)}), bmMenu);
+MainMenu.register(MenuAction("Visualise Speakers", {BMSpeakerListVisualiser(outputArray)}), bmMenu);
 
-MainMenu.register(Action("Show Virtual Controllers", {
+MainMenu.register(MenuAction("Show Virtual Controllers", {
 	BMAbstractController.allControllers.do({|ctllr|
 		if(ctllr.class == BMVirtualController, {BMVirtualControllerSliders(ctllr)});
 	})
@@ -119,11 +119,11 @@ concertManager= BMConcert(pieces, configManager, [ outputArray, inputArray ], BM
 
 ~concertManager = concertManager;
 
-MainMenu.register(Action.separator, bmMenu);
+MainMenu.register(MenuAction.separator, bmMenu);
 
 configMenu = "Configuration";
 
-MainMenu.register(Action("Configure System", {
+MainMenu.register(MenuAction("Configure System", {
 	BMSystemConfigAppGUI(systemConfig, {|res|
 		concertManager.setSysConfig(res);
 		concertManager.storeSession(configManager);
@@ -131,7 +131,7 @@ MainMenu.register(Action("Configure System", {
 	});
 }), bmMenu, configMenu);
 
-MainMenu.register(Action("Configure Speakers", {
+MainMenu.register(MenuAction("Configure Speakers", {
 	if(speakersWindow.isNil, {
    		speakersWindow = BMSpeakerArrayGUI(outputArray, {|newSpeakers|
    			outputArray = newSpeakers;
@@ -150,7 +150,7 @@ MainMenu.register(Action("Configure Speakers", {
    	})
 }), bmMenu, configMenu);
 
-MainMenu.register(Action("Configure Remote Time Display", {
+MainMenu.register(MenuAction("Configure Remote Time Display", {
 	var timeDispWin, listView, ip, port, add, delete, ok, cancel, resetValsFunc;
 	var localAddrsCopy;
 	localAddrsCopy = remoteTimeDisplayAddresses.copy;
@@ -274,9 +274,9 @@ pinkWin.onClose = {
 
 // Utilities
 utilMenu = "Utilities";
-MainMenu.register(Action("Test Outputs", pinkNoiseFunc), bmMenu, utilMenu);
-MainMenu.register(Action("Meter Bridge", {s.meter}), bmMenu, utilMenu);
-MainMenu.register(Action("Auto-balance Speakers", {
+MainMenu.register(MenuAction("Test Outputs", pinkNoiseFunc), bmMenu, utilMenu);
+MainMenu.register(MenuAction("Meter Bridge", {s.meter}), bmMenu, utilMenu);
+MainMenu.register(MenuAction("Auto-balance Speakers", {
 	BMAutoBalancerGUI(outputArray, {
 		// we operated in place so we can just store with no restart
 
@@ -285,16 +285,16 @@ MainMenu.register(Action("Auto-balance Speakers", {
 
 	}, s);
 }), bmMenu, utilMenu);
-MainMenu.register(Action("Dump Node Tree", {s.queryAllNodes(false)}), bmMenu, utilMenu);
-MainMenu.register(Action("Dump All Controller Values", {BMAbstractController.dumpAllValues}), bmMenu, utilMenu);
-MainMenu.register(Action("Calibrate Controllers", {
+MainMenu.register(MenuAction("Dump Node Tree", {s.queryAllNodes(false)}), bmMenu, utilMenu);
+MainMenu.register(MenuAction("Dump All Controller Values", {BMAbstractController.dumpAllValues}), bmMenu, utilMenu);
+MainMenu.register(MenuAction("Calibrate Controllers", {
 	{ BMAbstractController.allControllers.do({|ctrlr| ctrlr.calibrate.wait;}); }.fork;
 }), bmMenu, utilMenu);
 
 
 
-MainMenu.register(Action.separator, bmMenu, utilMenu);
-MainMenu.register(Action("Restart System", {thisProcess.recompile}), bmMenu, utilMenu);
+MainMenu.register(MenuAction.separator, bmMenu, utilMenu);
+MainMenu.register(MenuAction("Restart System", {thisProcess.recompile}), bmMenu, utilMenu);
 
 // Help
 helpMenu = "Help";
@@ -313,7 +313,7 @@ help.bounds = help.bounds.resizeBy(700, 400);
 "open http://www.beast.bham.ac.uk/research/mulch.shtml".unixCmd;
 
 });*/
-MainMenu.register(Action("Go to BEASTmulch Home Page", {"open http://www.birmingham.ac.uk/facilities/ea-studios/research/mulch.aspx".unixCmd;}), helpMenu);
+MainMenu.register(MenuAction("Go to BEASTmulch Home Page", {"open http://www.birmingham.ac.uk/facilities/ea-studios/research/mulch.aspx".unixCmd;}), helpMenu);
 }.defer(1);
 }).play(AppClock);
 )
