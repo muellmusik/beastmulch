@@ -46,7 +46,10 @@ BMSpeakerArrayGUI : BMAbstractGUI {
 	   speakerList	= ListView(speakerListCompView, 152 @ (508-35))
 	 					.items_(outputArray.keys.asArray)
 	 					.action_({| view |
-	 						var speaker	= outputArray[view.item];
+	 						var speaker;
+			if(view.items.size > 0, {
+
+				speaker	= outputArray[view.item];
 		 					if ((outputArray.size > 0))
 				    	  	    	   { if (speaker.isBMSpeaker)
 			 					   { instanceVarsBoxes
@@ -72,7 +75,8 @@ BMSpeakerArrayGUI : BMAbstractGUI {
 			 						 	instanceVarsBoxes[key].value = ""
 			 						 };
 			 				   }
-	 					});
+			});
+			});
 
 		// redirect to button actions
 	 	speakerList.keyDownAction = { arg view,char,modifiers,unicode,keycode;
@@ -213,20 +217,20 @@ BMSpeakerArrayGUI : BMAbstractGUI {
 					   .action_({| view |
 					   	switch(view.value,
 					   		// import speaker array
-					   		1, { CocoaDialog.getPaths({| path |
+					   		1, { Dialog.openPanel({| path |
 								var recalledstartArray;
 
-								recalledstartArray = Object.readTextArchive(path[0]);
+								recalledstartArray = Object.readTextArchive(path);
 								if (subarraysWindow.notNil) { subarraysWindow.window.close };
 								outputArray = recalledstartArray;
 								speakerList.items_(outputArray.keys.asArray);
 								speakerList.value_(0).doAction;
-								}, allowsMultiple: false);
+								});
 
 							 },
 
 					   		// export speaker array
-					   		2, { CocoaDialog.savePanel({| path |
+					   		2, { Dialog.savePanel({| path |
 							 	outputArray.writeTextArchive(path);
 							    })
 					  		 }
@@ -271,14 +275,15 @@ BMSpeakerArrayGUI : BMAbstractGUI {
 		var newWindow, name, speakerNameField, okButton, speakerIndexField;
 
 		origin		= origin ?? { 490 @ 500 };
-		newWindow 	= Window("New Speaker", Rect(origin.x, origin.y, 260, 110 + 30), false);
+		newWindow 	= Window("New Speaker", Rect(origin.x, origin.y, 280, 110 + 30), false).front;
+		newWindow.alwaysOnTop = true;
 		newWindow.view.decorator = FlowLayout(newWindow.view.bounds, Point(10, 10), Point(10, 10));
 
-		StaticText(newWindow, 50 @ 20).string = "Name:";
+		StaticText(newWindow, 60 @ 20).string = "Name:";
 
 		speakerNameField	= TextField(newWindow, 180 @ 20);
 
-		StaticText(newWindow, 50 @ 20).string = "HW Out:";
+		StaticText(newWindow, 60 @ 20).string = "HW Out:";
 		speakerIndexField	= TextField(newWindow, 180 @ 20);
 
 		newWindow.view.decorator.shift(0, 30);

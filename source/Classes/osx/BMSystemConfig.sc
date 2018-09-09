@@ -184,10 +184,10 @@ BMSystemConfigAppGUI : BMAbstractGUI {
 			.extrude_(false).canFocus_(false)
 			.states_([[ "OK", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ]])
 			.action_({
-				sysconfig.numInChannels = numInChannels.value;
-				sysconfig.numSoundFilePlayerChans = numSoundFilePlayerChans.value;
-				sysconfig.numVirtIns = numVirtIns.value;
-				sysconfig.numVirtOuts = numVirtOuts.value;
+				sysconfig.numInChannels = numInChannels.value.asInteger;
+				sysconfig.numSoundFilePlayerChans = numSoundFilePlayerChans.value.asInteger;
+				sysconfig.numVirtIns = numVirtIns.value.asInteger;
+				sysconfig.numVirtOuts = numVirtOuts.value.asInteger;
 				sysconfig.controllers = controllersList;
 				window.close;
 				okayFunc.value(sysconfig);

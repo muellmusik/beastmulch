@@ -37,7 +37,7 @@ BMConcert {
 	// cause chain elements (i.e. soundfile players) to load any heavy resources
 	// asssociated with a piece
 	loadAt {| pieceEventIndex |
-		var pieceEvent, element;
+		var pieceEvent, element, ctrlState;
 		//this.changed(\loadPiece, concert.pieces[pieceEventIndex])
 
 		pieceEvent = concert.pieces[pieceEventIndex];
@@ -54,6 +54,11 @@ BMConcert {
 
  		configManager.currentConfig_(pieceEvent.config, \concertEditor);
 		controllerAutomator.mappings = pieceEvent.controllerAutomation;
+		ctrlState = pieceEvent.controllerState;
+		ctrlState.notNil.if({ctrlState.keysValuesDo({|name, vals|
+			var ctrlr = BMAbstractController.allControllers[name];
+			ctrlr.notNil.if({ctrlr.setAllValues(vals)}, {"State of controller % could not be set as it could not be found\n".format(name).warn;});
+		})});
 
 	}
 
@@ -78,6 +83,10 @@ BMConcert {
 
 	setSysConfig {|newSysConfig|
 		concert.system.sysconfig = newSysConfig;
+	}
+
+	setRemoteTimeDisplayAddresses {|addressList|
+		concert.system.remoteTimeDisplayAddresses = addressList;
 	}
 }
 
@@ -118,7 +127,7 @@ BMConcertGUI  {
 
 		// Pieces List ---------------------
 
-		concertListView				= ListView(concertView, 180 @ 373)
+		concertListView				= ListView(concertView, 180 @ 360)
 									   .items_(concertManager.concert.pieces.collect{| x | x.name }.asArray);
 
 		concertListView.keyDownAction 	= { arg view,char,modifiers,unicode,keycode;
@@ -134,7 +143,7 @@ BMConcertGUI  {
 									   pieceLoaded = false;
 
 								   	   if ((concertManager.concert.pieces.size > 0))
-									      { configText.string = concertManager.concert.pieces[concertListView.value].config;
+									      { configText.string = concertManager.concert.pieces[view.value ? 0].config;
 									        loadButton.states = loadButtonStates.loadSelected }
 									      { configText.string = "";
 									        loadButton.states = loadButtonStates.noPieces
@@ -171,9 +180,10 @@ BMConcertGUI  {
 							   	    if (concertListView.item.notNil)
 							    	  	  { viewIndex = concertListView.value;
 							    	  	    concertManager.removeAt(viewIndex);
+				concertManager.storeSession(configManager);
 							    	  	    if ((viewIndex == (concertManager.concert.pieces.size)) and: { concertManager.concert.pieces.size > 0 })
 							    	  	    	   { concertListView.valueAction = viewIndex - 1 }
-							    	  	    	   { concertListView.action.value(viewIndex) }
+							    	  	    	   { concertListView.valueAction = viewIndex }
 							    	  	  }
 							       };
 
@@ -186,7 +196,8 @@ BMConcertGUI  {
 								    if (index.notNil and: {index > 0 })
 								    	   { concertManager.concert.pieces = concertManager.concert.pieces.swap(index - 1, index);
 								    	     concertManager.changed;
-								    	     concertListView.valueAction = index - 1
+								    	     concertListView.valueAction = index - 1;
+				concertManager.storeSession(configManager);
 								    	   }
 							 	  };
 
@@ -199,14 +210,23 @@ BMConcertGUI  {
 								    if (index.notNil and: { index < (concertManager.concert.pieces.size - 1) })
 								    	  { concertManager.concert.pieces = concertManager.concert.pieces.swap(index, index + 1);
 								    	    concertManager.changed;
-								    	    concertListView.valueAction = index + 1
+								    	    concertListView.valueAction = index + 1;
+				concertManager.storeSession(configManager);
 								    	  }
 								  };
 
 		concertView.decorator.shift(4, 0);
-		storeButton				= RoundButton(concertView, 46 @ 20).extrude_(false).canFocus_(false)
-					 			  .font_(Font("Arial", 11)).states_([["Store", Color.black,  Color.white.alpha_(0.8) ]])
-					 			  .action_{| view | concertManager.storeSession(configManager) };
+		storeButton				= RoundButton(concertView, 65 @ 20).extrude_(false).canFocus_(false)
+					 			  .font_(Font("Arial", 9)).states_([["Store Ctrllrs", Color.black,  Color.white.alpha_(0.8) ]])
+					 			  .action_{| view |
+
+			if(pieceLoaded, {concertManager.concert.pieces[concertListView.value].controllerState = BMAbstractController.allControllers.select({|ctrl| ctrl.acceptsAutomation }).collect({|ctrl| ctrl.getAllValues; });
+				concertManager.concert.pieces[concertListView.value].masterFaderLevel = BMAbstractAudioChainElement.allChainElements.detect({|el| el.isKindOf(BMMasterFader)}).level;
+			}, {"Please Load the Piece you wish to store".warn});
+			concertManager.storeSession(configManager);
+
+		};
+		storeButton.toolTip = "Store Master Trim and initial controller state (if supported)";
 
 
 		// Second Column -------------
@@ -227,15 +247,13 @@ BMConcertGUI  {
 
 		loadButton.action 			= {| view |
 								   if (selectable)
-								   	 { if (pieceLoaded.not)
-								   	 	  { concertManager.loadAt(concertListView.value);
+								   	 { concertManager.loadAt(concertListView.value);
 								   	 	    view.states = loadButtonStates.pieceLoaded;
 								   	 	    pieceLoaded = true
-								   	 	  }
-								   	 	  { ("The Piece \"" ++ concertListView.item ++ "\" has already been loaded").inform }
 								   	 }
 								  };
 
+		loadButton.toolTip = "Click to (re-)load and recall any stored controller states";
 		buttonSection.decorator.shift(0, 10);
 
 		StaticText.new(buttonSection, 180 @ 20).string = "Piece Configuration:";
@@ -273,10 +291,10 @@ BMConcertGUI  {
 					   	  switch(view.value,
 					   	   	// Import Concert
 					   	   	1,
-					   	   	{ CocoaDialog.getPaths({| path |
+					   	   	{ Dialog.openPanel({| path |
 								var recalled;
 
-								recalled = Object.readTextArchive(path[0]);
+								recalled = Object.readTextArchive(path);
 								concertManager.concert.pieces = recalled.concert.pieces.deepCopy;
 
 								configManager.currentConfig_('all off', \concertEditor);
@@ -313,13 +331,13 @@ BMConcertGUI  {
 								if (selectable.not) { this.listViewSelection(true) };
 								concertListView.value_(0).doAction;
 								concertManager.storeSession(configManager);
-								}, allowsMultiple: false);
+								});
 
 							 },
 
 							 // Export Concert
 							 2,
-							 {  CocoaDialog.savePanel({| path |
+							 {  Dialog.savePanel({| path |
 							 	this.prepareForExport.writeTextArchive(path);
 							 	concertManager.storeSession(configManager);
 							    })
@@ -327,10 +345,10 @@ BMConcertGUI  {
 
 					  		 // Import Piece
 					  		 4,
-					  		 { CocoaDialog.getPaths({| path |
+					  		 { Dialog.openPanel({| path |
 								var piece, configuration, pieceAndConfig, completion;
 
-								pieceAndConfig = Object.readTextArchive(path[0]);
+								pieceAndConfig = Object.readTextArchive(path);
 								piece = pieceAndConfig.piece;
 								configuration = pieceAndConfig.config;
 								completion = { concertManager.add(piece, concertListView.value);
@@ -380,13 +398,13 @@ BMConcertGUI  {
 				   					}
 				   				}
 								)
-							 }, allowsMultiple: false)
+							 })
 							 },
 
 					  		 // Export Piece
 					  		 5,
 					  		 { if (selectable and: { concertListView.items.size > 0 })
-					  		 	  {  CocoaDialog.savePanel({| path |
+					  		 	  {  Dialog.savePanel({| path |
 					  		 	  		var piece, configuration, pieceAndConfig;
 
 					  		 	  		piece = concertManager.concert.pieces[concertListView.value].deepCopy;
@@ -407,10 +425,10 @@ BMConcertGUI  {
 
 							 // Import Configuration
 							 7,
-					  		 { CocoaDialog.getPaths({| path |
+					  		 { Dialog.openPanel({| path |
 								var configuration;
 
-								configuration = Object.readTextArchive(path[0]);
+								configuration = Object.readTextArchive(path);
 								this.makeNewNameWindow(
 									configuration.key,
 									configManager.names,
@@ -422,7 +440,7 @@ BMConcertGUI  {
 
 									}
 								)
-							 }, allowsMultiple: false)
+							 })
 							 },
 
 							 // Export Configuration
@@ -432,7 +450,7 @@ BMConcertGUI  {
 							   	 var configuration;
 
 							   	 configuration = configName -> configManager.dict[configName].deepCopy;
-							   	 CocoaDialog.savePanel({| path |
+							   	 Dialog.savePanel({| path |
 							   	 	configuration.writeTextArchive(path);
 							   	 	configManager.storeConfiguration(configuration.key);
 							   	 	concertManager.storeSession(configManager);
@@ -458,8 +476,13 @@ BMConcertGUI  {
 		var piece;
 		if ((change == \currentConfig) and: { from == \configurationEditor })
 	    	  { 	if (selectable) { this.listViewSelection(false) } }
-		  {  if ((change != \storeSession) and: { change != \store })
-		  		{ concertListView.items = concertManager.concert.pieces.collect{| x | x.name }.asArray }
+		{  if ((change != \storeSession) and: { change != \store } and: { from != 'concertEditor'})
+		  		{ var oldItem, newIndex;
+				if(concertListView.items.size > 0, {oldItem = concertListView.item;});
+				concertListView.items = concertManager.concert.pieces.collect{| x | x.name }.asArray;
+				newIndex = if(oldItem.notNil, {concertListView.items.indexOf(oldItem)}, {0});
+				concertListView.value = newIndex;
+			};
 		  };
 
 
@@ -500,6 +523,9 @@ BMConcertGUI  {
 		configsView 				= ListView(window, 200 @ 317).canReceiveDragHandler = false;
 		configsView.background_(Color.white).hiliteColor_(Color.new255(51, 111, 203, 255 * 0.95));
 		configsView.items 			= configManager.names.asArray;
+		configsView.mouseDownAction = {|view, x, y, mod, button, clickCount|
+			if(clickCount.postln == 2, { okButton.doAction });
+		};
 
 		RoundButton(window, 95 @ 20)
 			   .extrude_(false).canFocus_(false)
@@ -547,8 +573,8 @@ BMConcertGUI  {
 
 				   			window.close;
 				   			if (button.value == 0)
-				   			   { CocoaDialog.getPaths({| path |
-				   			   					   event.add(\path -> path[0]);
+				   			   { Dialog.openPanel({| path |
+				   			   					   event.add(\path -> path);
 												   this.makeNewPieceWindow(event, origin);
 											       },
 											       allowsMultiple: false
@@ -568,7 +594,7 @@ BMConcertGUI  {
 							concertManager.concert.pieces.collect{| e | e.name },
 							{| newName |
 							  event.add(\name -> newName);
-						   	  concertManager.add(event, concertListView.value);
+						   	  concertManager.add(event, concertListView.value ? 0);
 						   	  concertManager.storeSession(configManager);
 						   	  if (selectable.not) { this.listViewSelection(true) };
 						   	  concertListView.valueAction = concertListView.value + 1

@@ -167,25 +167,23 @@ BMPluginSpec {
 					}, initVal, labelWidth: labelWidth
 				);
 				guiCtrls[i].numberView.background = Color.white.alpha_(0.4);
+				guiCtrls[i].numberView.maxDecimals_(3);
 				guiCtrls[i].font = font;
 				//displaySpecs[i] = displaySpec;
 			
 			});
 		}
 	}
-	
-	// protect for now
-	guiFunc { 
-		if(GUI.id == \cocoa, {
-			^guiFunc ? defaultGuiFunc 
-		}, {^nil})
+
+	guiFunc {
+		^guiFunc ? defaultGuiFunc
 	}
 	
 }
 
 // Class which manages resources for a plugin instance
 BMPlugin {
-	var <spec, <server, <attributes, <defName, <def, <specsDict;
+	var <spec, <server, <attributes, <defName, <def, <specsDict, customDefName = false;
 	var <synth, defaultValues, numControls, synthMappings;
 	var <preset;
 	var <controller, <name;
@@ -314,8 +312,8 @@ BMPlugin {
 
 	
 	makeDef {
-		defName = spec.name; 
-		if(attributes.notNil, { defName = defName ++ "-" ++ UniqueID.next});
+		defName = spec.name;
+		if(attributes.notNil, { defName = defName ++ "-" ++ UniqueID.next; customDefName = true});
 		def = SynthDef(defName, {arg i_in, cfgate = 1;
 			var input, out;
 			input = In.ar(i_in);
@@ -406,6 +404,7 @@ BMPlugin {
 		controller.free;
 		//gui.notNil.if({ gui.close });
 		spec.cleanupFunc.value(this);
+		if(customDefName, { SynthDef.removeAt(defName) });
 	} // I'm a lame duck...
 	
 	gui {

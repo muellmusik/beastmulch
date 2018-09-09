@@ -124,7 +124,7 @@ BMPluginGUI : BMAbstractVirtualControllerGUI {
 		window = Window.new(name,
 			Rect(300, 300, 652, (numSliders + 1) * 24 + 24), false); // 508
 		window.view.decorator = FlowLayout(window.view.bounds);
-		window.view.background = Color.rand.alpha_(0.3);
+		window.view.background = Color.rand;
 		guiCtrls = Array.newClear(numSliders);
 
 		compositeView = CompositeView(window, window.view.bounds);

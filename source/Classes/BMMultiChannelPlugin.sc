@@ -749,7 +749,7 @@ BMMultichannelPluginSpec {
 			spec = plugin.spec;
 			specsDict = plugin.specsDict;
 			numSliders = specsDict.size;
-			window = SCWindow.new("Plugin:" + spec.name, 
+			window = Window.new("Plugin:" + spec.name,
 				Rect(300, 300, 552, (numSliders + 1) * 24 + 24), false); // 508
 			window.view.decorator = FlowLayout(window.view.bounds);
 			window.view.background = Color.rand.alpha_(0.3);
@@ -770,15 +770,15 @@ BMMultichannelPluginSpec {
 					}, initVal
 				);
 				sliders[key].numberView.background = Color.white.alpha_(0.4);
-				SCStaticText(window, Rect(0,0,40,20)).string_(cspec.units);
-			
+				StaticText(window, Rect(0,0,40,20)).string_(cspec.units);
+
 			}, {|a, b|
 				var argArray;
 				argArray = plugin.spec.ugenGraphFunc.def.argNames;
 				argArray.indexOf(a) < argArray.indexOf(b)
 			});
 			window.view.decorator.nextLine.shift(10, 10);
-			presetMenu = SCPopUpMenu(window, Rect(0, 0, 100, 20));
+			presetMenu = PopUpMenu(window, Rect(0, 0, 100, 20));
 			presetMenu.items = ["presets", "-"] ++ spec.presets.keys;
 			presetMenu.action = {
 				if(presetMenu.value > 1, {
@@ -797,13 +797,10 @@ BMMultichannelPluginSpec {
 			window.front;
 		}
 	}
-	
-	// protect for now
-	guiFunc { 
-		if(GUI.id == \cocoa, {
-			^guiFunc ? defaultGuiFunc 
-		}, {^nil})
-	}	
+
+	guiFunc {
+		^guiFunc ? defaultGuiFunc
+	}
 }
 
 
@@ -930,7 +927,7 @@ BMMultichannelPlugin {
 		});
 		^("Debugging" + spec.name + "Plugin:\n");
 	}
-	
+
 	preset_{|presetname|
 		var psdict;
 		psdict = spec.presets[presetname];
@@ -940,7 +937,7 @@ BMMultichannelPlugin {
 			psdict.keysValuesDo({|key, val| this.set(key, val)});
 		}, {("Plugin " ++ spec.name ++ " has no preset named " ++ presetname).warn });
 	}
-	
+
 	makeSynth {|target, addAction=\addToTail|
 		(target.asTarget.server != server).if({
 			Error("Target server does not match Plugin server.").throw;
@@ -948,15 +945,16 @@ BMMultichannelPlugin {
 		synth.notNil.if({ synth.set(\cfgate, 0); });
 		synth = def.play(target, mappings, addAction);
 	}
-	
-	release { 
-		synth.set(\cfgate, 0); 
-		synth = nil; bus.free; 
+
+	release {
+		synth.set(\cfgate, 0);
+		synth = nil; bus.free;
 		bus = nil;
 		gui.notNil.if({ gui.close });
 		spec.cleanupFunc.value(this);
+		SynthDef.removeAt(defName);
 	} // I'm a lame duck...
-	
+
 	gui {
 		gui.isNil.if({
 			gui = spec.guiFunc.value(this);
@@ -965,7 +963,7 @@ BMMultichannelPlugin {
 			gui.front;
 		});
 	}
-	
+
 	copy {
 		var values, newplugin;
 		values = this.values;

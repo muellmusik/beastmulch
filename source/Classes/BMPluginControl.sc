@@ -149,9 +149,9 @@ BMPluginController : BMAbstractController {
 			^valueArray[ind];
 		}, {("Plugin " ++ name ++ "has no Control named " ++ key).warn; ^nil; });
 	}
-	
-	getAllValues { ^valueArray; }
-	
+
+	getAllValues { ^valueArray.copy; }
+
 	getAllValuesDict {
 		^paramNameIndices.collect({|ind, key| valueArray[ind] });
 	}
@@ -190,22 +190,23 @@ BMPluginController : BMAbstractController {
 		^("Debugging" + piSpec.name + "Plugin:\n");
 	}
 
-	
+	*humanName { ^"Plugin Controller" }
+
 }
 
 BMPluginControl : BMControl {
 	var <subName;
-	
+
 	*new {|name, controller, ctrlNum, subName|
 		^super.new(name, controller, ctrlNum).init(subName);
 	}
-	
+
 	init {|argSN|
 		subName = argSN;
 	}
-	
+
 	isMappableControl { ^false }
-	
+
 	displaySpec { ^BMNoOpSpec } // experimental
-	
+
 }

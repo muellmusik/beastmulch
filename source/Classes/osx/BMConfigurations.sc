@@ -100,6 +100,13 @@ BMConfigurations {
 	loadConfig {| configName, from |
 		{
 		BMAbstractController.stopAllListening;
+		// first clear everything
+		BMAbstractAudioChainElement.allChainElements.keysValuesDo{| key, value |
+		 	BMAbstractAudioChainElement.allChainElements[key].mappings = nil;
+		 	0.01.wait;
+
+		};
+		// then load
 		BMAbstractAudioChainElement.allChainElements.keysValuesDo{| key, value |
 			//key.postln;
 		 	BMAbstractAudioChainElement.allChainElements[key].mappings = dict[configName][key];
@@ -288,7 +295,7 @@ BMConfigurationsGUI : BMAbstractGUI {
 			view.refresh;
 		};
 
-		this.update;
+		configListView.items = configurations.names.asArray;
 		configListView.value = configurations.names.indexOf('all off');
 		window.onClose = { configurations.removeDependant(this);
 						//chainManager.removeDependant(this);
@@ -303,12 +310,22 @@ BMConfigurationsGUI : BMAbstractGUI {
 	}
 
 	update {| changed, change, argument, from |
-			if (change == \freed)
+/*			if (change == \freed)
 			   { window.close }
-			   { configListView.items = configurations.names.asArray;
+			   {
 			     if ((change == \currentConfig) and: { from == \concertEditor })
-	         	   	   { configListView.value = configurations.names.indexOf(argument) }
-	         	   }
+			{ configListView.value = configurations.names.indexOf(argument) }
+	         	   }*/
+		switch(change,
+			\currentConfig, {
+				//if(from == \concertEditor, { configListView.value = configurations.names.indexOf(argument) })
+				configListView.value = configurations.names.indexOf(argument)
+			},
+			\add, { configListView.items = configurations.names.asArray; },
+			\removeAt, { configListView.items = configurations.names.asArray; },
+			\names, { configListView.items = configurations.names.asArray; },
+			\freed, { window.close }
+		)
 	}
 
 	makeNewConfigWindow {| method, origin |

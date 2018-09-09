@@ -5,7 +5,7 @@
 
 BMControllerAutomatorGUI : BMAbstractGUI {
 	var ca, envView;
-	var path, sf, durInv, sfView, scrollView, selectView, backView, timesView;
+	var path, sf, durInv, sfView, scrollView, backView, timesView;
 	var activeSequence, activeSnapshot;
 	var sequenceLevels;
 	var dependees;
@@ -49,7 +49,6 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		scrollView.background = Color.black;
 
 		sfView = SoundFileView.new(scrollView, Rect(0,20, width - 10, 300));
-		sfView.background = HiliteGradient(Color.blue, Color.cyan, steps: 256);
 		this.setWaveColors;
 		sfView.timeCursorOn = true;
 		sfView.timeCursorColor = Color.red;
@@ -169,7 +168,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 		window.view.decorator.shift(10, 0);
 		refTime = StaticText(window, Rect(0, 0, 200, 25))
 			.string_("Source Time:") // initialise
-			.font_(Font("Helvetica-Bold", 16));
+			.font_(Font("Helvetica-Bold", 14));
 		time = BMTimeReferences.currentTime(ca.timeReference);
 		sfView.timeCursorPosition = time * sf.sampleRate;
 		refTime.string_("Source Time:" + time.getTimeString);
@@ -189,7 +188,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	setWaveColors {
 		sfView.waveColors_(
 			Array.fill(sf.numChannels, {|i|
-				Color.grey(0.2, 0.6).blend(Color.grey(0.3, 0.6), 1 / (sf.numChannels - 1) * i)
+				Color.cyan(0.9, 1).blend(Color.cyan(1.0, 1), 1 / (sf.numChannels - 1) * i)
 			})
 		);
 	}
@@ -205,7 +204,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			var tenSecs, thirtySecs, bounds;
 			bounds = timesView.bounds;
 			Pen.addRect(Rect(0, 0, bounds.width, 20));
-			Pen.fillColor = Color.new255(0, 0, 238);
+			Pen.fillColor = Color.new255(70, 130, 180);
 			Pen.fill;
 
 			tenSecs = timesView.bounds.width * durInv * 10;
@@ -231,7 +230,7 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 				((i + 1) * 30).asTimeString.drawLeftJustIn(
 					Rect((i+1) * thirtySecs + 1, 0, 50, 20),
 					Font("Helvetica-Bold", 11),
-					Color.black
+					Color.white
 				);
 			});
 			Pen.strokeColor = Color.black;

@@ -1,0 +1,14 @@
+# Add any directories, files, or patterns you don't want to be tracked by versio
+n control
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+.Spotlight-V100
+.Trashes
+
+# Specific files #
+####################
+*.pyc
+
