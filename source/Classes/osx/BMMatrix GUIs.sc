@@ -225,6 +225,29 @@ BMMatrixGUI : BMAbstractGUI {
 			window.refresh;
 		};
 
+		// alt arrow to shift things
+		userView.keyDownAction_({|view, char, mod, unicode, keycode, key|
+			//[mod, unicode, keycode, key].postln;
+			if(mod.isAlt && {keycode.inclusivelyBetween(125, 126)}, {
+				var inNames, mappings, shift;
+				inNames = matrix.inNames;
+				mappings = matrix.mappings.deepCopy;
+				shift = if(keycode == 125, 1, -1);
+				// clear old
+				mappings.keysValuesDo({|k, v|
+					matrix.disconnect(k, v);
+				});
+				mappings.keysValuesDo({|k, v|
+					var index, newKey;
+					index = inNames.indexOf(k);
+					newKey = inNames[index + shift];
+					if(newKey.notNil, {
+						matrix.connect(newKey, v);
+					})
+				});
+			});
+		});
+
 		window.acceptsMouseOver = true;
 		window.front;
 		window.drawFunc = {
