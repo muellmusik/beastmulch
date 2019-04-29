@@ -132,6 +132,8 @@ BMMatrixGUI : BMAbstractGUI {
 	var xpos = 1, ypos = 1; // draw lines initially
 	var linex, liney, xdist, ydist;
 	var font;
+	var selecting = false, selectionStart, selectionEnd;
+	var selections;
 
 	*new {|matrix, name|
 		^super.new.init(matrix, name ? matrix.name).makeWindow;
@@ -147,6 +149,7 @@ BMMatrixGUI : BMAbstractGUI {
 			});
 		});
 		font = Font("Andale Mono", 11);
+		selections = matrix.inNames.collectAs({|in| in->Set()}, IdentityDictionary);
 	}
 
 	makeWindow {
@@ -183,35 +186,50 @@ BMMatrixGUI : BMAbstractGUI {
 		vinterval = window.bounds.height - voffset / (numIns + 1);
 		userView = UserView(window, window.view.bounds);
 		userView.background = Color.clear;
-		userView.mouseDownAction = { arg view,inx,iny;
-			var x, y;
-			x = outs[(inx - hoffset/ hinterval).round.clip(1, numOuts) - 1];
-			y = ins[(iny - voffset/ vinterval).round.clip(1, numIns) - 1];
-			if(matrix.mappings[y].indexOf(x).isNil, {matrix.connect(y, x); on = true;},
-				{matrix.disconnect(y, x); on = false});
-			lastx = x; lasty = y;
+		userView.mouseDownAction = { arg view,inx,iny, mods;
+			if(mods.isAlt, {
+				selecting = true;
+				selectionStart = selectionEnd = inx@iny;
+				window.refresh;
+			},{
+				var x, y;
+				x = outs[(inx - hoffset/ hinterval).round.clip(1, numOuts) - 1];
+				y = ins[(iny - voffset/ vinterval).round.clip(1, numIns) - 1];
+				if(matrix.mappings[y].indexOf(x).isNil, {matrix.connect(y, x); on = true;},
+					{matrix.disconnect(y, x); on = false});
+				lastx = x; lasty = y;
+			});
+		};
+		userView.mouseUpAction = { arg view,inx,iny, mods;
+			selecting = false;
+			window.refresh;
 		};
 		// dragging
-		userView.mouseMoveAction = { arg  view,inx,iny;
-			var x, y;
-			x = outs[(inx - hoffset/ hinterval).round.clip(1, numOuts) - 1];
-			y = ins[(iny - voffset/ vinterval).round.clip(1, numIns) - 1];
-			if((x != lastx) || (y != lasty), {
-				linex = outs[(inx - hoffset/ hinterval).round.clip(1, numOuts) - 1];
-				liney = ins[(iny - voffset/ vinterval).round.clip(1, numIns) - 1];
-				if(on, {
+		userView.mouseMoveAction = { arg  view,inx,iny, mods;
+			if(mods.isAlt, {
+				selectionEnd = inx@iny;
+				window.refresh;
+			},{
+				var x, y;
+				x = outs[(inx - hoffset/ hinterval).round.clip(1, numOuts) - 1];
+				y = ins[(iny - voffset/ vinterval).round.clip(1, numIns) - 1];
+				if((x != lastx) || (y != lasty), {
+					linex = outs[(inx - hoffset/ hinterval).round.clip(1, numOuts) - 1];
+					liney = ins[(iny - voffset/ vinterval).round.clip(1, numIns) - 1];
+					if(on, {
 						if(matrix.mappings[y].indexOf(x).isNil, {
 							matrix.connect(y, x);
-						});},
+					});},
 					{
 						if(matrix.mappings[y].indexOf(x).notNil, {
 							matrix.disconnect(y, x);
 						});
-				});
-				window.refresh;
+					});
+					window.refresh;
 
+				});
+				lastx = x; lasty = y;
 			});
-			lastx = x; lasty = y;
 		};
 
 		// draw line for easy view
@@ -228,24 +246,32 @@ BMMatrixGUI : BMAbstractGUI {
 		// alt arrow to shift things
 		userView.keyDownAction_({|view, char, mod, unicode, keycode, key|
 			//[mod, unicode, keycode, key].postln;
-			if(mod.isAlt && {keycode.inclusivelyBetween(125, 126)}, {
+			if(mod.isAlt && {[16777237, 16777235].includes(key)}, {
 				var inNames, mappings, shift;
 				inNames = matrix.inNames;
-				mappings = matrix.mappings.deepCopy;
-				shift = if(keycode == 125, 1, -1);
+				mappings = IdentityDictionary();
+				selections.keysValuesDo({|k, v| mappings[k] = v.as(List)});
+				shift = if(key == 16777237, 1, -1);
 				// clear old
 				mappings.keysValuesDo({|k, v|
 					matrix.disconnect(k, v);
 				});
+				selections = matrix.inNames.collectAs({|in| in->Set()}, IdentityDictionary);
 				mappings.keysValuesDo({|k, v|
 					var index, newKey;
 					index = inNames.indexOf(k);
 					newKey = inNames[index + shift];
 					if(newKey.notNil, {
 						matrix.connect(newKey, v);
+						selections[newKey] = selections[newKey].addAll(v);
 					})
 				});
 			});
+			if(key == 16777216, { //esc
+				selections = matrix.inNames.collectAs({|in| in->Set()}, IdentityDictionary);
+				window.refresh;
+			});
+
 		});
 
 		window.acceptsMouseOver = true;
@@ -283,20 +309,42 @@ BMMatrixGUI : BMAbstractGUI {
 				Pen.stroke;
 				matrix.matrixArray.do({ arg row, y;
 					row.do({ arg item, x;
-						var crosspoint, rect;
+						var crosspoint, rect, selectRect;
 						item.notNil.if({
-							rect = Rect.aboutPoint((hinterval  + hoffset + (x * hinterval))
-								@(vinterval + voffset + (y * vinterval)), dotSize, dotSize);
+							crosspoint = (hinterval  + hoffset + (x * hinterval))
+								@(vinterval + voffset + (y * vinterval));
+							rect = Rect.aboutPoint(crosspoint, dotSize, dotSize);
+							if(selecting, {
+								selectRect = Rect.fromPoints(selectionStart, selectionEnd);
+								if(selectRect.containsPoint(crosspoint), {
+									selections[ins[y]] = selections[ins[y]].as(Set).add(outs[x]);
+								});
+							});
+
 							color.set;
 							Pen.fillOval(rect);
 
-							ringColor.set;
+							if(selections[ins[y]].includes(outs[x]), {
+								Color.white.set;
+							},{
+								ringColor.set;
+							});
 							Pen.strokeOval(rect);
 						});
 					})
 				});
 
 			};
+			// selectionRect
+			if(selecting, {
+				var selectRect;
+				selectRect = Rect.fromPoints(selectionStart, selectionEnd);
+				Color.white.alpha_(0.5).set;
+				Pen.fillRect(selectRect);
+				Color.white.alpha_(0.8).set;
+				Pen.strokeRect(selectRect);
+			});
+
 			outs.do({|item, i|
 				var inColor;
 
