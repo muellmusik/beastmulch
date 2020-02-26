@@ -181,7 +181,6 @@ BMMatrixGUI : BMAbstractGUI {
 
 		window = Window(name, Rect(40, 40, h, v), false);
 
-		//window.view.background = Color.new255(140, 38, 255);
 		userScrollView = ScrollView(
 			window,
 			Rect(hoffset, voffset, window.view.bounds.width - hoffset, window.view.bounds.height - voffset)
@@ -383,8 +382,6 @@ BMMatrixGUI : BMAbstractGUI {
 					row.do({ arg item, x;
 						var crosspoint, rect, selectRect;
 						item.notNil.if({
-							/*rect = Rect.aboutPoint((hinterval + (x * hinterval))
-								@(vinterval + (y * vinterval)), dotSize, dotSize);*/
 							crosspoint = (hinterval + (x * hinterval))
 								@(vinterval + (y * vinterval));
 							rect = Rect.aboutPoint(crosspoint, dotSize, dotSize);
