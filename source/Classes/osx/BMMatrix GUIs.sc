@@ -436,7 +436,7 @@ BMMatrixGUI : BMAbstractGUI {
 
 				Pen.use({
 					Pen.translate((hoffset / 2), (vinterval + (vinterval * i)));
-					item.asString.drawCenteredIn(Rect.aboutPoint(0@0, 60, 10),
+					item.asString.drawCenteredIn(Rect.aboutPoint(0@0, hoffset, 10),
 						font,
 						inColor
 					);
@@ -454,7 +454,7 @@ BMMatrixGUI : BMAbstractGUI {
 				Pen.use({
 					Pen.translate((hinterval + (hinterval * i)), (voffset / 2));
 					Pen.rotate(0.5pi);
-					item.asString.drawCenteredIn(Rect.aboutPoint(0@0, 60, 10),
+					item.asString.drawCenteredIn(Rect.aboutPoint(0@0, voffset, 10),
 						font,
 						Color.black
 					);
