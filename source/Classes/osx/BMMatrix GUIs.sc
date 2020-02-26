@@ -307,6 +307,13 @@ BMMatrixGUI : BMAbstractGUI {
 			window.refresh;
 		};
 
+		// don't draw white lines if we're not moused over
+		userView.mouseLeaveAction = {
+			linex = nil;
+			liney = nil;
+			userView.refresh;
+		};
+
 		// alt arrow to shift things
 		userView.keyDownAction_({|view, char, mod, unicode, keycode, key|
 			//[mod, unicode, keycode, key].postln;
