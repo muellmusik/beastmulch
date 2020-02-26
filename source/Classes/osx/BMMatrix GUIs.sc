@@ -181,13 +181,12 @@ BMMatrixGUI : BMAbstractGUI {
 
 		window = Window(name, Rect(40, 40, h, v), false);
 
-		window.view.background = Color.new255(140, 38, 255);
+		//window.view.background = Color.new255(140, 38, 255);
 		userScrollView = ScrollView(
 			window,
 			Rect(hoffset, voffset, window.view.bounds.width - hoffset, window.view.bounds.height - voffset)
 		);
 		userView = UserView(userScrollView, Rect(0, 0, numOuts * cellsize, numIns * cellsize));
-		userView.background = Color.new255(140, 38, 255);
 		hinterval = userView.bounds.width / (numOuts + 1);
 		vinterval = userView.bounds.height / (numIns + 1);
 		insScrollView = ScrollView(window, window.view.bounds.copy.top_(voffset).width_(hoffset));
@@ -196,9 +195,7 @@ BMMatrixGUI : BMAbstractGUI {
 		outsScrollView = ScrollView(window, window.view.bounds.copy.left_(hoffset).height_(voffset));
 		outsScrollView.hasHorizontalScroller_(false).hasVerticalScroller_(false);
 		insView = UserView(insScrollView, Rect(0, 0, hoffset - 2, numIns * cellsize)); // -2 stops wiggles
-		insView.background = Color.new255(140, 38, 255);
 		outsView = UserView(outsScrollView, Rect(0, 0, numOuts * cellsize, voffset - 2)); // -2 stops wiggles
-		outsView.background = Color.new255(140, 38, 255);
 
 		userScrollView.action = {
 			var origin;
