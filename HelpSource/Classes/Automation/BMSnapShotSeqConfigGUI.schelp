@@ -1,0 +1,27 @@
+title:: BMSnapShotSeqConfigGUI
+summary:: Documentation BEASTmulch - a GUI to select controllers for a snapshot seq
+categories:: Classes
+
+Description::
+
+BMSnapShotSeqConfigGUI provides a modal sheet to select controls for a new snapshot sequence. Normally you would not create one directly, but it is used by BMControllerAutomatorGUI.
+
+See also: link::Classes/Automation/BMSnapShot::, link::Classes/Automation/BMControllerAutomatorGUI::, link::Classes/Automation/BMControllerAutomator::
+
+CLASSMETHODS::
+
+method:: new
+
+argument:: parent
+The parent window. Usually this would be the window of a BMControllerAutomatorGUI.
+
+
+Examples::
+code::
+(
+c = BMVirtualController(\foo); // make some controls to select
+BMSnapShotSeqConfigGUI(SCWindow("Fake").front).onClose_(_.postln);
+)
+
+c.free;
+::

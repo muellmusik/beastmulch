@@ -1,0 +1,83 @@
+TITLE:: Time References and Automation
+summary:: Documentation BEASTmulch
+categories:: Overview
+
+Description::
+
+The BEASTmulch library makes use of the concept of Time References, which are objects which provide time updates for things like automation. Although in a typical use case there might be only one reference, e.g. a soundfile player, in principle one can have as many time references as desired (multiple players, external clock sources, etc.).
+
+Section:: Making an object into a Time Reference
+
+Any object can be a Time Reference providing it fulfils a number of requirements:
+
+List::
+## When its base time changes, it must call the following to notify its dependants:
+::
+
+Code:: 
+this.changed(\time, timeInSeconds, rateOfChange, referenceTime); 
+::
+
+Where Strong:: timeInSeconds :: is the updated time, Strong:: rateOfChange :: is the rate at which time is changing (this can be negative), and Strong:: referenceTime :: is a time indicating when Strong:: timeInSeconds :: was true. referenceTime should be in seconds since the application started so that it can be compared to Main.elapsedTime for purposes of correction. Normally Strong:: referenceTime :: would be derived from the time stamp on a received OSC message or from some similar non-synchronous source. In the absence of such a source the time reference should just pass Main.elapsedTime for this argument.
+
+It is up to dependants how they use this information. Since dependants may need to update at different rates than the Time Reference they depend on, it may be necessary to store this data to allow for interpolation.
+
+Note that if the original source is from another computer it will be necessary to synchronise the two machines using a network time source.
+
+If capable of pausing, a source should notify its dependants that code:: \time :: has changed with a rate of 0.
+
+List::
+## If it can stop (for instance in the case of a sound file player), it must call the following to notify its dependants:
+
+Code:: 
+this.changed(\stop); 
+::
+
+Again it is up to dependants to interpret this, but stopping should normally be equivalent to 
+
+Code::
+this.changed(\time, 0, 0, Main.elapsedTime);.
+::
+
+Stopped sources need not continue to regularly update their time.
+
+## If the base for the time reference changes (for instance when a sound file player loads a new file), it should notify its dependants:
+
+Code::
+this.changed(\base);
+::
+
+## It must register itself with BMTimeReferences as a reference.
+	
+Code::
+BMTimeReferences.addReference(this);
+::
+
+## It must respond to the message 'path' with either nil or a String. Time References which derive from files (such as sound file players) should return the file's path in response to this message. Those which don't, should return nil. This functionality allows dependants to access the source for things such as GUI representations. 
+
+## It must respond to the message setTime(time) by setting its time in seconds accordingly, and notifying its dependants of the change.
+
+## It must at least understand the messages 'play', 'stop', 'pause', and 'togglePlay'. If the implementation of any or all of  these messages would be inappropriate, it can return nil to indicate this.
+::
+
+Generally speaking time references should update reasonably frequently (say 10 times a second or faster). Note that what is done with the updated data is up to the dependant object to determine.
+
+Section:: BMTimeReferences
+ 
+The class BMTimeReferences provides a framework for accurate updating and interpolation of data from Time References. It serves as a centralised registry of time sources, and provides utility functions for updating time based on the current logical time. To obtain the current time for a reference, one can simple call
+
+Code::
+BMTimeReferences.currentTime(ref);
+::
+
+for an updated time.
+
+Section:: Notes on objects which use Time References
+ 
+In general objects should respond gracefully to any rate of change in time (faster or slower, backwards, or large leaps). Objects which make use of time sources should respond gracefully to current time values of nil, < 0 or +/- inf.
+
+See also: 
+Link::Classes/Other/BMTimeReferences::, Link::Classes/Automation/BMAbstractAutomator::, Link::Classes/Automation/BMControllerAutomator::
+
+
+

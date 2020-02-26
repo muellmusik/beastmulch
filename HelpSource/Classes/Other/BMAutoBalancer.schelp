@@ -1,0 +1,47 @@
+title:: BMAutoBalancer
+summary:: Documentation BEASTmulch - automatically balances a set of speakers
+categories:: Classes
+
+Description::
+
+BMAutoBalancer is a utility class which can be used to automatically balance a set of loudspeakers, specified as a link::Classes/BMInOutArray:: containing instances of link::Classes/Inputs and Outputs/BMSpeaker:: (any Associations containe therein will be ignored). A typical hardware configuration for this would involve an omni-directional microphone at the centre of a speaker array. The results will be used to populate each speaker's strong::autoTrim:: var, which is used in BMTrimPluginsRack's autoTrim method.
+
+BMAutoBalancer sends three bursts of filtered pink noise (through a BPF with bandwidth from 100 to 4000 Hz) out of each speaker in turn, and records the highest RMS amplitude for each burst. Once completed it takes the mean of each set of three and uses it to populate the speaker's autoTrim var with a value in dBFS. The values will be specified relative to the lowest level detected, rather than absolute, i.e. the quietest speaker will have an autoTrim of 0dBFS, all others <= 0dBFS.
+
+See also: link::Classes/Inputs and Outputs/BMSpeaker::, link::Classes/Inputs and Outputs/BMInOutArray::, link::Classes/Plugins/BMTrimPluginsRack::, link::Classes/Other/BMAutoBalancerGUI::
+
+CLASSMETHODS::
+
+method:: run
+Run through a balancing cycle. This fails if a cycle is already in progress.
+
+argument:: speakerList
+The link::Classes/Inputs and Outputs/BMInOutArray:: to balance. This is done in place.
+argument:: okayFunc
+An optional link::Classes/Function:: to evaluate when the cycle is complete. This will be passed speakerList as an argument.
+argument:: server
+The link::Classes/Server:: to use. nil indicates the default server.
+argument:: in
+The hardware input bus (starting from 0) to which the microphone signal is connected. Default value is 0.
+argument:: onlyFullRange
+A link::Classes/Boolean::. If true, only include speakers for which speaker.spec.fullRange == true. This excludes subwoofers and other specialised speakers. Default is true.
+		
+method:: stop
+Stop a running balancing cycle.
+
+
+INSTANCEMETHODS::
+	
+method:: running
+Returns a Boolean indicating whether a balancing cycle is in progress.
+				
+				
+Examples::
+
+code::
+l = [BMSpeaker(\left, 0), BMSpeaker(\right, 1), BMSpeaker(\sub, 2, spec: 'Generic Sub')].as(BMInOutArray); // sub will be ignored
+
+BMAutoBalancer.run(l);
+
+BMAutoBalancerGUI(l); // also GUI version
+::

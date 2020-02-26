@@ -1,0 +1,345 @@
+title:: BMAbstractController
+summary:: Documentation BEASTmulch - abstract superclass of all controllers
+categories:: Classes
+
+Description::
+
+BMAbstractController is the abstract superclass of all controllers in the BEASTmulch Library.
+
+See also: link::Classes/Root Classes/BMControl::
+
+Section:: Controllers vs. Controls
+
+The BEASTmulch library provides two ways of dealing with a given control:
+
+list::
+##as a collection of controls - this will be a subclass of BMAbstractController and will generally represent a single hardware device and all of its controls. Controls should be numbered, and be accessible through getVal and setVal by index, usually starting with 1 for human readability.
+
+##as an individual control - an instance of link::Classes/Root Classes/BMControl::. These have a Symbol for a name, and can be accessed through the class methods strong::*getValueByName:: and strong::*setValueByName::.
+::
+
+It is sometimes useful to deal with one or the other representation depending on what one is trying to do, but in normal usage it is more common to deal with the controller instance. BMAbstractController has two classvars, strong::allControllers:: and strong::allControls::, which contain dictionaries. These allow objects to query any individual control or controller by strong::name::, or to get global information about what controls or controllers currently exist.
+
+Each controller allocates a multichannel control rate bus for its controls. Objects in the library map to controls by mapping synth Controls to the corresponding bus. Bus values are assumed to be between 0 and 1. On Cmd-. all mappings are cleared. Subclasses of BMAbstractController must store current values in their valueArray in native format, e.g. 0-127 for a MIDI ctrl input.
+
+CLASSMETHODS::
+
+method:: dumpAllValues
+Prints the current values of all controls to the post window. The values printed will be mapped to be between 0 and 1.
+
+code::		
+// make a controller and post its values
+a = BMVirtualController(\bar);
+BMAbstractController.dumpAllValues;
+a.free // release its resources
+::
+
+
+method:: getValueByName
+Get the value of a control by name. This will be between 0 and 1.
+
+argument:: ctrlName
+A link::Classes/Symbol:: indicating the control's name.
+		
+code::
+// make a controller
+a = BMVirtualController(\bar);
+a.controlNames;
+BMAbstractController.getValueByName('bar-3');
+a.free // release its resources
+::
+
+
+method:: setValueByName
+Set the value of a control by name.
+
+argument:: ctrlName
+A link::Classes/Symbol:: indicating the control's name.
+argument:: val
+The value to set, between 0 and 1.
+
+code::		
+// make a controller
+a = BMVirtualController(\bar);
+a.controlNames;
+BMAbstractController.setValueByName('bar-3', 0.5);
+BMAbstractController.dumpAllValues;
+a.free // release its resources
+::
+
+
+method:: masterInOutArray
+Returns a link::Classes/Inputs and Outputs/BMInOutArray:: of all existing controls in the form of ctrlName->busIndex. This is suitable for use as an input to other objects, for example link::Classes/Matrices/BMAmpControlMatrix::.
+	
+code::	
+// make a controller
+a = BMVirtualController(\bar);
+g = BMAbstractController.masterInOutArray;
+a.free // release its resources
+::
+
+
+method:: makeName
+Returns a generated name for a new instance, in the form (this.humanName + UniqueID.next).asSymbol. See Subclassing, below.
+		
+		
+method:: stopAllListening
+Stops all controllers (particularly streaming controllers such as link::Classes/Controllers/BMEtherSense::) from forwarding messages to the server. This can be useful to temporarily clear network traffic, for instance.
+		
+		
+method:: startAllListening
+Starts all controllers forwarding messages to the server.
+		
+
+Section:: Subclassing
+
+See existing subclasses such as BMEtherSense, for useful examples. Subclasses of BMAbstractController must implement the following methods:
+
+CLASSMETHODS::
+
+method:: parameterList
+Returns a dictionary of arguments to this class' strong::*new:: method (excluding server) in the form argname->[class, spec, humanName], indicating the argument's class, a link::Classes/Spec::, and link::Classes/String:: containing a human readable name for the argument. This is useful for constructing GUIs to make new controllers. For an example see the implementation of code::BMControllerConfigGUI:: class (used in the BEASTmulch System application).
+
+code::
+BMVirtualController.parameterList;
+::
+
+
+method:: humanName
+Returns a link::Classes/String:: containing a human readable name for this type of Controller.
+
+code::
+BMVirtualController.humanName;
+::
+
+
+method:: newFromParamDict
+Creates a new instance from a dictionary containing values for arguments to this class' strong::*new:: method. These should be the same arguments in contained in a call to strong::*parameterList:: above, and should be in the form of argName1->value1, argName2->value2, etc.
+
+argument:: dict
+The link::Classes/Dictionary:: of parameters.
+argument:: server
+The link::Classes/Server:: on which to allocate this controller's busses. The default value is the default Server.
+		
+code::
+// example implementation from BMVirtualController
+*newFromParamDict {|dict, server| 
+	^this.new(dict[\name], server, dict[\numControls]);
+}
+::	
+
+	
+method:: new
+This method should call strong::init:: and then strong::addControlsToIndex::.
+
+code::		
+// example implementation from BMVirtualController
+*new { |name, server, numControls = 8|
+	^super.new.init(name, server ? Server.default, numControls).addControlsToIndex;
+}
+::
+
+
+method:: allControllers
+Returns a dictionary containing all existing BMAbstractController instances in the form controllerName->controller.
+				
+method:: allControls
+Returns a dictionary containing all existing link::Classes/Root Classes/BMControl:: instances in the form controlName->control.
+				
+method:: server
+Returns this controller's link::Classes/Server::.
+				
+method:: bus
+Returns this controller's link::Classes/Bus::.
+				
+method:: busIndex
+Returns an link::Classes/Integer:: indicating the index of this controller's link::Classes/Bus::.
+	
+method:: numControls
+Returns an link::Classes/Integer:: indicating the number of controls this controller has.
+			
+method:: name
+Returns a link::Classes/Symbol:: indicating this controller's name.
+				
+
+
+
+INSTANCEMETHODS::		
+			
+method:: init
+This method should set the strong::numControls:: instance var, allocate the controller's bus, populate its valueArray with appropriate values in the controller's native format (e.g. for midi between 0 and 127), and add this controller to strong::allControllers::.
+
+code::		
+// example implementation from BMVirtualController
+init { |argname, argserver, argnumControls|
+	name = argname;
+	server = argserver.postln;
+	numControls = argnumControls;
+	valueArray = Array.fill(numControls, {0});
+	labelArray = Array.fill(numControls, {""});
+	bus = Bus.control(server, numControls);
+	busIndex = bus.index;
+	allControllers[name] = this;
+}
+::
+
+
+method:: getVal
+Get a value for a control by number.
+argument:: controlNum
+The number of the control to poll. These start from 1, not 0.
+		
+code::
+// make a controller
+a = BMVirtualController(\bar);
+a.setVal(3, 0.5); // 'bar-3'
+a.getVal(3);
+a.free;
+::
+
+
+method:: setVal
+Set a value for a control by number. Non-automatable subclasses should override this to post a warning.
+
+argument:: controlNum
+The number of the control to set. These start from 1, not 0.
+argument:: val
+The value to set. This should be between 0 and 1.
+		
+code::
+// make a controller
+a = BMVirtualController(\bar);
+a.setVal(3, 0.5); // 'bar-3'
+a.getVal(3);
+a.free;
+::
+
+
+method:: getAllValues
+Returns an link::Classes/Array:: containing the values of all this controller's controls, in order. Values will be between 0 and 1.
+		
+code::
+// make a controller
+a = BMVirtualController(\bar);
+a.setVal(3, 0.5); // 'bar-3'
+a.getAllValues;
+a.free;
+::
+
+
+method:: setAllValues
+Set the values of all this controller's controls.
+
+argument:: array
+An link::Classes/Array:: containing the new values for this controller's controls, in order. Values should be between 0 and 1.
+		
+code::
+// make a controller
+a = BMVirtualController(\bar, s, 4);
+a.setAllValues([0, 1, 0.25, 0.75]);
+a.getAllValues;
+a.free;
+::
+
+
+
+method:: setLabel
+Set the label for a control by number.
+
+argument:: controlNum
+The number of the control to set. These start from 1, not 0.
+argument:: name
+A link::Classes/String:: containing the new label.
+		
+code::
+// make a controller
+a = BMVirtualController('GUI Sliders', s, 4);
+a.setLabel(1, "Fader-1!!");
+g = BMVirtualControllerSliders(a);
+a.free;
+::
+
+
+method:: getLabel
+Set the label for a control by number. Returns a link::Classes/String::.
+
+argument:: controlNum
+The number of the control to set. These start from 1, not 0.
+
+
+method:: getAllLabels
+Returns an link::Classes/Array:: of link::Classes/Strings:: containing this controller's labels in order.
+
+
+method:: setAllLabels
+Set all the labels for this controller.
+
+argument:: array
+An link::Classes/Array:: of link::Classes/Strings:: containing new labels for this controller's controls in order.
+		
+Section:: Instance Methods	
+The following two methods should add or remove responders for controllers, and can be used to start or stop forwarding messages to the server. The default implementations do nothing, in order to allow for the use of the strong::*stopAllListening:: and strong::*startAllListening:: class methods (see above). See link::Classes/Controllers/BMEtherSense:: for an example implementation.
+
+INSTANCEMETHODS::
+
+method:: stopListening
+Tell a controller to remove its responder or equivalent and stop forwarding to the server.
+		
+
+method:: startListening
+Tell a controller to add a responder or equivalent and start forwarding to the server. Implementations of this method should check to avoid duplicate responders.
+		
+
+method:: addControlsToIndex
+This should be called in subclasses' strong::*new:: methods to create the necessary link::Classes/Root Classes/BMControl:: instances.
+
+
+method:: controlNames
+Returns an link::Classes/Array:: of link::Classes/Symbols:: corresponding to this controller's control names. These will generally be in the form name-controlNum.
+		
+code::
+// make a controller
+a = BMVirtualController(\bar, s, 4);
+a.controlNames;
+a.free;
+::
+
+
+method:: asBMInOutArray
+Returns a link::Classes/Inputs and Outputs/BMInOutArray:: in the form of controlName->controlBusIndex. This is suitable for use as an input to other objects, for example link::Classes/Matrices/BMAmpControlMatrix::.
+	
+code::	
+// make a controller
+a = BMVirtualController(\bar, s, 4);
+a.asBMInOutArray;
+a.free;
+::
+
+
+method:: mappings
+Set this controller's values and labels. Subclasses may override this to include additional parameters.
+Returns an link::Classes/IdentityDictionary:: containing the current values and labels for this controller, in the form IdentityDictionary[\labels->this.getAllLabels, \faders->this.getAllValues]. Subclasses may override this to include additional parameters.
+
+argument:: mappings
+An link::Classes/IdentityDictionary:: containing the new values and labels for this controller, in the form IdentityDictionary[\labels->[ordered array of Strings], \faders->[ordered array of values].
+
+
+method:: acceptsAutomation
+Returns a link::Classes/Boolean:: indicating whether or not this controller is automatable. In general this will be true for virtual or motorised controllers, false otherwise.
+
+
+method:: spec
+Returns this controller's strong::spec::, which is used for applying a mapping curve. Subclasses should scale from native value range to 0..1 before mapping to the curve.
+
+
+method:: calibrate
+With motorised controllers it is sometimes useful to calibrate their range. This method provides a hook for this. Controllers which have a calibration procedure should return a calibration duration in seconds and post relevant information during the process. The default implementation posts a message saying that no calibration is necessary and returns 0. Durations can be used as a wait value.
+
+code::		
+// calibrate all controllers in turn
+{ BMAbstractController.allControllers.do({|ctrlr| ctrlr.calibrate.wait;}); }.fork;
+::	
+
+		
+method:: free
+Clean up this controller's resources. After calling this the object is unusable.

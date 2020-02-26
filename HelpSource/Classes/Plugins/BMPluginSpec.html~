@@ -1,0 +1,197 @@
+title:: BMPluginSpec
+summary:: Documentation BEASTmulch - a specification for creating a BMPlugin
+categories:: Classes
+
+Description::
+
+Instances of link::Classes/Plugins/BMPluginSpec:: serve as templates for creating a link::Classes/Plugins/BMPlugin:: of a particular type, e.g. a high pass filter, a reverb, a 3 band EQ, etc. They provide functions for such things as link::Classes/SynthDef:: and GUI creation, include standard presets, etc. Plugin specs allow for user customisation at plugin creation time through the use of attributes (see below).
+
+Specs are stored in a global dictionary held in the class variable strong::*specs::. You can see a list of all available specs as follows:
+
+code::
+BMPluginSpec.specs.keys;
+::
+
+See also: link::Classes/Plugins/BMPlugin::, link::Classes/Plugins/BMTrimPluginsRack::, link::Classes/Plugins/BMMultichannelPluginSpec::, link::Classes/Inputs and Outputs/BMSpeakerSpec::
+
+Section:: BMPlugin vs. BMMultichannelPlugin
+
+BMPlugin is monophonic, i.e. it has a single input and output, which are in fact the same bus. BMMultichannelPlugins can have variable numbers of inputs and outputs, which need not match. The exact number and configuration of inputs and outputs expected varies according to the multichannel plugin's spec.
+
+CLASSMETHODS::
+
+method:: new
+Create a new BMPluginSpec and add it to strong::*specs::. If a spec with this name already exists it will be replaced.
+
+argument:: name
+A link::Classes/Symbol:: indicating the name of this plugin spec, e.g. 'Hipass' or 'Freeverb'.
+argument:: ugenGraphFunc
+A link::Classes/Function:: detailing this spec's processing chain. When a plugin is created this will be passed the link::Classes/Plugins/BMPlugin:: instance and the input signal as its first two arguments. Additional arguments will result in instances of link::Classes/Control:: being created. The default GUI function uses the order these are listed to determine order in the GUI.
+argument:: specsDict
+A link::Classes/Dictionary:: or subclass matching link::Classes/Control:: names as keys with instances of link::Classes/ControlSpec::. Plugin instances make a copy of this which can be modified when strong::setupFunc:: (see below) is called. These will be used in GUI construction.
+argument:: guiFunc
+An optional link::Classes/Function:: which will be used to create GUIs for plugin instances using this spec. This Function will be passed the plugin instance as an argument, and should return the GUI's window. If nil is passed here, a default GUI Function will be used.
+argument:: presets
+An optional link::Classes/Dictionary:: or subclass providing parameter presets. Keys are Symbols indicating preset names, values are Dictionaries or subclasses matching Control names to values.
+argument:: description
+A link::Classes/String:: to serve as a human readable description of this spec.
+argument:: defaultAttributes
+Plugin specs can optionally provide a set of overridable attributes which can serve as settings or inputs to their strong::ugenGraphFunc::, strong::guiFunc::, strong::setupFunc::, and strong::cleanupFunc::. This should be a link::Classes/Dictionary:: or subclass containing key value pairs. Users can override these defaults by passing a Dictionary or subclass as the strong::attributes:: argument to strong::BMPlugin:new::. 
+argument:: setupFunc
+An optional link::Classes/Function:: that will be evaluated when a plugin instance is made, and before strong::ugenGraphFunc:: is evaluated. It will be passed the plugin instance as an argument. It can store any objects created in strong::attributes:: for use by the strong::ugenGraphFunc::, strong::guiFunc::, or strong::cleanUpFunc::. It can also do things like modify the plugin's local copy of the strong::specsDict::.
+argument:: cleanupFunc
+An optional link::Classes/Function:: that will be evaluated when a plugin instance is released. It will be passed the plugin instance as an argument.
+		
+
+INSTANCEMETHODS::
+	
+method:: specs
+Returns an link::Classes/IdentityDictionary:: containing all currently existing specs. This uses the names of specs as link::Classes/Symbols:: for keys.
+		
+code::
+BMPluginSpec.specs['Highpass'];
+::
+				
+method:: description
+Returns a link::Classes/String:: which serves as a human readable description of this spec.
+				
+method:: setupFunc
+Returns this spec's strong::setupFunc:: (see above).
+				
+method:: cleanupFunc
+Returns this spec's strong::cleanupFunc:: (see above).
+				
+method:: defaultAttributes
+Returns this spec's strong::defaultAttributes:: (see above).
+				
+method:: ugenGraphFunc
+Returns this spec's strong::ugenGraphFunc:: (see above).
+				
+method:: presets
+Set or get this spec's strong::presets:: dictionary.
+				
+method:: name
+Returns this spec's name as a link::Classes/Symbol::.
+				
+method:: specsDict
+Returns this spec's strong::specsDict:: (see above). Plugins may customize specDicts in their strong::setupFunc::, so when working with a plugin, use its strong::specsDict:: getter method rather than this one.
+				
+method:: guiFunc
+Returns this spec's strong::guiFunc:: (see above) if one has been provided, or the default GUI function otherwise.
+
+
+Examples::
+
+code::
+////// some plugin spec examples (see the *initClass method for more)
+
+// a simple highpass filter
+(
+BMPluginSpec('Help-Highpass', 						// name
+	{|plugin, input, freq| 							// ugenGraphFunc, freq becomes a Control
+		HPF.ar(input, freq);
+	}, 								
+	(freq: \freq.asSpec),							// specsDict
+	nil, 										// use the default GUI
+	(atcs: (freq: 80), tweeters: (freq: 10000)), 		// presets for use with some speakers
+	"2nd Order Butterworth Highpass Filter -12db/Oct"	// description
+);
+)
+
+p = BMPlugin('Help-Highpass');
+x = {Out.ar(1, PinkNoise.ar(0.2))}.play;
+p.makeSynth(1, x, \addAfter);
+p.gui; // default GUI looks like this
+x.free; p.release;
+
+
+// a plugin with setup and cleanup functions, and defaultAttributes 
+// (could actually do this simpler, but ...)
+(
+BMPluginSpec('Help-Buffer-Delay', 					// name
+	{|plugin, input, delayTime| 					// ugenGraphFunc
+		var buffer;
+		buffer = plugin.attributes.buffer;			// get the buffer from the attributes
+		BufDelayC.ar(buffer, input, delayTime) + input;
+	},
+	(delayTime: ControlSpec(0.0001, 1, \linear, 0, 0.5, units: " secs")), 	// specsDict
+	nil, 															// default GUI
+	(oneSecond: (delayTime: 1)),										// presets
+	"Automatically added Delay with Cubic Interpolation; 1 second maximum",	// description
+	(maximumDelay: 2),
+	
+	{|plugin|										// setupFunc
+		var attr, server;
+		attr = plugin.attributes;
+		server = plugin.server;
+		attr.buffer = Buffer.alloc(plugin.server, attr.maximumDelay * server.sampleRate, 1);
+	},
+	{|plugin|										// cleanupFunc
+		plugin.attributes.buffer.free;
+	}
+);
+)
+
+p = BMPlugin('Help-Buffer-Delay');
+x = {Out.ar(1, Decay2.ar(Impulse.ar(0.5), 0.001, 0.01, PinkNoise.ar(0.2)))}.play;
+p.makeSynth(1, x, \addAfter);
+p.gui; // default GUI looks like this
+x.free; p.release;
+
+
+// GUI Functions
+// in principle GUI functions of arbitrary complexity are possible
+// the default GUI Function is outlined below, and can serve as an example of how to go about this
+{|plugin|
+	var numSliders, spec, specsDict, window, presetMenu, sliders;
+	spec = plugin.spec;
+	specsDict = plugin.specsDict;
+	numSliders = specsDict.size;
+	window = SCWindow.new("Plugin:" + spec.name, 
+		Rect(300, 300, 552, (numSliders + 1) * 24 + 24), false); // 508
+	window.view.decorator = FlowLayout(window.view.bounds);
+	window.view.background = Color.rand.alpha_(0.3);
+	sliders = ();
+	specsDict.sortedKeysValuesDo({|key, cspec|
+		var initVal;
+		initVal = plugin.get(key);
+		(cspec.units == " dB" && plugin.attributes[\usesLinearAmp]).if({ 
+			initVal = initVal.ampdb;
+		});
+		sliders[key] = EZSlider.new(window, 500@20, key.asString, cspec,
+			{|ez| var setVal;
+				setVal = ez.value;
+				(cspec.units == " dB" && plugin.attributes[\usesLinearAmp]).if({ 
+					setVal = setVal.dbamp;
+				});
+				plugin.set(key, setVal);
+			}, initVal, labelWidth: 70
+		);
+		sliders[key].numberView.background = Color.white.alpha_(0.4);
+		SCStaticText(window, Rect(0,0,40,20)).string_(cspec.units);
+	
+	}, {|a, b|
+		var argArray;
+		argArray = plugin.spec.ugenGraphFunc.def.argNames;
+		argArray.indexOf(a) < argArray.indexOf(b)
+	});
+	window.view.decorator.nextLine.shift(10, 10);
+	presetMenu = SCPopUpMenu(window, Rect(0, 0, 100, 20));
+	presetMenu.items = ["presets", "-"] ++ spec.presets.keys;
+	presetMenu.action = {
+		if(presetMenu.value > 1, {
+			plugin.preset_(presetMenu.items[presetMenu.value].asSymbol);
+			sliders.keysValuesDo({|key, slid| 
+				var newVal;
+				newVal = plugin.get(key);
+				(slid.controlSpec.units == " dB" 
+					&& plugin.attributes[\usesLinearAmp]).if({ 
+					newVal = newVal.ampdb;
+				});
+				slid.value = newVal;
+			});
+		});
+	};
+	window.front; // this return value is stored in the plugin's gui var
+}
+::

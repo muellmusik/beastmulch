@@ -1,0 +1,178 @@
+title:: BMSoundFilePlayer
+summary:: Documentation BEASTmulch - a sound file player
+categories:: Classes
+
+Description::
+
+BMSoundFilePlayer is a soundfile player with integration in the BEASTmulch library. It provides standard functionality, i.e. play, pause, stop, change rate, etc.
+
+Instances can serve as Time References, and will update any dependants with strong::update(\time, timeInSeconds, rateOfChange, referenceTime):: messages. (See class link::Classes/Object:: for a discussion of dependancy mechanisms.) It also updates dependants with the following messages:
+
+code::\loading:: - when loading of a file begins
+code::\loaded:: - when a sound file has been loaded
+code::\base:: - when its time base has changed (i.e. a file has been loaded or buffer cleared)
+code::\play:: - when playback begins or resumes
+code::\playFailed:: - if playback failed
+code::\stop:: - when playback stopped
+code::\pause:: - when playback pauses
+code::\bufferFreed:: - when its buffer is freed
+
+See also: link::Classes/Root Classes/BMAbstractAudioSource::, link::Classes/Other/BMSoundFilePlayerGUI::, link::Overview/Time References and Automation::
+
+Section:: File Size Limits
+
+In the current implementation BMSoundFilePlayer loads files into memory rather than streaming from disk. This avoids potential dropout, etc. resulting from disk access, but places some practical upper limits on file size.
+
+CLASSMETHODS::
+
+method:: new
+Create a new BMSoundFilePlayer.
+
+argument:: maxNumChannels
+The maximum number of output channels for this player. Default value is 2.
+argument:: target
+Target for this object's link::Classes/Group::. If target is not a Group or link::Classes/Synth::, it will be converted as follows: If it is a link::Classes/Server::, it will be converted to the default_group of that server. If it is nil, to the default group of the default Server. strong::Note::: A Synth is not a valid target for code::\addToHead:: and code::\addToTail::.
+argument:: addAction
+one of the following Symbols:		
+code::\addToHead:: - (the default) add at the head of the group specified by target
+code::\addToTail:: - add at the tail of the group specified by target
+code::\addAfter:: - add immediately after target in its server's node order
+code::\addBefore:: - add immediately before target in its server's node order
+code::\addReplace:: - replace target and take its place in its server's node order
+argument:: name
+A Symbol indicating the name of this object. If not supplied one will be generated.
+
+
+INSTANCEMETHODS::
+	
+method:: sampleDur
+Returns the sample duration based on the currently loaded buffer's sample rate.
+				
+method:: buffer
+Get the currently loaded link::Classes/Buffer::.
+				
+method:: rate
+Set or get the current playback rate. 1 is normal, -1 is backwards, 2 is twice as fast, etc.
+				
+method:: loading
+Returns a link::Classes/Boolean:: indicating if a file load is in progress.
+				
+method:: synth
+If playing, return this object's playback link::Classes/Synth::, nil otherwise.
+				
+method:: bus
+Set or get this object's output audio Bus. This should match strong::maxNumChannels:: in size. 
+				
+
+method:: read
+Read a sound file into memory.
+		
+argument:: path
+A link::Classes/String:: indicating the path of the file to be loaded.
+argument:: action
+An optional link::Classes/Function:: to be evaluated when loading is complete. It will be passed the receiver as an argument.
+
+code::		
+p = BMSoundFilePlayer(name:\foo);
+p.read("sounds/a11wlk01.wav", {|pl| "% read successfully\n".postf(pl.name)}); 
+p.free; // cleanup
+::
+
+
+method:: play
+Play the currently loaded file. If playing is already underway this is ignored. At the end of the file playback will stop automatically.
+
+argument::startTime
+Offset in seconds into the file at which to start playback.
+argument:: out
+An optional link::Classes/Integer:: or link::Classes/Bus:: to use for output. If nil (the default) the object's internal (private) bus is used.
+		
+code::
+p = BMSoundFilePlayer(name:\foo);
+p.read("sounds/a11wlk01.wav");
+p.play(0, 0); // play from start out bus 0;
+p.play(1, 0); // skip ahead
+p.play(0, 0).rate_(0.5); // half speed
+p.free;
+::
+
+
+method:: stop
+If currently playing stop, otherwise ignore.
+
+
+method:: togglePlay
+If currently playing, pause playback. If stopped or paused, start or resume playback.
+
+
+method:: pause
+If currently playing pause playback.
+
+
+method:: freeBuffer
+Free the currently loaded Buffer.
+		
+		
+method:: free
+Free this object's resources and nodes. After calling this it should not be used.
+
+
+method:: setTime
+If currently playing jump to the new time, if not start playback at strong::time:: in a paused (i.e. cued) state.
+
+argument:: time
+The new time in seconds.
+
+
+method:: asBMInOutArray
+Returns this object's outputs as a link::Classes/Inputs and Outputs/BMInOutArray::.
+		
+code::
+p = BMSoundFilePlayer(name:\foo);
+p.asBMInOutArray; // foo-1 etc.
+p.free;
+::
+
+
+method:: path
+Returns a String indicating the path of the currently loaded sound file.
+	
+		
+method:: duration
+Returns the duration in seconds of the currently loaded sound file, or nil if one is not loaded.
+
+
+method:: gui
+Creates and returns a link::Classes/Other/BMSoundFilePlayerGUI:: with this object as an argument.
+		
+code::
+p = BMSoundFilePlayer(name:\foo);
+p.bus = 0; // for the sake of example
+p.gui.onClose_({p.free});
+::
+
+
+Examples::
+
+code::
+// example with a matrix for routing
+s.boot;
+
+p = BMSoundFilePlayer(name:\foo);
+p.read("sounds/a11wlk01.wav"); // mono, so only out foo-1
+
+// make a speaker list
+(
+l = [[-30, 'L'], [30, 'R'], [0, 'C'], [-110, 'Ls'], [110, 'Rs']].collectAs({|el, i|
+	BMSpeaker.newFromSpherical(el[1], i, el[0], 0, 2);
+}, BMInOutArray);
+)
+
+// make a matrix for connections
+m = BMAudioMatrix(p, l, name:'Router');
+
+m.connect('foo-1', 'L');
+
+m.gui; p.gui; // play with the GUIs
+p.free;
+::

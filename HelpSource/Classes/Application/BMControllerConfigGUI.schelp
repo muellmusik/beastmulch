@@ -1,0 +1,7 @@
+title:: BMControllerConfigGUI
+summary:: Documentation BEASTmulch - GUI for configuring controllers in BEASTmulch System
+categories:: Classes
+
+Description::
+
+This is a private class used in the BEASTmulch System application. It is included here for example purposes only.

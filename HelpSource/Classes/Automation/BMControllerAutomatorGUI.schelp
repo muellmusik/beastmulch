@@ -1,0 +1,69 @@
+title:: BMControllerAutomatorGUI
+summary:: Documentation BEASTmulch - GUI for a BMControllerAutomator
+categories:: Classes
+
+Description::
+
+This is a GUI class for link::Classes/Automation/BMControllerAutomator::. It allows one to create or edit sequences and snapshots, and shows a visual representation of the automator's time base, for instance a soundfile graph.
+
+See also: link::Classes/Automation/BMControllerAutomator::
+
+CLASSMETHODS::
+
+methods:: new
+Create a new BMControllerAutomatorGUI.
+
+argument:: ca
+An instance of BMControllerAutomator.
+
+argument:: name
+A String indicating what to display in the title bar of the resulting window. The default is "Soundfile / Controller Snapshots".
+
+argument:: origin
+A Point indicating the origin of the resulting window. The default is 200@200.
+
+
+
+Examples::
+
+code::
+s.boot;
+
+(
+// a source and time reference
+p = BMSoundFilePlayer(name:\bar);
+p.read("sounds/a11wlk01.wav");
+)
+
+(
+// make a speaker list
+l = [[-30, 'L'], [30, 'R'], [0, 'C'], [-110, 'Ls'], [110, 'Rs']].collectAs({|el, i|
+	BMSpeaker.newFromSpherical(el[1], i, el[0], 0, 2);
+}, BMInOutArray);
+
+m = BMAudioMatrix(p, l, name:'Router'); // make a matrix for connections
+m.connect('bar-1', l.keys);
+
+// a controller to automate and an amp control matrix
+c = BMVirtualController(\foo, s, 5);
+BMVirtualControllerSliders(c); // slider gui
+n = BMAmpControlMatrix(c, m);
+c.controlNames.do({|name, i| n.connect(name, l.keys[i])});
+
+a = BMControllerAutomator(c.controlNames, p); // control virt sliders, player as time ref
+
+// make a sequence and add some snapshots
+c.setAllValues(0 ! 5);
+a.addSequence('test1', 0, c.controlNames);
+c.setVal(1, 0.5);
+a.addSnapShot('test1', 0.5, 'test1-2');
+c.setVal(2, 1);
+a.addSnapShot('test1', 1, 'test1-3');
+c.setAllValues({1.0.rand} ! 5);
+a.addSnapShot('test1', 3, 'test1-4');
+)
+
+p.play.rate_(0.5); // half speed
+
+BMControllerAutomatorGUI(a, origin: 100@600); // try out the GUI
+::

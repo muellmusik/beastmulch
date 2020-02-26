@@ -1,0 +1,34 @@
+title:: BMArbitraryStartSnapShot
+summary:: Documentation BEASTmulch - an arbitrary intial state in an automation sequence
+categories:: Classes
+
+Description::
+
+BMArbitraryStartSnapShot represents an unknown initial state in a snapshot automation sequence. For example, if dealing with a motorised fader board, it may not be possible to know the state of the faders in advance of starting the sequence. Placing a BMArbitraySnapshot at the start of an automation sequence indicates that the intial state should be sampled when the sequence becomes active, and those values used as the start of the first segment. This means that an automation sequence can interpolate from an unknown to a known state, and allows users to combine live control with automation.
+
+Under normal circumstances you will not need to make these directly. A BMArbitraryStartSnapShot is automatically created as the first snapshot of a BMSnapShotSeq.
+
+See also: link::Classes/Automation/BMSnapShot::, link::Classes/Automation/BMAbstractSnapShot::, link::Classes/Automation/BMSnapShotSeq::, link::Classes/Automation/BMAbstractAutomator::, link::Classes/Root Classes/BMControl::, link::Classes/Root Classes/BMAbstractController::, link::Overview/Time References and Automation::
+
+CLASSMETHODS::
+
+method:: new
+Make a new arbitrary snapshot.
+
+argument:: controls
+An Array of Symbols corresponding to the names of the link::Classes/Root Classes/BMControl:: instances to be automated.
+
+argument:: time
+Time in seconds for this snapshot. This will be relative to a Time Reference. See link::Overview/Time References and Automation::.
+
+argument:: name
+A Symbol indicating the name of this snapshot.
+
+
+INSTANCEMETHODS::
+
+method:: snapTime
+Returns the time at which the controller state was determined, or nil if this segment is inactive. This will correspond to the moment at which the automator first called automate at a time equal to or later than this snapshot's time.
+
+method:: isKnown
+Returns false as this is an arbitrary snapshot.

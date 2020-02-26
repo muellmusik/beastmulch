@@ -1,0 +1,162 @@
+title:: BMMultichannelPlugin
+summary:: Documentation BEASTmulch - explanation of what BMMultichannelPlugin is and/or does
+categories:: Classes
+
+Description::
+
+BMMultichannelPlugin provides a general interface for making and managing multichannel plugins (i.e. processors) in the BEASTmulch library. Generally speaking these will be managed by a link::Classes/Plugins/BMMultichannelPluginsRack:: or similar object, but they can be instantiated individually using the strong::makeSynth:: and strong::release:: methods. In this way they can function as resuable multichannel processing synths with automatically created GUIs.
+
+Plugins are made using a specification object, an instance of link::Classes/Plugins/BMMultichannelPluginSpec::, which provides functions for such things as link::Classes/SynthDef:: and GUI creation, standard presets, etc. You can see a list of all available specs as follows:
+
+code::
+BMMultichannelPluginSpec.specs.keys;
+::
+
+The number of inputs and outputs for a multichannel plugin can vary, and there may be some limits based on spec.
+
+See also: link::Classes/Plugins/BMMultichannelPluginSpec::, link::Classes/Plugins/BMMultichannelPluginsRack::, link::Classes/Plugins/BMPlugin:: 
+
+Section:: BMPlugin vs. BMMultichannelPlugin
+
+BMPlugin is monophonic, i.e. it has a single input and output, which are in fact the same bus. BMMultichannelPlugins can have variable numbers of inputs and outputs, which need not match. The exact number and configuration of inputs and outputs expected varies according to the multichannel plugin's spec.
+
+CLASSMETHODS::
+
+method:: new
+Create a new multichannel plugin.
+
+argumet:: pluginSpecName
+A link::Classes/Symbol:: indicating the name of the BMMultichannelPluginSpec to use to create this plugin.
+argument:: inArray
+An instance of link::Classes/Inputs and Outputs/BMInOutArray:: to use as the inputs for this plugin.
+argument:: outArray
+An instance of link::Classes/Inputs and Outputs/BMInOutArray:: to use as the outputs for this plugin. Some plugin specs require outputs to be instances of link::Classes/Inputs and Outputs/BMSpeaker:: with correctly populated coordinate values rather than Associations (for instance ambisonics decoders or VBAP panners).
+argument:: server
+The link::Classes/Server:: to use for this plugin. Default value is nil, which results in the default server.
+argument:: attributes
+Plugin specs can optionally provide a set of attributes which will can serve as settings to their strong::ugenGraphFunc::, strong::guiFunc::, strong::setupFunc::, and strong::cleanupFunc:: (see link::Classes/Plugins/BMMultichannelPluginSpec::.). You can pass a Dictionary or subclass here containing values to override the defaults.
+
+
+INSTANCEMETHODS::
+	
+argument:: attributes
+Returns a link::Classes/Dictionary:: or subclass containing this object's attributes.
+				
+method:: spec
+Returns this object's link::Classes/Plugins/BMMultichannelPluginSpec::.
+		
+method:: specsDict
+Returns this object's strong::specsDict::, which is a dictionary matching controls as keys to instances of link::Classes/ControlSpec::.
+				
+method:: def
+Returns this object's link::Classes/SynthDef::.
+				
+method:: synth
+Returns this object's link::Classes/Synth::, if it is active, nil otherwise.
+				
+method:: inputs
+Returns a link::Classes/Inputs and Outputs/BMInOutArray:: containing this plugin's inputs.
+				
+method:: outputs
+Returns a link::Classes/Inputs and Outputs/BMInOutArray:: containing this plugin's outputs.
+				
+method:: numInputs
+Returns the number of inputs for this plugin.
+				
+method:: numOutputs
+Returns the number of outputs for this plugin.
+				
+method:: bus
+Returns this object's control link::Classes/Bus::, which is used for setting its controls.
+				
+method:: values
+Returns an link::Classes/Event:: containing this object's current control values as key-value pairs.
+				
+method:: defName
+Returns a link::Classes/String:: or link::Classes/Symbol:: indicating the name of this object's link::Classes/SynthDef::.
+				
+method:: preset
+Returns a link::Classes/Symbol:: indicating the name of the current preset if there is one, nil otherwise.
+				
+method:: server
+Return this object's link::Classes/Server::.
+				
+				
+method:: set
+Set a control to a value.
+
+argument:: key
+A link::Classes/Symbol:: indicating the name of the control to set.
+argument:: value
+The value to set the control to.
+
+
+method:: get
+Get the current value of a control.
+
+argument:: key
+A link::Classes/Symbol:: indicating the name of the control to get.
+
+
+method:: debug
+Post the current values of all controls and then call strong::trace:: on this object's link::Classes/Synth::.
+
+
+method:: preset
+Load a preset, setting this plugin's controls to its values.
+
+argument:: presetname
+A link::Classes/Symbol:: indicating the name of the preset to load.
+
+
+method:: makeSynth
+Make a synth for this plugin. If one already exists it will be removed and the new one added.
+
+argument:: target
+Target for this object's link::Classes/Synth::. If target is not a link::Classes/Group:: or link::Classes/Synth::, it will be converted as follows: If it is a link::Classes/Server::, it will be converted to the default_group of that server. If it is nil, to the default_group of the default Server. strong::Note::: A link::Classes/Synth:: is not a valid target for code::\addToHead:: and code::\addToTail::.
+
+argument:: addAction
+one of the following Symbols:		
+code::\addToHead:: - (the default) add at the head of the group specified by strong::target::
+code::\addToTail:: - add at the tail of the group specified by strong::target::
+code::\addAfter:: - add immediately after strong::target:: in its server's node order
+code::\addBefore:: - add immediately before strong::target:: in its server's node order
+code::\addReplace:: - replace strong::target:: and take its place in its server's node order
+
+
+method:: release
+Fade out and remove this plugin's synth, and call its spec's strong::cleanupFunc:: if one exists. After this you should not use this object.
+
+
+method:: gui
+Open a GUI for this plugin. If a GUI func was provided in this plugin's spec it will use that one to create it, otherwise it will use the strong::defaultGuiFunc:: defined in link::Classes/Plugins/BMMultichannelPluginSpec::.
+
+
+method:: copy
+Returns a new link::Classes/Plugins/BMMultichannelPlugin:: which is a copy of this object and its settings.
+
+
+Examples::
+
+code::
+// make a simple multichannel plugin
+s.boot;
+s.meter;
+
+// 5.1 Array (-0.1)
+(
+l = [[-30, 'L'], [30, 'R'], [0, 'C'], [-110, 'Ls'], [110, 'Rs']].collectAs({|el, i|
+	BMSpeaker.newFromSpherical(el[1], i, el[0], 0, 2);
+}, BMInOutArray);
+)
+
+b = Bus.audio(s, 1);
+x = {Out.ar(b, PinkNoise.ar(0.2))}.play; // something to pan
+p = BMMultichannelPlugin('2D VBAP Auto Panner', b, l);
+p.makeSynth(x, \addAfter);
+p.gui;
+p.debug; // debug fun
+p.attributes; // see the attributes
+p.release;
+x.free;
+::

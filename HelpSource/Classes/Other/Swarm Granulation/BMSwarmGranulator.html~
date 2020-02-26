@@ -1,0 +1,166 @@
+title:: BMSwarmGranulator
+summary:: Documentation BEASTmulch - a granulator using boid position to determine output
+categories:: Classes
+
+Description::
+
+Spatial Swarm Granulation is a multichannel spatialisation technique which is effective for spatialising over large non-homogenous speaker arrays (particularly those that have speakers at multiple distances). It is quite effective at creating an impression of volume, and provides a practical technique for varying the localisation of a multichannel granulation process.
+
+BMSwarmGranulator is a soundfile granulator (roughly in the style of Barry Truax's GSAMX programme) which uses a boid swarm (in the form of a link::Classes/Other/Swarm Granulation/BMBoidSpace::), and a speaker list (in the form of a link::Classes/Inputs and Outputs/BMInOutArray::) to determine the output channel for each grain. The number of simultaneous grains corresponds to the number of boids.
+
+The boids are polled for position in sequence as each grain is spawned. A k-dimensional tree (in an implementation by Dan Stowell) is used to determine the nearest speaker to the boid's current position, and the grain's output is routed there. With reasonably large numbers of short grains this is sufficient to create a sense of volume in a space, and more efficient than attempting to pan grains in some fashion (especially as 'distance panning' is far from straightforward). The result is essentially the same in any case: A number of channels with similar but decorrelated signals.
+
+For more information on Spatial Swarm Granulation see the following ICMC 2008 paper: strong::http://eprints.bham.ac.uk/237/1/cr1690.pdf::
+
+N.B. This implementation is still experimental and should be considered subject to change in future versions of the library.
+
+See also: link::Classes/Other/Swarm Granulation/BMBoidSpace::, link::Classes/Other/Swarm Granulation/BMBoid::, link::Classes/Other/Swarm Granulation/BMSwarmGranulator::, link::Classes/Inputs and Outputs/BMInOutArray::, link::Classes/Inputs and Outputs/BMSpeakerListVisualiser::
+
+CLASSMETHODS::
+
+method:: new
+Create a new BMSwarmGranulator.
+
+argument:: speakerList
+A link::Classes/Inputs and Outputs/BMInOutArray:: containing instances of link::Classes/Inputs and Outputs/BMSpeaker:: with position data entered.
+argument:: boidSpace
+A link::Classes/Other/Swarm Granulation/BMBoidSpace::.
+argument:: buffer
+The link::Classes/Buffer:: containing the soundfile to be granulated.
+argument:: target
+Target for this object's link::Classes/Group::. If target is not a Group or link::Classes/Synth::, it will be converted as follows: If it is a link::Classes/Server::, it will be converted to the default_group of that server. If it is nil, to the default_group of the default Server. strong::Note::: A Synth is not a valid target for code::\addToHead:: and code::\addToTail::.
+argument:: addAction
+one of the following Symbols:		
+code::\addToHead:: - (the default) add at the head of the group specified by strong::target::
+code::\addToTail:: - add at the tail of the group specified by strong::target::
+code::\addAfter:: - add immediately after strong::target:: in its server's node order
+code::\addBefore:: - add immediately before strong::target:: in its server's node order
+code::\addReplace:: - replace strong::target:: and take its place in its server's node order
+argument:: targetDef
+The link::Classes/SynthDef:: to use for grains. Default value is "BMSwarmPodGrain". It is possible to customise behaviour by using a different def. The standard one (defined in *initClass) can be used as a template.
+
+
+INSTANCEMETHODS::
+	
+method:: latency
+Set or get the latency for all BMSwarmGranulators in seconds. Grain messages are sent in timestamped bundles so as to ensure accurate timing, and latency sets the global delay.
+				
+method:: granGroup
+If playing return the link::Classes/Group:: containing all grains.
+				
+method:: buffer
+Return this object's soundfile link::Classes/Buffer::.
+				
+method:: targetDef
+Get the name of this object's strong::targetDef:: as a link::Classes/String:: or link::Classes/Symbol::.
+
+				
+INSTANCEMETHODS::
+	
+method:: play
+Start granulating. All of the following arguments can be instances of link::Classes/Function:: or link::Classes/Stream:: which return the correct argument type as well as scalars.
+
+argument:: pitch
+A pitch scalar. Default value is 1.
+argument:: stretch
+A time stretch factor. Default value is 1. 2 is twice as long, 0.5 half as long, etc.
+argument:: dur
+Grain duration in seconds. Default value is 0.05.
+argument:: durRand
+A random amount between 0 and strong::durRand:: will be added to each grain duration. Default value is 0.1.
+argument:: delay
+An amount of delay in seconds to add between each grain in a 'stream'. (The number of 'streams' corresponds to the number of boids.) Default value is 0.0.
+argument:: delRand
+A random amount between 0 and strong::delRand:: will be added to each grain strong::delay::. Default value is 0.
+argument:: offset
+A random offset in seconds between 0 and strong::offset:: for each grain start time from the current location in the soundfile. Default value is 0.05.
+argument:: mul
+An amplitude scalar. Each grain will be scaled by strong::mul::/(number of boids) to prevent clipping. Default value is 1.
+argument:: loop
+1 means loop the soundfile, 0 means don't. Default value is 1.
+argument:: attack
+A fadein time in seconds. Default value is 0.
+argument:: decay
+A fadeout time in seconds. Default value is 0.1.
+argument:: targetArgs
+An link::Classes/Array:: of extra arguments for a custom grain link::Classes/SynthDef:: (see strong::targetDef:: above).
+
+
+method:: stop
+Stop playing immediately.
+
+
+method:: release
+Fadeout playback and stop. You can start playing again as the fadeout completes.
+
+argument:: time
+A fadeout time in seconds. If nil, strong::decay:: is used. Default value is nil.
+				
+
+Section:: Setting Parameters During Playback
+
+A number of parameters can be set during playback using these setter methods:
+
+strong::pitch_:: - A pitch scalar.
+strong::stretch_:: - A time stretch factor.
+strong::dur_:: - Grain duration in seconds.
+strong::durRand_:: - A random amount between 0 and strong::durRand:: will be added to each grain duration. 
+strong::delay_:: - An amount of delay in seconds to add between each grain in a 'stream'. (The number of 'streams' corresponds to the number of boids.)
+strong::delRand_:: - A random amount between 0 and strong::delRand:: will be added to each grain delay.
+strong::offset_:: - A random offset in seconds between 0 and strong::offset:: for each grain start time from the current location in the soundfile.
+strong::mul_:: - An amplitude scalar. Each grain will be scaled by strong::mul::/(number of boids) to prevent clipping.
+strong::loop_:: - 1 means loop the soundfile, 0 means don't.
+strong::targetArgs_:: - An link::Classes/Array:: of extra arguments for a custom grain link::Classes/SynthDef:: (see strong::targetDef::).
+strong::targetDef_:: - The name of this object's strong::targetDef:: as a link::Classes/String:: or link::Classes/Symbol::. Unlike the other parameters this change persists.
+
+
+Examples
+
+// some speakers (there are some other layouts in BMSpeaker help)
+l = Object.readArchive("../../Inputs and Outputs/BigSpeakerArray".resolveRelative);
+v = BMSpeakerListVisualiser(l); // a gui to see the boids
+
+c = Buffer.read(s, "sounds/a11wlk01.wav");
+
+(
+b = BMBoidSpace(3, 20, nil, l, 1, 13, 0.1);
+
+// this updates their positions in the GUI
+d = Task({
+	loop({
+		v.boidPositions = b.positions;
+		0.05.wait;
+	})
+}, AppClock);
+d.start;
+)
+g = BMSwarmGranulator.new(l, b, c);
+g.play;
+
+b.minDist = 0.05; // cluster closer
+
+b.centre = [0,0,0]; // go to the middle
+
+b.centre = [1,0,0.5]; 
+
+b.centre = [-1,-1,-0.2];
+
+b.centre = nil; // wander freely
+
+b.velScale = 5; // slow down
+
+b.velScale = 135; // really fast
+
+b.velMax = 0.02; // don't flit too far
+
+b.avoidD = true; // don't go to the middle
+
+b.minDist = 0.1; // spread a little more
+
+b.velMax = 0.5; // wild and crazy
+
+g.pitch = 0.5; // half pitch
+
+g.stretch = 2; // time stretch
+
+d.stop; g.release(2);

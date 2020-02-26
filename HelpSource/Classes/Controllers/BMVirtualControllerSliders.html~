@@ -1,0 +1,61 @@
+title:: BMVirtualControllerSliders
+summary:: Documentation BEASTmulch - GUI sliders for a BMVirtualController
+categories:: Classes
+
+Description::
+
+BMVirtualControllerSliders are a slider-based GUI representation for a BMVirtualController. Other representations are of course possible (e.g. knobs), and this class could be used as a template.
+
+See also: link::Classes/Root Classes/BMAbstractGUI::, link::Classes/Root Classes/BMAbstractController::, link::Classes/Controllers/BMVirtualController::
+
+Section:: Automation
+
+Instances of BMVirtualController are automatable, but when creating GUI classes which represent the state of one, it will likely be necessary to separate GUI updates from automation updates, since too high a GUI refresh rate will cause the system to hang (spinning beachball). BMVirtualControllerSliders provides one example of how to do this using a refresh loop which is stopped and started as necessary.
+
+CLASSMETHODS::
+
+method:: new
+Create a new BMVirtualControllerSliders.
+
+argument:: virtualCont
+An instance of link::Classes/Controllers/BMVirtualController::.
+argument:: name
+An optional String or Symbol indicating the title of the window. If nil is passed the name of virtualCont will be used.
+argument:: origin
+An optional Point indicating the origin of the resulting window. The default is 40@200.
+	
+code::	
+c = BMVirtualController.new(\sliders, s, 4); // new controller
+g = BMVirtualControllerSliders(c);
+
+g.close; c.free; // free resources
+::
+
+
+INSTANCEMETHODS::
+	
+method:: refreshInterval
+Set or get a time in seconds indicating the interval at which this GUI will update in response to automation changes. The default value is 0.05 seconds (20 FPS).
+		
+argument:: arg	
+	
+				
+Section:: Implementation Details
+
+The following methods are 'private' but may be of interest to anyone making a similar class.
+	
+INSTANCEMETHODS::
+
+method:: update
+This is called through the standard Object dependancy mechanism whenever this object's controller is changed. If a fader value is changed it sets the instance variable needsRefresh to true, and calls startRefreshLoop (see below).
+
+argument:: changed
+argument:: what
+argument:: index
+argument:: val
+
+
+method:: startRefreshLoop
+This checks to see if the refresh loop is already running, and if not starts a loop to update the state of the sliders. Each time the loop is evaluated it checks if needsRefresh is true, and if so updates the sliders, sets needsRefresh to false, and then reschedules itself after refreshInterval. The next time it occurs it will update and reschedule only if update has been called in the interim. Otherwise, it stops the loop.
+
+

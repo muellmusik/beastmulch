@@ -1,0 +1,224 @@
+TITLE:: BEASTmulch System Quickstart
+summary:: Documentation BEASTmulch
+categories:: Overview
+
+Description:: 
+
+This document is designed to get you started with BEASTmulch System, a software tool for the presentation of electroacoustic music over multichannel systems. It provides support for complex routing, live diffusion and mixing, sound processing and automation.
+
+Upon startup you will be presented with a number of windows. Of particular note initially is the window labelled 'post'. This is where BEASTmulch System will give you information about any errors or problems it has had.
+
+Section:: Configuring your System
+
+To begin, you should configure the software to match your setup. To do this look under the BEASTmulch menu and select Configuration->Configure System. You should see a window which looks something like this:
+
+Image:: ../images/Pasted Graphic 1.png ::
+
+The top section, labelled Inputs and Outputs allows you to configure the number of hardware inputs (to allow you to include external sources such as live performers), the maximum number of channels for the soundfile player, and the number of 'virtual' inputs and outputs. These last two allow for parallel processing and routing of inputs and outputs. This will be discussed in greater detail below.
+
+The lower section of this window allows you to configure controllers (e.g. MIDI controllers, GUI Faders, Ethersense, etc.) for use with the system. By default an instance of GUI Faders (some onscreen sliders) is created and named 'Sample Controller'. You can add new controllers by dragging from the menu at the left to the list at the right. When you create a controller, a configuration sheet will open allowing you to name it and set any parameters. By double-clicking on a controller in the list at the right you can open this sheet again and make changes. Here are some examples of configuration sheets:
+
+Image:: ../images/Pasted Graphic 2.png ::
+Image:: ../images/Pasted Graphic 3.png ::
+
+You can remove a controller by selecting it in the list and pressing delete.
+
+One note regarding GUI Faders: To view these you can select the 'Show Virtual Controllers' item in the BEASTmulch menu.
+
+After changing the System Configuration the software will prompt you to automatically restart.
+
+Section:: Configuring your Outputs
+
+You may have noticed that the System Configuration window doesn't have a setting for the number of outputs. This is determined automatically based on your speaker configuration. To adjust this look under the BEASTmulch menu and select Configuration->Configure Speakers. You should see a window which looks something like this:
+
+Image:: ../images/Pasted Graphic.png ::
+
+This window functions in a similar fashion to the controller section of the System Configuration window. At the left is a list of speaker models. By dragging a model from the left to the list at the right, you can create a new speaker. Different models contain information about different aspects or parameters of the output, such as frequency response, default filtering settings, etc. A 'Generic' model is available. When you add a new speaker, a sheet will appear prompting you for a name and hardware output number:
+
+Image:: ../images/Pasted Graphic 6.png ::
+
+Once you have done this, you can also configure the location of the speaker in either Cartesian coordinates or spherical coordinates. (Changing one will automatically update the other.) 
+
+Cartesian coordinates are expressed in terms of x, y, and z values in meters, with {0, 0, 0} considered to be the head height of an audience member in the centre of the array. Positive values for x are to the left of centre, negative to the right; positive values for y and z are in front of and above centre respectively.
+
+Spherical coordinates are expressed in terms of azimuth and elevation values in degrees, and a radius in meters. Azimuth is horizontal (i.e. compass directions), with 0° directly in front and +/- 180° directly behind. Elevation represents a value above or below the azimuth plane (the horizon), e.g. 90° is directly overhead.
+
+Specifying speaker position is optional, but certain techniques such as ambisonics do require you to specify this.
+
+The Image:: ../images/Pasted Graphic 20.png :: buttons allow you to change the order of the speakers. This will determine the order in which the speakers appear elsewhere in the software, and is independent of hardware output number.
+
+The 'Subarrays' button allows you group speakers together, so that they can be assigned en masse elsewhere in the software.
+
+After changing the Speaker Configuration the software will prompt you to automatically restart.
+
+Section:: Configurations vs. Pieces
+
+Before continuing, it is important to distinguish between two major entities in the software: Configurations and Pieces.
+
+List::
+## A Configuration is a preset containing information about routing, controller assignments, pre- and post-processing, etc.
+## A Piece is a combination of a Configuration with an optional soundfile and automation data.
+::
+
+It is thus possible to for many Pieces to share the same Configuration, which can be efficient in terms of simplifying editing. Note that while editing a Configuration you can load a soundfiles to test it, but this information will not be saved in the Configuration. To save soundfile information you must create a Piece based on the Configuration.
+
+Configurations are created and edited in the Configuration Editor window. Pieces are created and edited in the Concert Editor window. Both Configurations and Pieces persist when you quit the programme, and can be imported and exported.
+
+Section:: The Configuration Editor
+
+This is where most of the setup will occur. In practice one might need only a few configurations for a concert (e.g. stereo diffusion, 5.1, ambisonics B-format). This window is always open, and should look something like this:
+
+Image:: ../images/Pasted Graphic 7.png ::
+
+At the left is a list of available configurations. Selecting a configuration makes it active. You can create a configuration, delete it, move it up and down, copy it, or store any recent changes using the buttons at the bottom of this section. The configuration 'all off' is a special case: Selecting it removes all routing, assignments and processing.
+
+Warning:: It is important to press 'Store' in order to avoid losing any changes. ::
+
+At the right is a depiction of the audio routing and processing chain, with signal running from top to bottom. At the top are sources: the soundfile player and hardware inputs. Below that are various stages which route and manipulate these channels. Here is a list of each stage in the chain:
+
+List::
+## Strong::Player/Hardware Inputs:: - A soundfile player and the hardware inputs.
+## Strong::Virtual Inputs:: - This stage allows you to make copies of input channels by routing their signals in parallel to the virtual input channels (the number of which was defined in the System Configuration window, see above). This can be useful if you want to have both processed and unprocessed versions of a channel, for example.
+## Strong::Pre-processing:: - Allows you to apply a trim setting and processing (e.g. EQ, delays, etc.) to any of the normal or virtual input channels. Since individual inputs may be routed to multiple outputs, it can be useful to do this here to avoid duplication of processing.
+## Strong::Input Levels:: - Allows you to assign controllers (such as MIDI faders or GUI faders) to scale the levels of the input channels. A single control can scale multiple channels. Since individual inputs may be routed to multiple outputs, it can be useful to do this here.
+## Strong::Audio Routing:: - This is a matrix router which allows you to route signals from input channels to output channels. This includes routing signals from Virtual Inputs and to Virtual Outputs.
+## Strong::Output Levels:: - As with input levels above, this allows you to assign controllers to scale the levels of the output channels.
+## Strong::Post-processing:: - Allows you to apply a trim setting and processing (e.g. EQ, delays, etc.) to any of the normal or virtual output channels.
+## Strong::Multichannel:: - A special stage which allows for multichannel processing, such as VBAP panning or ambisonics decoding.
+## Strong::Virtual Outputs:: - This stage allows you to make copies of output channels by routing any signals connected to Virtual Outputs in the Audio Routing stage in parallel to the physical outputs.
+## Strong::Master Fader:: - A global level setting for the system.
+::
+
+For all of these except Hardware Inputs clicking on the stage will open a window. In the following discussion we'll start in the centre of the chain, with the Audio Routing section.
+
+Section:: Audio Routing
+
+The Audio Routing section is essentially a matrix in which you can connect inputs to one or more outputs. This has two GUI representations, either of which can be useful depending on what you're trying to do. The first is a window with three lists:
+
+Image:: ../images/Pasted Graphic 8.png ::
+
+The left list contains the available inputs. If you select an input in this list you will see which outputs it is routed to. Here we see that the soundfile player channel 1 is routed to speakers named MainL, WideL, SideL, and RearL. You can make assignments by selecting one in the list at the right and pressing the '<' button, or by holding down the cmd (apple) key and dragging from the right list to the centre list. You can remove an assignment by selecting it and pressing the delete key.
+
+Pressing the 'View Matrix' button will open the other GUI representation, which is a matrix view with inputs on the vertical axis and outputs on the horizontal axis:
+
+Image:: ../images/Pasted Graphic 9.png ::
+
+Here you can make or remove assignments by clicking at the appropriate node on the grid. While doing so a moving cross-hatch helps you to see what you're selecting.
+
+Section:: Virtual Inputs and Outputs, Input and Output Levels
+
+The Virtual Inputs and Virtual Outputs stages have the same dual interface as the Audio Routing stage: A three list window and a matrix representation. The only difference is what is being routed, so they should not require further explanation.
+
+The Input Levels and Output Levels stages use the same interface as well, but with one crucial difference: Instead of routing signals you are assigning controllers to scale the level of input or output channels. Here is an example Output Levels matrix:
+
+Image:: ../images/Pasted Graphic 11.png ::
+
+On the left are 8 GUI faders (see the System Configuration section above for details on how to setup controllers), across the top a number of real and virtual outputs. Note that a single controller can be assigned to multiple inputs or outputs, but not the other way around. 'Sample Controller-8' is greyed out, indicating that it is unavailable for assignment here, as it is already assigned in the Input Levels stage.
+
+Section:: Pre- and Post-Processing
+
+The Pre- and Post-Processing stages allow you to manipulate and process individual channels. These two stages share the same GUI controls. Here's an example of the window for the Post-Processing stage:
+
+Image:: ../images/Pasted Graphic 12.png ::
+
+In these stages each input or output channel has a strip with a trim setting in dBFS and a list of plugins applied to it. You can copy trim settings or plugins between channels by Cmd-dragging them. You can remove a plugin by selecting it and pressing delete. Double clicking on a plugin in the list will open a window with sliders to control any parameters, and a list of presets. Here is a sample for a highpass filter:
+
+Image:: ../images/Pasted Graphic 13.png ::
+
+At the left of the main window is a list of available plugins. Clicking on one will cause a description of the plugin (e.g. '2nd Order Butterworth Highpass Filter -12dB/Oct') to be displayed. Clicking on the '?' button restores the general help info. You can add a plugin by dragging from this list to a channel strip.
+
+There are also a number of other buttons which can be used in the Post-Processing stage. 'APi' automatically adds any plugins specified by the output's speaker model. For instance it may be necessary to filter out particular frequencies for a given type of speaker, particularly in the case of specialised speakers like subwoofers or tweeter arrays, and this information can be specified as a plugin preset in the model. 'ATr' applies trim settings to speakers based on data captured using the 'Auto Balance Outputs' utility (see below). 'dT' uses speaker location information to compensate for different distances of speakers, thus avoiding precedence effect. (This may or may not be desirable depending on your purpose.)
+
+Section:: Multichannel
+
+The Multichannel stage allows you to use sophisticated multichannel techniques such as VBAP panning, spectral splitting, or ambisonics. It works in a similar fashion to the Processing stages, allowing you to add various 'plugins', but with only a single 'strip' for the plugins.
+
+Image:: ../images/Pasted Graphic 15.png ::
+
+As with the Processing stages, you add a multichannel plugin by dragging from the left. This will cause a sheet to open which will allow you to select inputs and outputs for the plugin. 
+
+Image:: ../images/Pasted Graphic 16.png ::
+
+You can add any subarrays you've defined using the 'Add subarray' menus.
+
+Note:: The appropriate number of inputs and outputs will vary by plugin type, and some plugins require accurate location information to be entered in the Speaker Configuration window. ::
+
+Double clicking on a plugin in the list will open a window with sliders to control any parameters and a list of presets. Here is a sample for a first order 3D ambisonic autopanner:
+
+Image:: ../images/Pasted Graphic 17.png ::
+
+Section:: Player
+
+The Soundfile player GUI looks like this:
+
+Image:: ../images/Pasted Graphic 18.png ::
+
+It has standard controls for Play/Pause, Stop (this returns to the start), FFwd, and FBack. It also has a load file button, which allows you to load in sound files for testing purposes, and an unload button 'x', which clears the associated memory buffer.
+
+The clock button Image:: ../images/Pasted Graphic 19.png :: opens a large clock for easy viewing.
+
+Note that multichannel files should be in interleaved format. You can use the BEASTmulch De-Interleaver application–available from the BEASTmulch site–to interleave or deinterleave multichannel files as needed.
+
+Section:: Master Fader
+
+Clicking on this stage opens a large slider which scales the levels of all outputs.
+
+Section:: The Concert Editor
+
+The Concert editor is relatively simple by comparison to the Configuration Editor:
+
+Image:: ../images/Pasted Graphic 21.png ::
+
+At the left is a list of available Pieces. Using the '+' button you can add a new piece. When you do so you will be prompted to select one of the available configurations for the Piece, and asked whether you wish to use a soundfile. If so you will have to navigate to its location in the File System and select it.
+
+To load a Piece, select it in the list and press the 'Load Selected Piece' button. This will load the associated configuration, along with the soundfile if there is one, and the button will then change to indicate that the Piece is active:
+
+Image:: ../images/Pasted Graphic 22.png ::
+
+The 'Store' button is used to save any changes to the Piece, for example automation data that you may have added (see below).
+
+Section:: Soundfile Display and Controller Automation
+
+BEASTmulch System offers a soundfile display which is capable of displaying multichannel files with large numbers of channels. This is available under the BEASTmulch Menu. This window can be useful for following along during playback, and contains a control for zooming. When this window is selected the space bar toggles Play/Pause and the return key stops playback and resets the time to zero. Clicking in the window sets the current playback time, which can be useful for rehearsal purposes. This window is also where you configure and edit controller automation.
+
+Since it is designed for performance/presentation rather than editing and mixing, BEASTmulch System uses a slightly different model for automation than most DAW software. The model is based around the concept of automation Sequences, which automate a selection of controls, e.g. one or more faders. A Sequence is made up of a series of Snapshots, which capture the momentary state of a Sequence's controls. These Snapshots serve as target states, and as playback moves through a Sequence the software interpolates between them.
+
+You create a Sequence using the 'Add Sequence' button. This will result in a popup asking you which controls the new Sequence should automate. Once this is done the software will add a new Snapshot at the current time (indicated by a vertical red line) using the controls' current state. As well, it will add another special kind of Snapshot just before this, called an Arbitrary Snapshot. One of the goals of BEASTmulch System was to be able to combine live control (i.e. level balancing or sound diffusion) with automated control, and Arbitrary Snapshots allow you to transition from one to the other. When playback reaches an Arbitrary Snapshot, it will record the state of the Sequence's controls at that moment, and interpolate from that state to the next (non-arbitrary) Snapshot. This allows you to enter an automation Sequence without knowing in advance exactly how your controls will be set, and thereby interpolate from an unknown state (live) to a known one (automated).
+
+There can be multiple Sequences in a Piece, and these can freely overlap, albeit with one caveat: If multiple Sequences try to automate the same control simultaneously, all but the first will fail. 
+
+Image:: ../images/Pasted Graphic 4.png ::
+
+In the example above we see two overlapping Sequences. The upper Sequence is selected: It is coloured blue, and its Snapshots have vertical time indicators. The currently selected Snapshot is coloured grey. The two Snapshots with question marks are Arbitrary Snapshots. Pressing the 'Add Snapshot' button will add a new Snapshot to the selected Sequence at the current time.
+
+Double-clicking on a Snaphot will open a window allowing you to edit the control levels:
+
+Image:: ../images/Pasted Graphic 1.png ::
+
+You can drag Snapshots around to change their time, however each Sequence's Arbitrary Snapshot must always come first. You can also drag Sequences vertically, but this is purely as a visual/organisational aid. It has no effect on playback.
+
+Section:: Utilities and Other Functions
+
+BEASTmulch System also has a number of other useful functions and utilities. These include a meter bridge, dumping controller states, testing the outputs with a pink noise burst, auto-balancing speaker levels, and speaker array visualisation.
+
+Image:: ../images/Pasted Graphic 5.png ::
+
+All of these can be found under the BEASTmulch menu.
+
+Section:: Acknowledgements
+
+BEASTmulch System was programmed by Scott Wilson and Sergio Luque. Significant creative input was provided by Jonty Harrison, Eric Bumstead, James Carpenter and the numerous members and guests of the BEAST community who tried out the software in its various stages of development.
+
+The BEASTmulch project received funding from the Arts and Humanities Research Council of the UK, and was sponsored by the University of Birmingham.
+
+Image:: ../images/www.ahrc.ac.uk.png ::
+
+http://www.ahrc.ac.uk
+
+Image:: ../images/www.bham.ac.uk.png ::
+
+http://www.bham.ac.uk
+
+Strong:: BEAST :: : http://www.beast.bham.ac.uk/research/mulch.shtml 
+beastmulch-info@contacts.bham.ac.uk
+

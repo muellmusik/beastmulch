@@ -1,0 +1,61 @@
+title:: BMVirtualController
+summary:: Documentation BEASTmulch - generic software based controller
+categories:: Classes
+
+Description::
+
+BMVirtualController is a generic software based controller. It provides a back end model and could be represented by any number of GUIs. One example, link::Classes/Controllers/BMVirtualControllerSliders::, is provided in the library. 
+
+See also: link::Classes/Root Classes/BMAbstractController::, link::Classes/Controllers/BMVirtualControllerSliders::
+
+Section:: Automation
+
+This class is automatable, but when creating GUI classes to represent the state of this controller, it will likely be necessary to separate GUI updates from automation updates, since too high a GUI refresh rate will cause the system to hang (spinning beachball). BMVirtualControllerSliders provides one example of how to do this using a refresh loop which is stopped and started as necessary.
+
+CLASSMETHODS::
+
+method:: new
+Create a new BMVirtualController.
+
+argument:: name
+A Symbol indicating the name of this controller.
+argument:: server
+An instance of Server. If you pass nil this will be the default Server.
+argument:: numControls
+An Integer indicating the number of controls this controller will have. The default value is 8.
+		
+code::
+c = BMVirtualController.new(\sliders, s, 4); // new controller
+g = BMVirtualControllerSliders(c);
+
+g.close; c.free; // free resources
+::
+
+method:: newFromParamDict (dict, server)
+	
+Create a new instance using a parameter dictionary. (See link::Classes/Root Classes/BMAbstractController:: for more information.)
+
+argument:: dict
+A Dictionary or subclass with values for the following keys: code::\numControls:: -> An Integer indicating the number of controls, code::\name:: -> A Symbol indicating the name of this controller.
+argument:: server
+An instance of Server. If you pass nil this will be the default Server.
+
+
+method:: parameterList
+See link::Classes/Root Classes/BMAbstractController:: for a discussion of this method. This is the implementation for BMVirtualController:
+		
+code::
+*parameterList { 
+	var class;
+	class = this;
+	^(
+		name: [Symbol, {class.makeName}, "Name"],
+		numControls: [Integer, [1, 64, \linear, 1].asSpec, "Number of Faders"]
+	); 
+}
+::
+
+method:: humanName
+Returns the String "GUI Controller".
+
+

@@ -1,0 +1,16 @@
+title:: BMBoid
+summary:: Documentation BEASTmulch - represents a single boid in a BMBoidSpace
+categories:: Classes
+
+Description::
+
+BMBoid represents a single boid (i.e. flock member) in a link::Classes/Other/Swarm Granulation/BMBoidSpace::. Normally you would not create these directly, rather they are created and controlled by BMBoidSpace for you. As such all its methods should be considered 'private'. See link::Classes/Other/Swarm Granulation/BMBoidSpace:: for examples.
+
+warning::This implementation is still experimental and should be considered subject to change in future versions of the library.::
+
+See also: link::Classes/Other/Swarm Granulation/BMBoidSpace::, link::Classes/Other/Swarm Granulation/BMSwarmGranulator::
+
+INSTANCEMETHODS::
+
+method:: pos
+Returns this boid's current position as an link::Classes/Array:: of the same size as this boid's link::Classes/Other/Swarm Granulation/BMBoidSpace::'s number of dimensions, e.g. [x, y, z] for a three dimensional space.

@@ -1,0 +1,145 @@
+title:: BMEtherSense
+summary:: Documentation BEASTmulch - controller class for IRCAM's EtherSense	
+categories:: Classes
+
+Description::
+
+This is a subclass of BMAbstractController which represents IRCAM's EtherSense voltage to OSC converter. (see http://recherche.ircam.fr/equipes/temps-reel/movement/hardware/index.htm for more details.)
+
+This class could also serve as a template for other OSC controllers. For this reason the implementation details are discussed in the method documentation below.
+
+
+See also: link::Classes/Root Classes/BMAbstractController::, link::Classes/Root Classes/BMControl::
+
+Section:: Setting up your EtherSense
+
+SuperCollider listens by default on port 57120. The EtherSense expresses this as a negative port number, so you will need to set its UDP port as -8416. You will also need to configure the address of the EtherSense, and your network and firewall settings.
+
+CLASSMETHODS::
+
+method:: new
+Create a new BMEtherSense object.
+
+argument:: addr
+An instance of NetAddr. Its address should be set to the address of your EtherSense and its port to 57120.
+argument:: name
+A Symbol indicating the name of this controller.
+argument:: server
+An instance of Server. If you pass nil this will indicate the default Server.
+
+code::		
+b = BMEtherSense(NetAddr("10.0.0.2", 57120), \etherSense));
+		
+b.free; // free my resources
+::
+
+
+method:: newFromParamDict
+Create a new instance using a parameter dictionary. (See BMAbstractController for more information.)
+
+argument:: dict
+A Dictionary or subclass with values for the following keys: code::\addr:: -> a String indicating the IP address of this EtherSense, code::\name:: -> A Symbol indicating the name of this controller.
+argument:: server
+An instance of Server. If you pass nil this will indicate the default Server.
+
+
+method:: parameterList
+See BMAbstractController for a discussion of this method. This is the implementation for BMEtherSense:
+		
+code::
+*parameterList { 
+	var class;
+	class = this;
+	^(
+		name: [Symbol, {class.makeName}, "Name"],
+		addr: [NetAddr, "0.0.0.0", "IP Address"]
+	); 
+}
+::
+
+
+method:: humanName
+Returns the String "EtherSense".
+
+
+INSTANCEMETHODS::
+	
+method:: addr
+Returns this EtherSense's NetAddr.
+				
+				
+Section :: Implementation notes
+
+Below is a discussion of BMEthersense's methods which may be of use in writing a class for other OSC controllers. No new 'public' methods are defined beyond those already described in the BMAbstractController help file.
+
+
+INSTANCEMETHODS::
+	
+method:: init
+This performs the standard initialisation, allocates instance variable objects where necessary, and calls strong::startListening::.
+
+argument:: addr
+argument:: name
+argument:: server
+
+
+method:: startListening
+This creates and adds the OSCresponders. Note that since the EtherSense divides its controllers into two banks of 16, which each send a distinct OSC message, two responders are created here. For many OSC controllers only one would be needed. The responders scale incoming values linearly from 16 bit integers to floats between 0 and 1, and then use strong::spec:: to map to a curve before updating this object's control busses on the server.
+
+
+method:: stopListening
+Removes the responders created in strong::startListening::.
+
+
+method:: getVal
+valueArray stores values in 16 bit (native EtherSense) form, so this method scales and maps to give correct floats between 0 and 1.
+
+argument:: controlNum
+
+
+method:: getAllValues
+valueArray stores values in 16 bit (native EtherSense) form, so this method scales and maps to give correct floats between 0 and 1.
+
+
+method:: setVal
+The EtherSense is not automatable, so this method throws a ShouldNotImplementError.	
+
+method:: setAllValues
+The EtherSense is not automatable, so this method throws a ShouldNotImplementError.	
+
+argument:: array
+			
+
+method:: mappings
+The EtherSense is not an automatable controller, and has no user settable options through the current class implementation, so these two methods are overridden to do nothing.
+
+
+method:: mappings
+argument:: mappings
+
+
+method:: setLabel
+The EtherSense does not support labels, so this method throws a ShouldNotImplementError.
+
+argument:: fader
+argument:: name
+
+method:: getLabel
+The EtherSense does not support labels, so this method throws a ShouldNotImplementError.
+
+argument:: fader
+
+method:: getAllLabels
+The EtherSense does not support labels, so this method throws a ShouldNotImplementError.
+
+method:: setAllLabels
+The EtherSense does not support labels, so this method throws a ShouldNotImplementError.
+
+argument:: array
+
+
+method:: asTextArchive, initFromArchive
+	
+		The OSCresponders use open Functions, and thus cause a warning when they are archived. For this reason these methods are overriden to temporarily stopListening while archiving is happening (removing the responders), and to startListening when an instance is created from an archive.
+
+

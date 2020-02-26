@@ -1,0 +1,63 @@
+title:: BMMIDIBendController
+summary:: Documentation BEASTmulch - Generic MIDI Bend Controller	
+categories:: Classes
+
+Description::
+
+This class implements a generic controller which receives MIDI pitch bend messages.
+
+See also: link::Classes/Root Classes/BMAbstractController::, link::Classes/Controllers/BMAbstractMIDIController::, link::Classes/Controllers/BMMIDICCController::
+
+CLASSMETHODS::
+
+method:: new
+Create a new BMMIDIBendController
+
+argument:: midiport
+An instance of link::Classes/Inputs and Outputs/BMMIDIPort::.
+argument:: name
+A Symbol indicating the name of this controller.
+argument:: server
+An instance of Server. If you pass nil this will be the default Server.
+		
+code::
+// initialise MIDI ports
+BMMIDIPort.init;
+// get a port
+p = BMMIDIPort.ports['IAC Bus 1'];
+b = BMMIDIBendController.new(p, \bendController, s);
+		
+b.free; // free my resources
+::
+
+
+method:: newFromParamDict
+Create a new instance using a parameter dictionary. (See link::Classes/Root Classes/BMAbstractController:: for more information.)
+
+argument:: dict
+A Dictionary or subclass with values for the following keys: code::\midiport:: -> An instance of link::Classes/Inputs and Outputs/BMMIDIPort::, code::\name:: -> A Symbol indicating the name of this controller.
+
+argument:: server
+An instance of Server. If you pass nil this will be the default Server.
+
+
+method:: parameterList
+See link::Classes/Root Classes/BMAbstractController:: for a discussion of this method. This is the implementation for BMMIDIBendController:
+		
+code::
+*parameterList { 
+	var class;
+	class = this;
+	^(
+		name: [Symbol, {class.makeName}, "Name"],
+		midiport: [BMMIDIPort, nil, "MIDI Port"]
+	); 
+}
+::
+
+
+method:: humanName
+Returns the String "MIDI Pitchbend Controller".
+
+
+

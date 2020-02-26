@@ -1,0 +1,169 @@
+title:: BMMultichannelPluginSpec
+summary:: Documentation BEASTmulch - a specification for creating a BMMultichannelPlugin
+categories:: Classes
+
+Description::
+
+Instances of BMMultichannelPluginSpec serve as templates for creating a link::Classes/Plugins/BMMultichannelPlugin:: of a particular type, e.g. an ambisonic decoder, a VBAP panner, etc. They provide functions for such things as link::Classes/SynthDef:: and GUI creation, standard presets, etc. Plugin specs allow for user customisation at plugin creation time through the use of attributes (see below).
+
+Specs are stored in a global dictionary held in the class variable strong::*specs::. You can see a list of all available specs as follows:
+
+code::
+BMMultichannelPluginSpec.specs.keys;
+::
+
+See also: link::Classes/Plugins/BMMultichannelPlugin::, link::Classes/Plugins/BMMultichannelPluginsRack::, link::Classes/Plugins/BMPluginSpec::, link::Classes/Inputs and Outputs/BMSpeakerSpec::
+
+Section:: BMPlugin vs. BMMultichannelPlugin
+
+BMPlugin is monophonic, i.e. it has a single input and output, which are in fact the same bus. BMMultichannelPlugins can have variable numbers of inputs and outputs, which need not match. The exact number and configuration of inputs and outputs expected varies according to the multichannel plugin's spec. Some specs require inputs and outputs in a specified order, others (e.g. VBAP panners) depend on speaker position data.
+
+CLASSMETHODS::
+
+method:: new
+Create a new BMMultichannelPluginSpec and add it to strong::*specs::. If a spec with this strong::name:: already exists it will be replaced.
+
+argument:: name
+A link::Classes/Symbol:: indicating the name of this plugin spec.
+argument:: ugenGraphFunc
+A link::Classes/Function:: detailing this spec's processing chain. When a plugin is created this will be passed the link::Classes/Plugins/BMMultichannelPlugin:: instance, strong::numInputs::, strong::numOutputs::, and its input signal(s) as its first four arguments. (If inputs.size > 1 the input signals will be an link::Classes/Array::, otherwise just a single signal.) Additional arguments will result in instances of link::Classes/Control:: being created. The default GUI function uses the order these are listed to determine order in the GUI.
+argument:: specsDict
+A link::Classes/Dictionary:: or subclass matching link::Classes/Control:: names as keys with instances of link::Classes/ControlSpec::. Plugin instances make a copy of this which can be modified when strong::setupFunc:: (see below) is called. These will be used in GUI construction.
+argument:: guiFunc
+An optional link::Classes/Function:: which will be used to create GUIs for plugin instances using this spec. This Function will be passed the plugin instance as an argument, and should return the GUI's window. If nil is passed here, a default GUI Function will be used.
+argument:: presets
+An optional link::Classes/Dictionary:: or subclass providing parameter presets. Keys are Symbols indicating preset names, values are Dictionaries or subclasses matching Control names to values.
+argument:: description
+A link::Classes/String:: to serve as a human readable description of this spec.
+argument:: defaultAttributes
+Plugin specs can optionally provide a set of overridable attributes which can serve as settings or inputs to their strong::ugenGraphFunc::, strong::guiFunc::, strong::setupFunc::, and strong::cleanupFunc::. This should be a link::Classes/Dictionary:: or subclass containing key value pairs. Users can override these defaults by passing a Dictionary or subclass as the strong::attributes:: argument to strong::BMMultichannelPlugin:new::. 
+argument:: inRange
+An link::Classes/Array:: in the form [minNumInputs, maxNumInputs] specifying the number of allowable inputs. The default is [1, inf].
+argument:: outRange
+An Array in the form [minNumOutputs, maxNumOutputs] specifying the number of allowable outputs. The default is [1, inf].
+argument:: setupFunc
+An optional link::Classes/Function:: that will be evaluated when a plugin instance is made, and before strong::ugenGraphFunc:: is evaluated. It will be passed the plugin instance as an argument. It can store any objects created in strong::attributes:: for use by the strong::ugenGraphFunc::, strong::guiFunc::, or strong::cleanUpFunc::. It can also do things like modify the plugin's local copy of the strong::specsDict::.
+argument:: cleanupFunc
+An optional link::Classes/Function:: that will be evaluated when a plugin instance is released. It will be passed the plugin instance as an argument.
+
+INSTANCEMETHODS::
+
+method:: specs
+Returns an link::Classes/IdentityDictionary:: containing all currently existing specs. This uses the names of specs as Symbols for keys.
+		
+code::
+BMMultichannelPluginSpec.specs['B-Format Decoder'];
+::
+				
+method:: maxInputs
+Returns the maximum number of inputs for plugins using this spec.
+				
+method:: minInputs
+Returns the minimum number of inputs for plugins using this spec.
+				
+method:: maxOutputs
+Returns the maximum number of outputs for plugins using this spec.
+				
+method:: minOutputs
+Returns the minimum number of outputs for plugins using this spec.
+				
+method:: setupFunc
+Returns this spec's strong::setupFunc:: (see above).
+				
+method:: cleanupFunc
+Returns this spec's strong::cleanupFunc:: (see above).
+				
+method:: ugenGraphFunc
+Returns this spec's strong::ugenGraphFunc:: (see above).
+
+method:: guiFunc
+Returns this spec's strong::guiFunc:: (see above) if one has been provided, or the default GUI function otherwise.
+				
+method:: description
+Returns a link::Classes/String:: which serves as a human readable description of this spec.
+				
+method:: presets
+Set or get this spec's strong::presets:: dictionary.
+				
+method:: defaultAttributes
+Returns this spec's strong::defaultAttributes:: (see above).
+				
+method:: specsDict
+Returns this spec's strong::specsDict:: (see above). Plugins may customize specDicts in their strong::setupFunc::, so when working with a plugin, use its strong::specsDict:: getter method rather than this one.
+				
+	name
+		
+		Returns this spec's name as a Symbol.
+					
+				
+Examples
+
+////// some plugin spec examples (see the *initClass method for more)
+
+(
+BMMultichannelPluginSpec('Help-2D VBAP Panner', 			// name
+	{|plugin, numInputs, numOutputs, inputs, azimuth, spread, azimuthLag| // ugenGraphFunc
+		VBAP.ar(
+			numOutputs, 
+			inputs,
+			plugin.attributes[\buffer],
+			azimuth.circleRamp(azimuthLag), 
+			0,
+			spread
+		);
+	}, 								
+	(azimuth: [-180, 180, 'lin', 0.0,  0, " deg"].asSpec,		// specsDict
+	spread: [0, 100, 'lin', 0.0, 2, " %"].asSpec,
+	azimuthLag: [0, 1, 'lin', 0.0, 0.1, " sec"].asSpec
+	),				
+	nil, 												// use default GUI
+	('dead ahead': (azimuth: 0)), 							// presets
+	"Mono input 2D Vector Base Amplitude Panner",				// description
+	nil, 								// use defaultAttributes
+	[1, 1],								// inRange
+	[2, inf],								// outRange 
+	{|plugin| 							// setupFunc
+		var speakers;
+		speakers = plugin.outputs.collectAs({|out|
+			out.isBMSpeaker.not.if({
+				"VBAP output not a speaker".error;
+				^false;
+			});
+			out.azi;
+		}, Array);
+		speakers = VBAPSpeakerArray(2, speakers);
+		plugin.attributes[\buffer] = 
+			Buffer.loadCollection(plugin.server, speakers.getSetsAndMatrices);
+	},								
+	{|plugin|								// cleanupFunc
+		plugin.attributes[\buffer].free;
+	}								
+);
+)
+
+// This one uses setupFunc to modify the plugin's local specsDict copy based on the number of outputs
+
+BMMultichannelPluginSpec('Help-Xfade Seq', // name
+	{|plugin, numInputs, numOutputs, inputs, position, width| // ugenGraphFunc
+		PanAz.ar(
+			numOutputs, 
+			inputs, 
+			position * 2.0, 
+			1, 
+			width, 
+			0.0
+		);
+	}, 								
+	(position: [0.0, 1.0, 'lin', 0.0, 0.0].asSpec, // specsDict
+	width: nil // placeholder (not really needed)
+	),				
+	nil, 							// use default GUI
+	nil, 							// presets
+	"Crossfade a signal through a looped sequence of channels\nOrder corresponds with order of outputs\nPosition cycles between 0 and 1\nWidth is number of channels simultaneously active, i.e. 2 = stereo", // description
+	nil, 						// use defaultAttributes
+	[1, 1],						// inRange
+	[2, inf],						// outRange
+	{|plugin|						// setupFunc modifies specsDict
+		plugin.specsDict[\width] = [2.0, plugin.numOutputs, 'lin', 0.0,  2.0].asSpec;
+	}		
+);

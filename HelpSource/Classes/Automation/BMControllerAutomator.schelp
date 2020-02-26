@@ -1,0 +1,153 @@
+title:: BMControllerAutomator
+summary:: Documentation BEASTmulch - automate Controls
+categories:: Classes
+
+Description::
+
+BMControllerAutomator is used to automate controls such as motorised faders or GUI sliders. For this to work any BMAbstractController subclass instance representing any of its automated controls must respond to acceptsAutomation with true.
+
+BMControllerAutomator may have any number of automation sequences (instances of link::Classes/Automation/BMSnapShotSeq::), each consisting of a number of link::Classes/Automation/BMSnapShots:: and beginning with a link::Classes/Automation/BMArbitraryStartSnapShot::. (This allows one to combine realtime performance with automation, by accounting for the fact that the state of controllers at the start of a sequence may not be known.)
+
+Snapshots represent a series of momentary states for the controls being automated in a sequence, and are used as target points for interpolation.
+
+Sequences can overlap in time, and can automate any desired subgroup of controls.
+
+Note::
+If more than one sequence attempts to automate the same control within a given automation cycle, all but the first processed will be ignored.
+::
+
+Since the times and orderings of sequences and snapshots might change, they are referred to by Strong::name::, which is represented by a Symbol.
+
+See also: link::Classes/Root Classes/BMControl::, link::Classes/Rott Classes/BMAbstractController::, link::Classes/Automation/BMAbstractAutomator::, link::Classes/Automation/BMAbstractIndependentRateAutomator::, link::Classes/Overview/Time References and Automation::, link::Classes/Automation/BMAbstractSnapShot::, link::Classes/Automation/BMSnapShotSeq::
+
+CLASSMETHODS::
+
+method:: new
+Create a new BMControllerAutomator.
+
+argument:: controls
+An Array of Symbols corresponding the names of the BMControl instances to be automated.
+
+argument:: timeref
+The object to serve as this automator's time reference. This can be any object which complies with the guidelines set out in Time References and Automation.
+
+INSTANCEMETHODS::
+
+method:: sequences
+Returns an IdentityDictionary containing one or more instances of BMSnapShotSeq. Sequence names serve as keys.
+
+method:: controls
+Returns an Array of Symbols corresponding the names of the BMControl instances to be automated.
+
+
+method:: addSequence
+Add a new automation sequence.
+
+argument:: seqName
+A Symbol serving as a name for this sequence.
+
+argument:: startTime
+A time in seconds corresponding to the start time of this sequence.
+
+argument:: ctrlNames
+An Array of Symbols corresponding the names of the BMControl instances to be automated. These must be included in the list of controls passed when this automator was created.
+
+
+method:: mappings
+Sets and Returns an IdentityDictionary containing this automator's sequences. Sequence names serve as keys.
+
+argument:: mappings
+Should be an IdentityDictionary in the form of sequenceNameSymbol->BMSnapShotSeq.
+
+
+method:: addSnapShot
+Add a controller snapshot to a sequence.
+
+argument:: seqName
+A Symbol indicating the name of the sequence to add the snapshot to.
+
+argument:: ssTime
+The time in seconds at which to add the snapshot.
+
+argument:: ssName
+A Symbol indicating the name of this snapshot.
+
+
+method:: addIndividualSequences
+This is a convenience method to add an individual sequence for each controller. The sequences will have names in the form of seqName-controllerName.
+
+argument:: seqName
+A Symbol indicating the base name for the individual sequences.
+
+argument:: startTime
+The start time in seconds at which to add the sequences.
+
+
+method:: removeSequence
+Remove an automation sequence from this automator.
+
+argument:: seq
+A Symbol indicating the name of the sequence to be removed.
+
+
+method:: sequence
+Return a particular sequence.
+
+argument:: name
+A Symbol indicating the name of the sequence to return.
+
+method:: clearLastAutomated
+
+method:: reset
+This resets all sequences (clears the states of their arbitrary start snapshots).
+
+method:: free
+Unassigns the receiver as automator for all its controls.
+
+method:: gui
+Creates and returns a new BMControllerAutomatorGUI for this automator.
+
+
+Examples::
+
+code::
+s.boot;
+
+(
+// a source and time reference
+p = BMSoundFilePlayer(name:\bar);
+p.read("sounds/a11wlk01.wav");
+)
+
+(
+// make a speaker list
+l = [[-30, 'L'], [30, 'R'], [0, 'C'], [-110, 'Ls'], [110, 'Rs']].collectAs({|el, i|
+	BMSpeaker.newFromSpherical(el[1], i, el[0], 0, 2);
+}, BMInOutArray);
+
+m = BMAudioMatrix(p, l, name:'Router'); // make a matrix for connections
+m.connect('bar-1', l.keys);
+
+// a controller to automate and an amp control matrix
+c = BMVirtualController(\foo, s, 5);
+BMVirtualControllerSliders(c); // slider gui
+n = BMAmpControlMatrix(c, m);
+c.controlNames.do({|name, i| n.connect(name, l.keys[i])});
+
+a = BMControllerAutomator(c.controlNames, p); // control virt sliders, player as time ref
+
+// make a sequence and add some snapshots
+c.setAllValues(0 ! 5);
+a.addSequence('test1', 0, c.controlNames);
+c.setVal(1, 0.5);
+a.addSnapShot('test1', 0.5, 'test1-2');
+c.setVal(2, 1);
+a.addSnapShot('test1', 1, 'test1-3');
+c.setAllValues({1.0.rand} ! 5);
+a.addSnapShot('test1', 3, 'test1-4');
+)
+
+p.play.rate_(0.5); // half speed
+
+BMControllerAutomatorGUI(a, origin: 100@600); // try out the GUI
+::

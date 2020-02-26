@@ -1,0 +1,34 @@
+title:: BMSelectInsOutsGUI
+summary:: Documentation BEASTmulch - a GUI for selecting inputs and outputs
+categories:: Classes
+
+Description::
+
+BMSelectInsOutsGUI is a modal sheet which allows you to select subsets of inputs and outputs from supplied lists.
+
+See also: link::Classes/Inputs and Outputs/BMInOutArray::
+
+CLASSMETHODS::
+
+method:: new
+Create a new BMSelectInsOutsGUI.
+		
+argument:: parent
+The parent window to which this sheet will be attached.
+argument:: ins
+A link::Classes/Inputs and Outputs/BMInOutArray::.
+argument:: outs
+A link::Classes/Inputs and Outputs/BMInOutArray::.
+argument:: okFunc
+A link::Classes/Function:: that will be evaluated when the sheet is closed. This will be passed two BMInOutArrays, inResults and outResults, as arguments.
+		
+
+Examples
+
+(
+w = Window("Dummy Parent", Rect(400, 400, 400, 400)).front; // a blank window to attach this to
+BMSelectInsOutsGUI(w, s.insAsBMInOutArray, s.outsAsBMInOutArray, {|ins, outs|
+	"ins %\n".postf(ins);
+	"outs %\n".postf(outs);
+});
+)

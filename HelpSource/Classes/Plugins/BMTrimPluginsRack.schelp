@@ -1,0 +1,111 @@
+title:: BMTrimPluginsRack
+summary:: Documentation BEASTmulch - manages trim and plugins on a channel
+categories:: Classes
+
+Description::
+
+BMTrimPluginsRack manages trim settings and plugins (instances of link::Classes/Plugins/BMPlugin::) for its input channels. It can thus provide a processing stage in an audio chain.
+
+The individual channels of a rack are manipulated using instances of link::Classes/Plugins/BMTrimPluginsStrip::.
+
+See also: link::Classes/Plugins/BMPlugin::, link::Classes/Plugins/BMPluginSpec::, link::Classes/Inputs and Outputs/BMInOutArray::, link::Classes/Root Classes/BMAbstractAudioChainElement::, link::Classes/Plugins/BMTrimPluginsRackGUI::, link::Classes/Plugins/BMTrimPluginsStrip::, link::Classes/Plugins/BMMultichannelPluginsRack::
+
+CLASSMETHODS::
+
+method:: new 
+Create a new BMTrimPluginsRack.
+
+argument:: ins
+An instance of link::Classes/Inputs and Outputs/BMInOutArray:: indicating the channels which are to be scaled and processed.
+argument:: target
+Target for this object's link::Classes/Group::. If target is not a Group or link::Classes/Synth::, it will be converted as follows: If it is a link::Classes/Server::, it will be converted to the default_group of that server. If it is nil, to the default_group of the default Server. strong::Note::: A Synth is not a valid target for code::\addToHead:: and code::\addToTail::.
+argument:: addAction
+one of the following Symbols:		
+code::\addToHead:: - add at the head of the group specified by strong::target::
+code::\addToTail:: - (the default) add at the tail of the group specified by strong::target::
+code::\addAfter:: - add immediately after strong::target:: in its server's node order
+code::\addBefore:: - add immediately before strong::target:: in its server's node order
+code::\addReplace:: - replace strong::target:: and take its place in its server's node order
+argument:: name
+A Symbol indicating the name of this object. If not supplied one will be generated.
+
+
+INSTANCEMETHODS::
+
+method:: mappings
+Returns an link::Classes/IdentityDictionary:: containing the current values for each channel for this rack, in the form IdentityDictionary[\channelName->IdentityDictionary[trim->trimValue, plugins->[[plugin.spec.name, plugin.attributes, plugin.values], ...] ], ...]. Subclasses may override this to include additional parameters.
+
+
+method:: mappings
+Set this objects trim and plugin settings.
+
+argument:: dict
+An link::Classes/IdentityDictionary:: containing the current values for each channel for this rack, in the form IdentityDictionary[\channelName->IdentityDictionary[trim->trimValue, plugins->[[plugin.spec.name, plugin.attributes, plugin.values], ...] ], ...]. Subclasses may override this to include additional parameters.
+
+
+method:: at
+Returns the link::Classes/Plugins/BMTrimPluginsStrip:: for the indicated channel. This can be used to manipulate values for individual channels.
+
+argument:: channel
+The name of the channel as a link::Classes/Symbol::.
+
+
+method:: gui
+Creates and returns a link::Classes/Plugins/BMTrimPluginsRackGUI:: using this as an argument.
+
+
+method:: free
+Free this strip's plugins, group and other resources. After this you should not use this object.
+
+
+method:: delayCompensateDistance
+Enable or disable delay compensation for distance. This will check the location of all link::Classes/Inputs and Outputs/BMSpeaker:: instances in ins and add a delay plugin so that sound will arrive at {0,0,0} simultaneously for all speakers. This can be used to eliminate precedence effect.
+
+argument:: bool
+A link::Classes/Boolean:: value. The default is true.
+
+
+method:: autoPlugins	
+link::Classes/Inputs and Outputs/BMSpeakerSpec:: instances can optionally define plugins and settings which should be used with speakers based on them, e.g. LPF on a subwoofer. This method enables or disables them for all speakers in this racks ins.
+
+argument:: bool
+A link::Classes/Boolean:: value. The default is true.
+
+
+method:: autoTrim
+link::Classes/Inputs and Outputs/BMSpeaker:: instances can have autoTrim values, for example determined using link::Classes/Other/BMAutoBalancer::. This method sets the trim settings to the autoTrim value for all channels in ins which output to speakers with defined autoTrim values. nil trim settings are ignored.
+
+
+Examples::
+
+code::
+// 5.1 Array (-0.1)
+(
+l = [[-30, 'L'], [30, 'R'], [0, 'C'], [-110, 'Ls'], [110, 'Rs']].collectAs({|el, i|
+	BMSpeaker.newFromSpherical(el[1], i, el[0], 0, 2);
+}, BMInOutArray);
+)
+
+r = BMTrimPluginsRack(l, name: 'Plug em In');
+
+r[\L]; // get the BMTrimPluginsStrip for 'L'
+
+// plugins are added at the end of the chain
+r[\L].addPlugin(BMPlugin('3 Band EQ'));
+r[\L].addPlugin(BMPlugin(\Highpass));
+r[\L].addPlugin(BMPlugin(\Lowpass));
+r[\L].plugins; // check order
+
+// but you can move them
+r[\L].movePluginUp(2);
+r[\L].movePluginDown(0);
+r[\L].plugins; // check order
+
+// remove by index
+r[\L].removePlugin(0);
+r[\L].plugins;
+
+r.gui; // play with the GUI
+
+r.free;
+::

@@ -1,0 +1,117 @@
+title:: BMMultichannelPluginsRack
+summary:: Documentation BEASTmulch - manage multichannel plugins
+categories:: Classes
+
+Description::
+
+BMMultichannelPluginsRack manages multichannel plugins (instances of link::Classes/Plugins/BMMultichannelPlugin::). It can thus provide a multichannel processing stage at a particular point in an audio chain.
+
+This functions in a similar way to link::Classes/Plugins/BMTrimPluginsRack:: and link::Classes/Plugins/BMTrimPluginsStrip::. The primary difference is that there is only a single 'strip' since the channel inputs and outputs for each plugin are arbitrary. Plugins do execute in the specified order however, so it is possible to chain them by using the output channels of one as the inputs of another.
+
+See also: link::Classes/Plugins/BMMultichannelPlugin::, link::Classes/Plugins/BMMultichannelPluginSpec::, link::Classes/Inputs and Outputs/BMInOutArray::, link::Classes/Root Classes/BMAbstractAudioChainElement::, link::Classes/Plugins/BMMultichannelPluginsRackGUI::, link::Classes/Plugins/BMTrimPluginsRack::
+
+CLASSMETHODS::
+
+method:: new
+Create a new BMMultichannelPluginsRack.
+
+argument:: ins
+An instance of link::Classes/Inputs and Outputs/BMInOutArray:: indicating the input channels which are to be processed.
+argument:: outs
+An instance of link::Classes/Inputs and Outputs/BMInOutArray:: indicating the available output channels. If nil is passed here the ins will be used as outputs as well.
+argument:: target
+Target for this object's link::Classes/Group::. If target is not a Group or link::Classes/Synth::, it will be converted as follows: If it is a link::Classes/Server::, it will be converted to the default_group of that server. If it is nil, to the default_group of the default Server. strong::Note::: A Synth is not a valid target for code::\addToHead:: and code::\addToTail::.
+argument:: addAction
+one of the following Symbols:		
+code::\addToHead:: - add at the head of the group specified by strong::target::
+code::\addToTail:: - (the default) add at the tail of the group specified by strong::target::
+code::\addAfter:: - add immediately after strong::target:: in its server's node order
+code::\addBefore:: - add immediately before strong::target:: in its server's node order
+code::\addReplace:: - replace strong::target:: and take its place in its server's node order
+argument:: name
+A link::Classes/Symbol:: indicating the name of this object. If not supplied one will be generated.
+
+
+INSTANCEMETHODS::
+	
+method:: plugins
+Returns a List of this strip's link::Classes/Plugins/BMMultichannelPlugin:: instances in the order in which they execute.
+				
+				
+method:: clear
+Remove all plugins from this rack.
+
+
+method:: mappings
+Returns an link::Classes/IdentityDictionary:: containing the current values for each channel for this rack, in the form IdentityDictionary[plugins->[[plugin.spec.name, plugin.inputs, plugin.outputs, plugin.attributes, plugin.values], ...] ]. Subclasses may override this to include additional parameters.
+
+
+method:: mappings
+Set this objects trim and plugin settings.
+
+argument:: dict - An link::Classes/IdentityDictionary:: containing the current values for each channel for this rack, in the form dentityDictionary[plugins->[[plugin.spec.name, plugin.inputs, plugin.outputs, plugin.attributes, plugin.values], ...] ]. Subclasses may override this to include additional parameters.
+
+
+addPlugin
+Add a plugin to this rack, at the end of its chain of plugins.
+
+argument:: plugin
+A link::Classes/Plugins/BMMultichannelPlugin::.
+
+
+method:: removePlugin
+Remove a plugin from this rack's chain of plugins.
+
+argument:: indexOrPlugin
+Either the index of the plugin to remove or the link::Classes/Plugins/BMMultichannelPlugin:: itself.
+
+
+method:: movePluginUp
+Move a plugin up one position in this rack's chain of plugins.
+
+argument:: index
+The index of the plugin to move.
+
+
+	movePluginDown (index)
+	
+		Move a plugin down one position in this rack's chain of plugins.
+		index - The index of the plugin to move.
+
+
+	free
+	
+		Free this strip's plugins, group and other resources. After this you should not use this object.
+
+
+	gui
+	
+		Creates and returns a BMMultichannelPluginsRackGUI using this as an argument.
+
+
+Examples
+
+s.boot;
+
+// 5.1 Array (-0.1)
+(
+l = [[-30, 'L'], [30, 'R'], [0, 'C'], [-110, 'Ls'], [110, 'Rs']].collectAs({|el, i|
+	BMSpeaker.newFromSpherical(el[1], i, el[0], 0, 2);
+}, BMInOutArray);
+)
+
+b = Bus.audio(s, 1);
+
+x = {Out.ar(b, PinkNoise.ar(0.2))}.play; // something to pan
+
+i = b.asBMInOutArray(\noiseBus);
+
+r = BMMultichannelPluginsRack(i, l, x, \addAfter, 'Plug em In');
+
+r.addPlugin(BMMultichannelPlugin('2D VBAP Auto Panner', i, l));
+
+s.meter;
+
+r.gui; // play with the GUI
+
+x.free; r.free; b.free;

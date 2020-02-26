@@ -1,0 +1,49 @@
+title:: BMTrimPluginsRackGUI
+summary:: Documentation BEASTmulch - GUI class for BMTrimPluginsRack	
+categories:: Classes
+
+Description::
+
+BMTrimPluginsRackGUI is a GUI class for control of a link::Classes/Plugins/BMTrimPluginsRack:: and its strips. If provides facility for plugin creation, control, and duplication, as well access to BMTrimPluginsRack's other functionality.
+
+See also: link::Classes/Plugins/BMTrimPluginsRack::, link::Classes/Plugins/BMPlugin::, link::Classes/Root Classes/BMAbstractGUI::
+
+Creation / Class Methods
+
+	*new (trimPluginsRack, name, origin)
+	
+		Create a new BMTrimPluginsRackGUI.
+		trimPluginsRack - An instance of BMTrimPluginsRack.
+		name - An optional String or Symbol indicating the title of the window. If nil is passed the name of trimPluginsRack will be used.
+		origin - An optional Point specifying the origin of the window. Default is 40@200.
+
+
+Examples
+
+// 5.1 Array (-0.1)
+(
+l = [[-30, 'L'], [30, 'R'], [0, 'C'], [-110, 'Ls'], [110, 'Rs']].collectAs({|el, i|
+	BMSpeaker.newFromSpherical(el[1], i, el[0], 0, 2);
+}, BMInOutArray);
+)
+
+r = BMTrimPluginsRack(l, name: 'Plug em In');
+
+// plugins are added at the end of the chain
+r[\L].addPlugin(BMPlugin('3 Band EQ'));
+r[\L].addPlugin(BMPlugin(\Highpass));
+r[\L].addPlugin(BMPlugin(\Lowpass));
+r[\L].plugins; // check order
+
+// but you can move them
+r[\L].movePluginUp(2);
+r[\L].movePluginDown(0);
+r[\L].plugins; // check order
+
+// remove by index
+r[\L].removePlugin(0);
+r[\L].plugins;
+
+r.gui; // play with the GUI
+
+r.free;

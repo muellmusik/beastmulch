@@ -1,0 +1,7 @@
+title:: BMMotorBEAST
+summary:: Documentation BEASTmulch - class representing a MotorBEAST (GLUI) Fader box
+categories:: Classes
+
+Description::
+
+This class represents the custom GLUI based fader boxes used in the BEAST system. It is provided here as an example of how to write a controller subclass for an automatable OSC controller with extension functions such as calibration, and LED control. It is not intended for general use.

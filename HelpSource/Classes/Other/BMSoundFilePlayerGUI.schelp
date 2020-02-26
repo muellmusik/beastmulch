@@ -1,0 +1,36 @@
+title:: BMSoundFilePlayerGUI
+summary:: Documentation BEASTmulch - GUI class for BMSoundFilePlayer
+categories:: Classes
+
+Description::
+	
+BMSoundFilePlayerGUI creates a gui for a link::Classes/Other/BMSoundFilePlayer::. It provides controls for playback, loading and clearing buffers, and an optional 'Big Clock'. (Click the clock icon.)
+
+See also: link::Classes/Root Classes/BMAbstractGUI::, link::Classes/Other/BMSoundFilePlayer::
+
+
+CLASSMETHODS::
+
+method:: new
+Create a new BMSoundFilePlayerGUI.
+
+argument:: player
+A link::Classes/Other/BMSoundFilePlayer::.
+argument:: name
+An optional link::Classes/String:: or link::Classes/Symbol:: indicating the title of the window. If nil is passed the name of player will be used.
+
+
+INSTANCEMETHODS::
+
+method:: makeBigClock
+Open the 'Big Clock' auxiliary window, if not already open. You can also do this by clicking on the clock icon.
+
+
+Examples::
+
+code::
+p = BMSoundFilePlayer(2, name:\foo); // stereo player
+p.bus = 0; // for the sake of example
+g = BMSoundFilePlayerGUI(p).onClose_({p.free}); // you'll need to load a file
+g.makeBigClock // can also click on the clock icon for this
+::

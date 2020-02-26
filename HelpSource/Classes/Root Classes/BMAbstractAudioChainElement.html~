@@ -1,0 +1,192 @@
+title:: BMAbstractAudioChainElement
+summary:: Documentation BEASTmulch - abstract superclass of audio chain elements
+categories:: Classes
+
+Description::
+
+BMAbstractAudioChainElement is the abstract superclass of all BEASTmulch Library objects which serve as elements in an audio chain. This includes sources (subclasses of link::Classes/Root Classes/BMAbstractAudioSource::), such as link::Classes/Other/BMSoundFilePlayer::, routers and mixers such as link::Classes/Matrices/BMAudioMatrix:: and link::Classes/Matrices/BMAmpControlMatrix::, and processors and spatialisers such as link::Classes/Plugins/BMTrimPluginsRack:: and link::Classes/Plugins/BMMultichannelPluginsRack::. As such it defines a standard interface and a number of inherited methods.
+
+Subclasses generally create a link::Classes/Group:: to hold all of their nodes which is stored in the group instance variable.
+
+For the sake of simplicity and to avoid conflicts subclasses of BMAbstractAudioChain do no rebuilding on Cmd-. If you want to do this simply add a link::Classes/Function:: to rebuild the chain to link::Classes/ServerTree::.
+
+You can see a list of all available subclasses by executing the following:
+
+code::
+BMAbstractAudioChainElement.dumpClassSubtree;
+::
+
+See also: link::Classes/Matrices/BMAbstractMatrix::, link::Classes/Root Classes/BMAbstractAudioSource::, link::Classes/Root Classes/BMAbstractController::, link::Classes/Root Classes/BMAbstractGUI::, link::Classes/Inputs and Outputs/BMInOutArray::
+
+Section:: Making chains of elements
+
+Subclasses take instances of link::Classes/Inputs and Outputs/BMInOutArray:: to specify input and/or busses. In some cases output busses will be the same as inputs, in others (notably link::Classes/Matrices/BMAudioMatrix::) take separate outputs. strong::*new:: methods generally call strong::asBMInOutArray:: on strong::ins:: and strong::outs::, which most subclasses implement to return their output array. This means that instances can be passed as arguments for these. Some classes (e.g. subclasses of link::Classes/Root Classes/BMAbstractAudioSource::) do not take inputs and supply their outputs as a private bus.
+
+strong::asTarget:: is implemented to return the object's strong::group::, which means that you can pass audio chain elements most places you would pass a link::Classes/Node::, e.g. as a target for a link::Classes/Synth::.
+
+By convention subclasses of link::Classes/Root Classes/BMAbstractAudioSource:: use code::\addToHead:: as their default strong::addAction::, and all other subclasses of BMAbstractAudioChainElement use code::\addToTail::. This means that in most cases chains of objects can be created in the order they will appear on the server.
+
+The examples below demonstrate this.
+
+CLASSMETHODS::
+	
+method:: allChainElements
+An link::Classes/IdentityDictionary:: containing all active instances of this class' subclasses. This can be used to query the library to see which chain elements exist at the moment.
+		
+INSTANCEMETHODS::
+		
+method:: addAction
+Returns this object's strong::addAction::, which determines where its strong::group:: will be created relative to its strong::target::. See subclasses for details.
+				
+method:: target
+Returns this object's strong::target::, which determines the relative position at which its strong::group:: will be created base on its strong::addAction:: See subclasses for details.
+				
+method::ins
+Returns this object's inputs as a link::Classes/Inputs and Outputs/BMInOutArray::.
+				
+method:: inNames
+Returns an link::Classes/Array:: of link::Classes/Symbols:: corresponding to the names of this object's ins.
+				
+method:: outs
+Returns this object's outputs as a link::Classes/Inputs and Outputs/BMInOutArray::
+				
+method:: outNames
+Returns an link::Classes/Array:: of link::Classes/Symbols:: corresponding to the names of this object's outs.
+				
+method:: group
+Returns this object's link::Classes/Group:: if it is active, nil otherwise.
+				
+method:: name
+Returns this object's name as a link::Classes/Symbol::.
+				
+method:: server
+Returns this object's link::Classes/Server::.
+				
+				
+INSTANCEMETHODS::
+
+The following methods specify the minimum interface for a BMAbstractAudioChainElement; some notes about subclassing are included. In some cases the methods simply return a SubclassResponsibilityError, and should be overridden in subclasses.
+
+Implementations of strong::*new:: in subclasses should take at least strong::target::, strong::addAction::, and strong::name:: as arguments.
+
+code::
+// simplest case
+*new { |outs, target, addAction = \addToTail, name| 
+	^super.new.initNameAndTarget(target, addAction, name);
+}
+::
+	
+Subclasses which take strong::ins:: or strong::outs:: as arguments to *new should implement an init method to copy those to the corresponding instance vars, and fill in strong::inNames:: and strong::outNames::.
+
+code::
+// example with ins and outs
+*new { |ins, outs, target, addAction = \addToTail, name|
+	^super.new.init(ins.asBMInOutArray, outs.asBMInOutArray, target, addAction, name);
+}
+	
+init {|argins, argouts, argTarget, argAddAction, argName|
+	this.initNameAndTarget(argTarget, argAddAction, argName);
+	ins = argins;
+	outs = argouts;
+	inNames = ins.keys;
+	outNames = outs.keys;
+}
+::
+	
+	
+	
+method:: initNameAndTarget	
+Converts strong::argtarget:: to a valid target, calls strong::makeName:: if needed, and adds this object to strong::allChainElements::. Subclasses should call this method from their strong::*new:: or strong::init:: methods. 
+	
+argument:: argtarget
+Target for this object's Group. If target is not a link::Classes/Group:: or link::Classes/Synth::, it will be converted as follows: If it is a link::Classes/Server::, it will be converted to the default_group of that server. If it is nil, to the default_group of the default Server. strong::Note::: A Synth is not a valid target for code::\addToHead:: and strong::\addToTail::.
+
+argument:: argaddAction
+one of the following Symbols:		
+code::\addToHead:: - (the default for BMAbstractAudioSources) add at the head of the group specified by strong::target::
+code::\addToTail:: - (the default for most subclasses) add at the tail of the group specified by strong::target::
+code::\addAfter:: - add immediately after strong::target:: in its server's node order
+code::\addBefore:: - add immediately before strong::target:: in its server's node order
+code::\addReplace:: - replace strong::target:: and take its place in its server's node order
+
+argument:: argname
+Explanation of argname. Default value is nil. Other information.
+
+code::
+// simplest case
+initNameAndTarget {|argtarget, argaddAction, argname|
+	target = argtarget.asTarget;
+	server = target.server;
+	addAction = argaddAction;
+	name = (argname ?? {this.makeName}).asSymbol;
+	allChainElements[name] = this;
+	this.makeGroup;
+}
+::
+
+method:: gui
+This should create and return an appropriate GUI, usually using a specific GUI class (e.g. link::Classes/Matrices/BMMatrixGUI:: for matrices) with this as an argument.
+
+
+method:: mappings
+This methods should be implemented to allow getting or setting presets, i.e. they should set or get the global state of the object. Usually these return or take some sort of link::Classes/IdentityDictionary::. The default implementations do nothing.
+
+
+method:: makeGroup
+Makes this object's link::Classes/Group:: using strong::target:: and strong::addAction::.
+
+
+method:: makeName
+Automatically generate a strong::name:: for this object if one has not been supplied.
+
+
+method:: free
+The default implementation frees strong::group:: and removes this object from strong::allChainElements::. Subclasses should override this to do any necessary cleanup of resources. Once called, objects should not be used again.
+
+
+method:: asTarget
+Returns the element's link::Classes/Group::. This means that chain elements can be passed directly as targets in most cases. Subclasses can override this to return something else if appropriate.
+		
+
+
+Examples
+
+// making an audio chain
+
+s.boot;
+
+// make a 5.1 speaker list (-0.1) for outputs
+(
+l = [[-30, 'L'], [30, 'R'], [0, 'C'], [-110, 'Ls'], [110, 'Rs']].collectAs({|el, i|
+	BMSpeaker.newFromSpherical(el[1], i, el[0], 0, 2);
+}, BMInOutArray);
+)
+
+// make a controller
+c = BMVirtualController.new('Level Sliders', s, 4); // new controller
+g = BMVirtualControllerSliders(c); // GUI sliders for it
+
+//// sources
+p = BMSoundFilePlayer(8, name:\foo); // maximum 8 channel soundfile player
+p.read("sounds/a11wlk01.wav"); // mono, so only out foo-1
+p.gui;
+
+b = Bus.audio(s, 1);
+x = {Out.ar(b, PinkNoise.ar(0.2))}.play(target: p, addAction:\addAfter); // a noise source; note p works as a target
+
+// do some processing at this stage
+t = BMTrimPluginsRack(p.asBMInOutArray ++ b.asBMInOutArray(\noiseBus), x, \addAfter); // x as target
+t.gui;
+
+// make a matrix for connections
+m = BMAudioMatrix(t, l, name:'Router'); 
+
+// a matrix to map controls to scale amplitude
+a = BMAmpControlMatrix(c, l, name:'Level Control'); // ins are the controller's control busses
+
+m.gui; a.gui; // make some assignments here
+
+// congrats, you've now got sources->trim-plugins->routing->level-scaling->outputs
+// turn up your controllers to listen
+
+[p, c, b, x, m, a, t].do(_.free); // cleanup

@@ -1,0 +1,34 @@
+title:: BMAutoBalancerGUI
+summary:: Documentation BEASTmulch - a GUI for BMAutoBalancer
+categories:: Classes
+
+Description::
+
+This class provides a GUI for the utility class methods found in link::Classes/Other/BMAutoBalancer::. Hardware input channels start from 1 in the GUI, not 0.
+
+See also: link::Classes/Root Classes/BMAbstractGUI::, link::Classes/Other/BMAutoBalancer::
+
+CLASSMETHODS::
+
+method:: new
+Create a new BMAutoBalancerGUI.
+
+argument:: speakerList
+The link::Classes/Inputs and Outputs/BMInOutArray:: to balance. This is done in place.
+argument:: okayFunc
+An optional link::Classes/Function:: to evaluate when the cycle is complete. This will be passed strong::speakerList:: as an argument.
+argument:: server
+The link::Classes/Server:: to use. nil indicates the default server.
+argument:: name
+An optional link::Classes/String:: or link::Classes/Symbol:: indicating the title of the window. Default is "Autobalance Speakers".
+argument:: origin
+An optional link::Classes/Point:: specifying the origin of the window. Default is 400@600.
+
+
+Examples::
+
+code::
+l = [BMSpeaker(\left, 0), BMSpeaker(\right, 1), BMSpeaker(\sub, 2, spec: 'Generic Sub')].as(BMInOutArray); // sub will be ignored
+
+BMAutoBalancerGUI(l); 
+::
