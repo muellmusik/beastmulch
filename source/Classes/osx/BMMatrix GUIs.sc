@@ -122,7 +122,7 @@ BMMatrixMenuGUI : BMAbstractGUI {
 BMMatrixGUI : BMAbstractGUI {
 
 	var h = 700, v = 700, numIns = 10, numOuts = 10, dotSize = 10;
-	var hinterval, vinterval, userView;
+	var hinterval, vinterval, userView, userScrollView, insView, outsView, insScrollView, outsScrollView;
 	var cellsize = 25, screenBounds; // maximum cellsize
 	var hoffset = 80, voffset = 100, hRectHeight, vRectHeight;
 	var color, ringColor;
@@ -134,6 +134,7 @@ BMMatrixGUI : BMAbstractGUI {
 	var font;
 	var selecting = false, selectionStart, selectionEnd;
 	var selections;
+	var dragStart;
 
 	*new {|matrix, name|
 		^super.new.init(matrix, name ? matrix.name).makeWindow;
@@ -154,6 +155,8 @@ BMMatrixGUI : BMAbstractGUI {
 
 	makeWindow {
 
+		var scrollFromInsOrOuts = false;
+
 		ins = matrix.inNames;
 
 		numIns = ins.size;
@@ -169,23 +172,87 @@ BMMatrixGUI : BMAbstractGUI {
 
 		// scale size to available monitor size
 		screenBounds = Window.screenBounds;
-		cellsize = cellsize min: (screenBounds.width - 40 - hoffset / numOuts);
-		cellsize = cellsize min: (screenBounds.height - 40 - voffset / numIns);
-		dotSize = cellsize * 0.33 min: 15; // maximum dot size
-		h = numOuts * cellsize + hoffset;
-		v = numIns * cellsize + voffset;
+		dotSize = cellsize * 0.33;
+		h = (numOuts * cellsize + hoffset) min: (screenBounds.width - 40);
+		v = (numIns * cellsize + voffset) min: (screenBounds.height - 40);
 
 		color = Color.blue.alpha_(0.5);
 		ringColor = Color.black;
 
 		window = Window(name, Rect(40, 40, h, v), false);
-		window.alpha = 0.98;
 
 		window.view.background = Color.new255(140, 38, 255);
-		hinterval = window.bounds.width - hoffset / (numOuts + 1);
-		vinterval = window.bounds.height - voffset / (numIns + 1);
-		userView = UserView(window, window.view.bounds);
-		userView.background = Color.clear;
+		userScrollView = ScrollView(
+			window,
+			Rect(hoffset, voffset, window.view.bounds.width - hoffset, window.view.bounds.height - voffset)
+		);
+		userView = UserView(userScrollView, Rect(0, 0, numOuts * cellsize, numIns * cellsize));
+		userView.background = Color.new255(140, 38, 255);
+		hinterval = userView.bounds.width / (numOuts + 1);
+		vinterval = userView.bounds.height / (numIns + 1);
+		insScrollView = ScrollView(window, window.view.bounds.copy.top_(voffset).width_(hoffset));
+		insScrollView = ScrollView(window, window.view.bounds.copy.top_(voffset).width_(hoffset));
+		insScrollView.hasHorizontalScroller_(false).hasVerticalScroller_(false);
+		outsScrollView = ScrollView(window, window.view.bounds.copy.left_(hoffset).height_(voffset));
+		outsScrollView.hasHorizontalScroller_(false).hasVerticalScroller_(false);
+		insView = UserView(insScrollView, Rect(0, 0, hoffset - 2, numIns * cellsize)); // -2 stops wiggles
+		insView.background = Color.new255(140, 38, 255);
+		outsView = UserView(outsScrollView, Rect(0, 0, numOuts * cellsize, voffset - 2)); // -2 stops wiggles
+		outsView.background = Color.new255(140, 38, 255);
+
+		userScrollView.action = {
+			var origin;
+			if(scrollFromInsOrOuts.not, {
+				origin = userScrollView.visibleOrigin;
+				insScrollView.visibleOrigin = 0@(origin.y);
+				outsScrollView.visibleOrigin = (origin.x)@0;
+			});
+		};
+
+		insScrollView.action = {
+			var origin;
+			scrollFromInsOrOuts = true;
+			origin = insScrollView.visibleOrigin;
+			userScrollView.visibleOrigin = userScrollView.visibleOrigin.x@(origin.y);
+			scrollFromInsOrOuts = false;
+		};
+
+		outsScrollView.action = {
+			var origin;
+			scrollFromInsOrOuts = true;
+			origin = outsScrollView.visibleOrigin;
+			userScrollView.visibleOrigin = (origin.x)@userScrollView.visibleOrigin.y;
+			scrollFromInsOrOuts = false;
+		};
+
+		insView.mouseDownAction = { arg view,inx,iny, mods;
+			dragStart = inx@iny;
+		};
+
+		insView.mouseMoveAction = { arg view,inx,iny, mods;
+			var origin, diff;
+			origin = insScrollView.visibleOrigin;
+			diff = iny - dragStart.y;
+			origin.y = (origin.y - diff) min: ((numIns * cellsize) - insScrollView.bounds.height);
+			scrollFromInsOrOuts = true;
+			insScrollView.visibleOrigin = origin;
+			scrollFromInsOrOuts = false;
+		};
+
+		outsView.mouseDownAction = { arg view,inx,iny, mods;
+			dragStart = inx@iny;
+		};
+
+		outsView.mouseMoveAction = { arg view,inx,iny, mods;
+			var origin, diff;
+			origin = outsScrollView.visibleOrigin;
+			diff = inx - dragStart.x;
+			origin.x = (origin.x - diff) min: ((numOuts * cellsize) - outsScrollView.bounds.width);
+			scrollFromInsOrOuts = true;
+			outsScrollView.visibleOrigin = origin;
+			scrollFromInsOrOuts = false;
+		};
+
 		userView.mouseDownAction = { arg view,inx,iny, mods;
 			if(mods.isAlt, {
 				selecting = true;
@@ -193,8 +260,8 @@ BMMatrixGUI : BMAbstractGUI {
 				window.refresh;
 			},{
 				var x, y;
-				x = outs[(inx - hoffset/ hinterval).round.clip(1, numOuts) - 1];
-				y = ins[(iny - voffset/ vinterval).round.clip(1, numIns) - 1];
+				x = outs[(inx / hinterval).round.clip(1, numOuts) - 1];
+				y = ins[(iny / vinterval).round.clip(1, numIns) - 1];
 				if(matrix.mappings[y].indexOf(x).isNil, {matrix.connect(y, x); on = true;},
 					{matrix.disconnect(y, x); on = false});
 				lastx = x; lasty = y;
@@ -211,11 +278,11 @@ BMMatrixGUI : BMAbstractGUI {
 				window.refresh;
 			},{
 				var x, y;
-				x = outs[(inx - hoffset/ hinterval).round.clip(1, numOuts) - 1];
-				y = ins[(iny - voffset/ vinterval).round.clip(1, numIns) - 1];
+				x = outs[(inx / hinterval).round.clip(1, numOuts) - 1];
+				y = ins[(iny / vinterval).round.clip(1, numIns) - 1];
 				if((x != lastx) || (y != lasty), {
-					linex = outs[(inx - hoffset/ hinterval).round.clip(1, numOuts) - 1];
-					liney = ins[(iny - voffset/ vinterval).round.clip(1, numIns) - 1];
+					linex = outs[(inx / hinterval).round.clip(1, numOuts) - 1];
+					liney = ins[(iny / vinterval).round.clip(1, numIns) - 1];
 					if(on, {
 						if(matrix.mappings[y].indexOf(x).isNil, {
 							matrix.connect(y, x);
@@ -234,8 +301,8 @@ BMMatrixGUI : BMAbstractGUI {
 
 		// draw line for easy view
 		userView.mouseOverAction = { arg view,inx,iny;
-			xpos = (inx - hoffset/ hinterval);
-			ypos = (iny - voffset/ vinterval);
+			xpos = (inx / hinterval);
+			ypos = (iny / vinterval);
 			linex = outs[xpos.round.clip(1, numOuts) - 1];
 			liney = ins[ypos.round.clip(1, numIns) - 1];
 			xdist = abs(xpos - xpos.round.clip(1, numOuts));
@@ -266,25 +333,26 @@ BMMatrixGUI : BMAbstractGUI {
 						selections[newKey] = selections[newKey].addAll(v);
 					})
 				});
+				window.refresh;
 			});
 			if(key == 16777216, { //esc
 				selections = matrix.inNames.collectAs({|in| in->Set()}, IdentityDictionary);
 				window.refresh;
 			});
-
+			true;
 		});
 
 		window.acceptsMouseOver = true;
 		window.front;
-		window.drawFunc = {
+		userView.drawFunc = {
 
 			Pen.width = 2;
 
 			Pen.use {
 				// border lines
 
-				Pen.line(hoffset@voffset, window.bounds.width@voffset);
-				Pen.line(hoffset@voffset, hoffset@window.bounds.height);
+				Pen.line(0@0, window.bounds.width@0);
+				Pen.line(0@0, 0@window.bounds.height);
 
 				color.set;
 				numIns.do { |i|
@@ -292,8 +360,8 @@ BMMatrixGUI : BMAbstractGUI {
 						Pen.stroke;
 						Color.white.alpha_(1-ydist).set;
 					});
-					Pen.line((1 + hoffset)@(vinterval + voffset + (i * vinterval)),
-						(window.bounds.width + hoffset)@(vinterval + voffset +
+					Pen.line(1@(vinterval + (i * vinterval)),
+						(userView.bounds.width)@(vinterval +
 						(i * vinterval)));
 					if(ins[i] == liney, {Pen.stroke; color.set;});
 				};
@@ -302,8 +370,8 @@ BMMatrixGUI : BMAbstractGUI {
 						Pen.stroke;
 						Color.white.alpha_(1-xdist).set;
 					});
-					Pen.line((hinterval + hoffset + (i * hinterval))@(1 + voffset), (hinterval +
-						hoffset + (i * hinterval))@(window.bounds.height + voffset));
+					Pen.line((hinterval + (i * hinterval))@1, (hinterval +
+						(i * hinterval))@(userView.bounds.height));
 					if(outs[i] == linex, {Pen.stroke; color.set;});
 				};
 				Pen.stroke;
@@ -311,8 +379,10 @@ BMMatrixGUI : BMAbstractGUI {
 					row.do({ arg item, x;
 						var crosspoint, rect, selectRect;
 						item.notNil.if({
-							crosspoint = (hinterval  + hoffset + (x * hinterval))
-								@(vinterval + voffset + (y * vinterval));
+							/*rect = Rect.aboutPoint((hinterval + (x * hinterval))
+								@(vinterval + (y * vinterval)), dotSize, dotSize);*/
+							crosspoint = (hinterval + (x * hinterval))
+								@(vinterval + (y * vinterval));
 							rect = Rect.aboutPoint(crosspoint, dotSize, dotSize);
 							if(selecting, {
 								selectRect = Rect.fromPoints(selectionStart, selectionEnd);
@@ -345,43 +415,47 @@ BMMatrixGUI : BMAbstractGUI {
 				Pen.strokeRect(selectRect);
 			});
 
-			outs.do({|item, i|
-				var inColor;
 
-				if(item == linex && (xpos > 0), {
-					inColor = Color.white;
+		};
+
+		insView.drawFunc = {
+
+			Pen.width = 2;
+
+			ins.do({|item, i|
+				var inColor, mappedTo;
+
+				(matrix.takesControlsForInputs && BMOptions.allowMultipleControlMappings.not).if({
+					mappedTo = BMAbstractController.allControls[item].mappedTo;
+					if(mappedTo.notNil && (mappedTo !== matrix), {
+						inColor = Color.grey;
+					}, { inColor = Color.black;});
 				}, { inColor = Color.black;});
 
+
 				Pen.use({
-					Pen.translate((hoffset + (hinterval * 1.5) + (hinterval * i)), 0);
-					Pen.rotate(0.5pi);
-					item.asString.drawRightJustIn(Rect.fromPoints(0@0, (voffset - 10)@vRectHeight),
+					Pen.translate((hoffset / 2), (vinterval + (vinterval * i)));
+					item.asString.drawCenteredIn(Rect.aboutPoint(0@0, 60, 10),
 						font,
 						inColor
 					);
 				});
 			});
 
-			ins.do({|item, i|
-				var inColor, tempColor, mappedTo;
+		};
 
-				if(item == liney && (ypos > 0), {
-					tempColor = Color.white;
-					}, { tempColor = Color.black;});
+		outsView.drawFunc = {
 
-				(matrix.takesControlsForInputs && BMOptions.allowMultipleControlMappings.not).if({
-					mappedTo = BMAbstractController.allControls[item].mappedTo;
-					if(mappedTo.notNil && (mappedTo !== matrix), {
-						inColor = Color.grey;
-					}, { inColor = tempColor;});
-				}, { inColor = tempColor;});
+			Pen.width = 2;
 
+			outs.do({|item, i|
 
 				Pen.use({
-					Pen.translate(0, (voffset + (vinterval * 0.5) + (vinterval * i)));
-					item.asString.drawRightJustIn(Rect.fromPoints(0@0, (hoffset - 10)@hRectHeight),
+					Pen.translate((hinterval + (hinterval * i)), (voffset / 2));
+					Pen.rotate(0.5pi);
+					item.asString.drawCenteredIn(Rect.aboutPoint(0@0, 60, 10),
 						font,
-						inColor
+						Color.black
 					);
 				});
 			});
