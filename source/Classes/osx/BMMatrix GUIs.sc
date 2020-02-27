@@ -313,6 +313,8 @@ BMMatrixGUI : BMAbstractGUI {
 			userView.refresh;
 		};
 
+		userView.toolTip = "Alt drag to select points\nAlt arrows to shift up and down";
+
 		// alt arrow to shift things
 		userView.keyDownAction_({|view, char, mod, unicode, keycode, key|
 			//[mod, unicode, keycode, key].postln;
