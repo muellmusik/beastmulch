@@ -356,8 +356,8 @@ BMMatrixGUI : BMAbstractGUI {
 			Pen.use {
 				// border lines
 
-				Pen.line(0@0, window.bounds.width@0);
-				Pen.line(0@0, 0@window.bounds.height);
+				Pen.line(0@0, userView.bounds.width@0);
+				Pen.line(0@0, 0@userView.bounds.height);
 
 				color.set;
 				numIns.do { |i|
