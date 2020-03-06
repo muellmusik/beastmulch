@@ -133,7 +133,7 @@ BMMatrixGUI : BMAbstractGUI {
 	var linex, liney, xdist, ydist;
 	var font;
 	var selecting = false, selectionStart, selectionEnd;
-	var selections;
+	var selections, selectRect;
 	var dragStart;
 
 	*new {|matrix, name|
@@ -264,7 +264,24 @@ BMMatrixGUI : BMAbstractGUI {
 			});
 		};
 		userView.mouseUpAction = { arg view,inx,iny, mods;
-			selecting = false;
+			if(selecting, {
+				matrix.matrixArray.do({ arg row, y;
+					row.do({ arg item, x;
+						var crosspoint, rect;
+						item.notNil.if({
+							crosspoint = (hinterval + (x * hinterval))
+							@(vinterval + (y * vinterval));
+
+							selectRect = Rect.fromPoints(selectionStart, selectionEnd);
+							if(selectRect.containsPoint(crosspoint), {
+								selections[ins[y]] = selections[ins[y]].as(Set).add(outs[x]);
+							});
+
+						});
+					})
+				});
+				selecting = false;
+			});
 			window.refresh;
 		};
 		// dragging
@@ -382,17 +399,17 @@ BMMatrixGUI : BMAbstractGUI {
 				Pen.stroke;
 				matrix.matrixArray.do({ arg row, y;
 					row.do({ arg item, x;
-						var crosspoint, rect, selectRect;
+						var crosspoint, rect;
 						item.notNil.if({
 							crosspoint = (hinterval + (x * hinterval))
 								@(vinterval + (y * vinterval));
 							rect = Rect.aboutPoint(crosspoint, dotSize, dotSize);
-							if(selecting, {
+/*							if(selecting, {
 								selectRect = Rect.fromPoints(selectionStart, selectionEnd);
 								if(selectRect.containsPoint(crosspoint), {
 									selections[ins[y]] = selections[ins[y]].as(Set).add(outs[x]);
 								});
-							});
+							});*/
 
 							color.set;
 							Pen.fillOval(rect);
