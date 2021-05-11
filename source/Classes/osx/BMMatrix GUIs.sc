@@ -251,6 +251,7 @@ BMMatrixGUI : BMAbstractGUI {
 
 		userView.mouseDownAction = { arg view,inx,iny, mods;
 			if(mods.isAlt, {
+				if(mods.isShift.not, { selections = matrix.inNames.collectAs({|in| in->Set()}, IdentityDictionary);});
 				selecting = true;
 				selectionStart = selectionEnd = inx@iny;
 				window.refresh;
