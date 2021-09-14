@@ -200,6 +200,7 @@ BMMultichannelPluginsRackGUI : BMAbstractGUI {
 
 		width = 4 + 210 + 300;
 		window = Window(name, Rect.new(x, y, width, 618), false);
+		window.acceptsMouseOver = true;
 		window.view.decorator = FlowLayout(window.view.bounds);
 		pluglist = ScrollView(window, Rect(0, 0, 200, 508))
 			.hasHorizontalScroller_(false)
@@ -215,7 +216,7 @@ BMMultichannelPluginsRackGUI : BMAbstractGUI {
 				.beginDragAction_({
 					piName.asSymbol;
 				})
-				.mouseDownAction_({
+				.mouseOverAction_({
 					descriptionHelpText.string = piName ++ ": " ++
 						BMMultichannelPluginSpec.specs[piName].description;
 				});
@@ -340,7 +341,7 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 	makeWindow {|parent|
 		var buttons, insSources, insLV, outsSources, insSubArrays, outsSubArrays;
 		var inResult, outResult, outsLV, dragSource;
-		window = Window("Select Inputs and Outputs", Rect.new(0, 0, 500, 620), false);
+		window = Window("Select Inputs and Outputs", Rect.new(0, 0, 500, 620), false).front;
 		window.view.decorator = FlowLayout(window.view.bounds);
 
 		// ins
