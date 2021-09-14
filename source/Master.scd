@@ -11,7 +11,7 @@ var controllerAutomator, bmMenu, configMenu, utilMenu, autoMenuItem, autoGUI, he
 var pinkNoiseFunc, speakersWindow;
 var remoteTimeDisplayAddresses;
 
-
+MainMenu.initBuiltInMenus;
 s.options = BMOptions.defaultServerOptions;
 
 // init midi
@@ -314,6 +314,57 @@ help.bounds = help.bounds.resizeBy(700, 400);
 
 });*/
 MainMenu.register(MenuAction("Go to BEASTmulch Home Page", {"open http://www.birmingham.ac.uk/facilities/ea-studios/research/mulch.aspx".unixCmd;}), helpMenu);
+
+
+
+BMMultichannelPluginSpec('3rd Order ECH_8340s', 			// name
+	{|plugin, numInputs, numOutputs, inputs| // ugenGraphFunc
+		ECH8340sBWELVEMANFKEYS3h3vAllr.ar(*inputs);
+	},
+	nil,
+	nil, 												// use default GUI
+	nil, 							// presets
+	"3rd order ambisonic decoder, ACN/SN3D\noutput speaker order: FL FR WL WR SL SR RR RL N S W E MFL MFR MWL MWR MSL MSR MRL MRR KFL KFR KRL KRR",				// description
+	nil, 								// use defaultAttributes
+	[16, 16],								// inRange
+	[24, 24],								// outRange
+	nil, 							// setupFunc
+	nil								// cleanupFunc
+
+);
+
+BMMultichannelPluginSpec('3rd Order ECH_BWELVE_8040s', 			// name
+	{|plugin, numInputs, numOutputs, inputs| // ugenGraphFunc
+		ECH12BWELVEHI80403h3vAllrad520.ar(*inputs);
+	},
+	nil,
+	nil, 												// use default GUI
+	nil, 							// presets
+	"3rd order ambisonic decoder, ACN/SN3D\noutput speaker order: FL FR WL WR SL SR RL RR N S W E HFL HFR HWL HWR HSL HSR HRL HRR",				// description
+	nil, 								// use defaultAttributes
+	[16, 16],								// inRange
+	[24, 24],								// outRange
+	nil, 							// setupFunc
+	nil								// cleanupFunc
+
+);
+
+BMMultichannelPluginSpec('3rd Order French 8', 			// name
+	{|plugin, numInputs, numOutputs, inputs| // ugenGraphFunc
+		French83H3VSlepian112Band.ar(*inputs);
+	},
+	nil,
+	nil, 												// use default GUI
+	nil, 							// presets
+	"3rd order ambisonic decoder, ACN/SN3D\noutput speaker order: FL FR WL WR SL SR RL RR",				// description
+	nil, 								// use defaultAttributes
+	[16, 16],								// inRange
+	[24, 24],								// outRange
+	nil, 							// setupFunc
+	nil								// cleanupFunc
+
+)
+
 }.defer(1);
 }).play(AppClock);
 )
