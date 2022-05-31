@@ -39,6 +39,7 @@ BMAbstractMIDIController : BMAbstractController {
 		});
 		//spec = [0, 1, 'cos', 0.0].asSpec;
 		this.makeInputSpec;
+		this.addControlsToIndex;
 		this.updateAllValues(valueArray.copy);
 		allControllers[name] = this;
 	}
@@ -100,7 +101,7 @@ BMAbstractMIDIController : BMAbstractController {
 BMMIDIBendController : BMAbstractMIDIController {
 
 	*new { |midiport, name, server|
-		^super.new.init(midiport, name, server ? Server.default).addControlsToIndex;
+		^super.new.init(midiport, name, server ? Server.default);
 	}
 	
 	*newFromParamDict {|dict, server| 
@@ -149,7 +150,7 @@ BMMIDICCController : BMAbstractMIDIController {
 	*new { |midiport, name, chan, ccArray, server|
 		^super.new
 			.setCCParams(chan, ccArray)
-			.init(midiport, name, server ? Server.default).addControlsToIndex;
+			.init(midiport, name, server ? Server.default);
 	}
 	
 	*newFromParamDict {|dict, server| 
