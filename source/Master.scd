@@ -75,6 +75,7 @@ chainFunc = {
 	[
 		inputs,
 		BMAudioMatrix(inputArray, privateIns, name: 'Virtual Inputs'),
+		BMMultichannelPluginsRack(inputArray ++ privateIns, name: 'Decoding'),
 		BMTrimPluginsRack(inputArray ++ privateIns, name:'Pre-Processing'),
 		BMAmpControlMatrix(controllers, inputArray ++ privateIns, name:'Input Levels'),
 		BMAudioMatrix(inputArray ++ privateIns, outputArray ++ privateOuts, name: 'Audio Routing'),
