@@ -4,7 +4,7 @@ Routine({
 var player, controllersList;
 var pieceUpdater,  changeFromPlayerGUI = true, newPresetGUIFunc, addButton, backupManager;
 var arrays, outputArray, systemConfig;
-var controllers, inputs, inputArray, privateIns, privateOuts;
+var controllers, inputs, inputArray, privateIns, privateOuts, allInsWithSubArrays;
 var concertManager, configManager, pieces, configurations;
 var chainFunc, chain, cond, configsGUI, configsGUIFunc;
 var controllerAutomator, bmMenu, configMenu, utilMenu, autoMenuItem, autoGUI, helpMenu;
@@ -72,10 +72,13 @@ chainFunc = {
 	privateOuts = BMInOutArray.privateBusBlock('Virtual Out', systemConfig.numVirtOuts);
 
 	~getIns = inputArray;
+	allInsWithSubArrays = inputArray ++ privateIns;
+	allInsWithSubArrays.defineSubArrayFromMatch('Player Channels', "Player");
+	allInsWithSubArrays.defineSubArrayFromMatch('Hardware Inputs', "Hardware");
 	[
 		inputs,
 		BMAudioMatrix(inputArray, privateIns, name: 'Virtual Inputs'),
-		BMMultichannelPluginsRack(inputArray ++ privateIns, name: 'Decoding'),
+		BMMultichannelPluginsRack(allInsWithSubArrays, name: 'Decoding'),
 		BMTrimPluginsRack(inputArray ++ privateIns, name:'Pre-Processing'),
 		BMAmpControlMatrix(controllers, inputArray ++ privateIns, name:'Input Levels'),
 		BMAudioMatrix(inputArray ++ privateIns, outputArray ++ privateOuts, name: 'Audio Routing'),
