@@ -413,12 +413,15 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 		assignButton.states = [["<", Color.black, Color.white.alpha_(0.8)]];
 		assignButton.action = {
 			if (subarrayView.item.notNil and: { speakerView.item.notNil },{
-				outputArray.addToSubArray(subarrayView.item.asSymbol,
-					speakerView.item.asSymbol);
+				speakerView.selection.do({|i|
+				    outputArray.addToSubArray(subarrayView.item.asSymbol,
+						speakerView.items[i].asSymbol);
+				});
 				this.updateLists;
 			})
 		};
 		speakerView = ListView(speakerSection, Rect(0, 0, 200-8, 250-1))
+		    .selectionMode_(\extended)
 			.canReceiveDragHandler = false;
 		this.updateLists;
 		speakerView.beginDragAction = {|view| view.item };
