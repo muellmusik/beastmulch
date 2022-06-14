@@ -343,7 +343,7 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 
 	makeWindow {
 
-		window = Window("Subarray Editor", (800-20)@300, false);
+		window = Window("Subarray Editor", (800-20)@300, false).front;
 		window.view.decorator = FlowLayout(window.view.bounds);
 		subarraySection = CompositeView(window, 200 @ 281)
 			.background_(Color.grey.alpha_(0.3));
@@ -369,6 +369,7 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 		  	    	   { subarrayView.value_(viewIndex - 1) }
 		  	    	   { subarrayView.value_(viewIndex) };
 		  	    outputArray.removeSubArray(name.asSymbol);
+				subarrayView.items = outputArray.subArrays;
 		  	    this.updateLists;
 		  	 }
 		   };
@@ -449,7 +450,6 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 	}
 
 	updateLists {
-		subarrayView.items = outputArray.subArrays;
 		if (outputArray.subArrays.size > 0)
 			{ assignView.items  = outputArray.getSubArrayKeys(subarrayView.item.asSymbol);
 			  speakerView.items = outputArray.keys
@@ -465,7 +465,7 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 		var newSAWindow, subarrayNameField, okButton;
 
 		origin		= origin ?? { 490 @ 500 };
-		newSAWindow 		= Window("New Subarray", 260@110, false);
+		newSAWindow 		= Window("New Subarray", 260@110, false).front;
 		newSAWindow.view.decorator = FlowLayout(newSAWindow.view.bounds, Point(10, 10), Point(10, 10));
 
 		StaticText(newSAWindow, 50 @ 20).string = "Name:";
