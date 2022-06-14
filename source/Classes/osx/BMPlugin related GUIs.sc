@@ -306,7 +306,13 @@ BMMultichannelPluginsStripGUI {
 				plugin = BMMultichannelPlugin(piName, ins, outs,
 					pluginsStrip.server);
 				// protect against bad plugin inputs
-				plugin.notNil.if({pluginsStrip.addPlugin(plugin)});
+				plugin.notNil.if({
+					pluginsStrip.addPlugin(plugin);
+
+				}, {
+					BMAlert("Plugin Initialisation Failed: Check numbers of Inputs and Outputs");
+					false;
+				});
 			});
 		};
 		listView.beginDragAction = { pluginsStrip.plugins[listView.value].copy };
@@ -490,12 +496,10 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 			.extrude_(false).canFocus_(false)
 			.states_([[ "OK", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ]])
 			.action_({
-				window.close;
-				okFunc.value(
+				if(okFunc.value(
 					inResult.items.collectAs({|key| key->ins[key]}, BMInOutArray),
 					outResult.items.collectAs({|key| key->outs[key]}, BMInOutArray)
-				);
-				onClose.value(this);
+			).postln != false, {window.close; onClose.value(this);});
 			});
 
 	}
