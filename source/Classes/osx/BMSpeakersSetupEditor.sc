@@ -465,7 +465,7 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 
 	makeNewSubarrayWindow {| origin |
 
-		var newSAWindow, subarrayNameField, okButton;
+		var newSAWindow, subarrayNameField, okButton, matchCheck;
 
 		origin		= origin ?? { 490 @ 500 };
 		newSAWindow 		= Window("New Subarray", 260@110, false).front;
@@ -475,7 +475,10 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 
 		subarrayNameField	= TextField(newSAWindow, 180 @ 20);
 
-		newSAWindow.view.decorator.shift(0, 30);
+		newSAWindow.view.decorator.shift(0, 5);
+
+		matchCheck = CheckBox(newSAWindow, 180@20, "Create by Matching Name");
+		newSAWindow.view.decorator.shift(0, 5);
 
 		RoundButton(newSAWindow, 115 @ 20)
 			   .extrude_(false).canFocus_(false)
@@ -498,8 +501,13 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 	   			        			 border: false
 	   			        	 )
 	   			          }
-	   			          { newSAWindow.close;
-	   			            outputArray.defineSubArray(name, []);
+	   			          {
+					newSAWindow.close;
+	   			    if(matchCheck.value, {
+						outputArray.defineSubArrayFromMatch(name, name.asString);
+					}, {
+						outputArray.defineSubArray(name, []);
+					});
 	   			            subarrayView.items_(outputArray.subArrays.asArray);
 	   			            subarrayView.value_(outputArray.subArrays.lastIndex)
 	   			            	.doAction;
