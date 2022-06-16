@@ -379,20 +379,23 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 			dragSource = nil;
 			inResult.items = inResult.items.add(View.currentDrag)
 		};
-		inResult.keyDownAction = { arg view,char,modifiers,unicode,keycode;
-			var newItems;
+		inResult.keyDownAction = { arg view,char,modifiers,unicode,keycode, key;
+			var newItems, oldValue;
+			oldValue = view.value;
+
 	 		block { |break|
-				if((modifiers == 11534600) && (unicode == 63233), {
+				if((modifiers == 3145728) && (key == 16777237), {
 					if(view.value < (view.items.size -1), {
 						view.items = view.items.swap(view.value, view.value + 1);
 						view.refresh;
-						view.value = view.value + 1;
+						view.value = oldValue;
 					});
 					break.value;
 				});
-				if((modifiers == 11534600) && (unicode == 63232), {
+				if((modifiers == 3145728) && (key == 16777235), {
 					if(view.value > 0, {
 						view.items = view.items.swap(view.value, view.value - 1);
+						view.value = oldValue;
 					});
 					break.value;
 				});
@@ -445,21 +448,23 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 			dragSource = nil;
 			outResult.items = outResult.items.add(View.currentDrag)
 		};
-		outResult.keyDownAction = { arg view,char,modifiers,unicode,keycode;
-			var newItems;
+		outResult.keyDownAction = { arg view,char,modifiers,unicode,keycode, key;
+			var newItems, oldValue;
+			oldValue = view.value;
 
 	 		block { |break|
-				if((modifiers == 11534600) && (unicode == 63233), {
+				if((modifiers == 3145728) && (key == 16777237), {
 					if(view.value < (view.items.size -1), {
 						view.items = view.items.swap(view.value, view.value + 1);
 						view.refresh;
-						view.value = view.value + 1;
+						view.value = oldValue;
 					});
 					break.value;
 				});
-				if((modifiers == 11534600) && (unicode == 63232), {
+				if((modifiers == 3145728) && (key == 16777235), {
 					if(view.value > 0, {
 						view.items = view.items.swap(view.value, view.value - 1);
+						view.value = oldValue;
 					});
 					break.value;
 				});
