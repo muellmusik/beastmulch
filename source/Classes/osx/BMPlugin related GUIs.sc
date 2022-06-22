@@ -209,6 +209,8 @@ BMMultichannelPluginsRackGUI : BMAbstractGUI {
 		numStrips = 1;
 		pluglist = VLayoutView(pluglist, Rect(4,4,190, numTypes * 24 + 4));
 		BMMultichannelPluginSpec.specs.keys.asArray.sort.do({|piName|
+			var spec;
+			spec = BMMultichannelPluginSpec.specs[piName];
 			DragSource(pluglist, Rect(0, 0, 150, 20)).string_("   " ++ piName.asString)
 				.background_(Color.grey.alpha_(0.2))
 				.font_(Font("Helvetica-Bold", 12))
@@ -218,7 +220,8 @@ BMMultichannelPluginsRackGUI : BMAbstractGUI {
 				})
 				.mouseOverAction_({
 					descriptionHelpText.string = piName ++ ": " ++
-						BMMultichannelPluginSpec.specs[piName].description;
+					spec.description ++
+				    "\nNumber of Inputs %-% | Number of Outputs %-%".format(spec.minInputs, spec.maxInputs, spec.minOutputs, spec.maxOutputs);
 				});
 		});
 
