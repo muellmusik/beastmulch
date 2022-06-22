@@ -350,7 +350,8 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 	makeWindow {|parent|
 		var buttons, insSources, insLV, outsSources, insSubArrays, outsSubArrays;
 		var inResult, outResult, outsLV, dragSource;
-		window = Window("Select Inputs and Outputs", Rect.new(0, 0, 500, 620), false).front;
+		var upIns, downIns, upOuts, downOuts;
+		window = Window("Select Inputs and Outputs", Rect.new(0, 0, 500, 660), false).front;
 		window.view.decorator = FlowLayout(window.view.bounds);
 
 		// ins
@@ -423,6 +424,38 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 				menu.value = 0;
 			});
 
+		window.view.decorator.nextLine;
+		window.view.decorator.left = 166;
+
+		upIns	= RoundButton(window, 20 @ 20).extrude_(false).canFocus_(false);
+		upIns.states = [[ \up, Color.black,  Color.white.alpha_(0.8) ]];
+		upIns.action = {
+			var index;
+			index = inResult.value;
+			if (index.notNil && (index > 0), {
+				inResult.items = inResult.items.swap(index - 1, index);
+				inResult.refresh;
+				inResult.value = index - 1;
+			});
+
+		};
+
+		window.view.decorator.shift(-3, 0);
+
+		downIns = RoundButton(window, 20 @ 20).extrude_(false).canFocus_(false);
+		downIns.states = [[ \down, Color.black,  Color.white.alpha_(0.8) ]];
+		downIns.action = {
+			var index;
+			index = inResult.value;
+			if (index.notNil && (index < (inResult.items.size - 1)), {
+				inResult.items = inResult.items.swap(index, index + 1);
+				inResult.refresh;
+				inResult.value = index + 1;
+			});
+		};
+
+		window.view.decorator.nextLine;
+
 		// outs
 		StaticText(window, Rect(0, 0, 100, 30))
 			.string_("Outputs")
@@ -491,6 +524,36 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 				subArray.notNil.if({outResult.items = outResult.items ++ subArray.keys});
 				menu.value = 0;
 			});
+
+		window.view.decorator.nextLine;
+		window.view.decorator.left = 166;
+
+		upOuts	= RoundButton(window, 20 @ 20).extrude_(false).canFocus_(false);
+		upOuts.states = [[ \up, Color.black,  Color.white.alpha_(0.8) ]];
+		upOuts.action = {
+			var index;
+			index = outResult.value;
+			if (index.notNil && (index > 0), {
+				outResult.items = outResult.items.swap(index - 1, index);
+				outResult.refresh;
+				outResult.value = index - 1;
+			});
+
+		};
+
+		window.view.decorator.shift(-3, 0);
+
+		downOuts = RoundButton(window, 20 @ 20).extrude_(false).canFocus_(false);
+		downOuts.states = [[ \down, Color.black,  Color.white.alpha_(0.8) ]];
+		downOuts.action = {
+			var index;
+			index = outResult.value;
+			if (index.notNil && (index < (outResult.items.size - 1)), {
+				outResult.items = outResult.items.swap(index, index + 1);
+				outResult.refresh;
+				outResult.value = index + 1;
+			});
+		};
 
 		window.view.decorator.nextLine;
 		window.view.decorator.shift(window.bounds.width - 242, 0);
