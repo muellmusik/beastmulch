@@ -958,7 +958,7 @@ BMMultichannelPlugin {
 	gui {
 		gui.isNil.if({
 			gui = spec.guiFunc.value(this);
-			gui.onClose = gui.onClose.addFunc({ gui = nil });
+			if(gui.notNil, {gui.onClose = gui.onClose.addFunc({ gui = nil })});
 		}, {
 			gui.front;
 		});
