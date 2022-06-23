@@ -887,8 +887,8 @@ BMMultichannelPlugin {
 			// if sizes don't match take the first outputs
 			// use Out not XOut for multichannel
 			out.do({|chan, i| Out.ar(outputs.at(i), env * chan);});
-		});
-		
+		}).add;
+
 	}
 	
 	set {|key, value|
