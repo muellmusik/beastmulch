@@ -408,6 +408,7 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 						newItems = view.items;
 						newItems.removeAt(view.value);
 						view.items = newItems;
+						view.value = oldValue - 1;
 					});
 					break.value;
 				});
@@ -509,6 +510,7 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 						newItems = view.items;
 						newItems.removeAt(view.value);
 						view.items = newItems;
+						view.value = oldValue - 1;
 					});
 					break.value;
 				});
