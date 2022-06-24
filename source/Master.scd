@@ -1,4 +1,5 @@
 (
+"VST programmes/VSTSpecsAndProgrammes.scd".resolveRelative.load; // load programme data
 Routine({
 
 var player, controllersList;
@@ -335,6 +336,49 @@ BMMultichannelPluginSpec('3rd Order ECH_8340s', 			// name
 	nil								// cleanupFunc
 
 );
+
+BMMultichannelPluginSpec('3rd Order Studio 2-3', 			// name
+	{|plugin, numInputs, numOutputs, inputs| // ugenGraphFunc
+		St23o3.ar(*inputs);
+	},
+	nil,
+	nil, 												// use default GUI
+	nil, 							// presets
+	"3rd order ambisonic decoder, ACN/SN3D\noutput speaker order: FL FR WL WR SL SR RR RL HFL HFR HRL HRR KL KR",				// description
+	nil, 								// use defaultAttributes
+	[16, 16],								// inRange
+	[14, 14],								// outRange
+	nil, 							// setupFunc
+	nil								// cleanupFunc
+
+);
+
+
+	//
+		// (
+		// 	Ndef(\decoder, \vst-> {
+		// 		var encoded;
+		// 		encoded = SinOsc.ar(mul: 0.01) !16;
+		// 		//encoded = DelayC.ar(encoded, 0.2, \delay.kr(0.04, 1.0), -3.dbamp, encoded * -3.dbamp);
+		// 	VSTPlugin.ar(encoded, 14); });//.play(addAction: \addToTail);
+		// 	~controller = VSTPluginNodeProxyController(Ndef(\decoder)).open("BinauralDecoder", editor: true);
+		// )
+		//
+		// (
+		// 	Ndef(\decoder, \vst-> {
+		// 		var encoded;
+		// 		encoded = SinOsc.ar(mul: 0.01) !16;
+		// 		//encoded = DelayC.ar(encoded, 0.2, \delay.kr(0.04, 1.0), -3.dbamp, encoded * -3.dbamp);
+		// 	VSTPlugin.ar(encoded, 6); });//.play(addAction: \addToTail);
+		// 	~controller = VSTPluginNodeProxyController(Ndef(\decoder)).open("AllRADecoder", editor: true);
+		// )
+		//
+		// ~controller.readProgram("/Users/wilsosdz/Composition Projects/New Accord/6chan.fxp")
+		// ~controller.editor
+		//
+		// ~controller.getProgramData({|data| data.postcs;})
+		//
+		// ~controller.setProgramData()
 
 		// BMMultichannelPluginSpec('3rd Order ECH_8340s', 			// name
 		// 	{|plugin, numInputs, numOutputs, inputs| // ugenGraphFunc
