@@ -323,15 +323,31 @@ MainMenu.register(MenuAction("Go to BEASTmulch Home Page", {"open http://www.bir
 
 BMMultichannelPluginSpec('3rd Order ECH_8340s', 			// name
 	{|plugin, numInputs, numOutputs, inputs| // ugenGraphFunc
-		G8340s.ar(*inputs);
+		G8340o3.ar(*inputs);
 	},
 	nil,
 	nil, 												// use default GUI
 	nil, 							// presets
-	"3rd order ambisonic decoder, ACN/SN3D\noutput speaker order: FL FR WL WR SL SR RR RL N S W E MFL MFR MWL MWR MSL MSR MRL MRR KFL KFR KRL KRR",				// description
+	"3rd order ambisonic decoder, ACN/SN3D\noutput speaker order: FL FR WL WR SL SR RL RR N S W E MFL MFR MWL MWR MSL MSR MRL MRR KFL KFR KRL KRR",				// description
 	nil, 								// use defaultAttributes
 	[16, 16],								// inRange
 	[24, 24],								// outRange
+	nil, 							// setupFunc
+	nil								// cleanupFunc
+
+);
+
+BMMultichannelPluginSpec('3rd Order Dome French 8', 			// name
+	{|plugin, numInputs, numOutputs, inputs| // ugenGraphFunc
+		DomeFrO3.ar(*inputs);
+	},
+	nil,
+	nil, 												// use default GUI
+	nil, 							// presets
+	"3rd order ambisonic decoder, ACN/SN3D\noutput speaker order: FL FR WL WR SL SR RL RR HFL HFR HWL HWR HSL HSR HRL HRR KFL KFR KRL KRR",				// description
+	nil, 								// use defaultAttributes
+	[16, 16],								// inRange
+	[20, 20],								// outRange
 	nil, 							// setupFunc
 	nil								// cleanupFunc
 
