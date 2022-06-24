@@ -353,6 +353,54 @@ BMMultichannelPluginSpec('3rd Order Dome French 8', 			// name
 
 );
 
+BMMultichannelPluginSpec('5th Order Dome French 8', 			// name
+	{|plugin, numInputs, numOutputs, inputs| // ugenGraphFunc
+		DomeFrO3.ar(*inputs);
+	},
+	nil,
+	nil, 												// use default GUI
+	nil, 							// presets
+	"3rd order ambisonic decoder, ACN/SN3D\noutput speaker order: FL FR WL WR SL SR RL RR HFL HFR HWL HWR HSL HSR HRL HRR KFL KFR KRL KRR",				// description
+	nil, 								// use defaultAttributes
+	[36, 36],								// inRange
+	[20, 20],								// outRange
+	nil, 							// setupFunc
+	nil								// cleanupFunc
+
+);
+
+BMMultichannelPluginSpec('3rd Order 2D French 8', 			// name
+	{|plugin, numInputs, numOutputs, inputs| // ugenGraphFunc
+		French82Do3.ar(*inputs);
+	},
+	nil,
+	nil, 												// use default GUI
+	nil, 							// presets
+	"3rd order ambisonic decoder, ACN/SN3D\noutput speaker order: FL FR WL WR SL SR RL RR",				// description
+	nil, 								// use defaultAttributes
+	[16, 16],								// inRange
+	[8, 8],								// outRange
+	nil, 							// setupFunc
+	nil								// cleanupFunc
+
+);
+
+BMMultichannelPluginSpec('3rd Order ATC12 8040HI', 			// name
+	{|plugin, numInputs, numOutputs, inputs| // ugenGraphFunc
+		ATC8040HIo3.ar(*inputs);
+	},
+	nil,
+	nil, 												// use default GUI
+	nil, 							// presets
+	"3rd order ambisonic decoder, ACN/SN3D\noutput speaker order: FL FR WL WR SL SR RL RR N S W E HFL HFR HWL HWR HSL HSR HRL HRR",				// description
+	nil, 								// use defaultAttributes
+	[16, 16],								// inRange
+	[20, 20],								// outRange
+	nil, 							// setupFunc
+	nil								// cleanupFunc
+
+);
+
 BMMultichannelPluginSpec('3rd Order Studio 2-3', 			// name
 	{|plugin, numInputs, numOutputs, inputs| // ugenGraphFunc
 		St23o3.ar(*inputs);
