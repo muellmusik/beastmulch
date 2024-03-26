@@ -122,7 +122,7 @@ BMMIDIBendController : BMAbstractMIDIController {
 	setNumControls { numControls = 16;}
 	
 	makeInputSpec {
-		inputSpec = [0, 16384].asSpec;
+		inputSpec = [0, 16383].asSpec;
 	}
 	
 	startListening {
