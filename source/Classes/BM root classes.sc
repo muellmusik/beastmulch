@@ -100,7 +100,8 @@ BMAbstractController {
 	classvar <allControllers, <allControls;
 	var <name, <bus, <busIndex, valueArray, labelArray, <server, <numControls;
 	var spec, <controls;
-	
+	var <transportTarget; // must understand play, stop, togglePlay, pause, rate_ and setTime
+
 	*initClass {
 		allControllers = IdentityDictionary.new;
 		allControls = IdentityDictionary.new;
@@ -220,7 +221,13 @@ BMAbstractController {
 	stopListening { }
 	
 	startListening { }
-	
+
+	transportTarget_ { |target|
+		transportTarget.removeDependant(this);
+		transportTarget = target;
+		transportTarget.addDependant(this);
+	}
+
 	*stopAllListening { allControllers.do(_.stopListening) }
 	
 	*startAllListening { allControllers.do(_.startListening) }	

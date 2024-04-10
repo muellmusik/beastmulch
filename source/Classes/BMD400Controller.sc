@@ -5,7 +5,7 @@
 
 BMD400Controller : BMAbstractController {
 	classvar labelHeader = #[0xF0, 0x00, 0x00, 0x66, 0x10, 0x12];
-	var <ports, numPorts, midiFuncs, midiOuts;
+	var <ports, numPorts, midiFuncs, midiOuts, transportMIDIFunc;
 	var <>loopBack = false;
 	var <>acceptsAutomation = false;
 	var inputSpec;
@@ -56,11 +56,29 @@ BMD400Controller : BMAbstractController {
 				this.updateValue((i*8) + chan, val);
 			}, (0..7), ports[i].inuid).fix
 		});
+		transportMIDIFunc = MIDIFunc.noteOn({|vel, num|
+			if(transportTarget.notNil, {
+				switch(num,
+					94, { transportTarget.togglePlay }, // play
+					93, { transportTarget.stop }, // stop
+				)
+			})
+		}, srcID: ports[0].inuid)
+	}
+
+	update {|changer, changed|
+		switch(changed,
+			\play, { midiOuts[0].noteOn(0, 94, 127) },
+			\pause, { midiOuts[0].noteOn(0, 94, 0) },
+			\stop, { midiOuts[0].noteOn(0, 94, 0) }
+		)
 	}
 
 	stopListening {
 		midiFuncs.do({|func| func.free });
 		midiFuncs = nil;
+		transportMIDIFunc.free;
+		transportMIDIFunc = nil;
 	}
 
 	zeroControls { this.setAllValues(0 ! numControls) }
@@ -118,7 +136,7 @@ BMD400Controller : BMAbstractController {
 		#msgUpper, msgLower = if(splitBySpace, {name.split(Char.space)}, {[name.copyFromStart(6), name.copyRange(7,13)]});
 		offset = (fader - 1)%8 * 7; // calculate character offset for this fader on the correct subdevice
 		midiOut = midiOuts[((fader - 1)/8).asInteger]; // get the MIDIOut of the D400F subunit
-		midiOut.sysex((labelHeader ++ offset ++ msgUpper.padRight(7, " ").ascii ++ 0xF7).postln.as(Int8Array).postln); // set the upper chars
+		midiOut.sysex((labelHeader ++ offset ++ msgUpper.padRight(7, " ").ascii ++ 0xF7).as(Int8Array)); // set the upper chars
 		midiOut.sysex((labelHeader ++ (0x38 + offset) ++ msgLower.padRight(7, " ").ascii ++ 0xF7).as(Int8Array)); // set the upper chars
 		labelArray[fader - 1] = name;
 		this.changed(\label, fader - 1, name);
