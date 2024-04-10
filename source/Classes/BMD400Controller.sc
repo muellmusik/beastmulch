@@ -1,8 +1,10 @@
 // This is essentially a cluster controller for a multi port MIDI device
+// As such it's not a subclass of BMMIDIController
 // for network use, we need to do live routings to/from on remote computer, and select the network port on this computer
 // One network MIDI session for each controller
 
 BMD400Controller : BMAbstractController {
+	classvar labelHeader = #[0xF0, 0x00, 0x00, 0x66, 0x10, 0x12];
 	var <ports, numPorts, midiFuncs, midiOuts;
 	var <>loopBack = false;
 	var <>acceptsAutomation = false;
@@ -29,6 +31,8 @@ BMD400Controller : BMAbstractController {
 		this.addControlsToIndex;
 		this.updateAllValues(valueArray.copy);
 		allControllers[name] = this;
+		labelArray = Array.fill(numControls, {""});
+		this.setAllLabels(numControls.collect({arg i; (i+1).asString}));
 	}
 
 	*newFromParamDict {|dict, server|
@@ -104,14 +108,27 @@ BMD400Controller : BMAbstractController {
 		});
 	}
 
-	// do later
-	setLabel { |controlNum, name|  }
+	setLabel { |fader, name|
+		var firstSpace, splitBySpace, msgUpper, msgLower, midiOut, offset;
+		// need to split the string sensibly to go on upper and lower lines
+		// (by space if there is one and halves will fit, otherwise just wrap)
+		// then zeropad to overwrite, and send
+		firstSpace = name.find(" ") ?? inf;
+		splitBySpace = (firstSpace <= 7) && (name.size - firstSpace <=7);
+		#msgUpper, msgLower = if(splitBySpace, {name.split(Char.space)}, {[name.copyFromStart(6), name.copyRange(7,13)]});
+		offset = (fader - 1)%8 * 7; // calculate character offset for this fader on the correct subdevice
+		midiOut = midiOuts[((fader - 1)/8).asInteger]; // get the MIDIOut of the D400F subunit
+		midiOut.sysex((labelHeader ++ offset ++ msgUpper.padRight(7, " ").ascii ++ 0xF7).postln.as(Int8Array).postln); // set the upper chars
+		midiOut.sysex((labelHeader ++ (0x38 + offset) ++ msgLower.padRight(7, " ").ascii ++ 0xF7).as(Int8Array)); // set the upper chars
+		labelArray[fader - 1] = name;
+		this.changed(\label, fader - 1, name);
+	}
 
-	getLabel { |controlNum| ^nil }
+	getLabel { |fader| ^labelArray[fader-1] }
 
-	getAllLabels { ^nil }
+	getAllLabels {  ^labelArray  }
 
-	setAllLabels { |array| }
+	setAllLabels {|array| array.do({|item, i| this.setLabel(i+1, item);}); }
 
 /*	setVal { |chan, val|
 		midiout.bend(chan-1, val);
