@@ -16,7 +16,7 @@ BMD400Controller : BMAbstractController {
 
 	init { |argName, argNumControls, argServer|
 		name = argName;
-		numControls = argNumControls;
+		numControls = argNumControls.asInteger;
 		server = argServer;
 		if(numControls%8 != 0, {"D400 number of controls should be a multiple of 8".warn});
 		if(BMMIDIPort.ports.collectAs({|port| port.device}, Set).includes(name.asString).not, {"D400 name must match existing MIDI Device name. Initialisation failed".warn});
@@ -36,7 +36,7 @@ BMD400Controller : BMAbstractController {
 	}
 
 	*newFromParamDict {|dict, server|
-		^this.new(dict[\midiport], dict[\name], server);
+		^this.new(dict[\name], dict[\numControls], server);
 	}
 
 	*parameterList {
@@ -44,7 +44,7 @@ BMD400Controller : BMAbstractController {
 		class = this;
 		^(
 			name: [Symbol, {class.makeName}, "Name"],
-			numControls: [Integer, [1, 64, \linear, 1].asSpec, "Number of Faders"]
+			numControls: [Integer, [8, 64, \linear, 32].asSpec, "Number of Faders"]
 		);
 	}
 
