@@ -100,7 +100,13 @@ player.addDependant({|changer, what, time|
 	});
 });
 
-controllerAutomator = BMControllerAutomator(BMAbstractController.masterInOutArray.keys, player);
+// Register transport controls
+
+BMAbstractController.allControllers.do({|controller| controller.transportTarget = player });
+
+////
+
+		controllerAutomator = BMControllerAutomator(BMAbstractController.masterInOutArray.keys, player);
 ~controllerAutomator = controllerAutomator;
 bmMenu = "BEASTmulch";
 
