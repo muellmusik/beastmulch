@@ -5,12 +5,12 @@ BMOptions {
 	classvar <>crossfade = 0.1;
 	classvar <>numInputBusChannels = 8;
 	classvar <>numOutputBusChannels = 8;
-	classvar <>numWireBufs = 1024; // can be complicated
+	classvar <>numWireBufs = 4096; // can be complicated
 	classvar <>numAudioBusChannels = 1024; // we need a lot
 	classvar <>memSize = 131072; // all those delays for compensating
 	classvar <>maxNodes = 4096;
 	classvar <>allowMultipleControlMappings = false;
-	
+
 	*defaultServerOptions {
 		^ServerOptions.new
 			.memSize_(memSize)

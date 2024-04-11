@@ -343,7 +343,7 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 
 	makeWindow {
 
-		window = Window("Subarray Editor", (800-20)@300, false);
+		window = Window("Subarray Editor", (800-20)@300, false).front;
 		window.view.decorator = FlowLayout(window.view.bounds);
 		subarraySection = CompositeView(window, 200 @ 281)
 			.background_(Color.grey.alpha_(0.3));
@@ -369,6 +369,7 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 		  	    	   { subarrayView.value_(viewIndex - 1) }
 		  	    	   { subarrayView.value_(viewIndex) };
 		  	    outputArray.removeSubArray(name.asSymbol);
+				subarrayView.items = outputArray.subArrays;
 		  	    this.updateLists;
 		  	 }
 		   };
@@ -412,12 +413,15 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 		assignButton.states = [["<", Color.black, Color.white.alpha_(0.8)]];
 		assignButton.action = {
 			if (subarrayView.item.notNil and: { speakerView.item.notNil },{
-				outputArray.addToSubArray(subarrayView.item.asSymbol,
-					speakerView.item.asSymbol);
+				speakerView.selection.do({|i|
+				    outputArray.addToSubArray(subarrayView.item.asSymbol,
+						speakerView.items[i].asSymbol);
+				});
 				this.updateLists;
 			})
 		};
 		speakerView = ListView(speakerSection, Rect(0, 0, 200-8, 250-1))
+		    .selectionMode_(\extended)
 			.canReceiveDragHandler = false;
 		this.updateLists;
 		speakerView.beginDragAction = {|view| view.item };
@@ -449,7 +453,6 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 	}
 
 	updateLists {
-		subarrayView.items = outputArray.subArrays;
 		if (outputArray.subArrays.size > 0)
 			{ assignView.items  = outputArray.getSubArrayKeys(subarrayView.item.asSymbol);
 			  speakerView.items = outputArray.keys
@@ -462,17 +465,20 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 
 	makeNewSubarrayWindow {| origin |
 
-		var newSAWindow, subarrayNameField, okButton;
+		var newSAWindow, subarrayNameField, okButton, matchCheck;
 
 		origin		= origin ?? { 490 @ 500 };
-		newSAWindow 		= Window("New Subarray", 260@110, false);
+		newSAWindow 		= Window("New Subarray", 260@110, false).front;
 		newSAWindow.view.decorator = FlowLayout(newSAWindow.view.bounds, Point(10, 10), Point(10, 10));
 
 		StaticText(newSAWindow, 50 @ 20).string = "Name:";
 
 		subarrayNameField	= TextField(newSAWindow, 180 @ 20);
 
-		newSAWindow.view.decorator.shift(0, 30);
+		newSAWindow.view.decorator.shift(0, 5);
+
+		matchCheck = CheckBox(newSAWindow, 180@20, "Create by Matching Name");
+		newSAWindow.view.decorator.shift(0, 5);
 
 		RoundButton(newSAWindow, 115 @ 20)
 			   .extrude_(false).canFocus_(false)
@@ -495,8 +501,13 @@ BMSubarrayMenuGUI : BMAbstractGUI {
 	   			        			 border: false
 	   			        	 )
 	   			          }
-	   			          { newSAWindow.close;
-	   			            outputArray.defineSubArray(name, []);
+	   			          {
+					newSAWindow.close;
+	   			    if(matchCheck.value, {
+						outputArray.defineSubArrayFromMatch(name, name.asString);
+					}, {
+						outputArray.defineSubArray(name, []);
+					});
 	   			            subarrayView.items_(outputArray.subArrays.asArray);
 	   			            subarrayView.value_(outputArray.subArrays.lastIndex)
 	   			            	.doAction;

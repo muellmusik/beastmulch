@@ -396,6 +396,25 @@ i.getSubArray(\firstTwo);
 ::
 
 	
+
+method:: defineSubArrayFromMatch
+Define a subarray which can be accessed by name by selecting all elements whose names contain matchText.
+
+argument:: name
+A Symbol indicating the name of the subarray.
+argument:: matchText
+A String or Symbol to match
+
+code::
+i = Bus.audio(s, 12).asBMInOutArray(\myPrivateBusaho);
+i.addFirst(BMSpeaker(\bar, 2)); // add a BMSpeaker before \foo
+i.defineSubArrayFromMatch(\private, "Private");
+i.defineSubArrayFromMatch(\bar, "bar");
+i.getSubArray(\private);
+i.getSubArray(\bar);
+::
+
+
 method:: getSubArray
 Returns a new BMInOutArray corresponding to the subarray specified by name.
 

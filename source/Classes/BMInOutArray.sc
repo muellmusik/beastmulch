@@ -180,11 +180,20 @@ BMInOutArray : List {
 		subArrays[name] = elementNames.sect(this.keys); 
 		index = subArraysKeys.indexOf(name);
 		if (index.isNil) { subArraysKeys = subArraysKeys.add(name) };	}
-	
-	getSubArray {|name| 
-		^subArrays[name].collectAs({|key| key->this[key] }, this.class); 
+
+	defineSubArrayFromMatch {|name, matchText|
+		var matches;
+		matchText = matchText.asString;
+		matches = this.keys.select({|name|
+			name.asString.contains(matchText);
+		});
+		this.defineSubArray(name, matches);
 	}
-	
+
+	getSubArray {|name|
+		^subArrays[name].collectAs({|key| key->this[key] }, this.class);
+	}
+
 	getSubArrayKeys {|name | ^subArrays[name] }
 	
 	removeSubArray {|name|

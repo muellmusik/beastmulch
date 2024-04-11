@@ -1,10 +1,11 @@
 (
+"VST programmes/VSTSpecsAndProgrammes.scd".resolveRelative.load; // load programme data
 Routine({
 
 var player, controllersList;
 var pieceUpdater,  changeFromPlayerGUI = true, newPresetGUIFunc, addButton, backupManager;
 var arrays, outputArray, systemConfig;
-var controllers, inputs, inputArray, privateIns, privateOuts;
+var controllers, inputs, inputArray, privateIns, privateOuts, allInsWithSubArrays;
 var concertManager, configManager, pieces, configurations;
 var chainFunc, chain, cond, configsGUI, configsGUIFunc;
 var controllerAutomator, bmMenu, configMenu, utilMenu, autoMenuItem, autoGUI, helpMenu;
@@ -72,9 +73,13 @@ chainFunc = {
 	privateOuts = BMInOutArray.privateBusBlock('Virtual Out', systemConfig.numVirtOuts);
 
 	~getIns = inputArray;
+	allInsWithSubArrays = inputArray ++ privateIns;
+	allInsWithSubArrays.defineSubArrayFromMatch('Player Channels', "Player");
+	allInsWithSubArrays.defineSubArrayFromMatch('Hardware Inputs', "Hardware");
 	[
 		inputs,
 		BMAudioMatrix(inputArray, privateIns, name: 'Virtual Inputs'),
+		BMMultichannelPluginsRack(allInsWithSubArrays, name: 'Decoding'),
 		BMTrimPluginsRack(inputArray ++ privateIns, name:'Pre-Processing'),
 		BMAmpControlMatrix(controllers, inputArray ++ privateIns, name:'Input Levels'),
 		BMAudioMatrix(inputArray ++ privateIns, outputArray ++ privateOuts, name: 'Audio Routing'),
@@ -318,12 +323,12 @@ MainMenu.register(MenuAction("Go to BEASTmulch Home Page", {"open http://www.bir
 
 BMMultichannelPluginSpec('3rd Order ECH_8340s', 			// name
 	{|plugin, numInputs, numOutputs, inputs| // ugenGraphFunc
-		G8340s.ar(*inputs);
+		G8340o3.ar(*inputs);
 	},
 	nil,
 	nil, 												// use default GUI
 	nil, 							// presets
-	"3rd order ambisonic decoder, ACN/SN3D\noutput speaker order: FL FR WL WR SL SR RR RL N S W E MFL MFR MWL MWR MSL MSR MRL MRR KFL KFR KRL KRR",				// description
+	"3rd order ambisonic decoder, ACN/SN3D\noutput speaker order: FL FR WL WR SL SR RL RR N S W E MFL MFR MWL MWR MSL MSR MRL MRR KFL KFR KRL KRR",				// description
 	nil, 								// use defaultAttributes
 	[16, 16],								// inRange
 	[24, 24],								// outRange
@@ -331,6 +336,113 @@ BMMultichannelPluginSpec('3rd Order ECH_8340s', 			// name
 	nil								// cleanupFunc
 
 );
+
+BMMultichannelPluginSpec('3rd Order Dome French 8', 			// name
+	{|plugin, numInputs, numOutputs, inputs| // ugenGraphFunc
+		DomeFrO3.ar(*inputs);
+	},
+	nil,
+	nil, 												// use default GUI
+	nil, 							// presets
+	"3rd order ambisonic decoder, ACN/SN3D\noutput speaker order: FL FR WL WR SL SR RL RR HFL HFR HWL HWR HSL HSR HRL HRR KFL KFR KRL KRR",				// description
+	nil, 								// use defaultAttributes
+	[16, 16],								// inRange
+	[20, 20],								// outRange
+	nil, 							// setupFunc
+	nil								// cleanupFunc
+
+);
+
+BMMultichannelPluginSpec('5th Order Dome French 8', 			// name
+	{|plugin, numInputs, numOutputs, inputs| // ugenGraphFunc
+		DomeFrO3.ar(*inputs);
+	},
+	nil,
+	nil, 												// use default GUI
+	nil, 							// presets
+	"3rd order ambisonic decoder, ACN/SN3D\noutput speaker order: FL FR WL WR SL SR RL RR HFL HFR HWL HWR HSL HSR HRL HRR KFL KFR KRL KRR",				// description
+	nil, 								// use defaultAttributes
+	[36, 36],								// inRange
+	[20, 20],								// outRange
+	nil, 							// setupFunc
+	nil								// cleanupFunc
+
+);
+
+BMMultichannelPluginSpec('3rd Order 2D French 8', 			// name
+	{|plugin, numInputs, numOutputs, inputs| // ugenGraphFunc
+		French82Do3.ar(*inputs);
+	},
+	nil,
+	nil, 												// use default GUI
+	nil, 							// presets
+	"3rd order ambisonic decoder, ACN/SN3D\noutput speaker order: FL FR WL WR SL SR RL RR",				// description
+	nil, 								// use defaultAttributes
+	[16, 16],								// inRange
+	[8, 8],								// outRange
+	nil, 							// setupFunc
+	nil								// cleanupFunc
+
+);
+
+BMMultichannelPluginSpec('3rd Order ATC12 8040HI', 			// name
+	{|plugin, numInputs, numOutputs, inputs| // ugenGraphFunc
+		ATC8040HIo3.ar(*inputs);
+	},
+	nil,
+	nil, 												// use default GUI
+	nil, 							// presets
+	"3rd order ambisonic decoder, ACN/SN3D\noutput speaker order: FL FR WL WR SL SR RL RR N S W E HFL HFR HWL HWR HSL HSR HRL HRR",				// description
+	nil, 								// use defaultAttributes
+	[16, 16],								// inRange
+	[20, 20],								// outRange
+	nil, 							// setupFunc
+	nil								// cleanupFunc
+
+);
+
+BMMultichannelPluginSpec('3rd Order Studio 2-3', 			// name
+	{|plugin, numInputs, numOutputs, inputs| // ugenGraphFunc
+		St23o3.ar(*inputs);
+	},
+	nil,
+	nil, 												// use default GUI
+	nil, 							// presets
+	"3rd order ambisonic decoder, ACN/SN3D\noutput speaker order: FL FR WL WR SL SR RR RL HFL HFR HRL HRR KL KR",				// description
+	nil, 								// use defaultAttributes
+	[16, 16],								// inRange
+	[14, 14],								// outRange
+	nil, 							// setupFunc
+	nil								// cleanupFunc
+
+);
+
+
+	//
+		// (
+		// 	Ndef(\decoder, \vst-> {
+		// 		var encoded;
+		// 		encoded = SinOsc.ar(mul: 0.01) !16;
+		// 		//encoded = DelayC.ar(encoded, 0.2, \delay.kr(0.04, 1.0), -3.dbamp, encoded * -3.dbamp);
+		// 	VSTPlugin.ar(encoded, 14); });//.play(addAction: \addToTail);
+		// 	~controller = VSTPluginNodeProxyController(Ndef(\decoder)).open("BinauralDecoder", editor: true);
+		// )
+		//
+		// (
+		// 	Ndef(\decoder, \vst-> {
+		// 		var encoded;
+		// 		encoded = SinOsc.ar(mul: 0.01) !16;
+		// 		//encoded = DelayC.ar(encoded, 0.2, \delay.kr(0.04, 1.0), -3.dbamp, encoded * -3.dbamp);
+		// 	VSTPlugin.ar(encoded, 6); });//.play(addAction: \addToTail);
+		// 	~controller = VSTPluginNodeProxyController(Ndef(\decoder)).open("AllRADecoder", editor: true);
+		// )
+		//
+		// ~controller.readProgram("/Users/wilsosdz/Composition Projects/New Accord/6chan.fxp")
+		// ~controller.editor
+		//
+		// ~controller.getProgramData({|data| data.postcs;})
+		//
+		// ~controller.setProgramData()
 
 		// BMMultichannelPluginSpec('3rd Order ECH_8340s', 			// name
 		// 	{|plugin, numInputs, numOutputs, inputs| // ugenGraphFunc

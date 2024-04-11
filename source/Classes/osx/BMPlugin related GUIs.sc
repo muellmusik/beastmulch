@@ -209,6 +209,8 @@ BMMultichannelPluginsRackGUI : BMAbstractGUI {
 		numStrips = 1;
 		pluglist = VLayoutView(pluglist, Rect(4,4,190, numTypes * 24 + 4));
 		BMMultichannelPluginSpec.specs.keys.asArray.sort.do({|piName|
+			var spec;
+			spec = BMMultichannelPluginSpec.specs[piName];
 			DragSource(pluglist, Rect(0, 0, 150, 20)).string_("   " ++ piName.asString)
 				.background_(Color.grey.alpha_(0.2))
 				.font_(Font("Helvetica-Bold", 12))
@@ -218,7 +220,8 @@ BMMultichannelPluginsRackGUI : BMAbstractGUI {
 				})
 				.mouseOverAction_({
 					descriptionHelpText.string = piName ++ ": " ++
-						BMMultichannelPluginSpec.specs[piName].description;
+					spec.description ++
+				    "\nNumber of Inputs %-% | Number of Outputs %-%".format(spec.minInputs, spec.maxInputs, spec.minOutputs, spec.maxOutputs);
 				});
 		});
 
@@ -306,7 +309,13 @@ BMMultichannelPluginsStripGUI {
 				plugin = BMMultichannelPlugin(piName, ins, outs,
 					pluginsStrip.server);
 				// protect against bad plugin inputs
-				plugin.notNil.if({pluginsStrip.addPlugin(plugin)});
+				plugin.notNil.if({
+					pluginsStrip.addPlugin(plugin);
+
+				}, {
+					BMAlert("Plugin Initialisation Failed: Check numbers of Inputs and Outputs");
+					false;
+				});
 			});
 		};
 		listView.beginDragAction = { pluginsStrip.plugins[listView.value].copy };
@@ -341,7 +350,8 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 	makeWindow {|parent|
 		var buttons, insSources, insLV, outsSources, insSubArrays, outsSubArrays;
 		var inResult, outResult, outsLV, dragSource;
-		window = Window("Select Inputs and Outputs", Rect.new(0, 0, 500, 620), false).front;
+		var upIns, downIns, upOuts, downOuts;
+		window = Window("Select Inputs and Outputs", Rect.new(0, 0, 500, 660), false).front;
 		window.view.decorator = FlowLayout(window.view.bounds);
 
 		// ins
@@ -373,20 +383,23 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 			dragSource = nil;
 			inResult.items = inResult.items.add(View.currentDrag)
 		};
-		inResult.keyDownAction = { arg view,char,modifiers,unicode,keycode;
-			var newItems;
+		inResult.keyDownAction = { arg view,char,modifiers,unicode,keycode, key;
+			var newItems, oldValue;
+			oldValue = view.value;
+
 	 		block { |break|
-				if((modifiers == 11534600) && (unicode == 63233), {
+				if((modifiers == 3145728) && (key == 16777237), {
 					if(view.value < (view.items.size -1), {
 						view.items = view.items.swap(view.value, view.value + 1);
 						view.refresh;
-						view.value = view.value + 1;
+						view.value = oldValue;
 					});
 					break.value;
 				});
-				if((modifiers == 11534600) && (unicode == 63232), {
+				if((modifiers == 3145728) && (key == 16777235), {
 					if(view.value > 0, {
 						view.items = view.items.swap(view.value, view.value - 1);
+						view.value = oldValue;
 					});
 					break.value;
 				});
@@ -395,6 +408,7 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 						newItems = view.items;
 						newItems.removeAt(view.value);
 						view.items = newItems;
+						view.value = oldValue - 1;
 					});
 					break.value;
 				});
@@ -410,6 +424,38 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 				subArray.notNil.if({inResult.items = inResult.items ++ subArray.keys});
 				menu.value = 0;
 			});
+
+		window.view.decorator.nextLine;
+		window.view.decorator.left = 166;
+
+		upIns	= RoundButton(window, 20 @ 20).extrude_(false).canFocus_(false);
+		upIns.states = [[ \up, Color.black,  Color.white.alpha_(0.8) ]];
+		upIns.action = {
+			var index;
+			index = inResult.value;
+			if (index.notNil && (index > 0), {
+				inResult.items = inResult.items.swap(index - 1, index);
+				inResult.refresh;
+				inResult.value = index - 1;
+			});
+
+		};
+
+		window.view.decorator.shift(-3, 0);
+
+		downIns = RoundButton(window, 20 @ 20).extrude_(false).canFocus_(false);
+		downIns.states = [[ \down, Color.black,  Color.white.alpha_(0.8) ]];
+		downIns.action = {
+			var index;
+			index = inResult.value;
+			if (index.notNil && (index < (inResult.items.size - 1)), {
+				inResult.items = inResult.items.swap(index, index + 1);
+				inResult.refresh;
+				inResult.value = index + 1;
+			});
+		};
+
+		window.view.decorator.nextLine;
 
 		// outs
 		StaticText(window, Rect(0, 0, 100, 30))
@@ -439,21 +485,23 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 			dragSource = nil;
 			outResult.items = outResult.items.add(View.currentDrag)
 		};
-		outResult.keyDownAction = { arg view,char,modifiers,unicode,keycode;
-			var newItems;
+		outResult.keyDownAction = { arg view,char,modifiers,unicode,keycode, key;
+			var newItems, oldValue;
+			oldValue = view.value;
 
 	 		block { |break|
-				if((modifiers == 11534600) && (unicode == 63233), {
+				if((modifiers == 3145728) && (key == 16777237), {
 					if(view.value < (view.items.size -1), {
 						view.items = view.items.swap(view.value, view.value + 1);
 						view.refresh;
-						view.value = view.value + 1;
+						view.value = oldValue;
 					});
 					break.value;
 				});
-				if((modifiers == 11534600) && (unicode == 63232), {
+				if((modifiers == 3145728) && (key == 16777235), {
 					if(view.value > 0, {
 						view.items = view.items.swap(view.value, view.value - 1);
+						view.value = oldValue;
 					});
 					break.value;
 				});
@@ -462,6 +510,7 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 						newItems = view.items;
 						newItems.removeAt(view.value);
 						view.items = newItems;
+						view.value = oldValue - 1;
 					});
 					break.value;
 				});
@@ -479,6 +528,36 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 			});
 
 		window.view.decorator.nextLine;
+		window.view.decorator.left = 166;
+
+		upOuts	= RoundButton(window, 20 @ 20).extrude_(false).canFocus_(false);
+		upOuts.states = [[ \up, Color.black,  Color.white.alpha_(0.8) ]];
+		upOuts.action = {
+			var index;
+			index = outResult.value;
+			if (index.notNil && (index > 0), {
+				outResult.items = outResult.items.swap(index - 1, index);
+				outResult.refresh;
+				outResult.value = index - 1;
+			});
+
+		};
+
+		window.view.decorator.shift(-3, 0);
+
+		downOuts = RoundButton(window, 20 @ 20).extrude_(false).canFocus_(false);
+		downOuts.states = [[ \down, Color.black,  Color.white.alpha_(0.8) ]];
+		downOuts.action = {
+			var index;
+			index = outResult.value;
+			if (index.notNil && (index < (outResult.items.size - 1)), {
+				outResult.items = outResult.items.swap(index, index + 1);
+				outResult.refresh;
+				outResult.value = index + 1;
+			});
+		};
+
+		window.view.decorator.nextLine;
 		window.view.decorator.shift(window.bounds.width - 242, 0);
 
 		RoundButton(window, 115 @ 20)
@@ -490,12 +569,10 @@ BMSelectInsOutsGUI : BMAbstractGUI {
 			.extrude_(false).canFocus_(false)
 			.states_([[ "OK", Color.black, Color.new255(51, 111, 203, 255 * 0.95) ]])
 			.action_({
-				window.close;
-				okFunc.value(
+				if(okFunc.value(
 					inResult.items.collectAs({|key| key->ins[key]}, BMInOutArray),
 					outResult.items.collectAs({|key| key->outs[key]}, BMInOutArray)
-				);
-				onClose.value(this);
+			).postln != false, {window.close; onClose.value(this);});
 			});
 
 	}
