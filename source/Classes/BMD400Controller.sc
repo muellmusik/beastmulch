@@ -148,6 +148,8 @@ BMD400Controller : BMAbstractController {
 
 	setAllLabels {|array| array.do({|item, i| this.setLabel(i+1, item);}); }
 
+	hasLabels { ^true }
+
 /*	setVal { |chan, val|
 		midiout.bend(chan-1, val);
 		this.updateValue(chan -1, inputSpec.map(controls[chan-1].controlSpec.unmap(val)))

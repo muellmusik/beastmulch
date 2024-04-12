@@ -190,7 +190,9 @@ BMAbstractController {
 	getAllLabels { ^nil}
 	
 	setAllLabels { |array| }
-	
+
+	hasLabels { ^false }
+
 	controlNames {^Array.fill(numControls, {|i| (name.asString ++ "-" ++ (i+1)).asSymbol})}
 
 	asBMInOutArray {
