@@ -125,6 +125,11 @@ MainMenu.register(MenuAction("Show Virtual Controllers", {
 	})
 }), bmMenu);
 
+MainMenu.register(MenuAction("Edit Controller Labels for Active Config", {
+	BMControllerLabelGUI("Edit Controller Labels for Active Config", BMAbstractController.allControllers);
+}), bmMenu);
+
+
 configManager	= BMConfigurations(configurations, backupManager);
 concertManager= BMConcert(pieces, configManager, [ outputArray, inputArray ], BMAbstractController.allControllers, controllerAutomator, systemConfig, backupManager);
 
