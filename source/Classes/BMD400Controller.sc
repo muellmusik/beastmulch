@@ -171,15 +171,6 @@ BMD400Controller : BMAbstractController {
 		if(loopBack || acceptsAutomation, {\updating.postln; this.loopback(ind, val.postln)});
 	}*/
 
-	mappings {
-		^IdentityDictionary[\faderVals->this.getAllValues];
-	}
-
-	mappings_ {|mappings|
-		mappings = mappings ? ();
-		this.setAllValues(mappings[\faderVals]);
-	}
-
 }
 
 
