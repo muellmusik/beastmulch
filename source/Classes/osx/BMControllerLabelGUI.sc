@@ -14,6 +14,11 @@ BMControllerLabelGUI : BMAbstractGUI {
 		var mainLayout;
 		window = Window(name, Rect(30, 30, 300, 600), scroll: true).alwaysOnTop_(true);
 		window.layout = mainLayout = VLayout();
+		mainLayout.add(Button().states_([["Default Labels"]]).action_({
+			controllers.do({|controller|
+				if(controller.hasLabels, { controller.setAllLabels(controller.defaultLabels) })
+			});
+		}));
 		controllers.do({|controller|
 			var controllerLayout, mappedTo;
 			if(controller.hasLabels, {
