@@ -63,6 +63,8 @@ BMVirtualController : BMAbstractController {
 	
 	setAllLabels {|array| array.do({|item, i| this.setLabel(i+1, item);}); }
 
+	defaultLabels { ^numControls.collect({|i| name ++ (i+1) }); }
+
 	hasLabels { ^true }
 
 	acceptsAutomation { ^true }

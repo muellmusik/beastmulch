@@ -32,7 +32,7 @@ BMD400Controller : BMAbstractController {
 		this.updateAllValues(valueArray.copy);
 		allControllers[name] = this;
 		labelArray = Array.fill(numControls, {""});
-		this.setAllLabels(numControls.collect({arg i; (i+1).asString}));
+		this.setAllLabels(this.defaultLabels);
 	}
 
 	*newFromParamDict {|dict, server|
@@ -146,9 +146,11 @@ BMD400Controller : BMAbstractController {
 
 	getAllLabels {  ^labelArray  }
 
-	setAllLabels {|array| array.do({|item, i| this.setLabel(i+1, item);}); }
+	setAllLabels {|array| array = array ?? { this.defaultLabels }; array.do({|item, i| this.setLabel(i+1, item);}); }
 
 	hasLabels { ^true }
+
+	defaultLabels { ^numControls.collect({arg i; (i+1).asString}) }
 
 /*	setVal { |chan, val|
 		midiout.bend(chan-1, val);
