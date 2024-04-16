@@ -80,13 +80,17 @@ BMConfigurations {
 	store {| name |
 	// store the current mappings in the selected configuration
 	       if (name != 'all off')
-	       	 { dict[name] = IdentityDictionary[];
+		{ dict[name] = IdentityDictionary[\chain->IdentityDictionary[], \ctrlrLabels->IdentityDictionary[]];
 		        BMAbstractAudioChainElement.allChainElements
 				 .keysValuesDo{| key, value |
-		 			 dict[name].add(key -> value.mappings.deepCopy)
+				dict[name][\chain].add(key -> value.mappings.deepCopy)
 		 		  };
+			BMAbstractController.allControllers.keysValuesDo({|key, value|
+				dict[name][\ctrlrLabels].add(key -> value.mappings[\labels].deepCopy);
+			});
+			dict[name][\specVersion] = 1.0; // store verison of config specification
 			   // and make a backup
-		 	   this.storeConfiguration(name, name -> dict[name]);
+		 	   this.storeConfiguration(name, name -> dict[name].postln);
 		 	 }
  		  	 { "The Configuration \"all off\" cannot be modified".error }
 	}
@@ -99,22 +103,40 @@ BMConfigurations {
 
 	loadConfig {| configName, from |
 		{
-		BMAbstractController.stopAllListening;
-		// first clear everything
-		BMAbstractAudioChainElement.allChainElements.keysValuesDo{| key, value |
-		 	BMAbstractAudioChainElement.allChainElements[key].mappings = nil;
-		 	0.01.wait;
+			BMAbstractController.stopAllListening;
+			// first clear everything
+			BMAbstractAudioChainElement.allChainElements.keysValuesDo{| key, value |
+				BMAbstractAudioChainElement.allChainElements[key].mappings = nil;
+				0.01.wait;
 
-		};
-		// then load
-		BMAbstractAudioChainElement.allChainElements.keysValuesDo{| key, value |
-			//key.postln;
-		 	BMAbstractAudioChainElement.allChainElements[key].mappings = dict[configName][key];
-		 	0.01.wait;
+			};
+			// then load
+			if(dict[configName][\specVersion].isNil, { // pre-versioned
+				BMAbstractAudioChainElement.allChainElements.keysValuesDo{| key, value |
+					//key.postln;
+					BMAbstractAudioChainElement.allChainElements[key].mappings = dict[configName][key];
+					0.01.wait;
 
-		};
-		this.changed(\currentConfig, configName, from);
-		BMAbstractController.startAllListening;
+				};
+			}, {
+				if(dict[configName][\specVersion] == 1.0, { // version 1.0, added controller labels
+					// chain config
+					BMAbstractAudioChainElement.allChainElements.keysValuesDo{| key, value |
+						//key.postln;
+						BMAbstractAudioChainElement.allChainElements[key].mappings = dict[configName][\chain][key];
+						0.01.wait;
+
+					};
+					// controller labels
+					BMAbstractController.allControllers.keysValuesDo({|key, value|
+						value.setAllLabels(dict[configName][\ctrlrLabels][key]);
+					});
+				});
+				// version too new
+				if(dict[configName][\specVersion] > 1.0, {"Configuration for preset % is from a newer version of BEASTmulch System and could not be loaded".format(configName).error});
+			});
+			this.changed(\currentConfig, configName, from);
+			BMAbstractController.startAllListening;
 		}.fork(AppClock);
 	}
 
