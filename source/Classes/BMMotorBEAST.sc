@@ -183,15 +183,6 @@ BMMotorBEAST : BMAbstractController {
 		this.setAllValues(mappings[\ctrlVals]);
 	}
 
-	// this has no labels
-	setLabel { |fader, name| this.shouldNotImplement(thisMethod) }
-
-	getLabel { |fader| ^this.shouldNotImplement(thisMethod) }
-
-	getAllLabels { ^this.shouldNotImplement(thisMethod) }
-
-	setAllLabels { |array| this.shouldNotImplement(thisMethod)}
-
 	acceptsAutomation { ^true }
 
 	initFromArchive { this.startListening }

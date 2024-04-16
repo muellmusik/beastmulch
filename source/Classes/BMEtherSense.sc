@@ -89,16 +89,7 @@ BMEtherSense : BMAbstractController {
 	}
 	
 	mappings_ {|mappings|	}
-	
-	// this has no labels
-	setLabel { |fader, name| this.shouldNotImplement(thisMethod) }
-	
-	getLabel { |fader| ^this.shouldNotImplement(thisMethod) }
-	
-	getAllLabels { ^this.shouldNotImplement(thisMethod) }
-	
-	setAllLabels { |array| this.shouldNotImplement(thisMethod)}
-	
+
 	initFromArchive { this.startListening }
 	
 	asTextArchive { 
