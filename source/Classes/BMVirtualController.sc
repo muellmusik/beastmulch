@@ -6,22 +6,22 @@ BMVirtualController : BMAbstractController {
 	*new { |name, server, numControls = 8|
 		^super.new.init(name.asSymbol, server ? Server.default, numControls).addControlsToIndex;
 	}
-	
-	*newFromParamDict {|dict, server| 
+
+	*newFromParamDict {|dict, server|
 		^this.new(dict[\name], server, dict[\numControls]);
 	}
-	
-	*parameterList { 
+
+	*parameterList {
 		var class;
 		class = this;
 		^(
 			name: [Symbol, {class.makeName}, "Name"],
 			numControls: [Integer, [1, 64, \linear, 1].asSpec, "Number of Faders"]
-		); 
+		);
 	}
-	
+
 	*humanName {  ^"GUI Controller"  }
-	
+
 	init { |argname, argserver, argnumControls|
 		name = argname;
 		server = argserver;
@@ -34,33 +34,33 @@ BMVirtualController : BMAbstractController {
 		busIndex = bus.index;
 		allControllers[name] = this;
 	}
-	
+
 	getVal { |controlNum|
 		^valueArray[controlNum -1];
 	}
-	
+
 	// there's no need to do any mapping here, but any GUI sliders etc. controlling this should use the control's spec
-	setVal { |controlNum, val| 
+	setVal { |controlNum, val|
 		var chan;
 		chan = controlNum - 1;
 		server.sendMsg("/c_set", busIndex + chan, val);
-		valueArray[chan] = val; 
+		valueArray[chan] = val;
 		this.changed(\controlVal, chan, val);
 	}
 
 	getAllValues { ^valueArray.copy; }
 
 	setAllValues {|array|  array.do({|item, i| this.setVal(i + 1, item);}); }
-	
+
 	setLabel { |fader, name|
 		labelArray[fader - 1] = name;
 		this.changed(\label, fader - 1, name);
 	}
-	
+
 	getLabel { |fader| ^labelArray[fader-1] }
-	
+
 	getAllLabels {  ^labelArray  }
-	
+
 	setAllLabels {|array| array.do({|item, i| this.setLabel(i+1, item);}); }
 
 	defaultLabels { ^numControls.collect({|i| name ++ (i+1) }); }

@@ -7,15 +7,15 @@ BMAbstractMIDIController : BMAbstractController {
 	var responder, <>loopBack = false;
 	var <>acceptsAutomation = false;
 	var inputSpec;
-	
-	startListening { 
+
+	startListening {
 		this.subclassResponsibility(thisMethod);
 	}
-	
-	makeInputSpec { 
+
+	makeInputSpec {
 		this.subclassResponsibility(thisMethod);
 	}
-	
+
 	init { |argmidiport, argname, argserver|
 		midiport = argmidiport;
 		uid = midiport.inuid;
@@ -43,15 +43,15 @@ BMAbstractMIDIController : BMAbstractController {
 		this.updateAllValues(valueArray.copy);
 		allControllers[name] = this;
 	}
-	
+
 	setNumControls {
 		this.subclassResponsibility(thisMethod);
 	}
-	
+
 	loopback {
 		this.subclassResponsibility(thisMethod);
 	}
-	
+
 	// val is native midi value
 	updateValue { |ind, val|
 		var value;
@@ -60,28 +60,28 @@ BMAbstractMIDIController : BMAbstractController {
 		server.sendMsg("/c_set", busIndex + ind, value);
 		if(loopBack || acceptsAutomation, {this.loopback(ind, val)});
 	}
-		
+
 	updateAllValues { |array|
 		array.do({|item, i| this.updateValue(i, item)});
 	}
-	
+
 	// assumes fader 1 = 1 not 0
 	// returns value between 0 and 1
-	getVal { |controlNum| 
-		^controls[controlNum -1].controlSpec.map(inputSpec.unmap(valueArray[controlNum -1])) 
+	getVal { |controlNum|
+		^controls[controlNum -1].controlSpec.map(inputSpec.unmap(valueArray[controlNum -1]))
 	}
-	
-	setVal { |controlNum, val| 
-		this.updateValue(controlNum -1, 
+
+	setVal { |controlNum, val|
+		this.updateValue(controlNum -1,
 			inputSpec.map(controls[controlNum-1].controlSpec.unmap(val)))
 	}
-	
-	getAllValues { 
+
+	getAllValues {
 		^valueArray.collect({|val, i| controls[i].controlSpec.map(inputSpec.unmap(val))})
 	}
-	
-	setAllValues {|array| 
-		array.do({|item, i| 
+
+	setAllValues {|array|
+		array.do({|item, i|
 			this.updateValue(i, inputSpec.map(controls[i].controlSpec.unmap(item)))
 		});
 	}
@@ -94,28 +94,28 @@ BMMIDIBendController : BMAbstractMIDIController {
 	*new { |midiport, name, server|
 		^super.new.init(midiport, name, server ? Server.default);
 	}
-	
-	*newFromParamDict {|dict, server| 
+
+	*newFromParamDict {|dict, server|
 		^this.new(dict[\midiport], dict[\name], server);
 	}
-	
-	*parameterList { 
+
+	*parameterList {
 		var class;
 		class = this;
 		^(
 			name: [Symbol, {class.makeName}, "Name"],
 			midiport: [BMMIDIPort, nil, "MIDI Port"]
-		); 
+		);
 	}
-	
+
 	*humanName {  ^"MIDI Pitchbend Controller"  }
 
 	setNumControls { numControls = 16;}
-	
+
 	makeInputSpec {
 		inputSpec = [0, 16383].asSpec;
 	}
-	
+
 	startListening {
 		if(responder.isNil, {
 			responder = BendResponder({|src, chan, value|
@@ -123,11 +123,11 @@ BMMIDIBendController : BMAbstractMIDIController {
 			}, uid);
 		});
 	}
-	
+
 	stopListening {
-		responder.remove; responder = nil;	
+		responder.remove; responder = nil;
 	}
-	
+
 	loopback {|ind, val|
 		midiout.bend(ind, val);
 	}
@@ -143,12 +143,12 @@ BMMIDICCController : BMAbstractMIDIController {
 			.setCCParams(chan, ccArray)
 			.init(midiport, name, server ? Server.default);
 	}
-	
-	*newFromParamDict {|dict, server| 
+
+	*newFromParamDict {|dict, server|
 		^this.new(dict[\midiport], dict[\name], dict[\chan] - 1, dict[\ccArray], server);
 	}
-	
-	*parameterList { 
+
+	*parameterList {
 		var class;
 		class = this;
 		^(
@@ -156,13 +156,13 @@ BMMIDICCController : BMAbstractMIDIController {
 			midiport: [BMMIDIPort, nil, "MIDI Port"],
 			chan: [Integer, [1, 16, \linear, 1, 0].asSpec, "MIDI Channel"],
 			ccArray: [Int8Array, "", "CC numbers"]
-		); 
+		);
 	}
-	
+
 	*humanName {  ^"MIDI CC Controller"  }
-	
+
 	setNumControls { numControls = ccArray.size}
-	
+
 	setCCParams { |argchan, argccArray|
 		chan = argchan.asInteger;
 		ccArray = argccArray;
@@ -171,19 +171,19 @@ BMMIDICCController : BMAbstractMIDIController {
 	makeInputSpec {
 		inputSpec = [0, 127].asSpec;
 	}
-	
-	startListening { 
+
+	startListening {
 		if(responder.isNil, {
 			responder = CCResponder({|src, chan, num, value|
 				this.updateValue(ccArray.indexOf(num), value);
 			}, uid, chan, ccArray);
 		});
 	}
-	
+
 	stopListening {
-		responder.remove; responder = nil;	
+		responder.remove; responder = nil;
 	}
-	
+
 	loopback {|ind, val|
 		midiout.control(chan, ccArray[ind], val);
 	}
