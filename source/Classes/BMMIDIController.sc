@@ -85,15 +85,6 @@ BMAbstractMIDIController : BMAbstractController {
 			this.updateValue(i, inputSpec.map(controls[i].controlSpec.unmap(item)))
 		});
 	}
-	
-	// this has no labels
-	setLabel { |controlNum, name| this.shouldNotImplement(thisMethod) }
-	
-	getLabel { |controlNum| ^this.shouldNotImplement(thisMethod) }
-	
-	getAllLabels { ^this.shouldNotImplement(thisMethod) }
-	
-	setAllLabels { |array| this.shouldNotImplement(thisMethod)}
 
 }
 
