@@ -32,6 +32,7 @@ BMControllerLabelGUI : BMAbstractGUI {
 						[staticText = StaticText().string_(control.name), stretch: 2],
 						[textField = TextField(window).string_(controller.getLabel(i+1)).action_({|field| controller.setLabel(i+1, field.value);}), stretch: 3]
 					));
+					textField.focusLostAction = { textField.doAction };
 					textFields[controller] = textFields[controller].add(textField);
 					mappedTo = control.mappedTo;
 					if(control.mappedTo.notNil, {
