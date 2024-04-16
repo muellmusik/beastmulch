@@ -1,5 +1,5 @@
 BMControllerLabelGUI : BMAbstractGUI {
-	var <controllers;
+	var <controllers, textFields;
 
 	*new {|name = "Edit Controller Labels", controllers|
 		^super.new.init(name, controllers).makeWindow;
@@ -8,6 +8,7 @@ BMControllerLabelGUI : BMAbstractGUI {
 	init {|argName, argControllers|
 		controllers = argControllers;
 		name = argName;
+		textFields = IdentityDictionary[];
 	}
 
 	makeWindow {
@@ -22,6 +23,7 @@ BMControllerLabelGUI : BMAbstractGUI {
 		controllers.do({|controller|
 			var controllerLayout, mappedTo;
 			if(controller.hasLabels, {
+				controller.addDependant(this);
 				mainLayout.add(controllerLayout = VLayout());
 				controllerLayout.add(StaticText().string_(controller.name).font_(Font(size: 18, bold: true)));
 				controller.controls.do({|control, i|
@@ -30,6 +32,7 @@ BMControllerLabelGUI : BMAbstractGUI {
 						[staticText = StaticText().string_(control.name), stretch: 2],
 						[textField = TextField(window).string_(controller.getLabel(i+1)).action_({|field| controller.setLabel(i+1, field.value);}), stretch: 3]
 					));
+					textFields[controller] = textFields[controller].add(textField);
 					mappedTo = control.mappedTo;
 					if(control.mappedTo.notNil, {
 						tooltip = control.mappedTo.mappings[control.name].as(Array).asString;
@@ -40,6 +43,10 @@ BMControllerLabelGUI : BMAbstractGUI {
 			});
 		});
 		window.front;
+		this.onClose_({ textFields.keys.do({|controller| controller.removeDependant(this);}); textFields = nil});
 	}
 
+	update {|changer, changed, controlNum|
+		if(changed == \label, { textFields[changer][controlNum].string = changer.getLabel(controlNum + 1) });
+	}
 }
