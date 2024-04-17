@@ -19,9 +19,10 @@ BMD400Controller : BMAbstractController {
 		numControls = argNumControls.asInteger;
 		server = argServer;
 		if(numControls%8 != 0, {"D400 number of controls should be a multiple of 8".warn});
-		if(BMMIDIPort.ports.collectAs({|port| port.device}, Set).includes(name.asString).not, {"D400 name must match existing MIDI Device name. Initialisation failed".warn});
+		if(BMMIDIPort.ports.collectAs({|port| port.device}, Set).includes(name.asString).not, {"D400 name must match existing MIDI Device name (e.g. D 400 or Network) Initialisation failed".warn});
 		numPorts = (numControls / 8).asInteger;
-		numPorts.do({|i| ports = ports.add(BMMIDIPort.ports[("Port" + (i + 1)).asSymbol])});
+		//numPorts.do({|i| ports = ports.add(BMMIDIPort.ports[("Port" + (i + 1)).asSymbol])});
+		ports = BMMIDIPort.ports.values.select({|port| port.device == name.asString}).sort({|a, b| a.name < b.name });
 		valueArray = Array.fill(numControls, {0});
 		bus = Bus.control(server, numControls);
 		busIndex = bus.index;
