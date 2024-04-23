@@ -169,6 +169,7 @@ BMPluginSpec {
 				guiCtrls[i].numberView.background = Color.white.alpha_(0.4);
 				guiCtrls[i].numberView.maxDecimals_(4);
 				guiCtrls[i].font = font;
+				guiCtrls[i].value_(initVal); // need to redo this after changing maxDecimals
 				//displaySpecs[i] = displaySpec;
 			
 			});
@@ -271,8 +272,7 @@ BMPlugin {
 			name = BMPlugin.newPluginName(name);
 			"Using % instead\n\n".postf(name);
 		});
-		specsDict = spec.specsDict.deepCopy;
-		server = argserver;
+		specsDict = spec.specsDict.deepCopy;		server = argserver;
 		attributes = spec.defaultAttributes.copy;
 		argattributes.notNil.if({attributes.putAll(argattributes)}); // local settings override
 		spec.setupFunc.value(this);
