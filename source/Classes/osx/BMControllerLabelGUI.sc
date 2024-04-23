@@ -14,7 +14,8 @@ BMControllerLabelGUI : BMAbstractGUI {
 	makeWindow {
 		var mainLayout;
 		window = Window(name, Rect(30, 30, 300, 600), scroll: true).alwaysOnTop_(true);
-		window.layout = mainLayout = VLayout();
+		window.view.canvas = View();
+		window.view.canvas.layout = mainLayout = VLayout();
 		mainLayout.add(Button().states_([["Default Labels"]]).action_({
 			controllers.do({|controller|
 				if(controller.hasLabels, { controller.setAllLabels(controller.defaultLabels) })
