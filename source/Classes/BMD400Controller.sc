@@ -35,7 +35,7 @@ BMD400Controller : BMAbstractController {
 		});
 		allControllers[name] = this;
 		labelArray = Array.fill(numControls, {""});
-		this.setAllLabels(this.defaultLabels);
+		if(midiOuts.size > 0, { this.setAllLabels(this.defaultLabels) }); // don't bork if MIDI connections failed
 	}
 
 	*newFromParamDict {|dict, server|
@@ -54,19 +54,24 @@ BMD400Controller : BMAbstractController {
 	*humanName {  ^"Asparion D400"  }
 
 	startListening {
-		midiFuncs = numPorts.collect({|i|
-			MIDIFunc.bend({|val, chan|
-				this.updateValue((i*8) + chan, val);
-			}, (0..7), ports[i].inuid).fix
+		{
+			midiFuncs = numPorts.collect({|i|
+				MIDIFunc.bend({|val, chan|
+					this.updateValue((i*8) + chan, val);
+				}, (0..7), ports[i].inuid).fix
+			});
+			transportMIDIFunc = MIDIFunc.noteOn({|vel, num|
+				if(transportTarget.notNil, {
+					switch(num,
+						94, { transportTarget.togglePlay }, // play
+						93, { transportTarget.stop }, // stop
+					)
+				})
+			}, srcID: ports[0].inuid)
+		}.try({|err|
+			"WARNING: MIDI connnections for D400 controller named % could not be initialised".postf(name);
+			err.postln;
 		});
-		transportMIDIFunc = MIDIFunc.noteOn({|vel, num|
-			if(transportTarget.notNil, {
-				switch(num,
-					94, { transportTarget.togglePlay }, // play
-					93, { transportTarget.stop }, // stop
-				)
-			})
-		}, srcID: ports[0].inuid)
 	}
 
 	update {|changer, changed|
@@ -84,7 +89,7 @@ BMD400Controller : BMAbstractController {
 		transportMIDIFunc = nil;
 	}
 
-	zeroControls { this.setAllValues(0 ! numControls) }
+	zeroControls { if(midiOuts.size > 0, { this.setAllValues(0 ! numControls) }); }
 
 	makeInputSpec {
 		inputSpec = [0, 16383].asSpec;
