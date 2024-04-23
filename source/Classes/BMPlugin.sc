@@ -167,7 +167,7 @@ BMPluginSpec {
 					}, initVal, labelWidth: labelWidth
 				);
 				guiCtrls[i].numberView.background = Color.white.alpha_(0.4);
-				guiCtrls[i].numberView.maxDecimals_(3);
+				guiCtrls[i].numberView.maxDecimals_(4);
 				guiCtrls[i].font = font;
 				//displaySpecs[i] = displaySpec;
 			
@@ -264,8 +264,7 @@ BMPlugin {
 		spec.isNil.if({
 			("Plugin spec" + argpluginSpecName + "does not exist!").warn;
 			^nil;
-		});
-		name = argName ? (spec.name  ++ UniqueID.next).asSymbol;
+		});		name = argName ? (spec.name  ++ UniqueID.next).asSymbol;
 		// protect against duplicate plugins
 		if(BMAbstractController.allControllers[name].notNil, {
 			warn("A plugin named " ++ name ++ " already exists");
