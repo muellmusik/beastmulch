@@ -6,12 +6,12 @@
 BMD400Controller : BMAbstractController {
 	classvar labelHeader = #[0xF0, 0x00, 0x00, 0x66, 0x10, 0x12];
 	var <ports, numPorts, midiFuncs, midiOuts, transportMIDIFunc;
-	var <>loopBack = false;
-	var <>acceptsAutomation = false;
+	var <>loopBack = true;
+	var <>acceptsAutomation = true;
 	var inputSpec;
 
 	*new { |name, numControls = 32, server| // name must correspond to the MIDI device name
-		^super.new.init(name, numControls, server ? Server.default).acceptsAutomation_(true).zeroControls;
+		^super.new.init(name, numControls, server ? Server.default);
 	}
 
 	init { |argName, argNumControls, argServer|
@@ -30,7 +30,9 @@ BMD400Controller : BMAbstractController {
 		midiOuts = ports.collect({|port| MIDIOut(port.outport, port.outuid) });
 		this.makeInputSpec;
 		this.addControlsToIndex;
-		this.updateAllValues(valueArray.copy);
+		SystemClock.sched(1, {
+			this.zeroControls;
+		});
 		allControllers[name] = this;
 		labelArray = Array.fill(numControls, {""});
 		this.setAllLabels(this.defaultLabels);
