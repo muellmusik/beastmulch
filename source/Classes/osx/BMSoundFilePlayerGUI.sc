@@ -24,7 +24,7 @@ BMSoundFilePlayerGUI : BMAbstractGUI {
 		clockView = StaticText.new(window, Rect(0,0,200,45));
 		clockView.string = "00:00:00.0";
 		clockView.background = Color.black;
-		clockView.font = Font("Helvetica-Bold", 18);
+		clockView.font = Font("Menlo", 18);
 		clockView.stringColor = Color.new255(106, 90, 205);
 		clockView.align = \center;
 
@@ -104,7 +104,7 @@ BMSoundFilePlayerGUI : BMAbstractGUI {
 			bigText = StaticText.new(bigClock, Rect(0, 0, 800, 180)).resize_(5);
 			bigText.string = "00:00:00.0";
 			bigText.background = Color.black;
-			bigText.font = Font("Helvetica-Bold", 120);
+			bigText.font = Font("Menlo", 120);
 			bigText.stringColor = Color.new255(106, 90, 205);
 			bigText.align = \center;
 			bigClock.front;
