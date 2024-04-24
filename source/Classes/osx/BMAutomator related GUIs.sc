@@ -188,9 +188,10 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 	setWaveColors {
 		sfView.waveColors_(
 			Array.fill(sf.numChannels, {|i|
-				Color.cyan(0.9, 1).blend(Color.cyan(1.0, 1), 1 / (sf.numChannels - 1) * i)
+				Color.cyan(0.6, 1).blend(Color.cyan(0.7, 1), 1 / (sf.numChannels - 1) * i)
 			})
 		);
+		sfView.rmsColor_(Color.blue);
 	}
 
 	makeTimesView {
@@ -256,7 +257,8 @@ BMControllerAutomatorGUI : BMAbstractGUI {
 			.selectionColor_(Color.grey)
 			.strokeColor_(Color.white)
 			.canFocus_(false)
-			.background_(Color.clear);
+			.background_(Color.clear)
+			.visible_(false); // temp fix for transparency issues as this isn't currently used.
 
 		currentEnvironment[\envV] = envView;
 
