@@ -6,8 +6,8 @@
 BMD400Controller : BMAbstractController {
 	classvar labelHeader = #[0xF0, 0x00, 0x00, 0x66, 0x10, 0x12];
 	var <ports, numPorts, midiFuncs, midiOuts, transportMIDIFunc;
-	var <>loopBack = true;
-	var <>acceptsAutomation = true;
+	var <loopBack = false;
+	var <acceptsAutomation = true;
 	var inputSpec;
 
 	*new { |name, numControls = 32, server| // name must correspond to the MIDI device name
@@ -105,7 +105,6 @@ BMD400Controller : BMAbstractController {
 		valueArray[ind] = val;
 		value = controls[ind].controlSpec.map(inputSpec.unmap(val)); // convert from midi to 0..1 and then add curve
 		server.sendMsg("/c_set", busIndex + ind, value);
-		if(loopBack || acceptsAutomation, {this.loopback(ind, val)});
 	}
 
 	updateAllValues { |array|
@@ -119,8 +118,10 @@ BMD400Controller : BMAbstractController {
 	}
 
 	setVal { |controlNum, val|
-		this.updateValue(controlNum -1,
-			inputSpec.map(controls[controlNum-1].controlSpec.unmap(val)))
+		controlNum = controlNum - 1;
+		val = inputSpec.map(controls[controlNum].controlSpec.unmap(val));
+		midiOuts[(controlNum/8).asInteger].bend(controlNum%8, val);
+		this.updateValue(controlNum, val);
 	}
 
 	getAllValues {
@@ -130,7 +131,7 @@ BMD400Controller : BMAbstractController {
 
 	setAllValues {|array|
 		array.do({|item, i|
-			this.updateValue(i, inputSpec.map(controls[i].controlSpec.unmap(item)))
+			this.setVal(i + 1, item);
 		});
 	}
 
