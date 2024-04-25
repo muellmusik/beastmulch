@@ -284,7 +284,8 @@ BMConcertGUI  {
 					   .items_([ " ",
 					   		    "Import Concert", "Export Concert", "-",
 					   		    "Import Piece", "Export Piece", "-",
-					   		    "Import Configuration", "Export Configuration"
+					   		    "Import Configuration", "Export Configuration",
+					   		    "Export All Active Configurations"
 					   		  ])
 					   .background_(Color.white)
 					   .action_({| view |
@@ -458,6 +459,20 @@ BMConcertGUI  {
 							 	 })
 					  		     }
 					  		   )
+					  		 },
+
+							// Export All Active Configurations
+							 9,
+							 {
+								FileDialog({| path |
+									var configs;
+									configs = configManager.dict.deepCopy;
+									configs.removeAt('all off');
+									configs.keysValuesDo({ |name, configuration|
+										configuration = name -> configuration;
+											configuration.writeTextArchive(path +/+ name ++ "-" ++ Date.getDate.stamp ++ ".bmconfig");
+									})
+								}, fileMode: 2, stripResult: true)
 					  		 }
 					  	);
 
