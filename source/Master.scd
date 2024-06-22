@@ -348,6 +348,22 @@ BMMultichannelPluginSpec('3rd Order ECH_8340s', 			// name
 
 );
 
+BMMultichannelPluginSpec('3rd Order ECH_8340s2Keys', 			// name
+	{|plugin, numInputs, numOutputs, inputs| // ugenGraphFunc
+		FaustG8340keys2o3.ar(*inputs);
+	},
+	nil,
+	nil, 												// use default GUI
+	nil, 							// presets
+	"3rd order ambisonic decoder, ACN/SN3D\noutput speaker order: FL FR WL WR SL SR RL RR N S W E MFL MFR MWL MWR MSL MSR MRL MRR KFL KL KR",				// description
+	nil, 								// use defaultAttributes
+	[16, 16],								// inRange
+	[22, 22],								// outRange
+	nil, 							// setupFunc
+	nil								// cleanupFunc
+
+);
+
 BMMultichannelPluginSpec('3rd Order Dome French 8', 			// name
 	{|plugin, numInputs, numOutputs, inputs| // ugenGraphFunc
 		DomeFrO3.ar(*inputs);
