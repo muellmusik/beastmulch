@@ -123,6 +123,19 @@ BMMultichannelPluginSpec {
 				[2, inf],						// inRange
 				[2, 2]						// outRange
 			);
+			BMMultichannelPluginSpec('Multi Delay', // name
+				{|plugin, numInputs, numOutputs, inputs, delayTime| // ugenGraphFunc
+					DelayC.ar(inputs, 10.0, delayTime);
+				},
+				(delayTime: [0.0, 10.0, 'lin', 0.0, 0.0].asSpec		// specsDict
+				),
+				nil, 												// use default GUI
+				nil, 							// presets
+				"Multichannel Delay", // description
+				nil, 								// use defaultAttributes
+				[2, inf],						// inRange
+				[2, inf]						// outRange
+			);
 			BMMultichannelPluginSpec('Splay Ring', // name
 				{|plugin, numInputs, numOutputs, inputs, spread, center, orientation| // ugenGraphFunc
 					SplayAz.ar(numOutputs, inputs, spread, 1,2, center, orientation);
