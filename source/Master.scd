@@ -1,3 +1,4 @@
+/*RUN*/
 (
 // "VST programmes/VSTSpecsAndProgrammes.scd".resolveRelative.load; // load programme data
 Routine({
